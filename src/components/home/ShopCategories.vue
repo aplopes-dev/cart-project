@@ -29,22 +29,23 @@ export default {
         {
           id: 1,
           name: 'Chairs',
-          image: '/images/categories/chairs.jpg'
+          image: '/images/categories/category-chairs.jpg'
         },
         {
           id: 2,
           name: 'Tables',
-          image: '/images/categories/tables.jpg'
+          image: '/images/categories/category-tables.jpg'
         },
         {
           id: 3,
           name: 'Sofas',
-          image: '/images/categories/sofas.jpg'
+          image: '/images/categories/category-sofas.jpg'
         },
         {
           id: 4,
           name: 'Beds',
-          image: '/images/categories/beds.jpg'
+          image: '/images/categories/category-beds.jpg',
+          link: '/category/beds'
         }
       ]
     }

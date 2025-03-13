@@ -5,7 +5,12 @@
         <div class="flex flex-col md:flex-row justify-start md:justify-center items-center md:items-start gap-8 md:gap-20 w-full">
           <!-- Logo -->
           <div class="w-[200px] mb-4 md:mb-0">
-            <img src="@/assets/logo.png" alt="Empire Logo" class="w-[200px] h-[87.06px]" />
+            <img 
+                :src="logoUrl"
+                alt="Empire Logo" 
+                class="w-[200px] h-[87.06px] object-contain"
+                @error="handleImageError"
+              >
           </div>
 
           <div class="flex flex-col md:flex-row gap-8 md:gap-20 w-full md:w-auto">
@@ -146,8 +151,22 @@
   </footer>
 </template>
 
+ 
 <script>
 export default {
-  name: 'TheFooter'
+  name: 'TheFooter',
+  data() {
+    return {
+      logoUrl: '/images/logo.png'
+    }
+  },
+  methods: {
+    handleImageError(e) {
+      console.error('Error loading image:', e);
+      // Usa diretamente o placeholder se a imagem não for encontrada
+      e.target.src = 'https://via.placeholder.com/200x87?text=Logo';
+      e.target.onerror = null;
+    }
+  }
 }
 </script>

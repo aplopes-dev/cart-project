@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white flex flex-col">
-    <TheHeader />
-    <main class="flex-grow">
+    <main class="flex-grow relative">
+      <TheHeader class="absolute top-0 left-0 w-full" />
       <router-view/>
     </main>
     <TheFooter />
