@@ -1,11 +1,11 @@
 <template>
   <div 
-    class="fixed right-0 top-0 h-screen w-[456px] bg-white shadow-cart z-50 flex flex-col px-6"
+    class="fixed right-0 top-0 h-screen w-full md:w-[456px] bg-white shadow-cart z-50 flex flex-col px-4 md:px-6"
   >
     <!-- Shopping Cart Section -->
     <section class="shopping-cart flex-grow overflow-y-auto">
       <div class="cart-header">
-        <h1>SHOPPING CART</h1>
+        <h1 class="text-2xl md:text-[34px]">SHOPPING CART</h1>
         <button class="close-button" @click="$emit('close')">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="black" stroke-width="2" stroke-linecap="round"/>
@@ -53,36 +53,36 @@
     </section>
 
     <!-- Subtotal Section -->
-    <div class="flex flex-col items-start w-full gap-2 mt-auto">
+    <div class="flex flex-col items-start w-full gap-2 mt-auto pb-4">
       <div class="flex justify-between items-center py-2 w-full">
-        <span class="font-archivo-narrow font-semibold text-2xl text-black/70">
+        <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
           SUBTOTAL
         </span>
-        <span class="font-archivo-narrow font-semibold text-2xl text-black/70">
+        <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
           $ {{ calculateSubtotal().toFixed(2) }}
         </span>
       </div>
       
-      <p class="font-archivo font-normal text-lg text-black w-full">
+      <p class="font-archivo font-normal text-base md:text-lg text-black w-full">
         Taxes and shipping calculated at checkout
       </p>
 
       <!-- Buttons Section -->
-      <div class="flex flex-col items-start w-full gap-2 mb-4">
+      <div class="flex flex-col items-start w-full gap-2">
         <button 
-          class="flex justify-center items-center w-full h-[60px] border-3 border-black"
+          class="flex justify-center items-center w-full h-[50px] md:h-[60px] border-3 border-black"
           @click="viewCart"
         >
-          <span class="font-archivo-narrow font-semibold text-2xl text-black">
+          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
             VIEW CART
           </span>
         </button>
 
         <button 
-          class="flex justify-center items-center w-full h-[60px] bg-empire-yellow"
+          class="flex justify-center items-center w-full h-[50px] md:h-[60px] bg-empire-yellow"
           @click="checkout"
         >
-          <span class="font-archivo-narrow font-semibold text-2xl text-black">
+          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
             CHECKOUT
           </span>
         </button>
@@ -139,11 +139,11 @@ export default {
 
 .shopping-cart {
   width: 100%;
-  max-width: 456px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: calc(100vh - 180px); /* Ajusta altura para acomodar o footer */
+  height: calc(100vh - 160px);
   padding: 12px;
   background-color: white;
 }
@@ -304,18 +304,25 @@ export default {
   cursor: pointer;
 }
 
-@media (max-width: 456px) {
+@media (max-width: 768px) {
   .shopping-cart {
+    height: calc(100vh - 140px);
     padding: 8px;
-    gap: 8px;
   }
-  
-  .cart-header h1 {
-    font-size: 28px;
+
+  .cart-item {
+    padding: 16px 0;
   }
-  
-  .item-info h2 {
-    font-size: 28px;
+
+  .item-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .quantity-selector {
+    width: 120px;
+    height: 36px;
+    padding: 8px;
   }
 }
 </style>

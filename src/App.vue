@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col">
+    <TheHeader />
     <main class="flex-grow relative" :class="{'bg-empire-dark': !isHomePage}">
-      <TheHeader class="absolute top-0 left-0 w-full" :class="{'bg-empire-dark': !isHomePage}" />
       <router-view/>
     </main>
     <TheFooter />
