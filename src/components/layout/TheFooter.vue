@@ -5,12 +5,14 @@
         <div class="flex flex-col md:flex-row justify-start md:justify-center items-center md:items-start gap-8 md:gap-20 w-full">
           <!-- Logo -->
           <div class="w-[200px] mb-4 md:mb-0">
-            <img 
+            <router-link to="/">
+              <img 
                 :src="logoUrl"
                 alt="Empire Logo" 
                 class="w-[200px] h-[87.06px] object-contain"
                 @error="handleImageError"
               >
+            </router-link>
           </div>
 
           <div class="flex flex-col md:flex-row gap-8 md:gap-20 w-full md:w-auto">
