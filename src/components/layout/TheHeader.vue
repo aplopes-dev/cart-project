@@ -1,7 +1,10 @@
 <template>
-  <header class="fixed w-full z-[100]"> <!-- Aumentado significativamente o z-index -->
-    <div class="relative flex flex-col items-center px-4 py-3 w-full !bg-black/30"> <!-- Adicionado '!' para forçar a precedência -->
-      <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-3">
+  <header :class="[
+    'w-full z-[100]',
+    { 'fixed bg-black/30': isHomePage, 'relative bg-black': !isHomePage }
+  ]">
+    <div class="relative flex flex-col items-center px-4 py-1.5 w-full !bg-black/30"> <!-- Reduzido py-3 para py-1.5 -->
+      <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5"> <!-- Reduzido py-3 para py-1.5 -->
         <!-- Logo e Botões Mobile -->
         <div class="flex flex-col w-full md:w-auto">
           <!-- Primeira linha: Logo, Email, Phone e Menu Sanduíche -->
@@ -113,7 +116,7 @@
       </div>
 
       <!-- Lower Section - Navigation -->
-      <div class="hidden md:flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-3 border-t border-[rgba(78,78,78,0.35)]">
+      <div class="hidden md:flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5 border-t border-[rgba(78,78,78,0.35)]"> <!-- Reduzido py-3 para py-1.5 -->
         <!-- Navigation Links -->
         <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-8 mb-4 md:mb-0">
           <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">Home</a>
@@ -192,6 +195,11 @@ export default {
   name: 'TheHeader',
   components: {
     CartWidget
+  },
+  computed: {
+    isHomePage() {
+      return this.$route.path === '/'
+    }
   },
   data() {
     return {

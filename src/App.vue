@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <TheHeader />
-    <main class="flex-grow relative" :class="{'bg-empire-dark': !isHomePage}">
+    <main class="flex-grow relative" :class="{'pt-0': isHomePage, 'pt-[120px]': !isHomePage}"> <!-- Reduzido de 180px para 120px -->
       <router-view/>
     </main>
     <TheFooter />
@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     isHomePage() {
-      return this.$route.name === 'home'
+      return this.$route.path === '/'
     }
   }
 }

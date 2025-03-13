@@ -98,10 +98,25 @@ export default {
     return {
       cartItems: [
         {
-          name: 'Lorem Ipsum',
-          price: 32.00,
+          name: 'Produto 1',
+          description: 'Descrição do produto 1',
+          price: 199.99,
           quantity: 1,
-          image: '/images/product1.png'
+          image: '/img/product1.png'
+        },
+        {
+          name: 'Produto 2',
+          description: 'Descrição do produto 2',
+          price: 299.99,
+          quantity: 1,
+          image: '/img/product2.png'
+        },
+        {
+          name: 'Produto 3',
+          description: 'Descrição do produto 3',
+          price: 399.99,
+          quantity: 1,
+          image: '/img/product3.png'
         }
       ]
     }
@@ -276,7 +291,6 @@ export default {
   margin: 0 auto;
   width: 32px;
   height: 32px;
-  border: 3px solid #E30505;
   background: none;
   cursor: pointer;
   display: flex;
@@ -288,6 +302,7 @@ export default {
   flex: none;
   order: 2;
   flex-grow: 0;
+  border: none; /* Removida a borda */
 }
 
 .delete-btn:hover {
@@ -295,8 +310,8 @@ export default {
 }
 
 .delete-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 32px; /* Aumentado de 24px para 32px */
+  height: 32px; /* Aumentado de 24px para 32px */
 }
 
 .close-button {
