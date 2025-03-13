@@ -137,7 +137,8 @@ export default {
       return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
     },
     checkout() {
-      console.log('Iniciando checkout...')
+      this.$emit('close') // Close the widget first
+      this.$router.push('/checkout') // Navigate to checkout page
     },
     viewCart() {
       this.$emit('close') // Fecha o widget primeiro

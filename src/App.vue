@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <TheHeader />
-    <main class="flex-grow relative" :class="{'pt-0': isHomePage, 'pt-[120px]': !isHomePage}"> <!-- Reduzido de 180px para 120px -->
+    <main class="flex-grow relative" :class="{'pt-0': isHomePage, 'pt-[60px]': !isHomePage}"> <!-- Reduzido de 120px para 60px -->
       <router-view/>
     </main>
     <TheFooter />

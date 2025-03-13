@@ -121,7 +121,10 @@
             Taxes and shipping calculated at checkout
           </p>
 
-          <button class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90">
+          <button 
+            class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
+            @click="checkout"
+          >
             CHECKOUT
           </button>
         </div>
@@ -181,6 +184,9 @@ export default {
     },
     removeItem(index) {
       this.cartItems.splice(index, 1)
+    },
+    checkout() {
+      this.$router.push('/checkout')
     }
   }
 }
