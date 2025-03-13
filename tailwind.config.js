@@ -11,6 +11,9 @@ module.exports = {
         'empire-white-70': 'rgba(255, 255, 255, 0.7)',
         'empire-dark': '#0F1515',
       },
+      borderWidth: {
+        '3': '3px',
+      },
       fontFamily: {
         'archivo-narrow': ['"Archivo Narrow"', 'sans-serif'],
         'archivo': ['Archivo', 'sans-serif'],

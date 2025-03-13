@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-white flex flex-col">
-    <main class="flex-grow relative">
-      <TheHeader class="absolute top-0 left-0 w-full" />
+  <div class="min-h-screen flex flex-col">
+    <main class="flex-grow relative" :class="{'bg-empire-dark': !isHomePage}">
+      <TheHeader class="absolute top-0 left-0 w-full" :class="{'bg-empire-dark': !isHomePage}" />
       <router-view/>
     </main>
     <TheFooter />
@@ -17,6 +17,11 @@ export default {
   components: {
     TheHeader,
     TheFooter
+  },
+  computed: {
+    isHomePage() {
+      return this.$route.name === 'home'
+    }
   }
 }
 </script>
