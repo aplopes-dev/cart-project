@@ -122,8 +122,31 @@
         <div class="flex-1">
           <!-- Filtros Mobile e Ordenação -->
           <div class="flex justify-between items-center p-3 border-2 border-black w-full h-16 mb-6">
-            <div class="flex-1">
-              <span class="font-inter text-base">Showing {{ filteredProducts.length }} results</span>
+            <div class="flex-1 flex items-center">
+              <!-- Ícone de Filtro - Visível apenas em mobile -->
+              <button 
+                @click="toggleMobileFilters"
+                class="md:hidden flex items-center justify-center w-[36px] h-[36px] bg-black p-[6px]"
+              >
+                <svg 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    d="M4 4L9 12V18L15 21V12L20 4H4Z" 
+                    stroke="#FFDD00" 
+                    stroke-width="1.5" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              
+              <!-- Texto de resultados - Visível apenas em desktop -->
+              <span class="font-inter text-base hidden md:block">Showing {{ filteredProducts.length }} results</span>
             </div>
             
             <div class="flex justify-end w-[240px]">
@@ -139,6 +162,106 @@
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="#1E1E1E"/>
                   </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção de Filtros Expansível Mobile -->
+          <div 
+            v-show="isMobileFiltersExpanded"
+            class="w-full mb-6 transition-all duration-300"
+          >
+            <!-- Filtro de Categorias -->
+            <div class="mb-6">
+              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
+                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+                  CATEGORIES
+                </h3>
+              </div>
+              <div class="border border-[#FAFAFA] p-4">
+                <!-- Conteúdo do filtro de categorias -->
+                <div class="flex flex-col gap-3">
+                  <div 
+                    v-for="category in categories" 
+                    :key="category.id"
+                    class="flex items-center gap-3"
+                  >
+                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                    <span class="font-archivo text-[20px] leading-[22px] text-black/70">
+                      {{ category.name }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtro de Preço -->
+            <div class="mb-6">
+              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
+                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+                  PRICE
+                </h3>
+              </div>
+              <div class="border border-[#FAFAFA] p-4">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-archivo text-sm">
+                    ${{ priceRange[0] }}
+                  </span>
+                  <span class="font-archivo text-sm">
+                    ${{ priceRange[1] }}
+                  </span>
+                </div>
+                <div class="relative w-full h-8">
+                  <div class="absolute w-full h-2 bg-[#E6E6E6] rounded-full top-3"></div>
+                  <div 
+                    class="absolute h-2 bg-black rounded-full top-3"
+                    :style="{ left: (priceRange[0] / maxPrice) * 100 + '%', right: 100 - (priceRange[1] / maxPrice) * 100 + '%' }"
+                  ></div>
+                  <input
+                    type="range"
+                    :min="0"
+                    :max="maxPrice"
+                    v-model.number="priceRange[0]"
+                    class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                  >
+                  <input
+                    type="range"
+                    :min="0"
+                    :max="maxPrice"
+                    v-model.number="priceRange[1]"
+                    class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtro de Marcas -->
+            <div class="mb-6">
+              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
+                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+                  BRANDS
+                </h3>
+              </div>
+              <div class="border border-[#FAFAFA] p-4">
+                <div class="flex flex-col gap-3">
+                  <label 
+                    v-for="brand in brands" 
+                    :key="brand.id" 
+                    class="flex items-center gap-3 h-[24.09px]"
+                  >
+                    <input 
+                      type="checkbox" 
+                      :value="brand.id"
+                      v-model="selectedBrands"
+                      class="w-6 h-6 accent-[#FBBD1E]"
+                    >
+                    <span class="font-archivo text-[20px] leading-[22px] text-black/70">
+                      {{ brand.name }}
+                    </span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -164,73 +287,55 @@
                 <p class="font-archivo text-lg text-black/70 h-[72px] line-clamp-3 mb-auto">
                   {{ product.description }}
                 </p>
-                <div class="mt-auto">
+                <div class="mt-auto w-full">
                   <p class="font-archivo-narrow font-semibold text-[28px] leading-[32px] mb-4">
                     ${{ product.price.toFixed(2) }}
                   </p>
-                  <button 
-                    class="w-full h-[73.31px] bg-black hover:bg-black/90 transition-colors"
-                    @click="addToCart(product)"
-                  >
-                    <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow">
-                      ADD CART
-                    </span>
-                  </button>
+                  <div class="w-full">
+                    <ProductQuantitySelector 
+                      @add-to-cart="(quantity) => addToCart(product, quantity)"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Paginação -->
-          <div class="flex flex-col items-center mt-12 mb-24"> <!-- Adicionado mb-24 para espaçamento -->
-            <div class="flex justify-center items-center gap-6 w-full max-w-[1036px]">
+          <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
+            <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
               <!-- Botão Previous -->
-              <button class="flex items-center justify-center px-4 h-10 gap-1 bg-[#F9F9FB] rounded-lg">
-                <div class="w-5 h-5 relative">
-                  <div class="absolute left-[20.83%] right-[20.83%] top-[20.83%] bottom-[20.83%] rotate-180">
-                    <div class="w-full h-full border-r-4 border-t-4 border-[#1E1E1E] transform rotate-45 translate-y-[-25%]"></div>
-                  </div>
-                </div>
-                <span class="font-inter font-medium text-base px-1">Previous</span>
+              <button class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]">
+                <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12.5 15L7.5 10L12.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="font-inter font-medium text-sm md:text-base">Previous</span>
               </button>
 
-              <!-- Números -->
-              <div class="flex gap-4">
-                <button class="flex justify-center items-center w-9 h-10 bg-[#FFDD00] font-inter font-medium text-base">
-                  1
-                </button>
-                <button class="flex justify-center items-center w-9 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  2
-                </button>
-                <button class="flex justify-center items-center w-9 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  3
-                </button>
-                <button class="flex justify-center items-center w-9 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  4
-                </button>
-                <button class="flex justify-center items-center w-9 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  5
-                </button>
-                <button class="flex justify-center items-center px-4 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  ...
-                </button>
-                <button class="flex justify-center items-center w-12 h-10 hover:bg-[#F9F9FB] rounded-lg font-inter font-medium text-base">
-                  100
+              <!-- Números das Páginas -->
+              <div class="flex gap-1 md:gap-2">
+                <button 
+                  v-for="page in 5" 
+                  :key="page"
+                  class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
+                  :class="page === 1 ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
+                >
+                  {{ page }}
                 </button>
               </div>
 
               <!-- Botão Next -->
-              <button class="flex items-center justify-center px-4 h-10 gap-1 bg-[#F9F9FB] rounded-lg">
-                <span class="font-inter font-medium text-base px-1">Next</span>
-                <div class="w-5 h-5 relative">
-                  <div class="absolute left-[20.83%] right-[20.83%] top-[20.83%] bottom-[20.83%]">
-                    <div class="w-full h-full border-r-4 border-t-4 border-[#1E1E1E] transform rotate-45 translate-y-[-25%]"></div>
-                  </div>
-                </div>
+              <button class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]">
+                <span class="font-inter font-medium text-sm md:text-base">Next</span>
+                <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.5 15L12.5 10L7.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
               </button>
+            </div>
 
-              <!-- Contador de Items -->
-              <span class="font-inter text-base ml-6">1-100 of 2 589 items</span>
+            <!-- Contador de Items -->
+            <div class="flex justify-center">
+              <span class="font-inter text-sm md:text-base">1-100 of 2 589 items</span>
             </div>
           </div>
         </div>
@@ -299,7 +404,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+
+const isMobileFiltersExpanded = ref(false)
+
+const toggleMobileFilters = () => {
+  isMobileFiltersExpanded.value = !isMobileFiltersExpanded.value
+}
 
 // Mock data
 const categories = ref([
@@ -330,8 +441,13 @@ const handlePageChange = (page) => {
 </script>
 
 <script>
+import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
+
 export default {
   name: 'CategoryPage',
+  components: {
+    ProductQuantitySelector
+  },
   data() {
     return {
       showMobileFilters: false,
@@ -437,8 +553,9 @@ export default {
     handleImageError(e) {
       e.target.src = 'https://via.placeholder.com/300x300?text=Product+Image'
     },
-    addToCart(product) {
-      console.log('Adding to cart:', product)
+    addToCart(product, quantity) {
+      console.log('Adding to cart:', product, 'quantity:', quantity)
+      // Aqui você pode implementar a lógica para adicionar ao carrinho
     }
   }
 }

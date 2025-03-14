@@ -1,68 +1,69 @@
 <template>
-  <div class="flex flex-col gap-4 w-full max-w-[554px]">
-    <!-- Quantidade e Botão Add Cart -->
-    <div class="flex flex-row gap-4">
-      <!-- Contador de Quantidade -->
-      <div class="flex flex-col gap-2 flex-grow">
-        <div class="flex flex-row items-center justify-between p-4 border-2 border-black">
-          <button @click="decrementQuantity" class="p-1">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3.33337 8H12.6667" stroke="#1E1E1E" stroke-width="1.6"/>
-            </svg>
-          </button>
-          
-          <span class="font-archivo font-bold text-2xl text-black">{{ quantity }}</span>
-          
-          <button @click="incrementQuantity" class="p-1">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3.33337V12.6667M3.33337 8H12.6667" stroke="#1E1E1E" stroke-width="1.6"/>
-            </svg>
-          </button>
+  <div class="flex flex-col sm:flex-row items-start gap-2 w-full">
+    <!-- Contador de Quantidade -->
+    <div class="w-full sm:w-[94.28px] h-[73.31px]">
+      <div class="flex flex-row justify-between items-center h-full border-2 border-black bg-white">
+        <button 
+          @click="decrementQuantity" 
+          class="flex items-center justify-center w-[40px] h-full hover:bg-black/5"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3.33337 8H12.6667" stroke="#1E1E1E" stroke-width="1.6"/>
+          </svg>
+        </button>
+        
+        <div class="font-archivo font-bold text-[22px] text-[#010101] flex items-center justify-center">
+          {{ quantity }}
         </div>
+        
+        <button 
+          @click="incrementQuantity" 
+          class="flex items-center justify-center w-[40px] h-full hover:bg-black/5"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3.33337V12.6667M3.33337 8H12.6667" stroke="#1E1E1E" stroke-width="1.6"/>
+          </svg>
+        </button>
       </div>
-
-      <!-- Botão Add Cart -->
-      <button 
-        @click="addToCart"
-        class="flex-grow bg-black text-empire-yellow font-archivo-narrow font-semibold text-[34px] h-[73px] flex items-center justify-center"
-      >
-        ADD CART
-      </button>
     </div>
 
-    <!-- Botão Shop Now -->
+    <!-- Botão Add Cart -->
     <button 
-      @click="shopNow"
-      class="w-full bg-empire-yellow text-black font-archivo-narrow font-semibold text-[34px] h-[73px] flex items-center justify-center"
+      class="w-full sm:flex-1 h-[73.31px] bg-black flex justify-center items-center"
+      @click="addToCart"
     >
-      SHOP NOW
+      <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-[#FFDD00]">ADD CART</span>
     </button>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'ProductQuantitySelector',
-  data() {
-    return {
-      quantity: 1
-    }
-  },
-  methods: {
-    incrementQuantity() {
-      this.quantity++
-    },
-    decrementQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--
-      }
-    },
-    addToCart() {
-      this.$emit('add-to-cart', this.quantity)
-    },
-    shopNow() {
-      this.$emit('shop-now')
-    }
+<script setup>
+/* eslint-disable no-undef */
+import { ref } from 'vue'
+
+const emit = defineEmits(['add-to-cart'])
+const quantity = ref(1)
+
+const incrementQuantity = () => {
+  quantity.value++
+}
+
+const decrementQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--
   }
 }
+
+const addToCart = () => {
+  emit('add-to-cart', quantity.value)
+}
 </script>
+<style scoped>
+.font-archivo-narrow {
+  font-family: 'Archivo Narrow', sans-serif;
+}
+
+.font-archivo {
+  font-family: 'Archivo', sans-serif;
+}
+</style>
