@@ -15,7 +15,7 @@ export default {
 
 <script setup>
 import HeroSection from '@/components/home/HeroSection.vue'
-import ShopCategories from '@/components/layout/ShopCategories.vue'
+import ShopCategories from '@/components/home/ShopCategories.vue' // Updated path
 import NewProducts from '@/components/home/NewProducts.vue'
 import BrandLogos from '@/components/home/BrandLogos.vue'
 </script>
