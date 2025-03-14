@@ -22,6 +22,8 @@
                 'flex-shrink-0 px-4 rotate-[0.21deg]',
                 'w-full md:w-1/3' // Uma coluna no mobile, três no desktop
               ]"
+              @click="goToProduct(product.id)"
+              class="cursor-pointer"
             >
               <div class="flex flex-col items-center h-[496.76px] bg-white border border-[#FAFAFA]">
                 <!-- Imagem do Produto -->
@@ -229,6 +231,9 @@ export default {
           this.prevSlide()
         }
       }
+    },
+    goToProduct(productId) {
+      this.$router.push(`/product/${productId}`)
     }
   },
   mounted() {

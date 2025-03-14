@@ -13,8 +13,21 @@
             <div class="space-y-8 bg-[#FAFAFA] p-8">
               <!-- Personal Details Section -->
               <section>
-                <h2 class="font-archivo-narrow font-semibold text-2xl mb-6">Personal Details</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('personal')">
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">Personal Details</h2>
+                  <svg 
+                    class="section-arrow lg:hidden absolute right-0"
+                    :class="{ 'rotate-270': sections.personal }"
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
+                  </svg>
+                </div>
+                <div v-show="sections.personal || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block font-archivo text-sm mb-2">First Name</label>
                     <input 
@@ -52,8 +65,81 @@
 
               <!-- Shipping Address Section -->
               <section>
-                <h2 class="font-archivo-narrow font-semibold text-2xl mb-6">Shipping Address</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">Shipping Details</h2>
+                  <svg 
+                    class="section-arrow lg:hidden absolute right-0"
+                    :class="{ 'rotate-270': sections.shipping }"
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
+                  </svg>
+                </div>
+                <div v-show="sections.shipping || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="md:col-span-2">
+                    <label class="block font-archivo text-sm mb-2">Address Line 1</label>
+                    <input 
+                      type="text" 
+                      placeholder="Enter your full address..."
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">City</label>
+                    <input 
+                      type="text" 
+                      placeholder="Your city"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">State</label>
+                    <input 
+                      type="text" 
+                      placeholder="Your State"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">Landmark</label>
+                    <input 
+                      type="text" 
+                      placeholder="Any landmark (famous place or mall)"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">Postal Code</label>
+                    <input 
+                      type="text" 
+                      placeholder="ZIP Code (231216)"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                </div>
+              </section>
+
+              <!-- Payment Section -->
+              <section>
+                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">Payment Details</h2>
+                  <svg 
+                    class="section-arrow lg:hidden absolute right-0"
+                    :class="{ 'rotate-270': sections.payment }"
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
+                  </svg>
+                </div>
+                <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
                     <label class="block font-archivo text-sm mb-2">Address Line 1</label>
                     <input 
@@ -111,22 +197,35 @@
                 <!-- Products List -->
                 <div class="space-y-0">
                   <div v-for="(item, index) in cartItems" :key="index" 
-                    class="flex justify-between items-start py-8 border-b border-black/25">
-                    <img :src="item.image" :alt="item.name" class="w-[120px] h-[110px] object-cover"/>
+                    class="flex items-start py-8 border-b border-black/25">
+                    <!-- Imagem do Produto -->
+                    <img 
+                      :src="item.image" 
+                      :alt="item.name" 
+                      class="w-[120px] h-[110px] object-cover"
+                    />
                     
-                    <div class="flex flex-col gap-4">
-                      <div class="flex items-center gap-2">
-                        <div class="flex justify-center items-center w-[22px] h-[22px] bg-black">
-                          <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
+                    <!-- Container para nome e preço -->
+                    <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
+                      <div class="flex flex-col gap-2">
+                        <!-- Nome do Produto com Quantidade -->
+                        <div class="flex items-center gap-2 min-w-0"> <!-- min-w-0 permite que o texto seja truncado -->
+                          <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
+                            <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
+                          </div>
+                          <span class="font-archivo text-[22px] leading-[40px] truncate">{{ item.name }}</span>
                         </div>
-                        <span class="font-archivo text-[22px] leading-[40px]">{{ item.name }}</span>
+                        
+                        <!-- Preço -->
+                        <span class="font-archivo text-[22px] leading-[40px] text-black/70">
+                          ${{ (item.price * item.quantity).toFixed(2) }}
+                        </span>
                       </div>
                     </div>
 
-                    <span class="font-archivo text-[22px] leading-[40px]">${{ (item.price * item.quantity).toFixed(2) }}</span>
-                    
+                    <!-- Botão de remover - sempre à direita -->
                     <button 
-                      class="w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                      class="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
                       @click="removeItem(index)"
                     >
                       <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -179,41 +278,74 @@ export default {
   name: 'CheckoutPage',
   data() {
     return {
+      sections: {
+        personal: true,
+        shipping: true,
+        payment: true
+      },
+      isDesktop: window.innerWidth >= 1024,
       cartItems: [
         {
-          name: 'Produto 1',
-          description: 'Descrição do produto 1',
-          price: 199.99,
+          name: 'Product Name 1',
+          price: 99.99,
           quantity: 1,
           image: '/img/product1.png'
         },
         {
-          name: 'Produto 2',
-          description: 'Descrição do produto 2',
-          price: 299.99,
-          quantity: 1,
+          name: 'Product Name 2',
+          price: 149.99,
+          quantity: 2,
           image: '/img/product2.png'
-        },
-        {
-          name: 'Produto 3',
-          description: 'Descrição do produto 3',
-          price: 399.99,
-          quantity: 1,
-          image: '/img/product3.png'
         }
       ]
     }
   },
+  mounted() {
+    window.addEventListener('resize', this.checkDesktop)
+    // Aqui você pode carregar os itens do carrinho
+    // Por exemplo, de uma store ou localStorage
+    this.cartItems = [
+      // Exemplo de dados
+      {
+        name: 'Produto 1',
+        price: 99.99,
+        quantity: 1,
+        image: '/img/product1.png'
+      }
+      // Adicione mais itens conforme necessário
+    ]
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.checkDesktop)
+  },
   methods: {
+    toggleSection(section) {
+      if (!this.isDesktop) {
+        this.sections[section] = !this.sections[section]
+      }
+    },
+    checkDesktop() {
+      this.isDesktop = window.innerWidth >= 1024
+    },
     calculateSubtotal() {
       return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
     },
-    completePurchase() {
-      console.log('Processing purchase...')
-      // Implement checkout logic here
+    async completePurchase() {
+      try {
+        // Aqui você pode adicionar a lógica de processamento do pedido
+        console.log('Processing purchase...')
+        
+        // Redireciona para a página de agradecimento
+        await this.$router.push('/thank-you')
+      } catch (error) {
+        console.error('Navigation error:', error)
+      }
     },
     removeItem(index) {
       this.cartItems.splice(index, 1)
+    },
+    calculateTotal() {
+      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
     }
   }
 }
@@ -227,5 +359,52 @@ export default {
 
 input::placeholder {
   color: rgba(0, 0, 0, 0.5);
+}
+
+/* Estilização da barra de rolagem */
+.overflow-y-auto {
+  scrollbar-width: 8px;
+  scrollbar-color: #FFDD00 #D9D9D9;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #D9D9D9;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #FFDD00;
+}
+
+/* Mobile Summary */
+.lg\\:hidden {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .lg\\:hidden {
+    display: block;
+  }
+}
+
+.section-arrow {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}
+
+.rotate-270 {
+  transform: rotate(270deg);
+}
+
+@media (min-width: 1024px) {
+  .section-arrow {
+    display: none;
+  }
 }
 </style>
