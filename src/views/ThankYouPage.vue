@@ -14,17 +14,17 @@
 
           <!-- Thank You Message -->
           <h1 class="font-archivo-narrow font-semibold text-[48px] leading-[56px]">
-            THANK YOU FOR YOUR ORDER!
+            {{ $t('thankYou.title') }}
           </h1>
 
           <!-- Order Number -->
           <p class="font-archivo text-[22px] leading-[32px] text-black/70">
-            Order #{{ orderId }}
+            {{ $t('thankYou.orderNumber') }}{{ orderId }}
           </p>
 
           <!-- Email Message -->
           <p class="font-archivo text-[22px] leading-[32px] text-black/70 max-w-[600px] mx-auto">
-            We've sent a confirmation email to your inbox with all the details of your purchase.
+            {{ $t('thankYou.emailConfirmation') }}
           </p>
 
           <!-- Continue Shopping Button -->
@@ -33,7 +33,7 @@
               @click="goToHome"
               class="bg-empire-yellow px-12 py-4 font-archivo-narrow font-semibold text-[34px] leading-[40px] hover:opacity-90 transition-opacity"
             >
-              CONTINUE SHOPPING
+              {{ $t('thankYou.continueShopping') }}
             </button>
           </div>
         </div>
@@ -43,8 +43,14 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 export default {
   name: 'ThankYouPage',
+  setup() {
+    const { t } = useI18n()
+    return { t }
+  },
   data() {
     return {
       orderId: null

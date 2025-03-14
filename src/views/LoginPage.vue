@@ -4,7 +4,7 @@
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-2 md:pb-3 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">SIGN IN</h1>
+          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('auth.signIn') }}</h1>
         </div>
 
         <!-- Conteúdo Principal -->
@@ -12,8 +12,8 @@
           <div class="flex flex-col justify-center items-center p-16 gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
             <!-- Sign Up Text -->
             <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
-              Don't have an account yet? 
-              <router-link to="/signup" class="text-empire-yellow hover:underline">Sign Up for free</router-link>
+              {{ $t('auth.dontHaveAccount') }}
+              <router-link to="/signup" class="text-empire-yellow hover:underline">{{ $t('auth.signUpFree') }}</router-link>
             </p>
 
             <!-- Form Fields -->
@@ -23,7 +23,7 @@
                 <input 
                   type="email"
                   v-model="email"
-                  placeholder="E-mail"
+                  :placeholder="$t('auth.email')"
                   class="w-full h-[48px] px-4 py-3 bg-white border border-[#1E1E1E] font-archivo font-bold text-[20px] leading-[20px] text-black/70"
                 />
               </div>
@@ -33,7 +33,7 @@
                 <input 
                   type="password"
                   v-model="password"
-                  placeholder="Password"
+                  :placeholder="$t('auth.password')"
                   class="w-full h-[48px] px-4 py-3 bg-white border border-[#1E1E1E] font-archivo font-bold text-[20px] leading-[20px] text-black/70"
                 />
               </div>
@@ -43,7 +43,7 @@
                 to="/forgot-password"
                 class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
               >
-                Forgot your password?
+                {{ $t('auth.forgotPassword') }}
               </router-link>
 
               <!-- Sign In Button -->
@@ -53,7 +53,7 @@
                   class="w-full bg-empire-yellow py-4 flex justify-center items-center"
                 >
                   <span class="font-archivo-narrow font-semibold text-[28px] leading-[72px] text-black">
-                    SIGN IN
+                    {{ $t('auth.signIn') }}
                   </span>
                 </button>
               </div>
@@ -66,8 +66,14 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 export default {
   name: 'LoginPage',
+  setup() {
+    const { t } = useI18n()
+    return { t }
+  },
   data() {
     return {
       email: '',

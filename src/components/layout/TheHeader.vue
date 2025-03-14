@@ -20,8 +20,23 @@
             
             <!-- Container dos ícones mobile -->
             <div class="flex items-center gap-6 md:ml-0 md:hidden">
-              <!-- FR -->
-              <span class="text-[15px] leading-7 text-white font-archivo font-medium">FR</span>
+              <!-- Language Selector -->
+              <div class="relative">
+                <select 
+                  v-model="selectedLanguage"
+                  class="text-[15px] leading-7 text-white font-archivo font-medium bg-transparent appearance-none cursor-pointer pr-6"
+                  @change="changeLanguage"
+                >
+                  <option value="FR" class="text-black">FR</option>
+                  <option value="EN" class="text-black">EN</option>
+                  <option value="PT" class="text-black">PT</option>
+                </select>
+                <div class="absolute right-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFFFFF">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                  </svg>
+                </div>
+              </div>
               
               <!-- Email com tooltip -->
               <div class="relative">
@@ -121,23 +136,38 @@
       <div class="hidden md:flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5 border-t border-[rgba(78,78,78,0.35)]"> <!-- Reduzido py-3 para py-1.5 -->
         <!-- Navigation Links -->
         <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-8 mb-4 md:mb-0">
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">Home</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">History</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">Suppliers</a>
+          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.home') }}</a>
+          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.history') }}</a>
+          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.suppliers') }}</a>
           <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1">
-            Shop
+            {{ $t('header.shop') }}
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#FBBD1E">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
           </a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">Career</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">Contact us</a>
+          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.career') }}</a>
+          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.contactUs') }}</a>
         </nav>
 
         <!-- Right Section -->
         <div class="flex flex-wrap justify-center items-center gap-4">
           <!-- Language -->
-          <span class="text-[15px] leading-7 text-white font-archivo font-medium">FR</span>
+          <div class="relative">
+            <select 
+              v-model="selectedLanguage"
+              class="text-[15px] leading-7 text-white font-archivo font-medium bg-transparent appearance-none cursor-pointer pr-6"
+              @change="changeLanguage"
+            >
+              <option value="FR" class="text-black">FR</option>
+              <option value="EN" class="text-black">EN</option>
+              <option value="PT" class="text-black">PT</option>
+            </select>
+            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFFFFF">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </div>
+          </div>
 
           <!-- Cart and Sign In -->
           <div class="flex items-center gap-6">
@@ -163,17 +193,17 @@
       <div v-show="isMobileMenuOpen" class="md:hidden w-full">
         <!-- Navigation Links Mobile -->
         <nav class="grid grid-cols-4 gap-2 w-full py-4 border-t border-[rgba(78,78,78,0.35)]">
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">Home</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">History</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">Suppliers</a>
+          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.home') }}</a>
+          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.history') }}</a>
+          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.suppliers') }}</a>
           <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center flex items-center justify-center gap-1">
-            Shop
+            {{ $t('header.shop') }}
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FBBD1E">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
           </a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">Career</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">Contact us</a>
+          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.career') }}</a>
+          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.contactUs') }}</a>
        
           <!-- Mobile Search -->
           <div class="col-span-4 mx-4 mt-2 flex items-center justify-between px-4 py-2 border-2 border-white rounded-full">
@@ -192,11 +222,16 @@
 
 <script>
 import CartWidget from '../cart/CartWidget.vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'TheHeader',
   components: {
     CartWidget
+  },
+  setup() {
+    const { t, locale } = useI18n()
+    return { t, locale }
   },
   computed: {
     isHomePage() {
@@ -209,7 +244,8 @@ export default {
       logoUrl: '/images/logo.png',
       isCartOpen: false,
       showEmailTooltip: false,
-      showPhoneTooltip: false
+      showPhoneTooltip: false,
+      selectedLanguage: 'FR'
     }
   },
   methods: {
@@ -226,6 +262,17 @@ export default {
     },
     closeCart() {
       this.isCartOpen = false
+    },
+    changeLanguage() {
+      this.locale = this.selectedLanguage.toLowerCase()
+    }
+  },
+  watch: {
+    selectedLanguage: {
+      immediate: true,
+      handler(newValue) {
+        this.locale = newValue.toLowerCase()
+      }
     }
   }
 }
@@ -242,5 +289,23 @@ export default {
 
 .text-empire-yellow {
   color: #FFDD00;
+}
+
+/* Adicione estes estilos para personalizar o select */
+select:focus {
+  outline: none;
+}
+
+/* Remove a borda padrão do select no Firefox */
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #fff;
+}
+
+/* Estilo para as options no Chrome */
+select option {
+  background-color: #1E1E1E;
+  color: white;
+  padding: 8px;
 }
 </style>
