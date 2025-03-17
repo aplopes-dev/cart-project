@@ -21,16 +21,34 @@ export default {
     lastName: 'Last Name',
     confirmPassword: 'Confirm Password',
     create: 'CREATE',
-    alreadyHaveAccount: 'Already have an account?'
+    alreadyHaveAccount: 'Already have an account?',
+    forgotPasswordTitle: 'FORGOT PASSWORD',
+    forgotPasswordInstruction: 'Enter your email address and we will send you a link to reset your password.',
+    sendResetLink: 'SEND RESET LINK',
+    backToLogin: 'Back to Login',
+    resetLinkSent: 'Password reset link has been sent to your email.',
+    resetLinkError: 'Error sending reset link. Please try again.',
+    emailRequired: 'Email is required',
+    resetPasswordTitle: 'RESET PASSWORD',
+    newPassword: 'New Password',
+    resetPassword: 'RESET PASSWORD',
+    allFieldsRequired: 'All fields are required',
+    passwordsDoNotMatch: 'Passwords do not match',
+    passwordResetSuccess: 'Password reset successful. Redirecting to login...',
+    passwordResetError: 'Error resetting password. Please try again.'
   },
   cart: {
     shoppingCart: 'SHOPPING CART',
     product: 'PRODUCT',
     quantity: 'QUANTITY',
     total: 'TOTAL',
-    addToCart: 'ADD TO CART'
+    addToCart: 'ADD TO CART',
+    addCart: 'ADD CART',
+    increase: 'Increase quantity',
+    decrease: 'Decrease quantity',
   },
   categories: {
+    shopByCategories: 'SHOP BY CATEGORIES',
     title: 'CATEGORIES',
     price: 'PRICE',
     brands: 'BRANDS',
@@ -49,8 +67,6 @@ export default {
     newCollection: 'New Collection'
   },
   products: {
-    new: 'New',
-    addToCart: 'Add to cart',
     newProducts: 'NEW PRODUCTS',
     outOfStock: 'Out of Stock',
     price: 'Price',
@@ -80,5 +96,94 @@ export default {
     orderNumber: 'Order #',
     emailConfirmation: "We've sent a confirmation email to your inbox with all the details of your purchase.",
     continueShopping: 'CONTINUE SHOPPING'
+  },
+  footer: {
+    titles: {
+      products: 'PRODUCTS',
+      contactUs: 'CONTACT US'
+    },
+    navigation: {
+      home: 'Home',
+      history: 'History',
+      suppliers: 'Suppliers',
+      career: 'Career',
+      heating: 'Heating',
+      tools: 'Tools'
+    },
+    contact: {
+      email: 'info@empirecanada.ca',
+      address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
+    },
+    copyright: '© Copyright Empire Canada 2025 | All Rights Reserved'
+  },
+  history: {
+    title: 'Our History',
+    foundation: {
+      title: 'Foundation',
+      text: 'Founded in 1945, Empire Canada began as a small family-owned plumbing supply store in Montreal. Our founders vision was to provide quality products and exceptional service to local contractors and homeowners.'
+    },
+    growth: {
+      title: 'Growth & Evolution',
+      text: 'Through decades of dedication and innovation, we expanded our operations across Canada, establishing ourselves as a leading supplier in the plumbing and heating industry.'
+    },
+    today: {
+      title: 'Empire Today',
+      text: 'Today, Empire Canada is a nationwide distributor with over 50 locations, serving thousands of professionals and maintaining our commitment to quality and customer service.'
+    }
+  },
+  suppliers: {
+    title: 'Our Suppliers',
+    supplier1: 'Leading manufacturer of high-quality plumbing fixtures and fittings, known for innovation and reliability.',
+    supplier2: 'Specialized in advanced heating solutions and energy-efficient systems.',
+    supplier3: 'Premium tool manufacturer with a focus on professional-grade equipment.',
+    supplier4: 'Global leader in pipe systems and solutions for various applications.'
+  },
+  career: {
+    title: 'Join Our Team',
+    whyJoin: {
+      title: 'Why Join Empire?',
+      benefit1: 'Competitive compensation and benefits package',
+      benefit2: 'Professional development opportunities',
+      benefit3: 'Positive and inclusive work environment',
+      benefit4: 'Career growth potential'
+    },
+    openings: {
+      title: 'Current Openings',
+      position1: {
+        title: 'Sales Representative',
+        description: 'Looking for experienced sales professionals to join our growing team.'
+      },
+      position2: {
+        title: 'Technical Support Specialist',
+        description: 'Support our customers with product knowledge and technical expertise.'
+      },
+      position3: {
+        title: 'Warehouse Manager',
+        description: 'Manage our warehouse operations and lead a team of logistics professionals.'
+      }
+    },
+    apply: 'Apply Now'
+  },
+  contact: {
+    title: 'Contact Us',
+    info: {
+      title: 'Contact Information'
+    },
+    form: {
+      title: 'Send us a Message',
+      name: 'Name',
+      email: 'Email',
+      phone: 'Phone',
+      subject: 'Subject',
+      selectSubject: 'Select a subject',
+      subjects: {
+        general: 'General Inquiry',
+        support: 'Technical Support',
+        sales: 'Sales',
+        other: 'Other'
+      },
+      message: 'Message',
+      submit: 'Send Message'
+    }
   }
 }

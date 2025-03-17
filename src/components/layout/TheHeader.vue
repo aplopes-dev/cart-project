@@ -117,7 +117,9 @@
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </button>
-            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">Sign in</router-link>
+            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">
+              {{ $t('header.signIn') }}
+            </router-link>
           </div>
         </div>
 
@@ -158,17 +160,27 @@
       <div class="hidden md:flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5 border-t border-[rgba(78,78,78,0.35)]"> <!-- Reduzido py-3 para py-1.5 -->
         <!-- Navigation Links -->
         <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-8 mb-4 md:mb-0">
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.home') }}</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.history') }}</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.suppliers') }}</a>
+          <router-link to="/" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            {{ $t('header.home') }}
+          </router-link>
+          <router-link to="/history" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            {{ $t('header.history') }}
+          </router-link>
+          <router-link to="/suppliers" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            {{ $t('header.suppliers') }}
+          </router-link>
           <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1">
             {{ $t('header.shop') }}
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#FBBD1E">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
           </a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.career') }}</a>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium">{{ $t('header.contactUs') }}</a>
+          <router-link to="/career" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            {{ $t('header.career') }}
+          </router-link>
+          <router-link to="/contact" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            {{ $t('header.contactUs') }}
+          </router-link>
         </nav>
 
         <!-- Right Section -->
@@ -222,7 +234,9 @@
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </button>
-            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">Sign in</router-link>
+            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">
+              {{ $t('header.signIn') }}
+            </router-link>
           </div>
 
           <!-- Search -->
@@ -239,17 +253,27 @@
       <div v-show="isMobileMenuOpen" class="md:hidden w-full">
         <!-- Navigation Links Mobile -->
         <nav class="grid grid-cols-4 gap-2 w-full py-4 border-t border-[rgba(78,78,78,0.35)]">
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.home') }}</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.history') }}</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.suppliers') }}</a>
+          <router-link to="/" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+            {{ $t('header.home') }}
+          </router-link>
+          <router-link to="/history" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+            {{ $t('header.history') }}
+          </router-link>
+          <router-link to="/suppliers" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+            {{ $t('header.suppliers') }}
+          </router-link>
           <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center flex items-center justify-center gap-1">
             {{ $t('header.shop') }}
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FBBD1E">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
           </a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.career') }}</a>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">{{ $t('header.contactUs') }}</a>
+          <router-link to="/career" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+            {{ $t('header.career') }}
+          </router-link>
+          <router-link to="/contact" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+            {{ $t('header.contactUs') }}
+          </router-link>
        
           <!-- Mobile Search -->
           <div class="col-span-4 mx-4 mt-2 flex items-center justify-between px-4 py-2 border-2 border-white rounded-full">

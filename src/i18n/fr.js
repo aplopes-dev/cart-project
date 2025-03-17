@@ -21,16 +21,34 @@ export default {
     lastName: 'Nom',
     confirmPassword: 'Confirmer le mot de passe',
     create: 'CRÉER',
-    alreadyHaveAccount: 'Vous avez déjà un compte?'
+    alreadyHaveAccount: 'Vous avez déjà un compte?',
+    forgotPasswordTitle: 'MOT DE PASSE OUBLIÉ',
+    forgotPasswordInstruction: 'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+    sendResetLink: 'ENVOYER LE LIEN',
+    backToLogin: 'Retour à la connexion',
+    resetLinkSent: 'Le lien de réinitialisation a été envoyé à votre e-mail.',
+    resetLinkError: 'Erreur lors de l\'envoi du lien. Veuillez réessayer.',
+    emailRequired: 'L\'e-mail est requis',
+    resetPasswordTitle: 'RÉINITIALISER LE MOT DE PASSE',
+    newPassword: 'Nouveau mot de passe',
+    resetPassword: 'RÉINITIALISER',
+    allFieldsRequired: 'Tous les champs sont requis',
+    passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
+    passwordResetSuccess: 'Mot de passe réinitialisé avec succès. Redirection vers la connexion...',
+    passwordResetError: 'Erreur lors de la réinitialisation. Veuillez réessayer.'
   },
   cart: {
     shoppingCart: 'PANIER',
     product: 'PRODUIT',
     quantity: 'QUANTITÉ',
     total: 'TOTAL',
-    addToCart: 'AJOUTER AU PANIER'
+    addToCart: 'AJOUTER AU PANIER',
+    addCart: 'AJOUTER AU PANIER',
+    increase: 'Augmenter la quantité',
+    decrease: 'Diminuer la quantité',
   },
   categories: {
+    shopByCategories: 'ACHETER PAR CATÉGORIES',
     title: 'CATÉGORIES',
     price: 'PRIX',
     brands: 'MARQUES',
@@ -49,8 +67,6 @@ export default {
     newCollection: 'Nouvelle Collection'
   },
   products: {
-    new: 'Nouveau',
-    addToCart: 'Ajouter au panier',
     newProducts: 'NOUVEAUX PRODUITS',
     outOfStock: 'Rupture de Stock',
     price: 'Prix',
@@ -80,5 +96,49 @@ export default {
     orderNumber: 'Commande #',
     emailConfirmation: 'Nous avons envoyé un e-mail de confirmation à votre boîte de réception avec tous les détails de votre achat.',
     continueShopping: 'CONTINUER VOS ACHATS'
+  },
+  footer: {
+    titles: {
+      products: 'PRODUITS',
+      contactUs: 'CONTACTEZ-NOUS'
+    },
+    navigation: {
+      home: 'Accueil',
+      history: 'Histoire',
+      suppliers: 'Fournisseurs',
+      career: 'Carrière',
+      heating: 'Chauffage',
+      tools: 'Outils'
+    },
+    contact: {
+      email: 'info@empirecanada.ca',
+      address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
+    },
+    copyright: '© Copyright Empire Canada 2025 | Tous Droits Réservés'
+  },
+  contact: {
+    title: 'Contactez-nous',
+    info: {
+      title: 'Informations de Contact',
+      phone: '+1 (514) 123-4567',
+      email: 'info@empirecanada.ca',
+      address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
+    },
+    form: {
+      title: 'Envoyez-nous un Message',
+      name: 'Nom',
+      email: 'E-mail',
+      phone: 'Téléphone',
+      subject: 'Sujet',
+      selectSubject: 'Sélectionnez un sujet',
+      subjects: {
+        general: 'Demande Générale',
+        support: 'Support Technique',
+        sales: 'Ventes',
+        other: 'Autre'
+      },
+      message: 'Message',
+      submit: 'Envoyer le Message'
+    }
   }
 }

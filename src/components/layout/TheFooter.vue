@@ -19,53 +19,56 @@
             <!-- Navigation Links -->
             <div class="w-full md:w-[120px]">
               <div class="flex flex-col gap-2">
-                <div class="flex">
+                <router-link to="/" class="flex items-center">
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Home</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.home') }}</span>
                   </div>
-                </div>
-                <div class="flex">
+                </router-link>
+
+                <router-link to="/history" class="flex items-center">
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">History</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.history') }}</span>
                   </div>
-                </div>
-                <div class="flex">
+                </router-link>
+
+                <router-link to="/suppliers" class="flex items-center">
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Suppliers</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.suppliers') }}</span>
                   </div>
-                </div>
-                <div class="flex">
+                </router-link>
+
+                <router-link to="/career" class="flex items-center">
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Career</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.career') }}</span>
                   </div>
-                </div>
+                </router-link>
               </div>
             </div>
 
             <!-- Products Section -->
             <div class="w-full md:w-[157px]">
               <h3 class="font-archivo-narrow font-semibold text-heading leading-heading text-empire-yellow h-[40px] flex items-center">
-                PRODUCTS
+                {{ $t('footer.titles.products') }}
               </h3>
               <div class="flex flex-col gap-2">
                 <div class="flex">
@@ -85,7 +88,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Heating</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.heating') }}</span>
                   </div>
                 </div>
                 <div class="flex">
@@ -95,7 +98,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Tools</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.tools') }}</span>
                   </div>
                 </div>
               </div>
@@ -104,7 +107,7 @@
             <!-- Contact Section -->
             <div class="w-full md:w-[437px]">
               <h3 class="font-archivo-narrow font-semibold text-heading leading-heading text-empire-yellow h-[40px] flex items-center">
-                CONTACT US
+                {{ $t('footer.titles.contactUs') }}
               </h3>
               <div class="flex flex-col gap-2">
                 <div class="flex">
@@ -124,7 +127,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">info@empirecanada.ca</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.contact.email') }}</span>
                   </div>
                 </div>
                 <div class="flex">
@@ -134,7 +137,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">2320, rue Cohen, Saint-Laurent, QC H4R 2N8</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.contact.address') }}</span>
                   </div>
                 </div>
               </div>
@@ -145,7 +148,7 @@
         <!-- Copyright -->
         <div class="flex justify-center items-center w-full mt-8 md:mt-0">
           <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70 text-center">
-            © Copyright Empire Canada 2025 | Tous Droits Réservés
+            {{ $t('footer.copyright') }}
           </span>
         </div>
       </div>
