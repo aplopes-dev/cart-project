@@ -4,37 +4,59 @@
     { 'fixed bg-black/30': isHomePage, 'relative bg-black': !isHomePage }
   ]">
     <div class="relative flex flex-col items-center px-4 py-1.5 w-full !bg-black/30"> <!-- Reduzido py-3 para py-1.5 -->
-      <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5"> <!-- Reduzido py-3 para py-1.5 -->
+      <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-0 md:px-8 py-1.5"> <!-- Alterado px-4 para px-0 -->
         <!-- Logo e Botões Mobile -->
         <div class="flex flex-col w-full md:w-auto">
           <!-- Primeira linha: Logo, Email, Phone e Menu Sanduíche -->
           <div class="flex justify-end items-center w-full">
-            <router-link to="/">
+            <router-link to="/" class="mr-auto pl-0 md:pl-4"> <!-- Adicionado pl-0 para mobile e pl-4 para desktop -->
               <img 
                 :src="logoUrl" 
                 alt="Logo" 
-                class="mr-auto w-[180px] h-[103.28px] object-contain"
+                class="w-[180px] h-[103.28px] object-contain"
                 @error="handleImageError"
               >
             </router-link>
             
             <!-- Container dos ícones mobile -->
-            <div class="flex items-center gap-6 md:ml-0 md:hidden">
-              <!-- Language Selector -->
-              <div class="relative">
-                <select 
-                  v-model="selectedLanguage"
-                  class="text-[15px] leading-7 text-white font-archivo font-medium bg-transparent appearance-none cursor-pointer pr-6"
-                  @change="changeLanguage"
+            <div class="flex items-center md:gap-6 gap-2 md:ml-0 md:hidden"> <!-- Corrigido a ordem das classes -->
+              <!-- Language Selector Mobile -->
+              <div class="relative md:hidden">
+                <button 
+                  @click="isOpen = !isOpen"
+                  class="flex items-center gap-2 bg-transparent cursor-pointer p-1"
                 >
-                  <option value="FR" class="text-black">FR</option>
-                  <option value="EN" class="text-black">EN</option>
-                  <option value="PT" class="text-black">PT</option>
-                </select>
-                <div class="absolute right-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFFFFF">
+                  <img 
+                    :src="flagImages[selectedLanguage]"
+                    class="w-7 h-7"
+                    :alt="`${selectedLanguage} flag`"
+                  />
+                  <svg 
+                    class="w-4 h-4" 
+                    viewBox="0 0 24 24" 
+                    fill="#FFFFFF"
+                  >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
+                </button>
+
+                <!-- Dropdown Mobile (apenas ícones) -->
+                <div 
+                  v-if="isOpen" 
+                  class="absolute top-full right-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
+                >
+                  <button
+                    v-for="lang in ['FR', 'EN', 'PT']"
+                    :key="lang"
+                    @click="selectLanguage(lang)"
+                    class="flex items-center justify-center w-full px-4 py-2 hover:bg-gray-100"
+                  >
+                    <img 
+                      :src="flagImages[lang]"
+                      class="w-6 h-6"
+                      :alt="`${lang} flag`"
+                    />
+                  </button>
                 </div>
               </div>
               
@@ -151,21 +173,45 @@
 
         <!-- Right Section -->
         <div class="flex flex-wrap justify-center items-center gap-4">
-          <!-- Language -->
-          <div class="relative">
-            <select 
-              v-model="selectedLanguage"
-              class="text-[15px] leading-7 text-white font-archivo font-medium bg-transparent appearance-none cursor-pointer pr-6"
-              @change="changeLanguage"
+          <!-- Language Desktop (ícones + texto) -->
+          <div class="relative hidden md:block">
+            <button 
+              @click="isOpen = !isOpen"
+              class="flex items-center gap-2 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-2 pr-6"
             >
-              <option value="FR" class="text-black">FR</option>
-              <option value="EN" class="text-black">EN</option>
-              <option value="PT" class="text-black">PT</option>
-            </select>
-            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFFFFF">
+              <img 
+                :src="flagImages[selectedLanguage]"
+                class="w-5 h-5"
+                :alt="`${selectedLanguage} flag`"
+              />
+              {{ selectedLanguage }}
+              <svg 
+                class="w-4 h-4" 
+                viewBox="0 0 24 24" 
+                fill="#FFFFFF"
+              >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
+            </button>
+
+            <!-- Dropdown Desktop (ícones + texto) -->
+            <div 
+              v-if="isOpen" 
+              class="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
+            >
+              <button
+                v-for="lang in ['FR', 'EN', 'PT']"
+                :key="lang"
+                @click="selectLanguage(lang)"
+                class="flex items-center gap-2 w-full px-4 py-2 text-black hover:bg-gray-100"
+              >
+                <img 
+                  :src="flagImages[lang]"
+                  class="w-5 h-5"
+                  :alt="`${lang} flag`"
+                />
+                {{ lang }}
+              </button>
             </div>
           </div>
 
@@ -223,6 +269,7 @@
 <script>
 import CartWidget from '../cart/CartWidget.vue'
 import { useI18n } from 'vue-i18n'
+// Removida a linha: import { getUnicode } from 'country-flag-icons/unicode'
 
 export default {
   name: 'TheHeader',
@@ -245,7 +292,13 @@ export default {
       isCartOpen: false,
       showEmailTooltip: false,
       showPhoneTooltip: false,
-      selectedLanguage: 'FR'
+      selectedLanguage: 'FR',
+      flagImages: {
+        'EN': '/images/flags/US.svg',
+        'FR': '/images/flags/FR.svg',
+        'PT': '/images/flags/BR.svg'
+      },
+      isOpen: false
     }
   },
   methods: {
@@ -265,6 +318,14 @@ export default {
     },
     changeLanguage() {
       this.locale = this.selectedLanguage.toLowerCase()
+    },
+    getFlagImage(lang) {
+      return this.flagImages[lang]
+    },
+    selectLanguage(lang) {
+      this.selectedLanguage = lang
+      this.isOpen = false
+      this.locale = lang.toLowerCase()
     }
   },
   watch: {
@@ -274,6 +335,17 @@ export default {
         this.locale = newValue.toLowerCase()
       }
     }
+  },
+  mounted() {
+    // Fecha o dropdown quando clicar fora dele
+    document.addEventListener('click', (e) => {
+      if (!this.$el.contains(e.target)) {
+        this.isOpen = false
+      }
+    })
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.closeDropdown)
   }
 }
 </script>
@@ -307,5 +379,43 @@ select option {
   background-color: #1E1E1E;
   color: white;
   padding: 8px;
+}
+
+/* Ajuste para o dropdown ficar mais largo e acomodar as bandeiras */
+@media (min-width: 768px) {
+  select {
+    min-width: 80px;
+  }
+}
+
+/* Versão mobile com apenas bandeiras */
+@media (max-width: 767px) {
+  select option {
+    padding: 8px 24px;  /* Reduzido padding */
+    min-height: 40px;   /* Reduzido min-height */
+  }
+}
+
+/* Estilo para as bandeiras */
+.flag-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Ajuste o padding-left do select para acomodar a bandeira */
+select {
+  padding-left: 2rem;
+}
+
+/* Adicione estes estilos */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.3s ease;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>
