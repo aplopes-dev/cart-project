@@ -5,8 +5,8 @@
     <!-- Shopping Cart Section -->
     <section class="shopping-cart flex-grow overflow-y-auto">
       <div class="cart-header">
-        <h1 class="text-2xl md:text-[34px]">SHOPPING CART</h1>
-        <button class="close-button" @click="$emit('close')">
+        <h1 class="text-2xl md:text-[34px]">{{ $t('cart.shoppingCart') }}</h1>
+        <button class="close-button" @click="$emit('close')" :aria-label="$t('cart.close')">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="black" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -56,15 +56,15 @@
     <div class="flex flex-col items-start w-full gap-2 mt-auto pb-4">
       <div class="flex justify-between items-center py-2 w-full">
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
-          SUBTOTAL
+          {{ $t('cart.subtotal') }}
         </span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
-          $ {{ calculateSubtotal().toFixed(2) }}
+          ${{ calculateSubtotal().toFixed(2) }}
         </span>
       </div>
       
       <p class="font-archivo font-normal text-base md:text-lg text-black w-full">
-        Taxes and shipping calculated at checkout
+        {{ $t('cart.taxesAndShipping') }}
       </p>
 
       <!-- Buttons Section -->
@@ -74,7 +74,7 @@
           @click="viewCart"
         >
           <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
-            VIEW CART
+            {{ $t('cart.viewCart') }}
           </span>
         </button>
 
@@ -83,7 +83,7 @@
           @click="checkout"
         >
           <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
-            CHECKOUT
+            {{ $t('cart.checkout') }}
           </span>
         </button>
       </div>

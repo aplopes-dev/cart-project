@@ -6,8 +6,13 @@ export default {
     shop: 'Loja',
     career: 'Carreira',
     contactUs: 'Contate-nos',
-    chatWithUs: 'Fale Conosco',
-    signIn: 'Entrar'
+    callUsToday: 'Ligue agora',
+    chatWithUs: 'Fale conosco',
+    signIn: 'Entrar',
+    search: 'Buscar',
+    searchPlaceholder: 'Buscar produtos...',
+    searchProducts: 'Buscar Produtos',
+    close: 'Fechar'
   },
   auth: {
     signIn: 'ENTRAR',
@@ -38,14 +43,31 @@ export default {
     passwordResetError: 'Erro ao redefinir a senha. Tente novamente.'
   },
   cart: {
-    shoppingCart: 'CARRINHO',
-    product: 'PRODUTO',
-    quantity: 'Quantidade',
+    shoppingCart: 'CARRINHO DE COMPRAS',
+    subtotal: 'SUBTOTAL',
+    taxesAndShipping: 'Impostos e frete calculados no checkout',
+    checkout: 'FINALIZAR COMPRA',
+    orderSummary: 'RESUMO DO PEDIDO',
+    shipping: 'Frete',
     total: 'TOTAL',
-    addToCart: 'ADICIONAR',
-    addCart: 'ADICIONAR',
-    increase: 'Aumentar quantidade',
+    viewCart: 'VER CARRINHO',
+    close: 'Fechar',
     decrease: 'Diminuir quantidade',
+    increase: 'Aumentar quantidade',
+    remove: 'Remover item',
+    addToCart: 'ADICIONAR',
+    addCart: 'ADICIONAR'
+  },
+  shoppingCart: {
+    title: 'CARRINHO DE COMPRAS',
+    subtotal: 'SUBTOTAL',
+    taxesAndShipping: 'Impostos e frete calculados no checkout',
+    checkout: 'FINALIZAR COMPRA',
+    product: 'Produto',
+    addNotes: 'Adicionar observações',
+    notesPlaceholder: 'Adicione suas observações aqui...',
+    quantity: 'Quantidade',
+    total: 'TOTAL'
   },
   categories: {
     shopByCategories: 'COMPRE POR CATEGORIAS',
@@ -70,6 +92,7 @@ export default {
     newProducts: 'NOVOS PRODUTOS',
     outOfStock: 'Fora de Estoque',
     price: 'Preço',
+    // eslint-disable-next-line no-dupe-keys
     description: 'Descrição'
   },
   common: {
@@ -85,11 +108,49 @@ export default {
     close: 'Fechar'
   },
   checkout: {
-    title: 'Finalizar Compra',
-    shipping: 'Endereço de Entrega',
-    payment: 'Pagamento',
-    review: 'Revisar Pedido',
-    placeOrder: 'Finalizar Pedido'
+    title: 'CHECKOUT',
+    personalDetails: 'Dados Pessoais',
+    firstName: 'Nome',
+    firstNamePlaceholder: 'Digite seu nome...',
+    lastName: 'Sobrenome',
+    lastNamePlaceholder: 'Digite seu sobrenome...',
+    email: 'E-mail',
+    emailPlaceholder: 'Digite seu e-mail...',
+    phone: 'Telefone',
+    phonePlaceholder: 'Digite seu telefone...',
+    
+    shippingDetails: 'Dados de Entrega',
+    address: 'Endereço',
+    addressPlaceholder: 'Digite seu endereço...',
+    apartment: 'Apartamento/Complemento',
+    apartmentPlaceholder: 'Número do apartamento (opcional)...',
+    city: 'Cidade',
+    cityPlaceholder: 'Digite sua cidade...',
+    state: 'Estado',
+    statePlaceholder: 'Selecione seu estado...',
+    postalCode: 'CEP',
+    postalCodePlaceholder: 'Digite seu CEP...',
+    country: 'País',
+    countryPlaceholder: 'Selecione seu país...',
+    
+    paymentDetails: 'Dados de Pagamento',
+    cardHolder: 'Titular do Cartão',
+    cardHolderPlaceholder: 'Nome completo no cartão...',
+    cardNumber: 'Número do Cartão',
+    cardNumberPlaceholder: 'Digite o número do cartão...',
+    expiryDate: 'Data de Validade',
+    expiryDatePlaceholder: 'MM/AA',
+    cvv: 'CVV',
+    cvvPlaceholder: '123',
+    
+    summary: {
+      title: 'RESUMO',
+      taxes: 'Impostos',
+      shipping: 'Frete',
+      subtotal: 'SUBTOTAL',
+      total: 'TOTAL'
+    },
+    completePurchase: 'FINALIZAR COMPRA'
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',
@@ -140,5 +201,41 @@ export default {
       message: 'Mensagem',
       submit: 'Enviar Mensagem'
     }
+  },
+  productDetails: {
+    addToCart: 'ADICIONAR AO CARRINHO',
+    shopNow: 'COMPRAR AGORA',
+    selectColor: 'Cor',
+    selectSize: 'Tamanho',
+    // eslint-disable-next-line no-dupe-keys
+    description: 'DESCRIÇÃO',
+    bestSellers: 'MAIS VENDIDOS',
+    addCart: 'ADICIONAR',
+    productName: 'Nome do Produto',
+    shippingInfo: 'Informações de Envio',
+    freeShipping: 'Frete grátis para pedidos acima de R$ 200,00',
+    selectOptions: 'Por favor, selecione cor e tamanho'
+  },
+  categoryPage: {
+    filters: 'FILTROS',
+    clearAll: 'Limpar Tudo',
+    categories: 'CATEGORIAS',
+    price: 'PREÇO',
+    brands: 'MARCAS',
+    sortBy: {
+      label: 'Ordenar por',
+      featured: 'Ordenar por Destaque',
+      priceLowHigh: 'Preço: Menor para Maior',
+      priceHighLow: 'Preço: Maior para Menor',
+      nameAZ: 'Nome: A a Z',
+      nameZA: 'Nome: Z a A'
+    },
+    showingResults: 'Mostrando {count} resultados',
+    itemsCount: 'Mostrando {start}-{end} de {total} resultados',
+    previous: 'Anterior',
+    next: 'Próximo',
+    addToCart: 'ADICIONAR AO CARRINHO',
+    outOfStock: 'Fora de Estoque',
+    noResults: 'Nenhum produto encontrado'
   }
 }

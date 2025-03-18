@@ -1,7 +1,7 @@
 <template>
   <section class="shopping-cart">
     <div class="cart-header">
-      <h1>SHOPPING CART</h1>
+      <h1>{{ $t('cart.shoppingCart') }}</h1>
       <button class="close-button">
         <!-- Add close icon here -->
       </button>
@@ -14,13 +14,21 @@
         <div class="item-details">
           <div class="item-info">
             <h2>{{ item.name }}</h2>
-            <p class="price">${{ item.price.toFixed(2) }}</p>
+            <p class="price">{{ formatPrice(item.price) }}</p>
           </div>
 
           <div class="quantity-selector">
-            <button class="quantity-btn" @click="decreaseQuantity(index)">-</button>
+            <button 
+              class="quantity-btn" 
+              @click="decreaseQuantity(index)"
+              :aria-label="$t('cart.decrease')"
+            >-</button>
             <span>{{ item.quantity }}</span>
-            <button class="quantity-btn" @click="increaseQuantity(index)">+</button>
+            <button 
+              class="quantity-btn" 
+              @click="increaseQuantity(index)"
+              :aria-label="$t('cart.increase')"
+            >+</button>
           </div>
         </div>
 
@@ -40,6 +48,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const cartItems = ref([
   {

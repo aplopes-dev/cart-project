@@ -134,7 +134,7 @@
                 </svg>
               </div>
               <div class="flex flex-col justify-center w-[137px] h-[56px]">
-                <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">Call us today</span>
+                <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">{{ $t('header.callUsToday') }}</span>
                 <span class="font-archivo font-bold text-[19px] leading-7 text-white">514 745-1080</span>
               </div>
             </div>
@@ -148,7 +148,7 @@
                 </svg>
               </div>
               <div class="flex flex-col justify-center w-[166px] h-[56px]">
-                <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">Chat with us</span>
+                <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">{{ $t('header.chatWithUs') }}</span>
                 <span class="font-archivo font-bold text-[19px] leading-7 text-white">info@empirecanada.ca</span>
               </div>
             </div>
@@ -239,12 +239,67 @@
             </router-link>
           </div>
 
-          <!-- Search -->
-          <div class="flex items-center justify-between px-4 py-2 w-full md:w-[213px] h-[42px] border-2 border-white rounded-full">
-            <span class="text-[15px] leading-7 text-white font-archivo font-medium">Search</span>
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
+          <!-- Search - Desktop -->
+          <div class="relative hidden md:block">
+            <div class="flex items-center justify-between px-4 py-2 w-full md:w-[213px] h-[42px] border-2 border-white rounded-full">
+              <input
+                type="text"
+                v-model="searchQuery"
+                :placeholder="$t('header.searchPlaceholder')"
+                @keyup.enter="handleSearch"
+                class="bg-transparent text-[15px] leading-7 text-white font-archivo font-medium w-full focus:outline-none"
+              />
+              <button @click="handleSearch">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
+            
+            <!-- Autocomplete dropdown - Desktop -->
+            <div 
+              v-if="showAutocomplete && filteredProducts.length > 0"
+              class="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
+            >
+              <div 
+                v-for="product in filteredProducts" 
+                :key="product.id"
+                @click="selectProduct(product)"
+                class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
+              >
+                <img 
+                  :src="product.image" 
+                  :alt="product.name"
+                  @error="handleImageError"
+                  class="w-12 h-12 object-cover rounded"
+                />
+                <div>
+                  <div class="text-black font-archivo font-medium">{{ product.name }}</div>
+                  <div class="text-gray-600 text-sm">${{ product.price.toFixed(2) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search - Mobile -->
+          <div class="md:hidden w-full px-4 mb-4">
+            <div class="relative flex items-center w-full">
+              <input
+                type="text"
+                v-model="searchQuery"
+                :placeholder="$t('header.searchPlaceholder')"
+                @keyup.enter="handleSearch"
+                class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
+              />
+              <button 
+                @click="handleSearch"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2"
+              >
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -275,12 +330,48 @@
             {{ $t('header.contactUs') }}
           </router-link>
        
-          <!-- Mobile Search -->
-          <div class="col-span-4 mx-4 mt-2 flex items-center justify-between px-4 py-2 border-2 border-white rounded-full">
-            <span class="text-[15px] leading-7 text-white font-archivo font-medium">Search</span>
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
+          <!-- Mobile Search Button -->
+          <div class="md:hidden col-span-4 mx-4 mt-2">
+            <div class="relative flex items-center w-full">
+              <input
+                type="text"
+                v-model="searchQuery"
+                :placeholder="$t('header.searchPlaceholder')"
+                @keyup.enter="handleSearch"
+                class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
+              />
+              <button 
+                @click="handleSearch"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2"
+              >
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Autocomplete dropdown para mobile -->
+            <div 
+              v-if="showAutocomplete && filteredProducts.length > 0"
+              class="absolute left-0 right-0 mt-2 mx-4 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
+            >
+              <div 
+                v-for="product in filteredProducts" 
+                :key="product.id"
+                @click="selectProduct(product)"
+                class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
+              >
+                <img 
+                  :src="product.image" 
+                  :alt="product.name"
+                  class="w-12 h-12 object-cover rounded"
+                />
+                <div>
+                  <div class="text-black font-archivo font-medium">{{ product.name }}</div>
+                  <div class="text-gray-600 text-sm">${{ product.price.toFixed(2) }}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </nav>
       </div>
@@ -307,6 +398,13 @@ export default {
   computed: {
     isHomePage() {
       return this.$route.path === '/'
+    },
+    filteredProducts() {
+      if (!this.searchQuery) return [];
+      const query = this.searchQuery.toLowerCase();
+      return this.mockProducts.filter(product => 
+        product.name.toLowerCase().includes(query)
+      );
     }
   },
   data() {
@@ -322,7 +420,48 @@ export default {
         'FR': '/images/flags/FR.svg',
         'PT': '/images/flags/BR.svg'
       },
-      isOpen: false
+      isOpen: false,
+      searchQuery: '',
+      showAutocomplete: false,
+      showMobileSearch: false,
+      mockProducts: [
+        {
+          id: 1,
+          name: 'Pipe Wrench',
+          price: 199.99,
+          image: '/img/product1.png'
+        },
+        {
+          id: 2,
+          name: 'Copper Fitting',
+          price: 299.99,
+          image: '/img/product2.png'
+        },
+        {
+          id: 3,
+          name: 'PVC Pipe',
+          price: 159.99,
+          image: '/img/product3.png'
+        },
+        {
+          id: 4,
+          name: 'Adjustable Wrench',
+          price: 399.99,
+          image: '/img/product1.png'
+        },
+        {
+          id: 5,
+          name: 'Pipe Cutter',
+          price: 249.99,
+          image: '/img/product2.png'
+        },
+        {
+          id: 6,
+          name: 'Plumbing Kit',
+          price: 179.99,
+          image: '/img/product3.png'
+        }
+      ]
     }
   },
   methods: {
@@ -350,6 +489,38 @@ export default {
       this.selectedLanguage = lang
       this.isOpen = false
       this.locale = lang.toLowerCase()
+    },
+    handleSearch() {
+      if (this.searchQuery.trim()) {
+        this.$router.push({
+          path: '/search',
+          query: { q: this.searchQuery }
+        });
+        this.showAutocomplete = false;
+        if (this.isMobileMenuOpen) {
+          this.toggleMobileMenu();
+        }
+      }
+    },
+    selectProduct(product) {
+      this.$router.push(`/product/${product.id}`);
+      this.searchQuery = '';
+      this.showAutocomplete = false;
+      if (this.isMobileMenuOpen) {
+        this.toggleMobileMenu();
+      }
+    },
+    toggleMobileSearch() {
+      this.showMobileSearch = true;
+      // Foca no input quando abrir a busca
+      this.$nextTick(() => {
+        this.$refs.mobileSearchInput?.focus();
+      });
+    },
+    closeMobileSearch() {
+      this.showMobileSearch = false;
+      this.searchQuery = '';
+      this.showAutocomplete = false;
     }
   },
   watch: {
@@ -357,6 +528,15 @@ export default {
       immediate: true,
       handler(newValue) {
         this.locale = newValue.toLowerCase()
+      }
+    },
+    searchQuery(newValue) {
+      this.showAutocomplete = newValue.length > 0;
+    },
+    isMobileMenuOpen(newValue) {
+      if (!newValue) {
+        this.showAutocomplete = false;
+        this.searchQuery = '';
       }
     }
   },
@@ -367,9 +547,19 @@ export default {
         this.isOpen = false
       }
     })
+    document.addEventListener('click', (e) => {
+      if (!this.$el.contains(e.target)) {
+        this.showAutocomplete = false;
+      }
+    });
   },
   beforeUnmount() {
     document.removeEventListener('click', this.closeDropdown)
+    document.removeEventListener('click', (e) => {
+      if (!this.$el.contains(e.target)) {
+        this.showAutocomplete = false;
+      }
+    });
   }
 }
 </script>
@@ -441,5 +631,57 @@ select {
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Adicione estes estilos para melhor experiência mobile */
+@media (max-width: 768px) {
+  .mobile-search {
+    position: relative;
+    z-index: 50;
+  }
+}
+
+/* Estilos para o overlay de busca mobile */
+.mobile-search-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Garantir que o input de busca tenha texto branco */
+input {
+  color: white;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Animações */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+input {
+  caret-color: white; /* Cor do cursor */
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Removendo aparência padrão em dispositivos móveis */
+input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 </style>

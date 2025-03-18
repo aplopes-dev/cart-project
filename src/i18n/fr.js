@@ -6,8 +6,11 @@ export default {
     shop: 'Boutique',
     career: 'Carrière',
     contactUs: 'Contactez-nous',
+    callUsToday: 'Appelez-nous',
     chatWithUs: 'Discutez avec nous',
-    signIn: 'Connexion'
+    signIn: 'Connexion',
+    search: 'Rechercher',
+    searchPlaceholder: 'Rechercher...'
   },
   auth: {
     signIn: 'CONNEXION',
@@ -39,13 +42,30 @@ export default {
   },
   cart: {
     shoppingCart: 'PANIER',
-    product: 'PRODUIT',
-    quantity: 'QUANTITÉ',
+    subtotal: 'SOUS-TOTAL',
+    taxesAndShipping: 'Taxes et frais de livraison calculés à la caisse',
+    checkout: 'PAYER',
+    orderSummary: 'RÉSUMÉ DE LA COMMANDE',
+    shipping: 'Livraison',
     total: 'TOTAL',
-    addToCart: 'AJOUTER AU PANIER',
-    addCart: 'AJOUTER AU PANIER',
-    increase: 'Augmenter la quantité',
+    viewCart: 'VOIR LE PANIER',
+    close: 'Fermer',
     decrease: 'Diminuer la quantité',
+    increase: 'Augmenter la quantité',
+    remove: 'Supprimer l\'article',
+    addToCart: 'AJOUTER',    
+    addCart: 'AJOUTER'
+  },
+  shoppingCart: {
+    title: 'PANIER',
+    subtotal: 'SOUS-TOTAL',
+    taxesAndShipping: 'Taxes et frais de livraison calculés à la caisse',
+    checkout: 'PAYER',
+    product: 'Produit',
+    addNotes: 'Ajouter des notes',
+    notesPlaceholder: 'Ajoutez vos notes ici...',
+    quantity: 'Quantité',
+    total: 'TOTAL'
   },
   categories: {
     shopByCategories: 'ACHETER PAR CATÉGORIES',
@@ -85,11 +105,49 @@ export default {
     close: 'Fermer'
   },
   checkout: {
-    title: 'Paiement',
-    shipping: 'Adresse de Livraison',
-    payment: 'Paiement',
-    review: 'Vérifier la Commande',
-    placeOrder: 'Passer la Commande'
+    title: 'PAIEMENT',
+    personalDetails: 'Informations Personnelles',
+    firstName: 'Prénom',
+    firstNamePlaceholder: 'Entrez votre prénom...',
+    lastName: 'Nom',
+    lastNamePlaceholder: 'Entrez votre nom...',
+    email: 'E-mail',
+    emailPlaceholder: 'Entrez votre e-mail...',
+    phone: 'Téléphone',
+    phonePlaceholder: 'Entrez votre numéro de téléphone...',
+    
+    shippingDetails: 'Détails de Livraison',
+    address: 'Adresse',
+    addressPlaceholder: 'Entrez votre adresse...',
+    apartment: 'Appartement/Suite',
+    apartmentPlaceholder: 'Numéro d\'appartement (optionnel)...',
+    city: 'Ville',
+    cityPlaceholder: 'Entrez votre ville...',
+    state: 'Province',
+    statePlaceholder: 'Sélectionnez votre province...',
+    postalCode: 'Code Postal',
+    postalCodePlaceholder: 'Entrez votre code postal...',
+    country: 'Pays',
+    countryPlaceholder: 'Sélectionnez votre pays...',
+    
+    paymentDetails: 'Détails du Paiement',
+    cardHolder: 'Nom sur la Carte',
+    cardHolderPlaceholder: 'Nom complet sur la carte...',
+    cardNumber: 'Numéro de Carte',
+    cardNumberPlaceholder: 'Entrez le numéro de carte...',
+    expiryDate: 'Date d\'Expiration',
+    expiryDatePlaceholder: 'MM/AA',
+    cvv: 'CVV',
+    cvvPlaceholder: '123',
+    
+    summary: {
+      title: 'RÉSUMÉ',
+      taxes: 'Taxes',
+      shipping: 'Frais de livraison',
+      subtotal: 'SOUS-TOTAL',
+      total: 'TOTAL'
+    },
+    completePurchase: 'FINALISER L\'ACHAT'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -140,5 +198,41 @@ export default {
       message: 'Message',
       submit: 'Envoyer le Message'
     }
+  },
+  productDetails: {
+    addToCart: 'AJOUTER AU PANIER',
+    shopNow: 'ACHETER MAINTENANT',
+    selectColor: 'Couleur',
+    selectSize: 'Taille',
+    // eslint-disable-next-line no-dupe-keys
+    description: 'DESCRIPTION',
+    bestSellers: 'MEILLEURES VENTES',
+    addCart: 'AJOUTER',
+    productName: 'Nom du Produit',
+    shippingInfo: 'Informations de livraison',
+    freeShipping: 'Livraison gratuite pour les commandes de plus de 200,00 $',
+    selectOptions: 'Veuillez sélectionner la couleur et la taille'
+  },
+  categoryPage: {
+    filters: 'FILTRES',
+    clearAll: 'Tout effacer',
+    categories: 'CATÉGORIES',
+    price: 'PRIX',
+    brands: 'MARQUES',
+    sortBy: {
+      label: 'Trier par',
+      featured: 'Trier par Popularité',
+      priceLowHigh: 'Prix: Croissant',
+      priceHighLow: 'Prix: Décroissant',
+      nameAZ: 'Nom: A à Z',
+      nameZA: 'Nom: Z à A'
+    },
+    showingResults: 'Affichage de {count} résultats',
+    itemsCount: 'Affichage de {start}-{end} sur {total} résultats',
+    previous: 'Précédent',
+    next: 'Suivant',
+    addToCart: 'AJOUTER AU PANIER',
+    outOfStock: 'Rupture de Stock',
+    noResults: 'Aucun produit trouvé'
   }
 }

@@ -63,7 +63,7 @@
             <div class="space-y-6">
               <!-- Color Selection -->
               <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">Color</label>
+                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
                 <div class="flex gap-4">
                   <button 
                     v-for="color in product.colors" 
@@ -81,7 +81,7 @@
 
               <!-- Size Selection -->
               <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">Size</label>
+                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
                 <div class="grid grid-cols-4 gap-4">
                   <button 
                     v-for="size in product.sizes" 
@@ -107,9 +107,9 @@
 
             <!-- Additional Info -->
             <div class="space-y-4 pt-8 border-t border-black/10">
-              <div v-for="(info, index) in additionalInfo" :key="index" class="space-y-2">
-                <h3 class="font-archivo-narrow font-semibold text-xl">{{ info.title }}</h3>
-                <p class="font-archivo text-black/70">{{ info.content }}</p>
+              <div class="space-y-2">
+                <h3 class="font-archivo-narrow font-semibold text-xl">{{ $t('productDetails.shippingInfo') }}</h3>
+                <p class="font-archivo text-black/70">{{ $t('productDetails.freeShipping') }}</p>
               </div>
             </div>
           </div>
@@ -171,7 +171,7 @@ export default {
   methods: {
     handleAddToCart(quantity) {
       if (!this.selectedColor || !this.selectedSize) {
-        alert('Please select color and size')
+        alert(this.$t('productDetails.selectOptions'))
         return
       }
       

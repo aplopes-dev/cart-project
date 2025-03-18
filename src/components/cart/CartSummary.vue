@@ -1,18 +1,18 @@
 <template>
   <div class="p-4 border border-black/25 rounded-none">
-    <h2 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] mb-6">ORDER SUMMARY</h2>
+    <h2 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] mb-6">{{ $t('cart.orderSummary') }}</h2>
     <div class="space-y-4">
       <div class="flex justify-between items-center">
-        <span class="font-archivo text-base md:text-xl text-black/70">Subtotal</span>
+        <span class="font-archivo text-base md:text-xl text-black/70">{{ $t('cart.subtotal') }}</span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ subtotal }}</span>
       </div>
       <div class="flex justify-between items-center">
-        <span class="font-archivo text-base md:text-xl text-black/70">Shipping</span>
+        <span class="font-archivo text-base md:text-xl text-black/70">{{ $t('cart.shipping') }}</span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ shipping }}</span>
       </div>
       <div class="border-t border-black/25 pt-4">
         <div class="flex justify-between items-center">
-          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">TOTAL</span>
+          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('cart.total') }}</span>
           <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ total }}</span>
         </div>
       </div>
@@ -22,7 +22,7 @@
       @click="checkout"
     >
       <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
-        CHECKOUT
+        {{ $t('cart.checkout') }}
       </span>
     </button>
   </div>

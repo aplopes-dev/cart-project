@@ -3,7 +3,7 @@
     <!-- Description Section -->
     <div class="flex flex-col items-start w-full bg-white border border-[#FAFAFA] rotate-[0.21deg]">
       <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
-        DESCRIPTION
+        {{ $t('productDetails.description') }}
       </h2>
       
       <p class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
@@ -13,17 +13,14 @@
 
     <!-- Best Sellers Section -->
     <div class="flex flex-col justify-center items-start w-full">
-      <!-- Título com mesmo estilo do DESCRIPTION -->
       <div class="w-full border-b border-black/25 mb-8">
         <h2 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-[40px] py-4">
-          BEST SELLERS
+          {{ $t('productDetails.bestSellers') }}
         </h2>
       </div>
 
-      <!-- Grid container com scroll horizontal no mobile -->
       <div class="w-full overflow-x-auto pb-4 -mx-4 md:mx-0">
         <div class="flex md:grid md:grid-cols-3 gap-4 px-4 md:px-0 min-w-max md:min-w-0">
-          <!-- Product Cards -->
           <div 
             v-for="i in 3" 
             :key="i" 
@@ -38,7 +35,7 @@
             <div class="flex flex-col items-start gap-4 w-full p-4">
               <div class="flex flex-col gap-2 md:gap-4">
                 <h3 class="font-archivo-narrow font-semibold text-[28px] md:text-[34px] leading-[32px] md:leading-[40px] text-black/70 text-center w-full">
-                  LOREM IPSUM
+                  {{ $t('productDetails.productName') }}
                 </h3>
                 <p class="font-archivo font-medium text-[16px] md:text-[20px] leading-[18px] md:leading-[22px] text-black/70 text-center w-full">
                   Lorem ipsum dolor sit amet dorim...
@@ -53,7 +50,9 @@
 
               <!-- Botão ADD CART -->
               <button class="w-full h-[73.31px] bg-black">
-                <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-[#FFDD00]">ADD CART</span>
+                <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-[#FFDD00]">
+                  {{ $t('productDetails.addCart') }}
+                </span>
               </button>
             </div>
           </div>

@@ -197,10 +197,19 @@ export default {
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat(this.$i18n.locale, {
+      if (this.$i18n.locale === 'pt') {
+        return new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(price);
+      }
+
+      // Para 'fr' e 'en', forçamos o formato en-US para manter o $ na frente
+      return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: this.$i18n.locale === 'pt' ? 'BRL' : 'USD'
-      }).format(price)
+        currency: 'USD',
+        currencyDisplay: 'symbol'
+      }).format(price);
     },
     nextSlide() {
       if (this.currentSlide >= this.maxSlides) {

@@ -6,8 +6,13 @@ export default {
     shop: 'Shop',
     career: 'Career',
     contactUs: 'Contact us',
+    callUsToday: 'Call us today',
     chatWithUs: 'Chat with us',
-    signIn: 'Sign In'
+    signIn: 'Sign In',
+    search: 'Search',
+    searchPlaceholder: 'Search products...',
+    searchProducts: 'Search Products',
+    close: 'Close'
   },
   auth: {
     signIn: 'SIGN IN',
@@ -39,13 +44,30 @@ export default {
   },
   cart: {
     shoppingCart: 'SHOPPING CART',
-    product: 'PRODUCT',
-    quantity: 'QUANTITY',
+    subtotal: 'SUBTOTAL',
+    taxesAndShipping: 'Taxes and shipping calculated at checkout',
+    checkout: 'CHECKOUT',
+    orderSummary: 'ORDER SUMMARY',
+    shipping: 'Shipping',
     total: 'TOTAL',
-    addToCart: 'ADD TO CART',
-    addCart: 'ADD CART',
-    increase: 'Increase quantity',
+    viewCart: 'VIEW CART',
+    close: 'Close',
     decrease: 'Decrease quantity',
+    increase: 'Increase quantity',
+    remove: 'Remove item',
+    addToCart: 'ADD',
+    addCart: 'ADD TO CART'
+  },
+  shoppingCart: {
+    title: 'SHOPPING CART',
+    subtotal: 'SUBTOTAL',
+    taxesAndShipping: 'Taxes and shipping calculated at checkout',
+    checkout: 'CHECKOUT',
+    product: 'Product',
+    addNotes: 'Add Notes',
+    notesPlaceholder: 'Add your notes here...',
+    quantity: 'Quantity',
+    total: 'TOTAL'
   },
   categories: {
     shopByCategories: 'SHOP BY CATEGORIES',
@@ -70,6 +92,7 @@ export default {
     newProducts: 'NEW PRODUCTS',
     outOfStock: 'Out of Stock',
     price: 'Price',
+    // eslint-disable-next-line no-dupe-keys
     description: 'Description'
   },
   common: {
@@ -85,11 +108,49 @@ export default {
     close: 'Close'
   },
   checkout: {
-    title: 'Checkout',
-    shipping: 'Shipping Address',
-    payment: 'Payment',
-    review: 'Review Order',
-    placeOrder: 'Place Order'
+    title: 'CHECKOUT',
+    personalDetails: 'Personal Details',
+    firstName: 'First Name',
+    firstNamePlaceholder: 'Enter your first name...',
+    lastName: 'Last Name',
+    lastNamePlaceholder: 'Enter your last name...',
+    email: 'Email',
+    emailPlaceholder: 'Enter your email...',
+    phone: 'Phone',
+    phonePlaceholder: 'Enter your phone number...',
+    
+    shippingDetails: 'Shipping Details',
+    address: 'Address',
+    addressPlaceholder: 'Enter your address...',
+    apartment: 'Apartment/Suite',
+    apartmentPlaceholder: 'Apartment number (optional)...',
+    city: 'City',
+    cityPlaceholder: 'Enter your city...',
+    state: 'State/Province',
+    statePlaceholder: 'Select your state/province...',
+    postalCode: 'Postal Code',
+    postalCodePlaceholder: 'Enter your postal code...',
+    country: 'Country',
+    countryPlaceholder: 'Select your country...',
+    
+    paymentDetails: 'Payment Details',
+    cardHolder: 'Card Holder',
+    cardHolderPlaceholder: 'Full name on card...',
+    cardNumber: 'Card Number',
+    cardNumberPlaceholder: 'Enter card number...',
+    expiryDate: 'Expiry Date',
+    expiryDatePlaceholder: 'MM/YY',
+    cvv: 'CVV',
+    cvvPlaceholder: '123',
+    
+    summary: {
+      title: 'SUMMARY',
+      taxes: 'Taxes',
+      shipping: 'Shipping',
+      subtotal: 'SUBTOTAL',
+      total: 'TOTAL'
+    },
+    completePurchase: 'COMPLETE PURCHASE'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
@@ -185,5 +246,41 @@ export default {
       message: 'Message',
       submit: 'Send Message'
     }
+  },
+  productDetails: {
+    addToCart: 'ADD TO CART',
+    shopNow: 'SHOP NOW',
+    selectColor: 'Color',
+    selectSize: 'Size',
+    // eslint-disable-next-line no-dupe-keys
+    description: 'DESCRIPTION',
+    bestSellers: 'BEST SELLERS',
+    addCart: 'ADD CART',
+    productName: 'Product Name',
+    shippingInfo: 'Shipping Information',
+    freeShipping: 'Free shipping on orders over $200.00',
+    selectOptions: 'Please select color and size'
+  },
+  categoryPage: {
+    filters: 'FILTERS',
+    clearAll: 'Clear All',
+    categories: 'CATEGORIES',
+    price: 'PRICE',
+    brands: 'BRANDS',
+    sortBy: {
+      label: 'Sort by',
+      featured: 'Sort by Featured',
+      priceLowHigh: 'Price: Low to High',
+      priceHighLow: 'Price: High to Low',
+      nameAZ: 'Name: A to Z',
+      nameZA: 'Name: Z to A'
+    },
+    itemsCount: 'Showing {start}-{end} of {total} results',
+    previous: 'Previous',
+    next: 'Next',
+    addToCart: 'ADD TO CART',
+    outOfStock: 'Out of Stock',
+    noResults: 'No products found',
+    showingResults: 'Showing {count} results'
   }
 }

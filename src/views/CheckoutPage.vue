@@ -4,7 +4,7 @@
       <div class="max-w-[1408px] mx-auto py-8">
         <!-- Title -->
         <div class="pb-6 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">CHECKOUT</h1>
+          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('checkout.title') }}</h1>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -14,7 +14,7 @@
               <!-- Personal Details Section -->
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('personal')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">Personal Details</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.personalDetails') }}</h2>
                   <svg 
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.personal }"
@@ -29,34 +29,34 @@
                 </div>
                 <div v-show="sections.personal || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label class="block font-archivo text-sm mb-2">First Name</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.firstName') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Enter your first name..."
+                      :placeholder="$t('checkout.firstNamePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">Last Name</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.lastName') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Enter your last name..."
+                      :placeholder="$t('checkout.lastNamePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">Email</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.email') }}</label>
                     <input 
                       type="email" 
-                      placeholder="Enter your Email..."
+                      :placeholder="$t('checkout.emailPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">Phone Number</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.phone') }}</label>
                     <input 
                       type="tel" 
-                      placeholder="Enter your Phone number..."
+                      :placeholder="$t('checkout.phonePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
@@ -66,7 +66,7 @@
               <!-- Shipping Address Section -->
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">Shipping Details</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
                   <svg 
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.shipping }"
@@ -81,42 +81,50 @@
                 </div>
                 <div v-show="sections.shipping || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
-                    <label class="block font-archivo text-sm mb-2">Address Line 1</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Enter your full address..."
+                      :placeholder="$t('checkout.addressPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">City</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Your city"
+                      :placeholder="$t('checkout.apartmentPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">State</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Your State"
+                      :placeholder="$t('checkout.cityPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">Landmark</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Any landmark (famous place or mall)"
+                      :placeholder="$t('checkout.statePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">Postal Code</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
                     <input 
                       type="text" 
-                      placeholder="ZIP Code (231216)"
+                      :placeholder="$t('checkout.postalCodePlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
+                    <input 
+                      type="text" 
+                      :placeholder="$t('checkout.countryPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
@@ -126,7 +134,7 @@
               <!-- Payment Section -->
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">Payment Details</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
                   <svg 
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.payment }"
@@ -141,42 +149,34 @@
                 </div>
                 <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
-                    <label class="block font-archivo text-sm mb-2">Address Line 1</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Enter your full address..."
+                      :placeholder="$t('checkout.cardHolderPlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                    >
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
+                    <input 
+                      type="text" 
+                      :placeholder="$t('checkout.cardNumberPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">City</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Your city"
+                      :placeholder="$t('checkout.expiryDatePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
                   <div>
-                    <label class="block font-archivo text-sm mb-2">State</label>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
                     <input 
                       type="text" 
-                      placeholder="Your State"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">Landmark</label>
-                    <input 
-                      type="text" 
-                      placeholder="Any landmark (famous place or mall)"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">Postal Code</label>
-                    <input 
-                      type="text" 
-                      placeholder="ZIP Code (231216)"
+                      :placeholder="$t('checkout.cvvPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
                   </div>
@@ -191,7 +191,7 @@
               <div class="flex flex-col gap-4 p-4">
                 <!-- Header -->
                 <div class="flex justify-center items-center w-full h-[72px] bg-[#FAFAFA]">
-                  <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-center mx-auto">SUMMARY</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-center mx-auto">{{ $t('checkout.summary.title') }}</h2>
                 </div>
 
                 <!-- Products List -->
@@ -242,15 +242,17 @@
                 <!-- Totals -->
                 <div class="space-y-4">
                   <div class="flex justify-between">
-                    <span class="font-archivo text-[22px] leading-[40px]">Taxes</span>
+                    <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
                     <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="font-archivo text-[22px] leading-[40px]">Shipping</span>
+                    <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.shipping') }}</span>
                     <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
                   </div>
                   <div class="flex justify-between items-center py-4">
-                    <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">SUBTOTAL</span>
+                    <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
+                      {{ $t('checkout.summary.subtotal') }}
+                    </span>
                     <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
                       ${{ calculateSubtotal().toFixed(2) }}
                     </span>
@@ -262,7 +264,7 @@
                   class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
                   @click="completePurchase"
                 >
-                  COMPLETE PURCHASE
+                  {{ $t('checkout.completePurchase') }}
                 </button>
               </div>
             </div>

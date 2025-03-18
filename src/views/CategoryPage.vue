@@ -13,7 +13,7 @@
                 <div class="flex flex-col w-full">
                   <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
                     <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                      CATEGORIES
+                      {{ $t('categoryPage.categories') }}
                     </h3>
                   </div>
                 </div>
@@ -43,7 +43,7 @@
                   <div class="flex flex-col w-full">
                     <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
                       <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                        PRICE
+                        {{ $t('categoryPage.price') }}
                       </h3>
                     </div>
                   </div>
@@ -88,7 +88,7 @@
                   <div class="flex flex-col w-full">
                     <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
                       <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                        BRANDS
+                        {{ $t('categoryPage.brands') }}
                       </h3>
                     </div>
                   </div>
@@ -146,17 +146,19 @@
               </button>
               
               <!-- Texto de resultados - Visível apenas em desktop -->
-              <span class="font-inter text-base hidden md:block">Showing {{ filteredProducts.length }} results</span>
+              <span class="font-inter text-base hidden md:block">
+                {{ $t('categoryPage.showingResults', { count: filteredProducts.length }) }}
+              </span>
             </div>
             
             <div class="flex justify-end w-[240px]">
               <div class="relative w-full">
                 <select class="w-full h-10 px-4 py-2 bg-white border border-[#D9D9D9] font-inter text-sm appearance-none cursor-pointer">
-                  <option value="1">Sort by Featured</option>
-                  <option value="2">Price: Low to High</option>
-                  <option value="3">Price: High to Low</option>
-                  <option value="4">Name: A to Z</option>
-                  <option value="5">Name: Z to A</option>
+                  <option value="1">{{ $t('categoryPage.sortBy.featured') }}</option>
+                  <option value="2">{{ $t('categoryPage.sortBy.priceLowHigh') }}</option>
+                  <option value="3">{{ $t('categoryPage.sortBy.priceHighLow') }}</option>
+                  <option value="4">{{ $t('categoryPage.sortBy.nameAZ') }}</option>
+                  <option value="5">{{ $t('categoryPage.sortBy.nameZA') }}</option>
                 </select>
                 <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-[#FFDD00]">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -176,7 +178,7 @@
             <div class="mb-6">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                  CATEGORIES
+                  {{ $t('categoryPage.categories') }}
                 </h3>
               </div>
               <div class="border border-[#FAFAFA] p-4">
@@ -202,7 +204,7 @@
             <div class="mb-6">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                  PRICE
+                  {{ $t('categoryPage.price') }}
                 </h3>
               </div>
               <div class="border border-[#FAFAFA] p-4">
@@ -242,7 +244,7 @@
             <div class="mb-6">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
-                  BRANDS
+                  {{ $t('categoryPage.brands') }}
                 </h3>
               </div>
               <div class="border border-[#FAFAFA] p-4">
@@ -309,7 +311,7 @@
                 <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.5 15L7.5 10L12.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span class="font-inter font-medium text-sm md:text-base">Previous</span>
+                <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.previous') }}</span>
               </button>
 
               <!-- Números das Páginas -->
@@ -326,7 +328,7 @@
 
               <!-- Botão Next -->
               <button class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]">
-                <span class="font-inter font-medium text-sm md:text-base">Next</span>
+                <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.next') }}</span>
                 <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7.5 15L12.5 10L7.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -335,7 +337,9 @@
 
             <!-- Contador de Items -->
             <div class="flex justify-center">
-              <span class="font-inter text-sm md:text-base">1-100 of 2 589 items</span>
+              <span class="font-inter text-sm md:text-base">
+                {{ $t('categoryPage.itemsCount', { start: 1, end: filteredProducts.length, total: totalItems }) }}
+              </span>
             </div>
           </div>
         </div>
@@ -353,7 +357,7 @@
         @click.stop
       >
         <div class="flex justify-between items-center mb-6">
-          <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">FILTERS</h2>
+          <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('categoryPage.filters') }}</h2>
           <button 
             @click="showMobileFilters = false"
             class="p-2"
@@ -368,7 +372,7 @@
         <div class="space-y-8">
           <!-- Filtro de Preço -->
           <div>
-            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">Price Range</h3>
+            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.priceRange') }}</h3>
             <div class="space-y-2">
               <label v-for="range in priceRanges" :key="range.id" class="flex items-center gap-2">
                 <input 
@@ -384,7 +388,7 @@
 
           <!-- Filtro de Marca -->
           <div>
-            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">Brand</h3>
+            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.brand') }}</h3>
             <div class="space-y-2">
               <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-2">
                 <input 
@@ -405,6 +409,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
+
+useI18n()
 
 const isMobileFiltersExpanded = ref(false)
 
@@ -441,8 +449,6 @@ const handlePageChange = (page) => {
 </script>
 
 <script>
-import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
-
 export default {
   name: 'CategoryPage',
   components: {

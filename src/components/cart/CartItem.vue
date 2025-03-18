@@ -6,9 +6,17 @@
       <p class="text-gray-600">{{ product.price }}</p>
     </div>
     <div class="flex items-center gap-2">
-      <button @click="decrease" class="p-1 rounded-full hover:bg-gray-100">-</button>
+      <button 
+        @click="decrease" 
+        class="p-1 rounded-full hover:bg-gray-100"
+        :aria-label="$t('cart.decrease')"
+      >-</button>
       <span class="w-8 text-center">{{ quantity }}</span>
-      <button @click="increase" class="p-1 rounded-full hover:bg-gray-100">+</button>
+      <button 
+        @click="increase" 
+        class="p-1 rounded-full hover:bg-gray-100"
+        :aria-label="$t('cart.increase')"
+      >+</button>
     </div>
   </div>
 </template>

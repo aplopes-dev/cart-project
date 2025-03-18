@@ -3,20 +3,20 @@
     <div class="container mx-auto px-4">
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
-        <div class="pt-0 pb-2 md:pb-3 text-center"> <!-- Removido padding top e mantido um pequeno padding bottom -->
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">SHOPPING CART</h1>
+        <div class="pt-0 pb-2 md:pb-3 text-center">
+          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('shoppingCart.title') }}</h1>
         </div>
 
         <!-- Header com títulos das colunas -->
         <div class="hidden md:grid grid-cols-12 gap-4 py-6 border-b border-black/25">
           <div class="col-span-6">
-            <span class="font-archivo-narrow font-semibold text-xl">PRODUCT</span>
+            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.product') }}</span>
           </div>
           <div class="col-span-3 text-center">
-            <span class="font-archivo-narrow font-semibold text-xl">QUANTITY</span>
+            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.quantity') }}</span>
           </div>
           <div class="col-span-3 text-right">
-            <span class="font-archivo-narrow font-semibold text-xl">TOTAL</span>
+            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
           </div>
         </div>
 
@@ -74,7 +74,7 @@
 
             <!-- Total -->
             <div class="col-span-1 md:col-span-3 flex items-start justify-between md:justify-end">
-              <span class="md:hidden font-archivo-narrow font-semibold text-xl">TOTAL</span>
+              <span class="md:hidden font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
               <span class="font-archivo-narrow font-semibold text-xl">${{ (item.price * item.quantity).toFixed(2) }}</span>
             </div>
           </div>
@@ -86,7 +86,7 @@
             class="font-archivo-narrow font-semibold text-xl hover:opacity-70 flex items-center gap-2"
             @click="toggleNotes"
           >
-            ADD NOTES
+            {{ $t('shoppingCart.addNotes') }}
             <svg 
               class="w-6 h-6 transition-transform" 
               :class="{ 'rotate-180': showNotes }"
@@ -105,7 +105,7 @@
               v-model="notes"
               rows="4"
               class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base resize-none focus:outline-none focus:border-black"
-              placeholder="Add your notes here..."
+              :placeholder="$t('shoppingCart.notesPlaceholder')"
             ></textarea>
           </div>
         </div>
@@ -113,19 +113,19 @@
         <!-- Summary -->
         <div class="py-6 max-w-[456px] ml-auto">
           <div class="flex justify-between items-center mb-4">
-            <span class="font-archivo-narrow font-semibold text-xl">SUBTOTAL</span>
+            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.subtotal') }}</span>
             <span class="font-archivo-narrow font-semibold text-xl">${{ calculateSubtotal().toFixed(2) }}</span>
           </div>
 
           <p class="font-archivo text-black/70 mb-6">
-            Taxes and shipping calculated at checkout
+            {{ $t('shoppingCart.taxesAndShipping') }}
           </p>
 
           <button 
             class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
             @click="checkout"
           >
-            CHECKOUT
+            {{ $t('shoppingCart.checkout') }}
           </button>
         </div>
       </div>
