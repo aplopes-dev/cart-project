@@ -12,7 +12,9 @@ export default {
     search: 'Search',
     searchPlaceholder: 'Search products...',
     searchProducts: 'Search Products',
-    close: 'Close'
+    close: 'Close',
+    greeting: 'Hello',
+    logout: 'Logout'
   },
   auth: {
     signIn: 'SIGN IN',
@@ -284,3 +286,4 @@ export default {
     showingResults: 'Showing {count} results'
   }
 }
+

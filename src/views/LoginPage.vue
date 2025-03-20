@@ -66,27 +66,46 @@
 </template>
 
 <script>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
   name: 'LoginPage',
   setup() {
-    const { t } = useI18n()
-    return { t }
+    const { t } = useI18n();
+    const router = useRouter();
+    const store = useStore();
+    return { t, router, store };
   },
   data() {
     return {
       email: '',
-      password: ''
-    }
+      password: '',
+      error: '',
+      isLoading: false
+    };
   },
   methods: {
-    handleLogin() {
-      // Implementar lógica de login aqui
-      console.log('Login attempt:', { email: this.email, password: this.password })
+    async handleLogin() {
+      try {
+        this.isLoading = true;
+        this.error = '';
+        
+        await this.store.dispatch('login', {
+          email: this.email,
+          password: this.password
+        });
+        
+        this.router.push('/');
+      } catch (error) {
+        this.error = error.message || this.$t('auth.loginError');
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -99,3 +118,4 @@ export default {
   border-color: #FFDD00;
 }
 </style>
+

@@ -50,7 +50,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+useI18n()  // Remover a desestruturação de 't'
 
 const cartItems = ref([
   {

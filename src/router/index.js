@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authService } from '@/services/auth.service'
 import Home from '../views/Home.vue'
 import HistoryView from '../views/HistoryView.vue'
 import SuppliersView from '../views/SuppliersView.vue'
@@ -42,7 +43,8 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/LoginPage.vue')
+    component: () => import('../views/LoginPage.vue'),
+    meta: { requiresGuest: true }
   },
   {
     path: '/signup',
@@ -92,8 +94,16 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  window.scrollTo(0, 0)
-  next()
+  const isAuthenticated = authService.isAuthenticated()
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login')
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    next('/')
+  } else {
+    window.scrollTo(0, 0)
+    next()
+  }
 })
 
 export default router

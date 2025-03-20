@@ -12,7 +12,9 @@ export default {
     search: 'Buscar',
     searchPlaceholder: 'Buscar produtos...',
     searchProducts: 'Buscar Produtos',
-    close: 'Fechar'
+    close: 'Fechar',
+    greeting: 'Olá',
+    logout: 'Sair'
   },
   auth: {
     signIn: 'ENTRAR',
@@ -239,3 +241,4 @@ export default {
     noResults: 'Nenhum produto encontrado'
   }
 }
+

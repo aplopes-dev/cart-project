@@ -10,7 +10,9 @@ export default {
     chatWithUs: 'Discutez avec nous',
     signIn: 'Connexion',
     search: 'Rechercher',
-    searchPlaceholder: 'Rechercher...'
+    searchPlaceholder: 'Rechercher...',
+    greeting: 'Bonjour',
+    logout: 'Déconnexion'
   },
   auth: {
     signIn: 'CONNEXION',
@@ -236,3 +238,4 @@ export default {
     noResults: 'Aucun produit trouvé'
   }
 }
+

@@ -117,7 +117,53 @@
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </button>
-            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            <template v-if="isAuthenticated">
+              <div class="relative">
+                <button 
+                  @click="toggleUserMenu"
+                  class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
+                >
+                  {{ $t('header.greeting') }}, {{ currentUser?.firstName }}
+                  <svg 
+                    class="w-4 h-4" 
+                    viewBox="0 0 24 24" 
+                    fill="#FFFFFF"
+                  >
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                  </svg>
+                </button>
+                
+                <!-- User Dropdown Menu Mobile -->
+                <div 
+                  v-show="isUserMenuOpen"
+                  class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50"
+                >
+                  <button
+                    @click="handleLogout"
+                    class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <svg 
+                      class="w-4 h-4" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="2"
+                    >
+                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                      <path d="M16 17l5-5-5-5" />
+                      <path d="M21 12H9" />
+                    </svg>
+                    {{ $t('header.logout') }}
+                  </button>
+                </div>
+              </div>
+            </template>
+            
+            <router-link 
+              v-else 
+              to="/login" 
+              class="text-[15px] leading-7 text-white font-archivo font-medium"
+            >
               {{ $t('header.signIn') }}
             </router-link>
           </div>
@@ -234,7 +280,53 @@
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </button>
-            <router-link to="/login" class="text-[15px] leading-7 text-white font-archivo font-medium">
+            <template v-if="isAuthenticated">
+              <div class="relative">
+                <button 
+                  @click="toggleUserMenu"
+                  class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
+                >
+                  {{ $t('header.greeting') }}, {{ currentUser?.firstName }}
+                  <svg 
+                    class="w-4 h-4" 
+                    viewBox="0 0 24 24" 
+                    fill="#FFFFFF"
+                  >
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                  </svg>
+                </button>
+                
+                <!-- User Dropdown Menu -->
+                <div 
+                  v-show="isUserMenuOpen"
+                  class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                >
+                  <button
+                    @click="handleLogout"
+                    class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  >
+                    <svg 
+                      class="w-5 h-5" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="2"
+                    >
+                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                      <path d="M16 17l5-5-5-5" />
+                      <path d="M21 12H9" />
+                    </svg>
+                    {{ $t('header.logout') }}
+                  </button>
+                </div>
+              </div>
+            </template>
+            
+            <router-link 
+              v-else 
+              to="/login" 
+              class="text-[15px] leading-7 text-white font-archivo font-medium"
+            >
               {{ $t('header.signIn') }}
             </router-link>
           </div>
@@ -384,7 +476,9 @@
 <script>
 import CartWidget from '../cart/CartWidget.vue'
 import { useI18n } from 'vue-i18n'
-// Removida a linha: import { getUnicode } from 'country-flag-icons/unicode'
+import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'TheHeader',
@@ -393,7 +487,48 @@ export default {
   },
   setup() {
     const { t, locale } = useI18n()
-    return { t, locale }
+    const router = useRouter()
+    const store = useStore()
+    const isUserMenuOpen = ref(false)
+
+    const isAuthenticated = computed(() => store.state.isAuthenticated)
+    const currentUser = computed(() => store.state.currentUser)
+
+    const toggleUserMenu = () => {
+      isUserMenuOpen.value = !isUserMenuOpen.value
+    }
+
+    const handleLogout = () => {
+      store.dispatch('logout')
+      isUserMenuOpen.value = false
+      router.push('/') // Alterado de '/login' para '/'
+    }
+
+    const closeUserMenu = (e) => {
+      // Verifica se o clique foi fora do menu e do botão
+      if (!e.target.closest('.user-menu') && isUserMenuOpen.value) {
+        isUserMenuOpen.value = false
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('click', closeUserMenu)
+      store.dispatch('updateUser')
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('click', closeUserMenu)
+    })
+
+    return {
+      t,
+      locale,
+      isAuthenticated,
+      currentUser,
+      isUserMenuOpen,
+      toggleUserMenu,
+      handleLogout
+    }
   },
   computed: {
     isHomePage() {
@@ -683,5 +818,10 @@ input {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.user-menu {
+  position: relative;
+  z-index: 51;
 }
 </style>
