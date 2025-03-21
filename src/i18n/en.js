@@ -39,10 +39,22 @@ export default {
     resetPasswordTitle: 'RESET PASSWORD',
     newPassword: 'New Password',
     resetPassword: 'RESET PASSWORD',
-    allFieldsRequired: 'All fields are required',
+    allFieldsRequired: 'Please fill in all required fields',
     passwordsDoNotMatch: 'Passwords do not match',
     passwordResetSuccess: 'Password reset successful. Redirecting to login...',
-    passwordResetError: 'Error resetting password. Please try again.'
+    passwordResetError: 'Error resetting password. Please try again.',
+    signupError: 'Error creating account. Please try again.',
+    loading: 'Loading...',
+    signupSuccess: 'Account created successfully! Welcome!',
+    firstNamePlaceholder: 'Enter your first name',
+    lastNamePlaceholder: 'Enter your last name',
+    emailPlaceholder: 'Enter your email',
+    passwordPlaceholder: 'Enter your password',
+    confirmPasswordPlaceholder: 'Confirm your password',
+    fieldRequired: 'This field is required',
+    signup: 'SIGN UP',
+    invalidCredentials: 'Invalid credentials',
+    passwordTooShort: 'Password must be at least 6 characters long'
   },
   cart: {
     shoppingCart: 'SHOPPING CART',
@@ -286,4 +298,11 @@ export default {
     showingResults: 'Showing {count} results'
   }
 }
+
+
+
+
+
+
+
 

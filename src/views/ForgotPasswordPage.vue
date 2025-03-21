@@ -2,15 +2,15 @@
   <div class="forgot-password-page">
     <div class="container mx-auto px-4">
       <div class="max-w-[1408px] mx-auto">
-        <!-- Title -->
+        <!-- Título Principal -->
         <div class="pt-0 pb-2 md:pb-3 text-center">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
             {{ $t('auth.forgotPasswordTitle') }}
           </h1>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex flex-col justify-center items-center px-4 gap-6 py-16">
+        <!-- Conteúdo Principal -->
+        <div class="flex flex-col justify-center items-center px-4 gap-6 py-8">
           <div class="flex flex-col justify-center items-center p-16 gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
             <!-- Form -->
             <div class="flex flex-col gap-4 w-full max-w-[682px]">
@@ -20,7 +20,7 @@
                   type="email"
                   v-model="email"
                   :placeholder="$t('auth.email')"
-                  class="w-full h-[48px] px-4 py-3 bg-white border border-[#1E1E1E] font-archivo font-bold text-[20px] leading-[20px] text-black/70"
+                  class="w-full p-4 border border-gray-300"
                 />
               </div>
 

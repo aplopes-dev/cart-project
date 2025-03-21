@@ -8,7 +8,7 @@
         </div>
 
         <!-- Conteúdo Principal -->
-        <div class="flex flex-col justify-center items-center px-4 gap-6 py-16">
+        <div class="flex flex-col justify-center items-center px-4 gap-6 py-8">
           <div class="flex flex-col justify-center items-center p-16 gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
             <!-- Sign Up Text -->
             <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
@@ -16,27 +16,53 @@
               <router-link to="/signup" class="text-empire-yellow hover:underline">{{ $t('auth.signUpFree') }}</router-link>
             </p>
 
-            <!-- Form Fields -->
-            <div class="flex flex-col gap-4 w-full max-w-[682px]">
+            <!-- Form -->
+            <div class="w-full flex flex-col gap-4">
               <!-- Email Input -->
-              <div class="flex flex-col gap-2">
-                <input 
-                  type="email"
-                  v-model="email"
-                  :placeholder="$t('auth.email')"
-                  class="w-full h-[48px] px-4 py-3 bg-white border border-[#1E1E1E] font-archivo font-bold text-[20px] leading-[20px] text-black/70"
-                />
-              </div>
+              <input
+                v-model="email"
+                type="email"
+                :placeholder="$t('auth.email')"
+                class="w-full p-4 border border-gray-300"
+              />
 
               <!-- Password Input -->
-              <div class="flex flex-col gap-2">
-                <input 
-                  type="password"
+              <div class="relative">
+                <input
                   v-model="password"
+                  :type="showPassword ? 'text' : 'password'"
                   :placeholder="$t('auth.password')"
-                  class="w-full h-[48px] px-4 py-3 bg-white border border-[#1E1E1E] font-archivo font-bold text-[20px] leading-[20px] text-black/70"
+                  class="w-full p-4 border border-gray-300"
                 />
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600"
+                >
+                  <svg
+                    v-if="showPassword"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg
+                    v-else
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                </button>
               </div>
+
+              <!-- Error Message -->
+              <p v-if="error" class="text-red-500 text-center">{{ error }}</p>
 
               <!-- Forgot Password -->
               <router-link 
@@ -50,10 +76,11 @@
               <div class="w-full mt-4">
                 <button 
                   @click="handleLogin"
+                  :disabled="isLoading"
                   class="w-full bg-empire-yellow py-4 flex justify-center items-center"
                 >
                   <span class="font-archivo-narrow font-semibold text-[28px] leading-[72px] text-black">
-                    {{ $t('auth.signIn') }}
+                    {{ isLoading ? $t('auth.loading') : $t('auth.signIn') }}
                   </span>
                 </button>
               </div>
@@ -66,46 +93,64 @@
 </template>
 
 <script>
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { ref, getCurrentInstance } from 'vue'
 
 export default {
   name: 'LoginPage',
   setup() {
-    const { t } = useI18n();
-    const router = useRouter();
-    const store = useStore();
-    return { t, router, store };
-  },
-  data() {
-    return {
-      email: '',
-      password: '',
-      error: '',
-      isLoading: false
-    };
-  },
-  methods: {
-    async handleLogin() {
+    const { t } = useI18n()
+    const router = useRouter()
+    const store = useStore()
+    const app = getCurrentInstance()
+    const toast = app.appContext.config.globalProperties.$toast
+
+    const email = ref('')
+    const password = ref('')
+    const error = ref('')
+    const isLoading = ref(false)
+    const showPassword = ref(false)
+
+    const handleLogin = async () => {
       try {
-        this.isLoading = true;
-        this.error = '';
+        isLoading.value = true
+        error.value = ''
         
-        await this.store.dispatch('login', {
-          email: this.email,
-          password: this.password
-        });
+        await store.dispatch('login', {
+          email: email.value,
+          password: password.value
+        })
         
-        this.router.push('/');
-      } catch (error) {
-        this.error = error.message || this.$t('auth.loginError');
+        // Força a atualização do usuário após o login
+        await store.dispatch('updateUser')
+        
+        router.push('/')
+      } catch (err) {
+        console.error('Login error:', err)
+        const errorMessage = err.response?.data?.message === 'Invalid credentials' 
+          ? t('auth.invalidCredentials')
+          : t('auth.loginError')
+        
+        error.value = errorMessage
+        toast.error(errorMessage)
       } finally {
-        this.isLoading = false;
+        isLoading.value = false
       }
     }
+
+    return {
+      email,
+      password,
+      error,
+      isLoading,
+      showPassword,
+      handleLogin,
+      t
+    }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -118,4 +163,9 @@ export default {
   border-color: #FFDD00;
 }
 </style>
+
+
+
+
+
 

@@ -123,7 +123,7 @@
                   @click="toggleUserMenu"
                   class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
                 >
-                  {{ $t('header.greeting') }}, {{ currentUser?.firstName }}
+                  {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg 
                     class="w-4 h-4" 
                     viewBox="0 0 24 24" 
@@ -286,7 +286,7 @@
                   @click="toggleUserMenu"
                   class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
                 >
-                  {{ $t('header.greeting') }}, {{ currentUser?.firstName }}
+                  {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg 
                     class="w-4 h-4" 
                     viewBox="0 0 24 24" 

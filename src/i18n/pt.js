@@ -6,8 +6,8 @@ export default {
     shop: 'Loja',
     career: 'Carreira',
     contactUs: 'Contate-nos',
-    callUsToday: 'Ligue agora',
-    chatWithUs: 'Fale conosco',
+    callUsToday: 'Ligue hoje',
+    chatWithUs: 'Converse conosco',
     signIn: 'Entrar',
     search: 'Buscar',
     searchPlaceholder: 'Buscar produtos...',
@@ -29,6 +29,16 @@ export default {
     confirmPassword: 'Confirmar Senha',
     create: 'CRIAR',
     alreadyHaveAccount: 'Já tem uma conta?',
+    allFieldsRequired: 'Por favor, preencha todos os campos obrigatórios',
+    passwordsDoNotMatch: 'As senhas não coincidem',
+    signupError: 'Erro ao criar conta. Por favor, tente novamente.',
+    loading: 'Carregando...',
+    signupSuccess: 'Conta criada com sucesso! Bem-vindo!',
+    firstNamePlaceholder: 'Digite seu nome',
+    lastNamePlaceholder: 'Digite seu sobrenome',
+    emailPlaceholder: 'Digite seu e-mail',
+    passwordPlaceholder: 'Digite sua senha',
+    confirmPasswordPlaceholder: 'Confirme sua senha',
     forgotPasswordTitle: 'ESQUECI MINHA SENHA',
     forgotPasswordInstruction: 'Digite seu e-mail e enviaremos um link para redefinir sua senha.',
     sendResetLink: 'ENVIAR LINK',
@@ -39,10 +49,12 @@ export default {
     resetPasswordTitle: 'REDEFINIR SENHA',
     newPassword: 'Nova senha',
     resetPassword: 'REDEFINIR SENHA',
-    allFieldsRequired: 'Todos os campos são obrigatórios',
-    passwordsDoNotMatch: 'As senhas não conferem',
     passwordResetSuccess: 'Senha redefinida com sucesso. Redirecionando para o login...',
-    passwordResetError: 'Erro ao redefinir a senha. Tente novamente.'
+    passwordResetError: 'Erro ao redefinir a senha. Tente novamente.',
+    fieldRequired: 'Este campo é obrigatório',
+    signup: 'CADASTRAR',
+    invalidCredentials: 'Credenciais inválidas',
+    passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
   },
   cart: {
     shoppingCart: 'CARRINHO DE COMPRAS',
@@ -241,4 +253,12 @@ export default {
     noResults: 'Nenhum produto encontrado'
   }
 }
+
+
+
+
+
+
+
+
 

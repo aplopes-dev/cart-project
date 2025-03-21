@@ -6,11 +6,13 @@ export default {
     shop: 'Boutique',
     career: 'Carrière',
     contactUs: 'Contactez-nous',
-    callUsToday: 'Appelez-nous',
-    chatWithUs: 'Discutez avec nous',
+    callUsToday: 'Appelez-nous aujourd\'hui',
+    chatWithUs: 'Chattez avec nous',
     signIn: 'Connexion',
     search: 'Rechercher',
     searchPlaceholder: 'Rechercher...',
+    searchProducts: 'Rechercher des Produits',
+    close: 'Fermer',
     greeting: 'Bonjour',
     logout: 'Déconnexion'
   },
@@ -20,13 +22,23 @@ export default {
     email: 'E-mail',
     password: 'Mot de passe',
     forgotPassword: 'Mot de passe oublié?',
-    dontHaveAccount: "Vous n'avez pas encore de compte?",
-    signUpFree: 'Inscrivez-vous gratuitement',
+    dontHaveAccount: "Vous n'avez pas de compte?",
+    signUpFree: "S'inscrire gratuitement",
     firstName: 'Prénom',
     lastName: 'Nom',
     confirmPassword: 'Confirmer le mot de passe',
     create: 'CRÉER',
     alreadyHaveAccount: 'Vous avez déjà un compte?',
+    allFieldsRequired: 'Veuillez remplir tous les champs obligatoires',
+    passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
+    signupError: 'Erreur lors de la création du compte. Veuillez réessayer.',
+    loading: 'Chargement...',
+    signupSuccess: 'Compte créé avec succès! Bienvenue!',
+    firstNamePlaceholder: 'Entrez votre prénom',
+    lastNamePlaceholder: 'Entrez votre nom',
+    emailPlaceholder: 'Entrez votre e-mail',
+    passwordPlaceholder: 'Entrez votre mot de passe',
+    confirmPasswordPlaceholder: 'Confirmez votre mot de passe',
     forgotPasswordTitle: 'MOT DE PASSE OUBLIÉ',
     forgotPasswordInstruction: 'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
     sendResetLink: 'ENVOYER LE LIEN',
@@ -37,10 +49,12 @@ export default {
     resetPasswordTitle: 'RÉINITIALISER LE MOT DE PASSE',
     newPassword: 'Nouveau mot de passe',
     resetPassword: 'RÉINITIALISER',
-    allFieldsRequired: 'Tous les champs sont requis',
-    passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
     passwordResetSuccess: 'Mot de passe réinitialisé avec succès. Redirection vers la connexion...',
-    passwordResetError: 'Erreur lors de la réinitialisation. Veuillez réessayer.'
+    passwordResetError: 'Erreur lors de la réinitialisation. Veuillez réessayer.',
+    fieldRequired: 'Ce champ est obligatoire',
+    signup: 'INSCRIPTION',
+    invalidCredentials: 'Identifiants invalides',
+    passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
   },
   cart: {
     shoppingCart: 'PANIER',
@@ -238,4 +252,11 @@ export default {
     noResults: 'Aucun produit trouvé'
   }
 }
+
+
+
+
+
+
+
 
