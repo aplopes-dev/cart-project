@@ -69,8 +69,9 @@ export default {
     decrease: 'Diminuer la quantité',
     increase: 'Augmenter la quantité',
     remove: 'Supprimer l\'article',
-    addToCart: 'AJOUTER',    
-    addCart: 'AJOUTER'
+    addToCart: 'AJOUTER',
+    addCart: 'AJOUTER',
+    quantity: 'Quantité'
   },
   shoppingCart: {
     title: 'PANIER',
@@ -198,6 +199,7 @@ export default {
       email: 'info@empirecanada.ca',
       address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
     },
+    email: 'info@empirecanada.ca',
     form: {
       title: 'Envoyez-nous un Message',
       name: 'Nom',
@@ -244,7 +246,7 @@ export default {
       nameZA: 'Nom: Z à A'
     },
     showingResults: 'Affichage de {count} résultats',
-    itemsCount: 'Affichage de {start}-{end} sur {total} résultats',
+    itemsCount: 'Affichage de {start} à {end} sur {total}',
     previous: 'Précédent',
     next: 'Suivant',
     addToCart: 'AJOUTER AU PANIER',
@@ -252,6 +254,14 @@ export default {
     noResults: 'Aucun produit trouvé'
   }
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -67,9 +67,15 @@ const routes = [
     component: () => import('../views/ProductDetailsPage.vue')
   },
   {
-    path: '/category/:slug',
-    name: 'category',
+    path: '/categories',
+    name: 'categories',
     component: CategoryPage
+  },
+  {
+    path: '/categories/:slug',
+    name: 'category-detail',
+    component: CategoryPage,
+    props: true
   },
   {
     path: '/contact',
@@ -90,7 +96,13 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
+  async scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { top: 0 };
+  }
 })
 
 router.beforeEach((to, from, next) => {
@@ -107,4 +119,7 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
+
+
 

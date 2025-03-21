@@ -70,7 +70,8 @@ export default {
     increase: 'Increase quantity',
     remove: 'Remove item',
     addToCart: 'ADD',
-    addCart: 'ADD TO CART'
+    addCart: 'ADD TO CART',
+    quantity: 'Quantity'
   },
   shoppingCart: {
     title: 'SHOPPING CART',
@@ -244,6 +245,7 @@ export default {
     info: {
       title: 'Contact Information'
     },
+    email: 'info@empirecanada.ca',
     form: {
       title: 'Send us a Message',
       name: 'Name',
@@ -289,7 +291,7 @@ export default {
       nameAZ: 'Name: A to Z',
       nameZA: 'Name: Z to A'
     },
-    itemsCount: 'Showing {start}-{end} of {total} results',
+    itemsCount: 'Showing {start} to {end} of {total}',
     previous: 'Previous',
     next: 'Next',
     addToCart: 'ADD TO CART',
@@ -298,6 +300,14 @@ export default {
     showingResults: 'Showing {count} results'
   }
 }
+
+
+
+
+
+
+
+
 
 
 

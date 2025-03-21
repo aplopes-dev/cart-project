@@ -24,12 +24,17 @@
                     <div 
                       v-for="category in categories" 
                       :key="category.id"
-                      class="flex items-center px-6 py-1 gap-3 h-[24.09px]"
+                      class="flex items-center px-6 py-1 gap-3 h-[24.09px] cursor-pointer hover:bg-gray-50"
+                      :class="{ 'selected-category': selectedCategory === category.id }"
+                      @click="selectCategory(category.id)"
                     >
-                      <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                      <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                       </svg>
-                      <span class="font-archivo text-[20px] leading-[22px] text-black/70">
+                      <span 
+                        class="font-archivo text-[20px] leading-[22px]"
+                        :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
+                      >
                         {{ category.name }}
                       </span>
                     </div>
@@ -70,6 +75,10 @@
                         :max="maxPrice"
                         v-model.number="priceRange[0]"
                         class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                        @mousedown="handleRangeStart"
+                        @mouseup="handleRangeEnd"
+                        @touchstart="handleRangeStart"
+                        @touchend="handleRangeEnd"
                       >
                       <input
                         type="range"
@@ -77,6 +86,10 @@
                         :max="maxPrice"
                         v-model.number="priceRange[1]"
                         class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                        @mousedown="handleRangeStart"
+                        @mouseup="handleRangeEnd"
+                        @touchstart="handleRangeStart"
+                        @touchend="handleRangeEnd"
                       >
                     </div>
                   </div>
@@ -123,9 +136,9 @@
           <!-- Filtros Mobile e Ordenação -->
           <div class="flex justify-between items-center p-3 border-2 border-black w-full h-16 mb-6">
             <div class="flex-1 flex items-center">
-              <!-- Ícone de Filtro - Visível apenas em mobile -->
+              <!-- Botão de Filtro Mobile -->
               <button 
-                @click="toggleMobileFilters"
+                @click="isMobileFiltersExpanded = !isMobileFiltersExpanded"
                 class="md:hidden flex items-center justify-center w-[36px] h-[36px] bg-black p-[6px]"
               >
                 <svg 
@@ -147,22 +160,33 @@
               
               <!-- Texto de resultados - Visível apenas em desktop -->
               <span class="font-inter text-base hidden md:block">
-                {{ $t('categoryPage.showingResults', { count: filteredProducts.length }) }}
+                {{ totalItems === 0 
+                  ? $t('categoryPage.noResults') 
+                  : $t('categoryPage.itemsCount', { 
+                      start: itemRange.start, 
+                      end: itemRange.end, 
+                      total: totalItems 
+                    })
+                }}
               </span>
             </div>
             
             <div class="flex justify-end w-[240px]">
               <div class="relative w-full">
-                <select class="w-full h-10 px-4 py-2 bg-white border border-[#D9D9D9] font-inter text-sm appearance-none cursor-pointer">
-                  <option value="1">{{ $t('categoryPage.sortBy.featured') }}</option>
-                  <option value="2">{{ $t('categoryPage.sortBy.priceLowHigh') }}</option>
-                  <option value="3">{{ $t('categoryPage.sortBy.priceHighLow') }}</option>
-                  <option value="4">{{ $t('categoryPage.sortBy.nameAZ') }}</option>
-                  <option value="5">{{ $t('categoryPage.sortBy.nameZA') }}</option>
+                <select 
+                  v-model="sortBy"
+                  class="w-full h-10 px-4 py-2 bg-white border border-[#D9D9D9] font-inter text-sm appearance-none cursor-pointer"
+                  @change="handleSort"
+                >
+                  <option value="featured">{{ $t('categoryPage.sortBy.featured') }}</option>
+                  <option value="priceLowHigh">{{ $t('categoryPage.sortBy.priceLowHigh') }}</option>
+                  <option value="priceHighLow">{{ $t('categoryPage.sortBy.priceHighLow') }}</option>
+                  <option value="nameAZ">{{ $t('categoryPage.sortBy.nameAZ') }}</option>
+                  <option value="nameZA">{{ $t('categoryPage.sortBy.nameZA') }}</option>
                 </select>
-                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-[#FFDD00]">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="#1E1E1E"/>
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFDD00">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </div>
               </div>
@@ -187,12 +211,17 @@
                   <div 
                     v-for="category in categories" 
                     :key="category.id"
-                    class="flex items-center gap-3"
+                    class="flex items-center gap-3 cursor-pointer"
+                    :class="{ 'selected-category': selectedCategory === category.id }"
+                    @click="selectCategory(category.id)"
                   >
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
-                    <span class="font-archivo text-[20px] leading-[22px] text-black/70">
+                    <span 
+                      class="font-archivo text-[20px] leading-[22px]"
+                      :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
+                    >
                       {{ category.name }}
                     </span>
                   </div>
@@ -228,6 +257,10 @@
                     :max="maxPrice"
                     v-model.number="priceRange[0]"
                     class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                    @mousedown="handleRangeStart"
+                    @mouseup="handleRangeEnd"
+                    @touchstart="handleRangeStart"
+                    @touchend="handleRangeEnd"
                   >
                   <input
                     type="range"
@@ -235,6 +268,10 @@
                     :max="maxPrice"
                     v-model.number="priceRange[1]"
                     class="absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
+                    @mousedown="handleRangeStart"
+                    @mouseup="handleRangeEnd"
+                    @touchstart="handleRangeStart"
+                    @touchend="handleRangeEnd"
                   >
                 </div>
               </div>
@@ -271,43 +308,54 @@
 
           <!-- Grid de Produtos -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div 
-              v-for="product in filteredProducts" 
-              :key="product.id" 
-              class="flex flex-col bg-white border border-[#FAFAFA] h-[700px]"
-            >
-              <img 
-                :src="product.image" 
-                :alt="product.name"
-                class="w-full aspect-square object-cover"
-                @error="handleImageError"
+            <div v-if="loading" class="col-span-full flex justify-center items-center">
+              <div class="loader">Loading...</div>
+            </div>
+            <div v-else-if="error" class="col-span-full text-red-500">
+              {{ error }}
+            </div>
+            <template v-else>
+              
+              <div 
+                v-for="product in filteredProducts" 
+                :key="product.id" 
+                class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
               >
-              <div class="p-4 flex flex-col h-[300px]">
-                <h3 class="font-archivo-narrow font-semibold text-[28px] leading-[32px] text-black/70 h-[64px] line-clamp-2">
-                  {{ product.name }}
-                </h3>
-                <p class="font-archivo text-lg text-black/70 h-[72px] line-clamp-3 mb-auto">
-                  {{ product.description }}
-                </p>
-                <div class="mt-auto w-full">
-                  <p class="font-archivo-narrow font-semibold text-[28px] leading-[32px] mb-4">
-                    ${{ product.price.toFixed(2) }}
+                <img 
+                  :src="product.image" 
+                  :alt="product.name"
+                  class="w-full aspect-square object-cover md:h-[400px] h-[250px]"
+                  @error="handleImageError"
+                >
+                <div class="p-4 flex flex-col flex-grow">
+                  <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
+                    {{ product.name }}
+                  </h3>
+                  <p class="font-archivo text-base md:text-lg text-black/70 mb-4 line-clamp-3 md:line-clamp-2 overflow-hidden">
+                    {{ product.description }}
                   </p>
-                  <div class="w-full">
+                  <div class="mt-auto w-full">
+                    <p class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
+                      ${{ Number(product.price).toFixed(2) }}
+                    </p>
                     <ProductQuantitySelector 
-                      @add-to-cart="(quantity) => addToCart(product, quantity)"
+                      @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
                     />
                   </div>
                 </div>
-              </div>
-            </div>
+              </div>              
+            </template>
           </div>
 
           <!-- Paginação -->
           <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
             <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
               <!-- Botão Previous -->
-              <button class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]">
+              <button 
+                class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+                :disabled="currentPage === 1"
+                @click="handlePageChange(currentPage - 1)"
+              >
                 <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.5 15L7.5 10L12.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -317,17 +365,22 @@
               <!-- Números das Páginas -->
               <div class="flex gap-1 md:gap-2">
                 <button 
-                  v-for="page in 5" 
+                  v-for="page in displayedPages" 
                   :key="page"
                   class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
-                  :class="page === 1 ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
+                  :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
+                  @click="handlePageChange(page)"
                 >
                   {{ page }}
                 </button>
               </div>
 
               <!-- Botão Next -->
-              <button class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]">
+              <button 
+                class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+                :disabled="currentPage === totalPages"
+                @click="handlePageChange(currentPage + 1)"
+              >
                 <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.next') }}</span>
                 <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7.5 15L12.5 10L7.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -335,10 +388,17 @@
               </button>
             </div>
 
-            <!-- Contador de Items -->
+            <!-- Contador de Items na paginação -->
             <div class="flex justify-center">
               <span class="font-inter text-sm md:text-base">
-                {{ $t('categoryPage.itemsCount', { start: 1, end: filteredProducts.length, total: totalItems }) }}
+                {{ totalItems === 0 
+                  ? $t('categoryPage.noResults') 
+                  : $t('categoryPage.itemsCount', { 
+                      start: itemRange.start, 
+                      end: itemRange.end, 
+                      total: totalItems 
+                    }) 
+                }}
               </span>
             </div>
           </div>
@@ -408,47 +468,276 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { ref, onMounted, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { productService } from '@/services/productService'
+import { categoryService } from '@/services/categoryService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
+import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { debounce } from 'lodash'
 
-useI18n()
-
-const isMobileFiltersExpanded = ref(false)
-
-const toggleMobileFilters = () => {
-  isMobileFiltersExpanded.value = !isMobileFiltersExpanded.value
-}
-
-// Mock data
-const categories = ref([
-  { id: 1, name: 'Plumbing', slug: 'plumbing' },
-  { id: 2, name: 'Heating', slug: 'heating' },
-  { id: 3, name: 'Tools', slug: 'tools' }
-]);
-
-const brands = ref([
-  { id: 1, name: 'Brand 1' },
-  { id: 2, name: 'Brand 2' },
-  { id: 3, name: 'Brand 3' }
-]);
-
+const route = useRoute()
 const currentPage = ref(1)
-// eslint-disable-next-line no-unused-vars
-const totalPages = ref(100)
-// eslint-disable-next-line no-unused-vars
-const itemsPerPage = ref(12)
-// eslint-disable-next-line no-unused-vars
-const totalItems = ref(2589)
+const totalPages = ref(1)
+const products = ref([])
+const loading = ref(true)
+const error = ref(null)
+const categories = ref([])
+const selectedCategory = ref(null)
+const selectedBrands = ref([])
+const brands = ref([])
+const showMobileFilters = ref(false)
+const isMobileFiltersExpanded = ref(false)
+const priceRange = ref([0, 1000])
+const maxPrice = ref(1000)
+const totalItems = ref(0) // Mantemos apenas esta declaração
+const itemsPerPage = ref(9) // Adicionando uma ref para o número de itens por página
+const sortBy = ref('featured')
+const isDragging = ref(false)
+const tempPriceRange = ref([0, 1000]) // Nova ref para armazenar valores temporários
 
-// eslint-disable-next-line no-unused-vars
-const handlePageChange = (page) => {
-  currentPage.value = page
-  // Aqui você pode adicionar a lógica para buscar os produtos da página selecionada
+const handleSort = () => {
+  currentPage.value = 1 // Reset para primeira página ao mudar ordenação
+  fetchFilteredProducts()
 }
+
+// Computed property para filteredProducts
+const filteredProducts = computed(() => products.value)
+
+// Computed para páginas a serem exibidas
+const displayedPages = computed(() => {
+  const pages = []
+  const maxVisiblePages = 5
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
+  let end = Math.min(totalPages.value, start + maxVisiblePages - 1)
+
+  if (end - start + 1 < maxVisiblePages) {
+    start = Math.max(1, end - maxVisiblePages + 1)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
+// Computed property para calcular o intervalo de itens
+const itemRange = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value + 1
+  const end = Math.min(start + itemsPerPage.value - 1, totalItems.value)
+  return { start, end }
+})
+
+// Watched para reagir às mudanças nos filtros
+watch([selectedBrands, selectedCategory], async () => {
+  currentPage.value = 1;
+  await fetchFilteredProducts();
+}, { deep: true })
+
+const fetchCategories = async () => {
+  try {
+    const response = await categoryService.getCategories()
+    categories.value = response || []
+    console.log('Categories loaded:', categories.value)
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+    error.value = 'Error loading categories'
+    categories.value = []
+  }
+}
+
+const fetchBrands = async (categoryId = null) => {
+  try {
+    let response;
+    if (categoryId) {
+      response = await productService.getBrandsByCategory(categoryId)
+    } else {
+      response = await productService.getBrands()
+    }
+    brands.value = response || []
+    console.log('Brands loaded:', brands.value)
+  } catch (err) {
+    console.error('Error fetching brands:', err)
+    error.value = 'Error loading brands'
+    brands.value = []
+  }
+}
+
+const fetchFilteredProducts = async () => {
+  console.log('📡 Chamando fetchFilteredProducts - isDragging:', isDragging.value)
+  try {
+    loading.value = true
+    const filters = {
+      categoryId: selectedCategory.value,
+      brands: selectedBrands.value,
+      minPrice: priceRange.value[0],
+      maxPrice: priceRange.value[1],
+      page: currentPage.value,
+      limit: itemsPerPage.value, // Use itemsPerPage aqui
+      sortBy: sortBy.value
+    }
+    
+    const response = await productService.getProducts(filters)
+    products.value = response.items
+    totalItems.value = response.total
+    totalPages.value = Math.ceil(response.total / itemsPerPage.value)
+  } catch (err) {
+    console.error('Error fetching filtered products:', err)
+    error.value = 'Error loading products'
+    products.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleImageError = (e) => {
+  e.target.src = PLACEHOLDER_IMAGE_BASE64
+  e.target.onerror = null // Previne loop infinito
+}
+
+const selectCategory = async (categoryId) => {
+  // Reset da página atual ao mudar de categoria
+  currentPage.value = 1;
+  
+  selectedCategory.value = selectedCategory.value === categoryId ? null : categoryId;
+  
+  if (selectedCategory.value) {
+    await fetchBrands(selectedCategory.value);
+    selectedBrands.value = brands.value.map(brand => brand.id);
+  } else {
+    await fetchBrands();
+    selectedBrands.value = [];
+  }
+  
+  // fetchFilteredProducts será chamado automaticamente pelo watcher
+}
+
+const handleAddToCart = (product, quantity) => {
+  const cartItem = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    quantity: quantity,
+    image: product.image
+  }
+  
+  console.log('Adding to cart:', cartItem)
+  // Aqui você pode emitir um evento ou chamar uma action do Vuex/Pinia
+  // para adicionar o item ao carrinho
+}
+
+const handlePageChange = async (page) => {
+  currentPage.value = page
+  await fetchFilteredProducts()
+  // Opcional: Rolar para o topo da lista de produtos
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// Função para selecionar a primeira categoria
+const selectFirstCategory = () => {
+  if (categories.value && categories.value.length > 0) {
+    selectCategory(categories.value[0].id)
+  }
+}
+
+// Função para selecionar categoria por slug
+const selectCategoryBySlug = async (slug) => {
+  if (categories.value && categories.value.length > 0) {
+    const category = categories.value.find(cat => cat.id === slug)
+    if (category) {
+      await selectCategory(category.id)
+    }
+  }
+}
+
+onMounted(async () => {
+  try {
+    await fetchCategories()
+    
+    // Se tiver slug na rota, seleciona a categoria específica
+    if (route.params.slug) {
+      await selectCategoryBySlug(route.params.slug)
+    } 
+    // Se não tiver slug, seleciona a primeira categoria
+    else {
+      selectFirstCategory()
+    }
+    
+    await fetchFilteredProducts()
+  } catch (err) {
+    console.error('Error in initialization:', err)
+    error.value = 'Error loading page'
+  }
+})
+
+// Observar mudanças na rota para atualizar a categoria selecionada
+watch(
+  () => route.params.slug,
+  async (newSlug) => {
+    if (newSlug) {
+      await selectCategoryBySlug(newSlug)
+    } else {
+      selectFirstCategory()
+    }
+  }
+)
+
+// Função debounced que só será chamada quando o usuário terminar de arrastar
+const debouncedFetchProducts = debounce(() => {
+  console.log('🎯 Valores atuais:', {
+    isDragging: isDragging.value,
+    tempRange: tempPriceRange.value,
+    currentRange: priceRange.value
+  })
+
+  // Se NÃO está arrastando E os valores são diferentes, faz a requisição
+  if (!isDragging.value && 
+      (tempPriceRange.value[0] !== priceRange.value[0] || 
+       tempPriceRange.value[1] !== priceRange.value[1])) {
+    console.log('🔄 Fazendo requisição após debounce')
+    currentPage.value = 1
+    fetchFilteredProducts()
+    tempPriceRange.value = [...priceRange.value]
+  } else {
+    console.log('❌ Requisição ignorada porque:', 
+      isDragging.value ? 'ainda está arrastando' : 'valores não mudaram')
+  }
+}, 500)
+
+const handleRangeStart = () => {
+  isDragging.value = true
+  console.log('🟢 isDragging:', isDragging.value, '- Início do arrasto')
+  tempPriceRange.value = [...priceRange.value]
+}
+
+const handleRangeEnd = () => {
+  isDragging.value = false
+  console.log('🔴 isDragging:', isDragging.value, '- Fim do arrasto')
+  if (tempPriceRange.value[0] !== priceRange.value[0] || 
+      tempPriceRange.value[1] !== priceRange.value[1]) {
+    debouncedFetchProducts()
+  }
+}
+
+// Watch apenas para quando isDragging mudar para false
+watch(isDragging, (newValue) => {
+  console.log('👀 Watch isDragging:', newValue, {
+    tempRange: tempPriceRange.value,
+    currentRange: priceRange.value
+  })
+  
+  if (!newValue && 
+      (tempPriceRange.value[0] !== priceRange.value[0] || 
+       tempPriceRange.value[1] !== priceRange.value[1])) {
+    debouncedFetchProducts()
+  }
+})
+
+
 </script>
 
 <script>
+/* eslint-disable vue/no-dupe-keys */
 export default {
   name: 'CategoryPage',
   components: {
@@ -460,108 +749,19 @@ export default {
       selectedBrands: [],
       priceRange: [0, 1000],
       maxPrice: 1000,
-      products: [
-        {
-          id: 1,
-          name: 'Pipe Wrench',
-          description: 'Heavy duty pipe wrench for professional use',
-          price: 199.99,
-          image: '/img/product1.png',
-          brandId: 1
-        },
-        {
-          id: 2,
-          name: 'Copper Fitting',
-          description: 'Premium quality copper pipe fitting',
-          price: 299.99,
-          image: '/img/product2.png',
-          brandId: 2
-        },
-        {
-          id: 3,
-          name: 'PVC Pipe',
-          description: 'High-grade PVC pipe for plumbing',
-          price: 159.99,
-          image: '/img/product3.png',
-          brandId: 1
-        },
-        {
-          id: 4,
-          name: 'Adjustable Wrench',
-          description: 'Professional grade adjustable wrench',
-          price: 399.99,
-          image: '/img/product1.png',
-          brandId: 3
-        },
-        {
-          id: 5,
-          name: 'Pipe Cutter',
-          description: 'Precision pipe cutting tool',
-          price: 249.99,
-          image: '/img/product2.png',
-          brandId: 2
-        },
-        {
-          id: 6,
-          name: 'Plumbing Kit',
-          description: 'Complete professional plumbing kit',
-          price: 179.99,
-          image: '/img/product3.png',
-          brandId: 1
-        },
-        {
-          id: 7,
-          name: 'Tool Set',
-          description: 'Comprehensive plumbing tool set',
-          price: 289.99,
-          image: '/img/product2.png',
-          brandId: 3
-        },
-        {
-          id: 8,
-          name: 'Pipe Sealer',
-          description: 'Professional grade pipe sealing compound',
-          price: 199.99,
-          image: '/img/product1.png',
-          brandId: 2
-        },
-        {
-          id: 9,
-          name: 'Drain Snake',
-          description: 'Professional plumbing auger tool',
-          price: 349.99,
-          image: '/img/product3.png',
-          brandId: 1
-        }
-      ]
-    }
-  },
-  computed: {
-    filteredProducts() {
-      let filtered = [...this.products]
-
-      // Filtro de preço
-      filtered = filtered.filter(product => {
-        return product.price >= this.priceRange[0] && product.price <= this.priceRange[1]
-      })
-
-      // Filtro de marcas
-      if (this.selectedBrands.length > 0) {
-        filtered = filtered.filter(product => 
-          this.selectedBrands.includes(product.brandId)
-        )
-      }
-
-      return filtered
+      selectedCategory: null
     }
   },
   methods: {
     handleImageError(e) {
-      e.target.src = 'https://via.placeholder.com/300x300?text=Product+Image'
+      e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.onerror = null
     },
     addToCart(product, quantity) {
       console.log('Adding to cart:', product, 'quantity:', quantity)
-      // Aqui você pode implementar a lógica para adicionar ao carrinho
+    },
+    selectCategory(categoryId) {
+      this.selectedCategory = this.selectedCategory === categoryId ? null : categoryId;
     }
   }
 }
@@ -614,4 +814,84 @@ input[type="checkbox"]:checked::after {
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.selected-category {
+  background-color: rgba(251, 189, 30, 0.1); /* Cor amarela com transparência */
+}
+
+.selected-category:hover {
+  background-color: rgba(251, 189, 30, 0.2); /* Cor amarela um pouco mais escura no hover */
+}
+
+.loader {
+  /* Adicione aqui o estilo do seu loader */
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #FBBD1E;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .aspect-square {
+    aspect-ratio: 1 / 0.75; /* Proporção um pouco menor para mobile */
+  }
+}
+
+/* Removendo o ícone padrão do select no Chrome/Safari */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Removendo o ícone padrão do select no IE/Edge */
+select::-ms-expand {
+  display: none;
+}
+
+/* Garantindo que o select fique por cima do ícone customizado */
+select {
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+}
+
+/* Estilo para o hover do select */
+select:hover {
+  border-color: #FFDD00;
+}
+
+/* Estilo para o focus do select */
+select:focus {
+  outline: none;
+  border-color: #FFDD00;
+  box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2);
+}
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

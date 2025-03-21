@@ -127,6 +127,7 @@
 <script>
 import ProductDescription from '@/components/product/ProductDescription.vue'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
+import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 
 export default {
   name: 'ProductDetailsPage',
@@ -191,6 +192,9 @@ export default {
       // Implementar lógica de compra imediata
       console.log('Shop now clicked')
       this.$router.push('/checkout')
+    },
+    handleImageError(e) {
+      e.target.src = PLACEHOLDER_IMAGE_BASE64
     }
   },
   created() {

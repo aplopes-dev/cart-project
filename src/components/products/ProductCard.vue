@@ -45,6 +45,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 
 export default defineComponent({
   name: 'ProductCard',
@@ -73,7 +74,7 @@ export default defineComponent({
       }).format(price)
     },
     handleImageError(e) {
-      e.target.src = '/images/placeholder-product.png' // Imagem de fallback
+      e.target.src = PLACEHOLDER_IMAGE_BASE64
     },
     addToCart() {
       this.$emit('add-to-cart', this.product)

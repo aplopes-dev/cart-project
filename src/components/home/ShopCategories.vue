@@ -160,7 +160,7 @@ const heatingItems = [
 ];
 
 const navigateToCategory = (slug) => {
-  router.push(`/category/${slug}`);
+  router.push(`/categories/${slug}`);
 };
 </script>
 

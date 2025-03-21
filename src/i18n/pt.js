@@ -7,7 +7,7 @@ export default {
     career: 'Carreira',
     contactUs: 'Contate-nos',
     callUsToday: 'Ligue hoje',
-    chatWithUs: 'Converse conosco',
+    chatWithUs: 'Fale conosco',
     signIn: 'Entrar',
     search: 'Buscar',
     searchPlaceholder: 'Buscar produtos...',
@@ -70,7 +70,8 @@ export default {
     increase: 'Aumentar quantidade',
     remove: 'Remover item',
     addToCart: 'ADICIONAR',
-    addCart: 'ADICIONAR'
+    addCart: 'ADICIONAR AO CARRINHO',
+    quantity: 'Quantidade'
   },
   shoppingCart: {
     title: 'CARRINHO DE COMPRAS',
@@ -199,6 +200,7 @@ export default {
       email: 'info@empirecanada.ca',
       address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
     },
+    email: 'info@empirecanada.ca',
     form: {
       title: 'Envie-nos uma Mensagem',
       name: 'Nome',
@@ -245,14 +247,22 @@ export default {
       nameZA: 'Nome: Z a A'
     },
     showingResults: 'Mostrando {count} resultados',
-    itemsCount: 'Mostrando {start}-{end} de {total} resultados',
+    itemsCount: 'Mostrando {start}-{end} de {total} itens',
     previous: 'Anterior',
     next: 'Próximo',
     addToCart: 'ADICIONAR AO CARRINHO',
     outOfStock: 'Fora de Estoque',
-    noResults: 'Nenhum produto encontrado'
+    noResults: 'Não encontramos nenhum produto'
   }
 }
+
+
+
+
+
+
+
+
 
 
 

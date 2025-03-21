@@ -36,7 +36,7 @@
       @click="addToCart"
     >
       <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-[#FFDD00]">
-        {{ $t('cart.addCart') }}
+        {{ $t('cart.addToCart') }}
       </span>
     </button>
   </div>

@@ -77,7 +77,7 @@
                   v-show="showEmailTooltip" 
                   class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
                 >
-                  info@empirecanada.ca
+                  {{ $t('contact.email') }}
                 </div>
               </div>
 
@@ -195,7 +195,7 @@
               </div>
               <div class="flex flex-col justify-center w-[166px] h-[56px]">
                 <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">{{ $t('header.chatWithUs') }}</span>
-                <span class="font-archivo font-bold text-[19px] leading-7 text-white">info@empirecanada.ca</span>
+                <span class="font-archivo font-bold text-[19px] leading-7 text-white">{{ $t('contact.email') }}</span>
               </div>
             </div>
           </div>
