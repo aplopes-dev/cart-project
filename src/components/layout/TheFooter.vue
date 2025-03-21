@@ -71,34 +71,22 @@
                 {{ $t('footer.titles.products') }}
               </h3>
               <div class="flex flex-col gap-2">
-                <div class="flex">
+                <div 
+                  v-for="category in categories" 
+                  :key="category.id"
+                  class="flex"
+                  @click="navigateToCategory(category.id)"
+                  style="cursor: pointer;"
+                >
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">Plumbing</span>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                    </svg>
-                  </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.heating') }}</span>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                    </svg>
-                  </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.tools') }}</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">
+                      {{ category.name }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -156,22 +144,37 @@
   </footer>
 </template>
 
- 
-<script>
-export default {
-  name: 'TheFooter',
-  data() {
-    return {
-      logoUrl: '/images/logo.png'
-    }
-  },
-  methods: {
-    handleImageError(e) {
-      console.error('Error loading image:', e);
-      // Usa diretamente o placeholder se a imagem não for encontrada
-      e.target.src = 'https://via.placeholder.com/200x87?text=Logo';
-      e.target.onerror = null;
-    }
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { categoryService } from '@/services/categoryService'
+
+const router = useRouter()
+const logoUrl = ref('/images/logo.png')
+const categories = ref([])
+
+const handleImageError = (e) => {
+  console.error('Error loading image:', e)
+  e.target.src = 'https://via.placeholder.com/200x87?text=Logo'
+  e.target.onerror = null
+}
+
+const navigateToCategory = (categoryId) => {
+  router.push(`/categories/${categoryId}`)
+}
+
+// Função para buscar categorias
+const fetchCategories = async () => {
+  try {
+    const response = await categoryService.getCategories()
+    categories.value = response
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+    categories.value = []
   }
 }
+
+onMounted(async () => {
+  await fetchCategories()
+})
 </script>

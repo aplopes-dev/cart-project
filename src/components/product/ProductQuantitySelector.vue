@@ -76,3 +76,4 @@ const addToCart = () => {
   font-family: 'Archivo', sans-serif;
 }
 </style>
+

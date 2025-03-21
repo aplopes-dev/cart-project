@@ -46,6 +46,7 @@
 import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { useCartStore } from '@/stores/cartStore'
 
 export default defineComponent({
   name: 'ProductCard',
@@ -63,8 +64,9 @@ export default defineComponent({
     }
   },
   setup() {
+    const cartStore = useCartStore()
     const { t } = useI18n()
-    return { t }
+    return { cartStore, t }
   },
   methods: {
     formatPrice(price) {
@@ -77,8 +79,16 @@ export default defineComponent({
       e.target.src = PLACEHOLDER_IMAGE_BASE64
     },
     addToCart() {
-      this.$emit('add-to-cart', this.product)
+      const item = {
+        id: this.product.id,
+        name: this.product.name,
+        price: this.product.price,
+        quantity: 1,
+        image: this.product.image
+      }
+      this.cartStore.addItem(item)
     }
   }
 })
 </script>
+

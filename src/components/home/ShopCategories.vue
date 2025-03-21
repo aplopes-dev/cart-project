@@ -9,7 +9,7 @@
       <!-- Categories Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
         <!-- Category Card - Plumbing -->
-        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory('plumbing')">
+        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[0]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
             <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
@@ -20,7 +20,9 @@
             <!-- Title Container -->
             <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">PLUMBING</span>
+                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                  {{ (firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase() }}
+                </span>
               </div>
             </div>
           </div>
@@ -28,11 +30,11 @@
           <div class="w-full border border-[#FAFAFA] p-6">
             <div class="flex flex-row justify-between">
               <ul class="flex flex-col gap-3">
-                <li v-for="item in plumbingItems" :key="item" class="flex items-center gap-2">
+                <li v-for="product in firstCategoryProducts" :key="product" class="flex items-center gap-2">
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ item }}</span>
+                  <span class="text-xl text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
@@ -47,7 +49,7 @@
         </div>
 
         <!-- Category Card - Tools -->
-        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory('tools')">
+        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[1]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
             <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
@@ -58,7 +60,9 @@
             <!-- Title Container -->
             <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">TOOLS</span>
+                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                  {{ (firstThreeCategories[1]?.name || 'TOOLS').toUpperCase() }}
+                </span>
               </div>
             </div>
           </div>
@@ -66,11 +70,11 @@
           <div class="w-full border border-[#FAFAFA] p-6">
             <div class="flex flex-row justify-between">
               <ul class="flex flex-col gap-3">
-                <li v-for="item in toolsItems" :key="item" class="flex items-center gap-2">
+                <li v-for="product in secondCategoryProducts" :key="product" class="flex items-center gap-2">
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ item }}</span>
+                  <span class="text-xl text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
@@ -85,7 +89,7 @@
         </div>
 
         <!-- Category Card - Heating -->
-        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory('heating')">
+        <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[2]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
             <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
@@ -96,7 +100,9 @@
             <!-- Title Container -->
             <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">HEATING</span>
+                <span class="text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                  {{ (firstThreeCategories[2]?.name || 'HEATING').toUpperCase() }}
+                </span>
               </div>
             </div>
           </div>
@@ -104,11 +110,11 @@
           <div class="w-full border border-[#FAFAFA] p-6">
             <div class="flex flex-row justify-between">
               <ul class="flex flex-col gap-3">
-                <li v-for="item in heatingItems" :key="item" class="flex items-center gap-2">
+                <li v-for="product in thirdCategoryProducts" :key="product" class="flex items-center gap-2">
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ item }}</span>
+                  <span class="text-xl text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
@@ -127,41 +133,79 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { categoryService } from '@/services/categoryService';
+import { productService } from '@/services/productService';
 
 const router = useRouter();
+const categories = ref([]);
+const categoryProducts = ref({});
 
 const plumbingImage = '/images/categories/plumbing.png'
 const toolsImage = '/images/categories/tools.png'
 const heatingImage = '/images/categories/heating.png'
 
-const plumbingItems = [
-  'Pipe Fittings',
-  'Valves & Controls',
-  'Drainage Systems',
-  'Water Heaters',
-  'Bathroom Fixtures'
-];
+// Computed para pegar apenas as 3 primeiras categorias
+const firstThreeCategories = computed(() => {
+  return categories.value.slice(0, 3);
+});
 
-const toolsItems = [
-  'Hand Tools',
-  'Power Tools',
-  'Measuring Tools',
-  'Safety Equipment',
-  'Tool Storage'
-];
+// Computed properties para os produtos de cada categoria
+const firstCategoryProducts = computed(() => {
+  const categoryId = firstThreeCategories.value[0]?.id;
+  return categoryProducts.value[categoryId]?.slice(0, 5) || [];
+});
 
-const heatingItems = [
-  'Radiators',
-  'Boilers',
-  'Thermostats',
-  'Heat Pumps',
-  'Underfloor Heating'
-];
+const secondCategoryProducts = computed(() => {
+  const categoryId = firstThreeCategories.value[1]?.id;
+  return categoryProducts.value[categoryId]?.slice(0, 5) || [];
+});
 
-const navigateToCategory = (slug) => {
-  router.push(`/categories/${slug}`);
+const thirdCategoryProducts = computed(() => {
+  const categoryId = firstThreeCategories.value[2]?.id;
+  return categoryProducts.value[categoryId]?.slice(0, 5) || [];
+});
+
+const fetchCategories = async () => {
+  try {
+    const response = await categoryService.getCategories();
+    categories.value = response;
+    await fetchProductsForCategories();
+  } catch (err) {
+    console.error('Error fetching categories:', err);
+    categories.value = [];
+  }
 };
+
+const fetchProductsForCategories = async () => {
+  try {
+    for (const category of firstThreeCategories.value) {
+      if (category?.id) {
+        const response = await productService.getProducts({ 
+          categoryId: category.id,
+          limit: 5,
+          page: 1
+        });
+        categoryProducts.value[category.id] = response.items.map(item => item.name);
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching products:', err);
+  }
+};
+
+const navigateToCategory = (categoryId) => {
+  if (categoryId) {
+    router.push({
+      path: `/categories/${categoryId}`
+    });
+  }
+};
+
+onMounted(async () => {
+  await fetchCategories();
+});
 </script>
 
 <style scoped>
@@ -173,3 +217,9 @@ const navigateToCategory = (slug) => {
   font-family: 'Archivo', sans-serif;
 }
 </style>
+
+
+
+
+
+

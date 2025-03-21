@@ -71,7 +71,8 @@ export default {
     remove: 'Remove item',
     addToCart: 'ADD',
     addCart: 'ADD TO CART',
-    quantity: 'Quantity'
+    quantity: 'Quantity',
+    productAdded: "Product added to cart successfully!",
   },
   shoppingCart: {
     title: 'SHOPPING CART',
@@ -275,7 +276,8 @@ export default {
     productName: 'Product Name',
     shippingInfo: 'Shipping Information',
     freeShipping: 'Free shipping on orders over $200.00',
-    selectOptions: 'Please select color and size'
+    selectOptions: 'Please select color and size',
+    noDescription: 'No technical description available for this product.'
   },
   categoryPage: {
     filters: 'FILTERS',
@@ -300,6 +302,10 @@ export default {
     showingResults: 'Showing {count} results'
   }
 }
+
+
+
+
 
 
 

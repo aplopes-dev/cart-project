@@ -1,6 +1,6 @@
 <template>
   <div class="shopping-cart-page">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-2 md:pb-3 text-center">
@@ -12,8 +12,8 @@
           <div class="col-span-6">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.product') }}</span>
           </div>
-          <div class="col-span-3 text-center">
-            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.quantity') }}</span>
+          <div class="col-span-3">
+            <span class="font-archivo-narrow font-semibold text-xl ml-[100px]">{{ $t('shoppingCart.quantity') }}</span>
           </div>
           <div class="col-span-3 text-right">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
@@ -30,18 +30,13 @@
                 <img :src="item.image" :alt="item.name" class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"/>
                 <div class="flex flex-col">
                   <h3 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] md:leading-[40px]">{{ item.name }}</h3>
-                  <p class="font-archivo text-base md:text-xl text-black/70">{{ item.description }}</p>
+                  <p v-if="productDetails[item.id]?.description" class="font-archivo text-base md:text-xl text-black/70">
+                    {{ productDetails[item.id].description }}
+                  </p>
                   
                   <!-- Options -->
-                  <div class="mt-2 md:mt-4 space-y-1">
-                    <div class="flex gap-2">
-                      <span class="font-archivo text-sm">Label</span>
-                      <span class="font-archivo text-sm text-black/70">Hello World</span>
-                    </div>
-                    <div v-for="n in 5" :key="n" class="flex gap-2">
-                      <span class="font-archivo text-sm">Option {{ n }}</span>
-                      <span class="font-archivo text-sm text-black/70">Option {{ n }}</span>
-                    </div>
+                  <div class="mt-2 md:mt-4">
+                    <p class="font-archivo text-base text-black/70">{{ item.description }}</p>
                   </div>
                 </div>
               </div>
@@ -114,7 +109,7 @@
         <div class="py-6 max-w-[456px] ml-auto">
           <div class="flex justify-between items-center mb-4">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.subtotal') }}</span>
-            <span class="font-archivo-narrow font-semibold text-xl">${{ calculateSubtotal().toFixed(2) }}</span>
+            <span class="font-archivo-narrow font-semibold text-xl">${{ subtotal.toFixed(2) }}</span>
           </div>
 
           <p class="font-archivo text-black/70 mb-6">
@@ -134,35 +129,31 @@
 </template>
 
 <script>
-export default {
+import { useCartStore } from '@/stores/cartStore'
+import { defineComponent } from 'vue'
+import { productService } from '@/services/productService'
+
+export default defineComponent({
   name: 'ShoppingCartPage',
+  setup() {
+    const cartStore = useCartStore()
+    return { cartStore }
+  },
   data() {
     return {
-      cartItems: [
-        {
-          name: 'Produto 1',
-          description: 'Descrição do produto 1',
-          price: 199.99,
-          quantity: 1,
-          image: '/img/product1.png'
-        },
-        {
-          name: 'Produto 2',
-          description: 'Descrição do produto 2',
-          price: 299.99,
-          quantity: 1,
-          image: '/img/product2.png'
-        },
-        {
-          name: 'Produto 3',
-          description: 'Descrição do produto 3',
-          price: 399.99,
-          quantity: 1,
-          image: '/img/product3.png'
-        }
-      ],
+      productDetails: {},
       showNotes: false,
       notes: ''
+    }
+  },
+  computed: {
+    cartItems() {
+      return this.cartStore.items
+    },
+    subtotal() {
+      return this.cartItems.reduce((total, item) => {
+        return total + (item.price * item.quantity)
+      }, 0)
     }
   },
   methods: {
@@ -170,26 +161,51 @@ export default {
       this.showNotes = !this.showNotes
     },
     increaseQuantity(index) {
-      this.cartItems[index].quantity++
+      const item = this.cartItems[index]
+      this.cartStore.updateQuantity(index, item.quantity + 1)
     },
     decreaseQuantity(index) {
-      if (this.cartItems[index].quantity > 1) {
-        this.cartItems[index].quantity--
+      const item = this.cartItems[index]
+      if (item.quantity > 1) {
+        this.cartStore.updateQuantity(index, item.quantity - 1)
       }
     },
-    calculateSubtotal() {
-      return this.cartItems.reduce((total, item) => {
-        return total + (item.price * item.quantity)
-      }, 0)
-    },
     removeItem(index) {
-      this.cartItems.splice(index, 1)
+      this.cartStore.removeItem(index)
     },
     checkout() {
       this.$router.push('/checkout')
+    },
+    formatPrice(price) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(price)
+    },
+    async fetchProductDetails(productId) {
+      try {
+        const details = await productService.getProductDetails(productId)
+        this.productDetails[productId] = details
+      } catch (error) {
+        console.error(`Error fetching details for product ${productId}:`, error)
+      }
+    }
+  },
+  watch: {
+    cartItems: {
+      immediate: true,
+      handler(items) {
+        if (items) {
+          items.forEach(item => {
+            if (!this.productDetails[item.id]) {
+              this.fetchProductDetails(item.id)
+            }
+          })
+        }
+      }
     }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -202,3 +218,12 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
+
+
+
+
+
+
+
+

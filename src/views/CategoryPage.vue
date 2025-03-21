@@ -321,26 +321,35 @@
                 :key="product.id" 
                 class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
               >
-                <img 
-                  :src="product.image" 
-                  :alt="product.name"
-                  class="w-full aspect-square object-cover md:h-[400px] h-[250px]"
-                  @error="handleImageError"
+                <!-- Wrap the clickable area in a div -->
+                <div 
+                  class="flex flex-col flex-grow cursor-pointer"
+                  @click="navigateToProduct(product.id)"
                 >
-                <div class="p-4 flex flex-col flex-grow">
-                  <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
-                    {{ product.name }}
-                  </h3>
-                  <p class="font-archivo text-base md:text-lg text-black/70 mb-4 line-clamp-3 md:line-clamp-2 overflow-hidden">
-                    {{ product.description }}
-                  </p>
-                  <div class="mt-auto w-full">
-                    <p class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
-                      ${{ Number(product.price).toFixed(2) }}
+                  <img 
+                    :src="product.image" 
+                    :alt="product.name"
+                    class="w-full aspect-square object-cover md:h-[400px] h-[250px]"
+                    @error="handleImageError"
+                  >
+                  <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
+                      {{ product.name }}
+                    </h3>
+                    <p class="font-archivo text-base md:text-lg text-black/70 mb-4 line-clamp-3 md:line-clamp-2 overflow-hidden">
+                      {{ product.description }}
                     </p>
-                    <ProductQuantitySelector 
-                      @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
-                    />
+                    <div class="mt-auto w-full">
+                      <p class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
+                        ${{ Number(product.price).toFixed(2) }}
+                      </p>
+                      <!-- Wrap the button in a div that stops event propagation -->
+                      <div @click.stop>
+                        <ProductQuantitySelector 
+                          @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>              
@@ -465,18 +474,31 @@
       </div>
     </div>
   </div>
+
+  <!-- Toast Message -->
+  <div 
+    v-if="showToast"
+    class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
+    :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
+  >
+    <p class="font-archivo-narrow text-lg">
+      {{ $t('cart.productAdded') }}
+    </p>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/productService'
 import { categoryService } from '@/services/categoryService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { debounce } from 'lodash'
+import { useCartStore } from '@/stores/cartStore'
 
 const route = useRoute()
+const router = useRouter()
 const currentPage = ref(1)
 const totalPages = ref(1)
 const products = ref([])
@@ -495,6 +517,8 @@ const itemsPerPage = ref(9) // Adicionando uma ref para o número de itens por p
 const sortBy = ref('featured')
 const isDragging = ref(false)
 const tempPriceRange = ref([0, 1000]) // Nova ref para armazenar valores temporários
+const cartStore = useCartStore()
+const showToast = ref(false)
 
 const handleSort = () => {
   currentPage.value = 1 // Reset para primeira página ao mudar ordenação
@@ -621,9 +645,15 @@ const handleAddToCart = (product, quantity) => {
     image: product.image
   }
   
-  console.log('Adding to cart:', cartItem)
-  // Aqui você pode emitir um evento ou chamar uma action do Vuex/Pinia
-  // para adicionar o item ao carrinho
+  cartStore.addItem(cartItem)
+  showSuccessToast()
+}
+
+const showSuccessToast = () => {
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 3000)
 }
 
 const handlePageChange = async (page) => {
@@ -733,6 +763,9 @@ watch(isDragging, (newValue) => {
   }
 })
 
+const navigateToProduct = (productId) => {
+  router.push(`/product/${productId}`)
+}
 
 </script>
 
@@ -879,19 +912,13 @@ select:focus {
   border-color: #FFDD00;
   box-shadow: 0 0 0 2px rgba(255, 221, 0, 0.2);
 }
+
+/* Adicione estes estilos para melhorar a interação */
+.cursor-pointer:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

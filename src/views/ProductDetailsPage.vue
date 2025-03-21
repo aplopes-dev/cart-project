@@ -1,15 +1,21 @@
 <template>
   <div class="bg-white">
     <div class="container mx-auto px-4 py-12">
-      <div class="max-w-[1408px] mx-auto">
+      <!-- Seção principal do produto -->
+      <div class="max-w-[1408px] mx-auto pb-16">
         <!-- Breadcrumb -->
         <div class="mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
-            <router-link to="/category" class="hover:text-black">Category</router-link>
+            <router-link 
+              :to="`/categories/${product.category?.id}`" 
+              class="hover:text-black"
+            >
+              {{ product.category?.name || 'Loading...' }}
+            </router-link>
             <span>/</span>
-            <span class="text-black">{{ product.name }}</span>
+            <span class="text-black">{{ product.name || 'Loading...' }}</span>
           </nav>
         </div>
 
@@ -18,7 +24,7 @@
           <!-- Left Column - Images -->
           <div class="space-y-4">
             <!-- Main Image -->
-            <div class="aspect-square bg-[#FAFAFA] flex items-center justify-center">
+            <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img 
                 :src="selectedImage || product.mainImage" 
                 :alt="product.name"
@@ -31,10 +37,14 @@
                 v-for="(image, index) in product.images" 
                 :key="index"
                 @click="selectedImage = image"
-                class="aspect-square bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
+                class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
                 :class="{'border-2 border-black': selectedImage === image}"
               >
-                <img :src="image" :alt="`${product.name} view ${index + 1}`" class="w-full h-full object-contain">
+                <img 
+                  :src="image" 
+                  :alt="`${product.name} view ${index + 1}`" 
+                  class="w-full h-full object-contain"
+                >
               </button>
             </div>
           </div>
@@ -45,37 +55,36 @@
               <h1 class="font-archivo-narrow font-semibold text-[45px] leading-[52px] text-black/70">
                 {{ product.name }}
               </h1>
-              <p class="font-archivo text-xl text-black/70">
-                {{ product.description }}
-              </p>
+              
               <!-- Preços -->
               <div class="flex items-center gap-4">
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
-                  {{ product.price }}
+                  {{ formatPrice(product.price) }}
                 </p>
-                <p class="font-archivo-narrow font-medium text-[28px] leading-[34px] text-[#E30505] line-through opacity-80">
-                  {{ product.originalPrice }}
+                <p class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
+                  {{ formatPrice(calculateOriginalPrice(product.price)) }}
                 </p>
               </div>
-            </div>
 
-            <!-- Options -->
-            <div class="space-y-6">
+              <p class="font-archivo text-xl text-black/70">
+                {{ product.description }}
+              </p>
+
               <!-- Color Selection -->
               <div class="space-y-2">
                 <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
-                <div class="flex gap-4">
+                <div class="grid grid-cols-4 gap-4">
                   <button 
                     v-for="color in product.colors" 
-                    :key="color.name"
+                    :key="color"
                     @click="selectedColor = color"
-                    class="w-12 h-12 rounded-full border-2"
+                    class="h-12 border-2"
                     :class="[
-                      selectedColor === color ? 'border-black' : color.value === '#FFFFFF' ? 'border-gray-200' : 'border-transparent',
-                      'hover:opacity-80 transition-opacity'
+                      selectedColor === color ? 'border-black' : 'border-black/70',
+                      'hover:border-black transition-colors'
                     ]"
-                    :style="{ backgroundColor: color.value }"
-                  ></button>
+                    :style="{ backgroundColor: color }"
+                  />
                 </div>
               </div>
 
@@ -97,85 +106,165 @@
                   </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Substituir o antigo seletor de quantidade pelo novo componente -->
-            <ProductQuantitySelector 
-              @add-to-cart="handleAddToCart"
-              @shop-now="handleShopNow"
-            />
+              <!-- Buttons Container -->
+              <div class="flex flex-col space-y-4">
+                <!-- Quantity Selector -->
+                <ProductQuantitySelector @add-to-cart="handleAddToCart" />
 
-            <!-- Additional Info -->
-            <div class="space-y-4 pt-8 border-t border-black/10">
-              <div class="space-y-2">
-                <h3 class="font-archivo-narrow font-semibold text-xl">{{ $t('productDetails.shippingInfo') }}</h3>
-                <p class="font-archivo text-black/70">{{ $t('productDetails.freeShipping') }}</p>
+                <!-- Shop Now Button -->
+                <button 
+                  @click="handleShopNow"
+                  class="w-full h-[70px] bg-empire-yellow"
+                >
+                  <span class="font-archivo-narrow font-semibold text-[34px] leading-[70px] text-black">
+                    {{ $t('productDetails.shopNow') }}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Adicionando o ProductDescription -->
-        <div class="mt-24 flex justify-center">
-          <ProductDescription />
+        <!-- Seção de descrição -->
+        <div class="mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-6">
+          <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
+            {{ $t('productDetails.description') }}
+          </h2>
+          
+          <!-- Descrição técnica -->
+          <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
+            <pre v-if="hasDescription" 
+                 class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
+            <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
+          </div>
         </div>
       </div>
+
+      <!-- Best Sellers Section -->
+      <div class="mt-16 w-full" style="max-width: 1408px; margin: 48px auto 0;">
+        <BestSeller 
+          :current-product-id="String(product?.id)" 
+          v-if="product?.id"
+        />
+      </div>
     </div>
+  </div>
+
+  <!-- Toast Message -->
+  <div 
+    v-if="showToast"
+    class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
+    :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
+  >
+    <p class="font-archivo-narrow text-lg">
+      {{ $t('cart.productAdded') }}
+    </p>
   </div>
 </template>
 
 <script>
-import ProductDescription from '@/components/product/ProductDescription.vue'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
+import BestSeller from '@/components/product/BestSeller.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { productService } from '@/services/productService'
+import eventBus from '@/utils/eventBus'
+import { useCartStore } from '@/stores/cartStore'
 
 export default {
   name: 'ProductDetailsPage',
   components: {
-    ProductDescription,
-    ProductQuantitySelector
+    ProductQuantitySelector,
+    BestSeller
+  },
+  setup() {
+    const cartStore = useCartStore()
+    return { cartStore }
   },
   data() {
     return {
-      selectedImage: null,
+      product: {
+        id: null,
+        name: '',
+        price: 0,
+        description: '',
+        technical_description: '',
+        image: '',
+        category: null
+      },
+      loading: true,
+      error: null,
       selectedColor: null,
       selectedSize: null,
-      product: {
-        id: '1',
-        name: 'Product Name',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-        price: 'R$ 199,99',
-        originalPrice: 'R$ 299,99', // Adicionado preço original
-        mainImage: '/img/product1.png',
-        images: [
-          '/img/product1.png',
-          '/img/product2.png',
-          '/img/product3.png',
-          '/img/product1.png'
-        ],
-        colors: [
-          { name: 'Black', value: '#000000' },
-          { name: 'White', value: '#FFFFFF' },
-          { name: 'Red', value: '#FF0000' },
-          { name: 'Blue', value: '#0000FF' }
-        ],
-        sizes: ['P', 'M', 'G']
-      },
-      additionalInfo: [        
-        {
-          title: 'Shipping Information',
-          content: 'Free shipping on orders over R$ 200,00'
+      selectedImage: null,
+      showToast: false
+    }
+  },
+  created() {
+    this.loadProduct()
+    
+    // Usa o eventBus ao invés do $root
+    eventBus.on('reload-product-details', this.loadProduct)
+  },
+  beforeUnmount() {
+    // Remove o listener usando eventBus
+    eventBus.off('reload-product-details', this.loadProduct)
+  },
+  watch: {
+    // Observa mudanças no parâmetro da rota
+    '$route.params.id': {
+      handler(newId, oldId) {
+        if (newId !== oldId) {
+          this.loadProduct()
         }
-      ]
+      },
+      immediate: true
     }
   },
   methods: {
-    handleAddToCart(quantity) {
-      if (!this.selectedColor || !this.selectedSize) {
-        alert(this.$t('productDetails.selectOptions'))
-        return
+    formatPrice(price) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(price)
+    },
+
+    calculateOriginalPrice(price) {
+      return price * 1.3 // Aumenta o preço em 30%
+    },
+    async loadProduct() {
+      try {
+        this.loading = true
+        this.error = null
+        const productId = this.$route.params.id
+        const productData = await productService.getProductById(productId)
+        
+        if (!productData) {
+          throw new Error('Product not found')
+        }
+
+        this.product = {
+          ...productData,
+          category: productData.category || null
+        }
+
+        // Reseta estados importantes
+        this.selectedColor = null
+        this.selectedSize = null
+        this.selectedImage = null
+        
+        // Rola a página para o topo
+        window.scrollTo(0, 0)
+        
+      } catch (err) {
+        console.error('Error loading product:', err)
+        this.error = 'Failed to load product details'
+        this.$router.push('/404')
+      } finally {
+        this.loading = false
       }
-      
+    },
+    handleAddToCart(quantity) {
       const item = {
         id: this.product.id,
         name: this.product.name,
@@ -186,7 +275,8 @@ export default {
         image: this.selectedImage || this.product.mainImage
       }
       
-      console.log('Adding to cart:', item)
+      this.cartStore.addItem(item)
+      this.showSuccessToast()
     },
     handleShopNow() {
       // Implementar lógica de compra imediata
@@ -195,13 +285,49 @@ export default {
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
+    },
+    showSuccessToast() {
+      this.showToast = true
+      setTimeout(() => {
+        this.showToast = false
+      }, 3000)
     }
   },
-  created() {
-    // Aqui você pode carregar os dados do produto baseado no ID da rota
-    const productId = this.$route.params.id
-    console.log('Loading product:', productId)
-    // Implementar chamada à API para carregar os dados do produto
+  computed: {
+    hasDescription() {
+      return Boolean(this.product?.technical_description || this.product?.description)
+    },
+    getDescription() {
+      return this.product?.technical_description || this.product?.description || ''
+    }
   }
 }
 </script>
+
+<style scoped>
+.font-archivo {
+  font-family: 'Archivo', sans-serif;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

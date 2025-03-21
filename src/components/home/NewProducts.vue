@@ -22,51 +22,52 @@
                 'flex-shrink-0 px-2 md:px-4 rotate-[0.21deg]',
                 'w-full md:w-1/3'
               ]"
-              @click="goToProduct(product.id)"
-              class="cursor-pointer"
             >
               <div class="flex flex-col items-center h-auto md:h-[496.76px] bg-white border border-[#FAFAFA]">
-                <!-- Imagem do Produto -->
-                <img 
-                  :src="product.image" 
-                  :alt="product.name" 
-                  class="w-full md:w-[307.35px] h-[200px] md:h-[281.87px] object-cover"
+                <!-- Área clicável para detalhes do produto -->
+                <div 
+                  class="w-full cursor-pointer"
+                  @click="navigateToProduct(product.id)"
                 >
-                
-                <!-- Informações do Produto -->
-                <div class="flex flex-col items-center p-4 md:p-0 gap-2 md:gap-4 w-full md:w-[361.79px]">
-                  <!-- Container Nome e Descrição -->
-                  <div class="flex flex-col items-center">
-                    <!-- Nome do Produto -->
-                    <h3 class="font-archivo-narrow font-semibold text-xl md:text-[34px] leading-tight md:leading-[40px] text-black/70 text-center">
-                      {{ product.name }}
-                    </h3>
-                    
-                    <!-- Descrição do Produto -->
-                    <p class="font-archivo font-medium text-base md:text-[20px] leading-normal md:leading-[22px] text-black/70 text-center">
-                      {{ $t('products.description') }}
-                    </p>
-                  </div>
+                  <!-- Imagem do Produto -->
+                  <img 
+                    :src="product.image" 
+                    :alt="product.name" 
+                    class="w-full md:w-[307.35px] h-[200px] md:h-[281.87px] object-cover"
+                  >
                   
-                  <!-- Container Preço -->
-                  <div class="flex flex-col items-center">
-                    <!-- Preço -->
-                    <p class="font-archivo-narrow font-semibold text-xl md:text-[34px] leading-tight md:leading-[40px] text-black text-center">
-                      {{ formatPrice(product.price) }}
-                    </p>
+                  <!-- Informações do Produto -->
+                  <div class="flex flex-col items-center p-4 md:p-0 gap-2 md:gap-4 w-full md:w-[361.79px]">
+                    <!-- Container Nome e Descrição -->
+                    <div class="flex flex-col items-center space-y-4 w-full">
+                      <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center">
+                        {{ product.name }}
+                      </h3>
+                      
+                      <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center line-clamp-2 px-4 md:px-6 w-full">
+                        {{ product.description }}
+                      </p>
+                    </div>
+                    
+                    <!-- Container Preço -->
+                    <div class="flex flex-col items-center mb-2">
+                      <p class="font-archivo-narrow font-semibold text-xl md:text-[28px] leading-tight md:leading-[34px] text-black text-center">
+                        {{ formatPrice(product.price) }}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 
                 <!-- Quantidade e Botão Adicionar ao Carrinho -->
-                <div class="flex flex-col sm:flex-row items-start gap-2 w-full p-4">
+                <div class="flex flex-col sm:flex-row items-start gap-2 w-full px-4 pb-4 mt-auto" @click.stop>
                   <!-- Select Field -->
-                  <div class="w-full sm:w-[150px] h-[40px] sm:h-[73.31px]">
+                  <div class="w-full sm:w-[150px] h-[40px] sm:h-[60px]">
                     <!-- Select -->
                     <div class="flex flex-row justify-between items-center h-full px-2 md:px-4 py-2 md:py-3 gap-2 bg-white border-2 border-black">
                       <!-- Minus -->
                       <button 
                         class="w-3 h-3 md:w-4 md:h-4"
-                        @click.stop="decrementQuantity(index)"
+                        @click="decrementQuantity(index)"
                       >
                         <div class="relative w-full h-full">
                           <div class="absolute left-[20.83%] right-[20.83%] top-1/2 bottom-1/2 border-[1.6px] border-[#1E1E1E]"></div>
@@ -81,19 +82,31 @@
                       <!-- Plus -->
                       <button 
                         class="w-3 h-3 md:w-4 md:h-4"
-                        @click.stop="incrementQuantity(index)"
+                        @click="incrementQuantity(index)"
                       >
-                        <div class="relative w-full h-full">
-                          <div class="absolute left-[20.83%] right-[20.83%] top-1/2 bottom-1/2 border-[1.6px] border-[#1E1E1E]"></div>
-                          <div class="absolute top-[20.83%] bottom-[20.83%] left-1/2 -translate-x-1/2 w-[1.6px] bg-[#1E1E1E]"></div>
-                        </div>
+                        <svg 
+                          viewBox="0 0 16 16" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-full h-full"
+                        >
+                          <path 
+                            d="M8 3.33337V12.6667M3.33337 8H12.6667" 
+                            stroke="#1E1E1E" 
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                          />
+                        </svg>
                       </button>
                     </div>
                   </div>
 
                   <!-- Botão ADD CART -->
-                  <button class="w-full sm:flex-1 h-[40px] sm:h-[73.31px] bg-black">
-                    <span class="font-archivo-narrow font-semibold text-lg md:text-[34px] leading-tight md:leading-[72px] text-[#FFDD00]">
+                  <button 
+                    class="w-full sm:flex-1 h-[40px] sm:h-[60px] bg-black"
+                    @click="handleAddToCart(index)"
+                  >
+                    <span class="font-archivo-narrow font-semibold text-lg md:text-[28px] leading-tight md:leading-[60px] text-[#FFDD00]">
                       {{ $t('cart.addToCart') }}
                     </span>
                   </button>
@@ -125,65 +138,58 @@
         </button>
       </div>
     </div>
+    <!-- Toast Message -->
+    <div 
+      v-if="showToast"
+      class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
+      :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
+    >
+      <p class="font-archivo-narrow text-lg">
+        {{ $t('cart.productAdded') }}
+      </p>
+    </div>
   </section>
 </template>
 
 <script>
 import { useI18n } from 'vue-i18n'
+import { useCartStore } from '@/stores/cartStore'
+import { productService } from '@/services/productService'
 
 export default {
   name: 'NewProducts',
   setup() {
     const i18n = useI18n()
+    const cartStore = useCartStore()
+    
     return {
-      t: i18n.t
+      t: i18n.t,
+      cartStore
     }
   },
   data() {
     return {
       currentSlide: 0,
-      quantities: Array(6).fill(1),
-      products: [
-        {
-          id: 1,
-          name: this.$t('products.newProducts') + ' 1',
-          price: 199.99,
-          image: '/img/product1.png'
-        },
-        {
-          id: 2,
-          name: this.$t('products.newProducts') + ' 1',
-          price: 199.99,
-          image: '/img/product2.png'
-        },
-        {
-          id: 3,
-          name: this.$t('products.newProducts') + ' 3',
-          price: 399.99,
-          image: '/img/product3.png'
-        },
-        {
-          id: 4,
-          name: this.$t('products.newProducts') + ' 4',
-          price: 499.99,
-          image: '/img/product1.png'
-        },
-        {
-          id: 5,
-          name: this.$t('products.newProducts') + ' 5',
-          price: 599.99,
-          image: '/img/product2.png'
-        },
-        {
-          id: 6,
-          name: this.$t('products.newProducts') + ' 6',
-          price: 699.99,
-          image: '/img/product3.png'
-        }
-      ],
+      quantities: [],
+      products: [],
       resizeHandler: null,
       touchStartX: 0,
-      touchEndX: 0
+      touchEndX: 0,
+      showToast: false
+    }
+  },
+  async created() {
+    try {
+      const response = await productService.getProducts({ 
+        limit: 10,
+        page: 1,
+        sortBy: 'featured'
+      })
+      this.products = response.items
+      this.quantities = Array(response.items.length).fill(1)
+    } catch (err) {
+      console.error('Error fetching products:', err)
+      this.products = []
     }
   },
   computed: {
@@ -197,19 +203,11 @@ export default {
   },
   methods: {
     formatPrice(price) {
-      if (this.$i18n.locale === 'pt') {
-        return new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        }).format(price);
-      }
-
-      // Para 'fr' e 'en', forçamos o formato en-US para manter o $ na frente
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         currencyDisplay: 'symbol'
-      }).format(price);
+      }).format(price)
     },
     nextSlide() {
       if (this.currentSlide >= this.maxSlides) {
@@ -231,8 +229,18 @@ export default {
         this.currentSlide--
       }
     },
+    navigateToProduct(productId) {
+      this.$router.push({
+        name: 'ProductDetails', // Corrigido para corresponder ao nome exato da rota
+        params: { id: productId }
+      })
+    },
     incrementQuantity(index) {
-      this.quantities[index]++
+      if (!this.quantities[index]) {
+        this.$set(this.quantities, index, 1)
+      } else {
+        this.quantities[index]++
+      }
     },
     decrementQuantity(index) {
       if (this.quantities[index] > 1) {
@@ -254,32 +262,71 @@ export default {
         }
       }
     },
-    goToProduct(productId) {
-      this.$router.push(`/product/${productId}`)
+    handleAddToCart(index) {
+      const product = this.products[index]
+      const quantity = this.quantities[index]
+      
+      const item = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+        image: product.image
+      }
+      
+      this.cartStore.addItem(item)
+      this.showSuccessToast()
+    },
+    showSuccessToast() {
+      this.showToast = true
+      setTimeout(() => {
+        this.showToast = false
+      }, 3000) // Toast desaparece após 3 segundos
     }
   },
   mounted() {
     this.resizeHandler = () => {
-      if (this.currentSlide > this.maxSlides) {
-        this.currentSlide = this.maxSlides
-      }
+      this.currentSlide = 0
     }
     window.addEventListener('resize', this.resizeHandler)
-
-    const carousel = document.querySelector('.carousel-container')
-    if (carousel) {
-      carousel.addEventListener('touchstart', this.handleTouchStart)
-      carousel.addEventListener('touchend', this.handleTouchEnd)
-    }
   },
   beforeUnmount() {
-    window.removeEventListener('resize', this.resizeHandler)
-    
-    const carousel = document.querySelector('.carousel-container')
-    if (carousel) {
-      carousel.removeEventListener('touchstart', this.handleTouchStart)
-      carousel.removeEventListener('touchend', this.handleTouchEnd)
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler)
     }
   }
 }
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.transition-opacity {
+  transition: opacity 0.3s ease-in-out;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

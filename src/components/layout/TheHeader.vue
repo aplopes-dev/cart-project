@@ -23,8 +23,8 @@
               <!-- Language Selector Mobile -->
               <div class="relative md:hidden">
                 <button 
-                  @click="isOpen = !isOpen"
-                  class="flex items-center gap-2 bg-transparent cursor-pointer p-1"
+                  @click="toggleLanguageDropdown"
+                  class="language-selector flex items-center gap-2 bg-transparent cursor-pointer p-1"
                 >
                   <img 
                     :src="flagImages[selectedLanguage]"
@@ -33,6 +33,7 @@
                   />
                   <svg 
                     class="w-4 h-4" 
+                    :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
                     viewBox="0 0 24 24" 
                     fill="#FFFFFF"
                   >
@@ -40,13 +41,13 @@
                   </svg>
                 </button>
 
-                <!-- Dropdown Mobile (apenas ícones) -->
+                <!-- Dropdown Mobile -->
                 <div 
-                  v-if="isOpen" 
+                  v-show="isLanguageDropdownOpen"
                   class="absolute top-full right-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
                 >
                   <button
-                    v-for="lang in ['FR', 'EN', 'PT']"
+                    v-for="lang in availableLanguages"
                     :key="lang"
                     @click="selectLanguage(lang)"
                     class="flex items-center justify-center w-full px-4 py-2 hover:bg-gray-100"
@@ -121,7 +122,7 @@
               <div class="relative">
                 <button 
                   @click="toggleUserMenu"
-                  class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
+                  class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2"
                 >
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg 
@@ -215,12 +216,54 @@
           <router-link to="/suppliers" class="text-[15px] leading-7 text-white font-archivo font-medium">
             {{ $t('header.suppliers') }}
           </router-link>
-          <a href="#" class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1">
-            {{ $t('header.shop') }}
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#FBBD1E">
-              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
-          </a>
+          <div class="relative category-dropdown">
+            <button 
+              @click="toggleCategoryDropdown"
+              class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
+            >
+              {{ $t('header.shop') }}
+              <svg 
+                class="w-4 h-4" 
+                :class="{ 'transform rotate-180': showCategoryDropdown }"
+                viewBox="0 0 24 24" 
+                fill="#FFFFFF"
+              >
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </button>
+
+            <!-- Categories Dropdown -->
+            <div 
+              v-if="showCategoryDropdown"
+              class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+            >
+              <!-- Loading State -->
+              <div v-if="loading" class="px-4 py-2 text-gray-500">
+                {{ $t('common.loading') }}...
+              </div>
+
+              <!-- Error State -->
+              <div v-else-if="error" class="px-4 py-2 text-red-500">
+                {{ $t('common.error') }}
+              </div>
+
+              <!-- Empty State -->
+              <div v-else-if="categories.length === 0" class="px-4 py-2 text-gray-500">
+                {{ $t('common.noCategories') }}
+              </div>
+
+              <!-- Categories List -->
+              <div 
+                v-else
+                v-for="category in categories" 
+                :key="category.id"
+                @click="navigateToCategory(category.id)"
+                class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200"
+              >
+                {{ category.name }}
+              </div>
+            </div>
+          </div>
           <router-link to="/career" class="text-[15px] leading-7 text-white font-archivo font-medium">
             {{ $t('header.career') }}
           </router-link>
@@ -234,8 +277,8 @@
           <!-- Language Desktop (ícones + texto) -->
           <div class="relative hidden md:block">
             <button 
-              @click="isOpen = !isOpen"
-              class="flex items-center gap-2 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-2 pr-6"
+              @click="toggleLanguageDropdown"
+              class="language-selector flex items-center gap-2 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-2 pr-6"
             >
               <img 
                 :src="flagImages[selectedLanguage]"
@@ -245,6 +288,7 @@
               {{ selectedLanguage }}
               <svg 
                 class="w-4 h-4" 
+                :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
                 viewBox="0 0 24 24" 
                 fill="#FFFFFF"
               >
@@ -252,13 +296,13 @@
               </svg>
             </button>
 
-            <!-- Dropdown Desktop (ícones + texto) -->
+            <!-- Dropdown Desktop -->
             <div 
-              v-if="isOpen" 
+              v-show="isLanguageDropdownOpen"
               class="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
             >
               <button
-                v-for="lang in ['FR', 'EN', 'PT']"
+                v-for="lang in availableLanguages"
                 :key="lang"
                 @click="selectLanguage(lang)"
                 class="flex items-center gap-2 w-full px-4 py-2 text-black hover:bg-gray-100"
@@ -284,7 +328,7 @@
               <div class="relative">
                 <button 
                   @click="toggleUserMenu"
-                  class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2 user-menu"
+                  class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2"
                 >
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg 
@@ -406,15 +450,44 @@
           <router-link to="/history" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
             {{ $t('header.history') }}
           </router-link>
+          <!-- Menu Loja mobile -->
+          <div class="md:hidden category-dropdown relative">
+            <button 
+              @click="toggleCategoryDropdown"
+              class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center w-full flex items-center justify-center gap-1"
+            >
+              {{ $t('header.shop') }}
+              <svg 
+                class="w-4 h-4" 
+                :class="{ 'transform rotate-180': showCategoryDropdown }"
+                viewBox="0 0 24 24" 
+                fill="#FFFFFF"
+              >
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </button>
+            
+            <!-- Dropdown do menu Loja -->
+            <div 
+              v-if="showCategoryDropdown"
+              class="absolute bg-white shadow-lg z-50 rounded-lg mt-12 left-1/2 transform -translate-x-1/2"
+              style="width: 250px;"
+            >
+              <div class="max-h-[50vh] overflow-y-auto py-1">
+                <div 
+                  v-for="category in categories" 
+                  :key="category.id"
+                  @click="navigateToCategory(category.id)"
+                  class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200 text-center"
+                >
+                  {{ category.name }}
+                </div>
+              </div>
+            </div>
+          </div>
           <router-link to="/suppliers" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
             {{ $t('header.suppliers') }}
           </router-link>
-          <a href="#" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center flex items-center justify-center gap-1">
-            {{ $t('header.shop') }}
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FBBD1E">
-              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
-          </a>
           <router-link to="/career" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
             {{ $t('header.career') }}
           </router-link>
@@ -469,234 +542,238 @@
       </div>
     </div>
     <!-- Cart Widget -->
-    <CartWidget v-if="isCartOpen" @close="closeCart" />
+    <CartWidget v-if="cartStore.isOpen" />
   </header>
 </template>
 
-<script>
-import CartWidget from '../cart/CartWidget.vue'
+<script setup>
+import { 
+  ref, 
+  computed, 
+  onMounted, 
+  onUnmounted, 
+  watch
+} from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
+import { useCartStore } from '@/stores/cartStore'
+import CartWidget from '../cart/CartWidget.vue'
+import { categoryService } from '@/services/categoryService'
 
-export default {
-  name: 'TheHeader',
-  components: {
-    CartWidget
-  },
-  setup() {
-    const { t, locale } = useI18n()
-    const router = useRouter()
-    const store = useStore()
-    const isUserMenuOpen = ref(false)
+const router = useRouter()
+const route = useRoute()
+const store = useStore()
+const cartStore = useCartStore()
+const { locale } = useI18n() // Removido 't' da desestruturação já que está sendo usado via $t no template
 
-    const isAuthenticated = computed(() => store.state.isAuthenticated)
-    const currentUser = computed(() => store.state.currentUser)
+// Estado
+const isMobileMenuOpen = ref(false)
+const isLanguageDropdownOpen = ref(false)
+const isUserMenuOpen = ref(false)
+const selectedLanguage = ref('FR')
+const searchQuery = ref('')
+const showAutocomplete = ref(false)
+const showCategoryDropdown = ref(false)
+const logoUrl = ref('/images/logo.png')
+const categories = ref([])
+const loading = ref(false)
+const error = ref(null)
 
-    const toggleUserMenu = () => {
-      isUserMenuOpen.value = !isUserMenuOpen.value
-    }
+// Constantes
+const flagImages = {
+  'EN': '/images/flags/US.svg',
+  'FR': '/images/flags/FR.svg',
+  'PT': '/images/flags/BR.svg'
+}
 
-    const handleLogout = () => {
-      store.dispatch('logout')
-      isUserMenuOpen.value = false
-      router.push('/') // Alterado de '/login' para '/'
-    }
+const availableLanguages = ['FR', 'EN', 'PT']
 
-    const closeUserMenu = (e) => {
-      // Verifica se o clique foi fora do menu e do botão
-      if (!e.target.closest('.user-menu') && isUserMenuOpen.value) {
-        isUserMenuOpen.value = false
-      }
-    }
+// Computed Properties
+const isHomePage = computed(() => route.path === '/')
+const isAuthenticated = computed(() => store.state.isAuthenticated)
+const currentUser = computed(() => store.state.currentUser)
 
-    onMounted(() => {
-      document.addEventListener('click', closeUserMenu)
-      store.dispatch('updateUser')
+// Methods
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+}
+
+const handleImageError = (e) => {
+  console.error('Error loading image:', e)
+  e.target.src = 'https://via.placeholder.com/180x103?text=Logo'
+  e.target.onerror = null
+}
+
+const toggleCart = () => {
+  cartStore.toggleCart()
+}
+
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({
+      path: '/search',
+      query: { q: searchQuery.value }
     })
-
-    onUnmounted(() => {
-      document.removeEventListener('click', closeUserMenu)
-    })
-
-    return {
-      t,
-      locale,
-      isAuthenticated,
-      currentUser,
-      isUserMenuOpen,
-      toggleUserMenu,
-      handleLogout
+    showAutocomplete.value = false
+    if (isMobileMenuOpen.value) {
+      toggleMobileMenu()
     }
-  },
-  computed: {
-    isHomePage() {
-      return this.$route.path === '/'
-    },
-    filteredProducts() {
-      if (!this.searchQuery) return [];
-      const query = this.searchQuery.toLowerCase();
-      return this.mockProducts.filter(product => 
-        product.name.toLowerCase().includes(query)
-      );
-    }
-  },
-  data() {
-    return {
-      isMobileMenuOpen: false,
-      logoUrl: '/images/logo.png',
-      isCartOpen: false,
-      showEmailTooltip: false,
-      showPhoneTooltip: false,
-      selectedLanguage: 'FR',
-      flagImages: {
-        'EN': '/images/flags/US.svg',
-        'FR': '/images/flags/FR.svg',
-        'PT': '/images/flags/BR.svg'
-      },
-      isOpen: false,
-      searchQuery: '',
-      showAutocomplete: false,
-      showMobileSearch: false,
-      mockProducts: [
-        {
-          id: 1,
-          name: 'Pipe Wrench',
-          price: 199.99,
-          image: '/img/product1.png'
-        },
-        {
-          id: 2,
-          name: 'Copper Fitting',
-          price: 299.99,
-          image: '/img/product2.png'
-        },
-        {
-          id: 3,
-          name: 'PVC Pipe',
-          price: 159.99,
-          image: '/img/product3.png'
-        },
-        {
-          id: 4,
-          name: 'Adjustable Wrench',
-          price: 399.99,
-          image: '/img/product1.png'
-        },
-        {
-          id: 5,
-          name: 'Pipe Cutter',
-          price: 249.99,
-          image: '/img/product2.png'
-        },
-        {
-          id: 6,
-          name: 'Plumbing Kit',
-          price: 179.99,
-          image: '/img/product3.png'
-        }
-      ]
-    }
-  },
-  methods: {
-    toggleMobileMenu() {
-      this.isMobileMenuOpen = !this.isMobileMenuOpen
-    },
-    handleImageError(e) {
-      console.error('Error loading image:', e);
-      e.target.src = 'https://via.placeholder.com/180x103?text=Logo';
-      e.target.onerror = null;
-    },
-    toggleCart() {
-      this.isCartOpen = !this.isCartOpen
-    },
-    closeCart() {
-      this.isCartOpen = false
-    },
-    changeLanguage() {
-      this.locale = this.selectedLanguage.toLowerCase()
-    },
-    getFlagImage(lang) {
-      return this.flagImages[lang]
-    },
-    selectLanguage(lang) {
-      this.selectedLanguage = lang
-      this.isOpen = false
-      this.locale = lang.toLowerCase()
-    },
-    handleSearch() {
-      if (this.searchQuery.trim()) {
-        this.$router.push({
-          path: '/search',
-          query: { q: this.searchQuery }
-        });
-        this.showAutocomplete = false;
-        if (this.isMobileMenuOpen) {
-          this.toggleMobileMenu();
-        }
-      }
-    },
-    selectProduct(product) {
-      this.$router.push(`/product/${product.id}`);
-      this.searchQuery = '';
-      this.showAutocomplete = false;
-      if (this.isMobileMenuOpen) {
-        this.toggleMobileMenu();
-      }
-    },
-    toggleMobileSearch() {
-      this.showMobileSearch = true;
-      // Foca no input quando abrir a busca
-      this.$nextTick(() => {
-        this.$refs.mobileSearchInput?.focus();
-      });
-    },
-    closeMobileSearch() {
-      this.showMobileSearch = false;
-      this.searchQuery = '';
-      this.showAutocomplete = false;
-    }
-  },
-  watch: {
-    selectedLanguage: {
-      immediate: true,
-      handler(newValue) {
-        this.locale = newValue.toLowerCase()
-      }
-    },
-    searchQuery(newValue) {
-      this.showAutocomplete = newValue.length > 0;
-    },
-    isMobileMenuOpen(newValue) {
-      if (!newValue) {
-        this.showAutocomplete = false;
-        this.searchQuery = '';
-      }
-    }
-  },
-  mounted() {
-    // Fecha o dropdown quando clicar fora dele
-    document.addEventListener('click', (e) => {
-      if (!this.$el.contains(e.target)) {
-        this.isOpen = false
-      }
-    })
-    document.addEventListener('click', (e) => {
-      if (!this.$el.contains(e.target)) {
-        this.showAutocomplete = false;
-      }
-    });
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.closeDropdown)
-    document.removeEventListener('click', (e) => {
-      if (!this.$el.contains(e.target)) {
-        this.showAutocomplete = false;
-      }
-    });
   }
 }
+
+const selectProduct = (product) => {
+  router.push(`/product/${product.id}`)
+  searchQuery.value = ''
+  showAutocomplete.value = false
+  if (isMobileMenuOpen.value) {
+    toggleMobileMenu()
+  }
+}
+
+// Método para toggle do dropdown de categorias
+const toggleCategoryDropdown = (event) => {
+  event.stopPropagation()
+  showCategoryDropdown.value = !showCategoryDropdown.value
+  // Fecha os outros dropdowns quando abrir este
+  if (showCategoryDropdown.value) {
+    isLanguageDropdownOpen.value = false
+    isUserMenuOpen.value = false
+  }
+}
+
+// Método para navegação de categoria
+const navigateToCategory = (categoryId) => {
+  router.push(`/categories/${categoryId}`)
+  showCategoryDropdown.value = false
+  if (isMobileMenuOpen.value) {
+    toggleMobileMenu()
+  }
+}
+
+// Método para logout
+const handleLogout = async () => {
+  await store.dispatch('logout')
+  isUserMenuOpen.value = false // Fecha o menu após logout
+  router.push('/') // Alterado de '/login' para '/'
+}
+
+const toggleUserMenu = (event) => {
+  event.stopPropagation()
+  isUserMenuOpen.value = !isUserMenuOpen.value
+  // Fecha o outro dropdown quando abrir este
+  if (isUserMenuOpen.value) {
+    isLanguageDropdownOpen.value = false
+  }
+}
+
+// Função para buscar categorias
+const fetchCategories = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    const response = await categoryService.getCategories()
+    categories.value = response
+    console.log('Categories loaded:', categories.value)
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+    error.value = 'Error loading categories'
+    categories.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+// Funções para o seletor de idiomas
+const toggleLanguageDropdown = (event) => {
+  event.stopPropagation()
+  isLanguageDropdownOpen.value = !isLanguageDropdownOpen.value
+  // Fecha outros dropdowns quando abrir este
+  if (isLanguageDropdownOpen.value) {
+    isUserMenuOpen.value = false
+    showCategoryDropdown.value = false
+  }
+}
+
+const selectLanguage = (lang) => {
+  selectedLanguage.value = lang
+  isLanguageDropdownOpen.value = false
+  locale.value = lang.toLowerCase()
+}
+
+// Event listener para fechar dropdowns ao clicar fora
+const handleClickOutside = (event) => {
+  const languageSelector = event.target.closest('.language-selector')
+  const userMenu = event.target.closest('.user-menu')
+  const categoryDropdown = event.target.closest('.category-dropdown')
+
+  if (!languageSelector && !userMenu && !categoryDropdown) {
+    isLanguageDropdownOpen.value = false
+    isUserMenuOpen.value = false
+    showCategoryDropdown.value = false
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+// Watchers
+watch(selectedLanguage, (newValue) => {
+  locale.value = newValue.toLowerCase()
+}, { immediate: true })
+
+watch(searchQuery, (newValue) => {
+  showAutocomplete.value = newValue.length > 0
+})
+
+watch(isMobileMenuOpen, (newValue) => {
+  if (!newValue) {
+    showAutocomplete.value = false
+    searchQuery.value = ''
+    showCategoryDropdown.value = false
+  }
+})
+
+// Lifecycle Hooks
+onMounted(async () => {
+  await fetchCategories()
+
+  const handleClickOutside = (event) => {
+    const languageButton = event.target.closest('.language-selector')
+    const userButton = event.target.closest('.user-menu')
+    const categoryButton = event.target.closest('.category-dropdown')
+    
+    if (!languageButton && !userButton && !categoryButton) {
+      isLanguageDropdownOpen.value = false
+      isUserMenuOpen.value = false
+      showCategoryDropdown.value = false
+    }
+  }
+
+  document.addEventListener('click', handleClickOutside)
+
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+  })
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', (e) => {
+    const target = e.target
+    if (!target.closest('.language-selector')) {
+      isLanguageDropdownOpen.value = false
+    }
+    if (!target.closest('.category-dropdown')) {
+      showCategoryDropdown.value = false
+    }
+  })
+})
 </script>
 
 <style scoped>
@@ -712,51 +789,43 @@ export default {
   color: #FFDD00;
 }
 
-/* Adicione estes estilos para personalizar o select */
 select:focus {
   outline: none;
 }
 
-/* Remove a borda padrão do select no Firefox */
 select:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #fff;
 }
 
-/* Estilo para as options no Chrome */
 select option {
   background-color: #1E1E1E;
   color: white;
   padding: 8px;
 }
 
-/* Ajuste para o dropdown ficar mais largo e acomodar as bandeiras */
 @media (min-width: 768px) {
   select {
     min-width: 80px;
   }
 }
 
-/* Versão mobile com apenas bandeiras */
 @media (max-width: 767px) {
   select option {
-    padding: 8px 24px;  /* Reduzido padding */
-    min-height: 40px;   /* Reduzido min-height */
+    padding: 8px 24px;
+    min-height: 40px;
   }
 }
 
-/* Estilo para as bandeiras */
 .flag-icon {
   font-size: 1.2rem;
   line-height: 1;
 }
 
-/* Ajuste o padding-left do select para acomodar a bandeira */
 select {
   padding-left: 2rem;
 }
 
-/* Adicione estes estilos */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.3s ease;
@@ -772,7 +841,6 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Adicione estes estilos para melhor experiência mobile */
 @media (max-width: 768px) {
   .mobile-search {
     position: relative;
@@ -780,21 +848,18 @@ input::placeholder {
   }
 }
 
-/* Estilos para o overlay de busca mobile */
 .mobile-search-overlay {
   backdrop-filter: blur(4px);
 }
 
-/* Garantir que o input de busca tenha texto branco */
 input {
   color: white;
+  caret-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Animações */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -805,23 +870,21 @@ input::placeholder {
   opacity: 0;
 }
 
-input {
-  caret-color: white; /* Cor do cursor */
-}
-
-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Removendo aparência padrão em dispositivos móveis */
-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
 .user-menu {
   position: relative;
   z-index: 51;
+}
+
+.category-dropdown {
+  position: relative;
+}
+
+/* Estilos específicos para o menu mobile */
+@media (max-width: 768px) {
+  .category-dropdown {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>

@@ -1,12 +1,13 @@
 <template>
   <div 
+    v-if="cartStore.isOpen"
     class="fixed right-0 top-0 h-screen w-full md:w-[456px] bg-white shadow-cart z-50 flex flex-col px-4 md:px-6"
   >
     <!-- Shopping Cart Section -->
     <section class="shopping-cart flex-grow overflow-y-auto">
       <div class="cart-header">
         <h1 class="text-2xl md:text-[34px]">{{ $t('cart.shoppingCart') }}</h1>
-        <button class="close-button" @click="$emit('close')" :aria-label="$t('cart.close')">
+        <button class="close-button" @click="cartStore.closeCart()" :aria-label="$t('cart.close')">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="black" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -14,23 +15,23 @@
       </div>
 
       <div class="cart-items">
-        <div v-for="(item, index) in cartItems" :key="index" class="cart-item">
+        <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
           <img :src="item.image" :alt="item.name" class="item-image" />
           
           <div class="item-details">
             <div class="item-info">
               <h2>{{ item.name }}</h2>
-              <p class="price">${{ item.price.toFixed(2) }}</p>
+              <p class="price">{{ formatPrice(item.price) }}</p>
             </div>
 
             <div class="quantity-selector">
-              <button class="quantity-btn minus" @click="decreaseQuantity(index)">
+              <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
                 </svg>
               </button>
               <span class="quantity-value">{{ item.quantity }}</span>
-              <button class="quantity-btn plus" @click="increaseQuantity(index)">
+              <button class="quantity-btn plus" @click="cartStore.updateQuantity(index, item.quantity + 1)">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
                   <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
@@ -39,7 +40,7 @@
             </div>
           </div>
 
-          <button class="delete-btn" @click="removeItem(index)">
+          <button class="delete-btn" @click="cartStore.removeItem(index)">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -59,7 +60,7 @@
           {{ $t('cart.subtotal') }}
         </span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
-          ${{ calculateSubtotal().toFixed(2) }}
+          ${{ cartStore.subtotal.toFixed(2) }}
         </span>
       </div>
       
@@ -92,57 +93,29 @@
 </template>
 
 <script>
+import { useCartStore } from '@/stores/cartStore'
+
 export default {
   name: 'CartWidget',
-  data() {
-    return {
-      cartItems: [
-        {
-          name: 'Produto 1',
-          description: 'Descrição do produto 1',
-          price: 199.99,
-          quantity: 1,
-          image: '/img/product1.png'
-        },
-        {
-          name: 'Produto 2',
-          description: 'Descrição do produto 2',
-          price: 299.99,
-          quantity: 1,
-          image: '/img/product2.png'
-        },
-        {
-          name: 'Produto 3',
-          description: 'Descrição do produto 3',
-          price: 399.99,
-          quantity: 1,
-          image: '/img/product3.png'
-        }
-      ]
-    }
+  setup() {
+    const cartStore = useCartStore()
+    return { cartStore }
   },
   methods: {
-    increaseQuantity(index) {
-      this.cartItems[index].quantity++
-    },
-    decreaseQuantity(index) {
-      if (this.cartItems[index].quantity > 1) {
-        this.cartItems[index].quantity--
-      }
-    },
-    removeItem(index) {
-      this.cartItems.splice(index, 1)
-    },
-    calculateSubtotal() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+    formatPrice(price) {
+      const numPrice = Number(price)
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(numPrice)
     },
     checkout() {
-      this.$emit('close') // Close the widget first
-      this.$router.push('/checkout') // Navigate to checkout page
+      this.cartStore.closeCart()
+      this.$router.push('/checkout')
     },
     viewCart() {
-      this.$emit('close') // Fecha o widget primeiro
-      this.$router.push('/shopping-cart') // Depois navega para a página
+      this.cartStore.closeCart()
+      this.$router.push('/shopping-cart')
     }
   }
 }
@@ -181,11 +154,10 @@ export default {
 
 .cart-items {
   flex: 1;
-  overflow-y: auto; /* Permite rolagem apenas na área dos itens */
-  padding-right: 8px; /* Espaço para a barra de rolagem */
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
-/* Estiliza a barra de rolagem para melhor visual */
 .cart-items::-webkit-scrollbar {
   width: 4px;
 }
@@ -200,11 +172,12 @@ export default {
 }
 
 .cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
   padding: 32px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  align-items: flex-start;
 }
 
 .item-image {
@@ -219,17 +192,23 @@ export default {
   gap: 16px;
 }
 
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Adiciona espaçamento entre nome e preço */
+}
+
 .item-info h2 {
   font-family: 'Archivo';
-  font-weight: 400;
-  font-size: 34px;
-  line-height: 40px;
+  font-weight: 600; /* Alterado de 400 para 600 para ficar em negrito */
+  font-size: 22px;
+  line-height: 28px;
 }
 
 .price {
   font-family: 'Archivo';
-  font-size: 22px;
-  line-height: 40px;
+  font-size: 18px;
+  line-height: 24px;
 }
 
 .quantity-selector {
@@ -279,7 +258,6 @@ export default {
   color: #1E1E1E;
 }
 
-/* Removendo os estilos anteriores que possam conflitar */
 .quantity-selector button:hover {
   opacity: 1;
 }
@@ -289,7 +267,6 @@ export default {
 }
 
 .delete-btn {
-  margin: 0 auto;
   width: 32px;
   height: 32px;
   background: none;
@@ -300,10 +277,8 @@ export default {
   padding: 4px;
   border-radius: 2px;
   transition: background-color 0.2s ease;
-  flex: none;
-  order: 2;
-  flex-grow: 0;
-  border: none; /* Removida a borda */
+  border: none;
+  order: 1; /* Isso move o botão para o final */
 }
 
 .delete-btn:hover {
@@ -311,8 +286,8 @@ export default {
 }
 
 .delete-btn svg {
-  width: 32px; /* Aumentado de 24px para 32px */
-  height: 32px; /* Aumentado de 24px para 32px */
+  width: 32px;
+  height: 32px;
 }
 
 .close-button {
@@ -327,6 +302,8 @@ export default {
   }
 
   .cart-item {
+    grid-template-columns: 1fr auto;
+    gap: 8px;
     padding: 16px 0;
   }
 
@@ -340,5 +317,18 @@ export default {
     height: 36px;
     padding: 8px;
   }
+
+  .delete-btn {
+    order: 0; /* Reset da ordem para mobile se necessário */
+  }
 }
 </style>
+
+
+
+
+
+
+
+
+

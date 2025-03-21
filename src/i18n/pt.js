@@ -71,7 +71,8 @@ export default {
     remove: 'Remover item',
     addToCart: 'ADICIONAR',
     addCart: 'ADICIONAR AO CARRINHO',
-    quantity: 'Quantidade'
+    quantity: 'Quantidade',
+    productAdded: "Produto adicionado ao carrinho com sucesso!"
   },
   shoppingCart: {
     title: 'CARRINHO DE COMPRAS',
@@ -230,7 +231,8 @@ export default {
     productName: 'Nome do Produto',
     shippingInfo: 'Informações de Envio',
     freeShipping: 'Frete grátis para pedidos acima de R$ 200,00',
-    selectOptions: 'Por favor, selecione cor e tamanho'
+    selectOptions: 'Por favor, selecione cor e tamanho',
+    noDescription: 'Nenhuma descrição técnica disponível para este produto.'
   },
   categoryPage: {
     filters: 'FILTROS',
@@ -255,6 +257,9 @@ export default {
     noResults: 'Não encontramos nenhum produto'
   }
 }
+
+
+
 
 
 
