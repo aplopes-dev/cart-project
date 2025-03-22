@@ -673,14 +673,37 @@ const navigateToCategory = (categoryId) => {
 
 // Método para logout
 const handleLogout = async () => {
-  await store.dispatch('logout')
-  isUserMenuOpen.value = false
-  localStorage.removeItem('user')
+  const userId = JSON.parse(localStorage.getItem('user'))?.id;
   
-  cartStore.$reset()
+  if (userId) {
+    try {
+      // Recupera os dados do carrinho do localStorage antes de apagar
+      const cartData = localStorage.getItem(`cart_${userId}`);
+      if (cartData) {
+        const cartItems = JSON.parse(cartData);
+        if (cartItems.length > 0) {
+          // Sincroniza com o backend antes de limpar
+          await cartStore.syncCartWithBackend();
+          console.log('Cart synced before logout');
+        }
+      }
+    } catch (error) {
+      console.error('Error syncing cart before logout:', error);
+    }
+  }
   
-  updateAuthState()
-  router.replace('/')
+  await store.dispatch('logout');
+  isUserMenuOpen.value = false;
+  
+  // Remove os dados do carrinho do localStorage
+  localStorage.removeItem(`cart_${userId}`);
+  localStorage.removeItem('user');
+  
+  // Reset do estado do carrinho
+  cartStore.$reset();
+  
+  updateAuthState();
+  router.replace('/');
 }
 
 const toggleUserMenu = (event) => {

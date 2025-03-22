@@ -170,6 +170,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref, getCurrentInstance } from 'vue'
+import { useCartStore } from '@/stores/cartStore'
 
 export default {
   name: 'SignupPage',
@@ -178,6 +179,7 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const store = useStore()
+    const cartStore = useCartStore()
     const app = getCurrentInstance()
     const toast = app.appContext.config.globalProperties.$toast
 
@@ -238,11 +240,22 @@ export default {
         // Atualizar informações do usuário
         await store.dispatch('updateUser')
         
+        // Transferir carrinho de visitante para o novo usuário
+        const userId = store.state.currentUser?.id
+        if (userId) {
+          const guestCart = localStorage.getItem('cart_guest')
+          if (guestCart) {
+            localStorage.setItem(`cart_${userId}`, guestCart)
+            localStorage.removeItem('cart_guest')
+            await cartStore.loadCartFromStorage(userId)
+          }
+        }
+        
         toast.success(t('auth.signupSuccess'))
 
         // Verificar e realizar o redirecionamento
         const redirectPath = route.query.redirect
-        console.log('Redirect path after signup:', redirectPath) // Debug
+        console.log('Redirect path after signup:', redirectPath)
 
         if (redirectPath) {
           await router.push(redirectPath)
@@ -301,6 +314,8 @@ input[type="text"] {
   padding-right: 2.5rem;
 }
 </style>
+
+
 
 
 

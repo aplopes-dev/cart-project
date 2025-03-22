@@ -103,6 +103,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref, getCurrentInstance, nextTick } from 'vue'
+import { useCartStore } from '@/stores/cartStore'
 
 export default {
   name: 'LoginPage',
@@ -113,6 +114,7 @@ export default {
     const store = useStore()
     const app = getCurrentInstance()
     const toast = app.appContext.config.globalProperties.$toast
+    const cartStore = useCartStore()
 
     const email = ref('')
     const password = ref('')
@@ -125,7 +127,9 @@ export default {
         isLoading.value = true
         error.value = ''
         
-        await store.dispatch('login', {
+        // Login
+        // eslint-disable-next-line no-unused-vars
+        const loginResponse = await store.dispatch('login', {
           email: email.value,
           password: password.value
         })
@@ -133,7 +137,22 @@ export default {
         await store.dispatch('updateUser')
         await nextTick()
 
-        // Verifica se existe um redirecionamento pendente
+        // Carrega o carrinho após login bem-sucedido
+        const userId = store.state.currentUser?.id
+        console.log('Login successful, userId:', userId)
+        
+        if (userId) {
+          console.log('Loading cart for user:', userId)
+          try {
+            // Busca dados do carrinho do banco e salva no localStorage
+            await cartStore.loadCartFromStorage(userId)
+            console.log('Cart loaded from database:', cartStore.items)
+          } catch (cartError) {
+            console.error('Error loading cart:', cartError)
+          }
+        }
+
+        // Redirecionamento
         const redirectPath = route.query.redirect
         if (redirectPath) {
           router.push({ path: redirectPath })
@@ -153,9 +172,7 @@ export default {
       }
     }
 
-    // Adicionar método para ir para signup mantendo o redirecionamento
     const goToSignup = () => {
-      // Mantém o mesmo redirect que veio do checkout
       const query = route.query.redirect ? { redirect: route.query.redirect } : {}
       router.push({ 
         path: '/signup',
@@ -187,6 +204,13 @@ export default {
   border-color: #FFDD00;
 }
 </style>
+
+
+
+
+
+
+
 
 
 
