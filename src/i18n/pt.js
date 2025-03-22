@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 export default {
   header: {
     home: 'Início',
@@ -72,7 +73,8 @@ export default {
     addToCart: 'ADICIONAR',
     addCart: 'ADICIONAR AO CARRINHO',
     quantity: 'Quantidade',
-    productAdded: "Produto adicionado ao carrinho com sucesso!"
+    productAdded: "Produto adicionado ao carrinho com sucesso!",
+    emptyCart: "Seu carrinho está vazio"
   },
   shoppingCart: {
     title: 'CARRINHO DE COMPRAS',
@@ -83,7 +85,8 @@ export default {
     addNotes: 'Adicionar observações',
     notesPlaceholder: 'Adicione suas observações aqui...',
     quantity: 'Quantidade',
-    total: 'TOTAL'
+    total: 'TOTAL',
+    continueShopping: "CONTINUAR COMPRANDO"
   },
   categories: {
     shopByCategories: 'COMPRE POR CATEGORIAS',
@@ -166,7 +169,14 @@ export default {
       subtotal: 'SUBTOTAL',
       total: 'TOTAL'
     },
-    completePurchase: 'FINALIZAR COMPRA'
+    completePurchase: 'FINALIZAR COMPRA',
+    fieldRequired: 'Este campo é obrigatório',
+    emptyCart: "Seu carrinho está vazio",
+    continueShopping: "CONTINUAR COMPRANDO",
+    completePurchase: "FINALIZAR COMPRA",
+    summary: {
+      title: "RESUMO DO PEDIDO"
+    }
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',
@@ -257,6 +267,11 @@ export default {
     noResults: 'Não encontramos nenhum produto'
   }
 }
+
+
+
+
+
 
 
 

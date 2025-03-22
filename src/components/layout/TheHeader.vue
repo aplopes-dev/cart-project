@@ -565,7 +565,29 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const cartStore = useCartStore()
-const { locale } = useI18n() // Removido 't' da desestruturação já que está sendo usado via $t no template
+const { locale } = useI18n()
+
+// Modifique os computeds e adicione um ref para controle de estado
+const authState = ref({
+  isAuthenticated: false,
+  user: null
+})
+
+// Função para atualizar o estado de autenticação
+const updateAuthState = () => {
+  const token = localStorage.getItem('token')
+  const userData = localStorage.getItem('user')
+  
+  authState.value = {
+    isAuthenticated: !!token,
+    user: userData ? JSON.parse(userData) : null
+  }
+}
+
+// Computed properties atualizadas
+const isAuthenticated = computed(() => authState.value.isAuthenticated)
+
+const currentUser = computed(() => authState.value.user)
 
 // Estado
 const isMobileMenuOpen = ref(false)
@@ -591,8 +613,6 @@ const availableLanguages = ['FR', 'EN', 'PT']
 
 // Computed Properties
 const isHomePage = computed(() => route.path === '/')
-const isAuthenticated = computed(() => store.state.isAuthenticated)
-const currentUser = computed(() => store.state.currentUser)
 
 // Methods
 const toggleMobileMenu = () => {
@@ -654,8 +674,13 @@ const navigateToCategory = (categoryId) => {
 // Método para logout
 const handleLogout = async () => {
   await store.dispatch('logout')
-  isUserMenuOpen.value = false // Fecha o menu após logout
-  router.push('/') // Alterado de '/login' para '/'
+  isUserMenuOpen.value = false
+  localStorage.removeItem('user')
+  
+  cartStore.$reset()
+  
+  updateAuthState()
+  router.replace('/')
 }
 
 const toggleUserMenu = (event) => {
@@ -740,6 +765,14 @@ watch(isMobileMenuOpen, (newValue) => {
   }
 })
 
+watch(
+  () => localStorage.getItem('token'),
+  () => {
+    // Força reavaliação do estado de autenticação
+    isAuthenticated.value = !!localStorage.getItem('token')
+  }
+)
+
 // Lifecycle Hooks
 onMounted(async () => {
   await fetchCategories()
@@ -773,6 +806,37 @@ onUnmounted(() => {
       showCategoryDropdown.value = false
     }
   })
+})
+
+// Verifica o token a cada renderização do componente
+onMounted(() => {
+  updateAuthState()
+  
+  const interval = setInterval(() => {
+    updateAuthState()
+  }, 1000) // Verifica a cada segundo
+
+  onUnmounted(() => {
+    clearInterval(interval)
+  })
+})
+
+// Adicione um watcher para a rota
+watch(
+  () => route.path,
+  () => {
+    updateAuthState()
+  }
+)
+
+// Adicione um watcher para o estado de autenticação
+watch(() => authState.value.isAuthenticated, (newValue) => {
+  if (newValue) {
+    const userId = JSON.parse(localStorage.getItem('user'))?.id
+    if (userId) {
+      cartStore.loadCartFromStorage(userId)
+    }
+  }
 })
 </script>
 

@@ -14,43 +14,57 @@
         </button>
       </div>
 
-      <div class="cart-items">
-        <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
-          <img :src="item.image" :alt="item.name" class="item-image" />
-          
-          <div class="item-details">
-            <div class="item-info">
-              <h2>{{ item.name }}</h2>
-              <p class="price">{{ formatPrice(item.price) }}</p>
-            </div>
-
-            <div class="quantity-selector">
-              <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
-                </svg>
-              </button>
-              <span class="quantity-value">{{ item.quantity }}</span>
-              <button class="quantity-btn plus" @click="cartStore.updateQuantity(index, item.quantity + 1)">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
-                  <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <button class="delete-btn" @click="cartStore.removeItem(index)">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+      <template v-if="!cartStore.items.length">
+        <div class="flex flex-col items-center justify-center h-full">
+          <p class="font-archivo-narrow text-xl text-black/70 mb-6">{{ $t('cart.emptyCart') }}</p>
+          <button 
+            class="w-full h-[50px] md:h-[60px] bg-empire-yellow font-archivo-narrow font-semibold text-xl md:text-2xl text-black"
+            @click="goToCategories"
+          >
+            {{ $t('shoppingCart.continueShopping') }}
           </button>
         </div>
-      </div>
+      </template>
+
+      <template v-else>
+        <div class="cart-items">
+          <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
+            <img :src="item.image" :alt="item.name" class="item-image" />
+          
+            <div class="item-details">
+              <div class="item-info">
+                <h2>{{ item.name }}</h2>
+                <p class="price">{{ formatPrice(item.price) }}</p>
+              </div>
+
+              <div class="quantity-selector">
+                <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
+                  </svg>
+                </button>
+                <span class="quantity-value">{{ item.quantity }}</span>
+                <button class="quantity-btn plus" @click="cartStore.updateQuantity(index, item.quantity + 1)">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
+                    <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <button class="delete-btn" @click="cartStore.removeItem(index)">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </template>
     </section>
 
     <!-- Subtotal Section -->
@@ -69,7 +83,7 @@
       </p>
 
       <!-- Buttons Section -->
-      <div class="flex flex-col items-start w-full gap-2">
+      <div v-if="cartStore.items.length" class="flex flex-col items-start w-full gap-2">
         <button 
           class="flex justify-center items-center w-full h-[50px] md:h-[60px] border-3 border-black"
           @click="viewCart"
@@ -116,6 +130,10 @@ export default {
     viewCart() {
       this.cartStore.closeCart()
       this.$router.push('/shopping-cart')
+    },
+    goToCategories() {
+      this.cartStore.closeCart()
+      this.$router.push('/categories')
     }
   }
 }
@@ -323,6 +341,9 @@ export default {
   }
 }
 </style>
+
+
+
 
 
 

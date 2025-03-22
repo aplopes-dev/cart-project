@@ -118,9 +118,9 @@
 
           <button 
             class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
-            @click="checkout"
+            @click="handleButtonClick"
           >
-            {{ $t('shoppingCart.checkout') }}
+            {{ cartItems.length ? $t('shoppingCart.checkout') : $t('shoppingCart.continueShopping') }}
           </button>
         </div>
       </div>
@@ -132,12 +132,16 @@
 import { useCartStore } from '@/stores/cartStore'
 import { defineComponent } from 'vue'
 import { productService } from '@/services/productService'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
   setup() {
     const cartStore = useCartStore()
-    return { cartStore }
+    const store = useStore()
+    const router = useRouter()
+    return { cartStore, store, router }
   },
   data() {
     return {
@@ -173,8 +177,25 @@ export default defineComponent({
     removeItem(index) {
       this.cartStore.removeItem(index)
     },
-    checkout() {
-      this.$router.push('/checkout')
+    handleButtonClick() {
+      console.log('=== Debug Checkout Flow ===')
+      const hasToken = !!localStorage.getItem('token')
+      const isAuthenticated = this.store.state.isAuthenticated || hasToken
+
+      if (this.cartItems.length > 0) {
+        if (!isAuthenticated) {
+          console.log('User not authenticated, redirecting to login...')
+          this.$router.push({ 
+            name: 'Login',
+            query: { redirect: '/checkout' }
+          })
+        } else {
+          console.log('User authenticated, proceeding to checkout...')
+          this.$router.push({ name: 'Checkout' })
+        }
+      } else {
+        this.$router.push('/categories')
+      }
     },
     formatPrice(price) {
       return new Intl.NumberFormat('en-US', {
@@ -189,6 +210,9 @@ export default defineComponent({
       } catch (error) {
         console.error(`Error fetching details for product ${productId}:`, error)
       }
+    },
+    continueShopping() {
+      this.$router.push('/categories')
     }
   },
   watch: {
@@ -218,6 +242,7 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
 
 
 

@@ -12,46 +12,68 @@ export const useCartStore = defineStore('cart', {
   },
   
   actions: {
-    addItem(item) {
-      // Ensure price is stored as a number
-      const normalizedItem = {
-        ...item,
-        price: Number(item.price)
+    loadCartFromStorage(userId) {
+      if (userId) {
+        const savedCart = localStorage.getItem(`cart_${userId}`)
+        if (savedCart) {
+          this.items = JSON.parse(savedCart)
+        }
       }
-      
-      // Check if item already exists in cart
-      const existingItemIndex = this.items.findIndex(
-        cartItem => cartItem.id === normalizedItem.id &&
-                   cartItem.color === normalizedItem.color &&
-                   cartItem.size === normalizedItem.size
-      )
+    },
 
-      if (existingItemIndex !== -1) {
-        // If item exists, update quantity
-        this.items[existingItemIndex].quantity += normalizedItem.quantity
-      } else {
-        // If item doesn't exist, add new item
-        this.items.push(normalizedItem)
+    saveCartToStorage(userId) {
+      if (userId) {
+        localStorage.setItem(`cart_${userId}`, JSON.stringify(this.items))
       }
     },
-    
-    removeItem(index) {
-      this.items.splice(index, 1)
-    },
-    
-    updateQuantity(index, quantity) {
-      if (quantity > 0) {
-        this.items[index].quantity = quantity
-      }
-    },
-    
+
     toggleCart() {
       this.isOpen = !this.isOpen
     },
-    
+
     closeCart() {
+      this.isOpen = false
+    },
+
+    addItem(item) {
+      const existingItemIndex = this.items.findIndex(i => i.id === item.id)
+      
+      if (existingItemIndex > -1) {
+        this.items[existingItemIndex].quantity += item.quantity
+      } else {
+        this.items.push(item)
+      }
+
+      const userId = JSON.parse(localStorage.getItem('user'))?.id
+      if (userId) {
+        this.saveCartToStorage(userId)
+      }
+    },
+
+    removeItem(index) {
+      this.items.splice(index, 1)
+      const userId = JSON.parse(localStorage.getItem('user'))?.id
+      if (userId) {
+        this.saveCartToStorage(userId)
+      }
+    },
+
+    updateQuantity(index, quantity) {
+      if (quantity > 0) {
+        this.items[index].quantity = quantity
+        const userId = JSON.parse(localStorage.getItem('user'))?.id
+        if (userId) {
+          this.saveCartToStorage(userId)
+        }
+      }
+    },
+
+    $reset() {
+      this.items = []
       this.isOpen = false
     }
   }
 })
+
+
 

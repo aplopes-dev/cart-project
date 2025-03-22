@@ -13,7 +13,13 @@
             <!-- Sign Up Text -->
             <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
               {{ $t('auth.dontHaveAccount') }}
-              <router-link to="/signup" class="text-empire-yellow hover:underline">{{ $t('auth.signUpFree') }}</router-link>
+              <a 
+                @click.prevent="goToSignup" 
+                href="#" 
+                class="text-empire-yellow hover:underline cursor-pointer"
+              >
+                {{ $t('auth.signUpFree') }}
+              </a>
             </p>
 
             <!-- Form -->
@@ -94,15 +100,16 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { ref, getCurrentInstance } from 'vue'
+import { ref, getCurrentInstance, nextTick } from 'vue'
 
 export default {
   name: 'LoginPage',
   setup() {
     const { t } = useI18n()
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
     const app = getCurrentInstance()
     const toast = app.appContext.config.globalProperties.$toast
@@ -123,10 +130,16 @@ export default {
           password: password.value
         })
         
-        // Força a atualização do usuário após o login
         await store.dispatch('updateUser')
-        
-        router.push('/')
+        await nextTick()
+
+        // Verifica se existe um redirecionamento pendente
+        const redirectPath = route.query.redirect
+        if (redirectPath) {
+          router.push({ path: redirectPath })
+        } else {
+          router.push({ path: '/', replace: true })
+        }
       } catch (err) {
         console.error('Login error:', err)
         const errorMessage = err.response?.data?.message === 'Invalid credentials' 
@@ -140,6 +153,16 @@ export default {
       }
     }
 
+    // Adicionar método para ir para signup mantendo o redirecionamento
+    const goToSignup = () => {
+      // Mantém o mesmo redirect que veio do checkout
+      const query = route.query.redirect ? { redirect: route.query.redirect } : {}
+      router.push({ 
+        path: '/signup',
+        query
+      })
+    }
+
     return {
       email,
       password,
@@ -147,6 +170,7 @@ export default {
       isLoading,
       showPassword,
       handleLogin,
+      goToSignup,
       t
     }
   }
@@ -163,6 +187,10 @@ export default {
   border-color: #FFDD00;
 }
 </style>
+
+
+
+
 
 
 

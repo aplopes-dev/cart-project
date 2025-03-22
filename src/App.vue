@@ -22,6 +22,9 @@ export default {
     isHomePage() {
       return this.$route.path === '/'
     }
+  },
+  created() {
+    this.$store.dispatch('initializeAuth')
   }
 }
 </script>
@@ -34,4 +37,5 @@ export default {
   color: #2c3e50;
 }
 </style>
+
 

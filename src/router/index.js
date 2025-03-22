@@ -54,7 +54,8 @@ const routes = [
   {
     path: '/checkout',
     name: 'Checkout',
-    component: CheckoutPage
+    component: CheckoutPage,
+    meta: { requiresAuth: true }
   },
   {
     path: '/thank-you',
@@ -68,7 +69,7 @@ const routes = [
   },
   {
     path: '/categories',
-    name: 'categories',
+    name: 'Categories',
     component: CategoryPage
   },
   {
@@ -109,7 +110,10 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = authService.isAuthenticated()
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login')
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
   } else if (to.meta.requiresGuest && isAuthenticated) {
     next('/')
   } else {
@@ -119,6 +123,8 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
+
 
 
 

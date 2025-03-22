@@ -32,33 +32,67 @@
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.firstName') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.firstName"
                       :placeholder="$t('checkout.firstNamePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :disabled="userData?.firstName"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        userData?.firstName ? 'bg-gray-100' : 'bg-white',
+                        (showErrors && formErrors.firstName) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.firstName" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.lastName') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.lastName"
                       :placeholder="$t('checkout.lastNamePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :disabled="userData?.lastName"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        userData?.lastName ? 'bg-gray-100' : 'bg-white',
+                        (showErrors && formErrors.lastName) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.lastName" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.email') }}</label>
                     <input 
                       type="email" 
+                      v-model="formData.email"
                       :placeholder="$t('checkout.emailPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :disabled="userData?.email"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        userData?.email ? 'bg-gray-100' : 'bg-white',
+                        (showErrors && formErrors.email) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.email" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.phone') }}</label>
                     <input 
                       type="tel" 
+                      v-model="formData.phone"
                       :placeholder="$t('checkout.phonePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.phone) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.phone" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                 </div>
               </section>
@@ -84,14 +118,22 @@
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.address"
                       :placeholder="$t('checkout.addressPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.address" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.apartment"
                       :placeholder="$t('checkout.apartmentPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
                     >
@@ -100,85 +142,120 @@
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.city"
                       :placeholder="$t('checkout.cityPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.city" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.state"
                       :placeholder="$t('checkout.statePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.postalCode"
                       :placeholder="$t('checkout.postalCodePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.postalCode" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
                     <input 
                       type="text" 
+                      v-model="formData.country"
                       :placeholder="$t('checkout.countryPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
+                      ]"
                     >
+                    <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
                   </div>
                 </div>
               </section>
 
               <!-- Payment Section -->
               <section>
-                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
-                  <svg 
-                    class="section-arrow lg:hidden absolute right-0"
-                    :class="{ 'rotate-270': sections.payment }"
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
-                  </svg>
-                </div>
-                <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="md:col-span-2">
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
-                    <input 
-                      type="text" 
-                      :placeholder="$t('checkout.cardHolderPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
+                <div v-show="sections.payment || isDesktop">
+                  <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
+                    <div class="flex items-center gap-4">
+                      <img src="/images/payment/visa.png" alt="Visa" class="h-8">
+                      <img src="/images/payment/master.png" alt="Mastercard" class="h-8">
+                      <img src="/images/payment/paypal.png" alt="PayPal" class="h-8">
+                      <img src="/images/payment/stripe.png" alt="Stripe" class="h-8">
+                      <img src="/images/payment/google.png" alt="Google Pay" class="h-8">
+                    </div>
                   </div>
-                  <div class="md:col-span-2">
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
-                    <input 
-                      type="text" 
-                      :placeholder="$t('checkout.cardNumberPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
-                    <input 
-                      type="text" 
-                      :placeholder="$t('checkout.expiryDatePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
-                    <input 
-                      type="text" 
-                      :placeholder="$t('checkout.cvvPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
-                    >
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
+                      <input 
+                        type="text" 
+                        v-model="formData.cardHolder"
+                        :placeholder="$t('checkout.cardHolderPlaceholder')"
+                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                        disabled
+                      >
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
+                      <input 
+                        type="text" 
+                        v-model="formData.cardNumber"
+                        :placeholder="$t('checkout.cardNumberPlaceholder')"
+                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                        disabled
+                      >
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
+                      <input 
+                        type="text" 
+                        v-model="formData.expiryDate"
+                        :placeholder="$t('checkout.expiryDatePlaceholder')"
+                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                        disabled
+                      >
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
+                      <input 
+                        type="text" 
+                        v-model="formData.cvv"
+                        :placeholder="$t('checkout.cvvPlaceholder')"
+                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                        disabled
+                      >
+                    </div>
                   </div>
                 </div>
               </section>
@@ -194,78 +271,92 @@
                   <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-center mx-auto">{{ $t('checkout.summary.title') }}</h2>
                 </div>
 
-                <!-- Products List -->
-                <div class="space-y-0">
-                  <div v-for="(item, index) in cartItems" :key="index" 
-                    class="flex items-start py-8 border-b border-black/25">
-                    <!-- Imagem do Produto -->
-                    <img 
-                      :src="item.image" 
-                      :alt="item.name" 
-                      class="w-[120px] h-[110px] object-cover"
-                    />
-                    
-                    <!-- Container para nome e preço -->
-                    <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
-                      <div class="flex flex-col gap-2">
-                        <!-- Nome do Produto com Quantidade -->
-                        <div class="flex items-center gap-2 min-w-0"> <!-- min-w-0 permite que o texto seja truncado -->
-                          <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
-                            <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
+                <template v-if="cartItems.length > 0">
+                  <!-- Products List -->
+                  <div class="space-y-0">
+                    <div v-for="(item, index) in cartItems" :key="index" 
+                      class="flex items-start py-8 border-b border-black/25">
+                      <!-- Imagem do Produto -->
+                      <img 
+                        :src="item.image" 
+                        :alt="item.name" 
+                        class="w-[120px] h-[110px] object-cover"
+                      />
+                      
+                      <!-- Container para nome e preço -->
+                      <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
+                        <div class="flex flex-col gap-2">
+                          <!-- Nome do Produto com Quantidade -->
+                          <div class="flex items-center gap-2 min-w-0"> <!-- min-w-0 permite que o texto seja truncado -->
+                            <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
+                              <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
+                            </div>
+                            <span class="font-archivo text-[22px] leading-[40px] truncate">{{ item.name }}</span>
                           </div>
-                          <span class="font-archivo text-[22px] leading-[40px] truncate">{{ item.name }}</span>
+                          
+                          <!-- Preço -->
+                          <span class="font-archivo text-[22px] leading-[40px] text-black/70">
+                            ${{ (item.price * item.quantity).toFixed(2) }}
+                          </span>
                         </div>
-                        
-                        <!-- Preço -->
-                        <span class="font-archivo text-[22px] leading-[40px] text-black/70">
-                          ${{ (item.price * item.quantity).toFixed(2) }}
-                        </span>
                       </div>
-                    </div>
 
-                    <!-- Botão de remover - sempre à direita -->
+                      <!-- Botão de remover -->
+                      <button 
+                        class="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                        @click="removeItem(index)"
+                      >
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M20 4L21.3333 8H10.6667L12 4H20Z" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M13.3333 13.3333V22.6667" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M18.6667 13.3333V22.6667" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Totals -->
+                  <div class="space-y-4">
+                    <div class="flex justify-between">
+                      <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
+                      <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.shipping') }}</span>
+                      <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center py-4">
+                      <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
+                        {{ $t('checkout.summary.subtotal') }}
+                      </span>
+                      <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
+                        ${{ subtotal.toFixed(2) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Complete Purchase Button -->
+                  <button 
+                    class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
+                    @click="completePurchase"
+                  >
+                    {{ $t('checkout.completePurchase') }}
+                  </button>
+                </template>
+
+                <template v-else>
+                  <div class="flex flex-col items-center gap-6 py-8">
+                    <p class="font-archivo-narrow font-semibold text-2xl text-center">{{ $t('checkout.emptyCart') }}</p>
                     <button 
-                      class="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
-                      @click="removeItem(index)"
+                      class="bg-empire-yellow px-8 py-4 font-archivo-narrow font-semibold text-2xl"
+                      @click="continueShopping"
                     >
-                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
+                      {{ $t('checkout.continueShopping') }}
                     </button>
                   </div>
-                </div>
-
-                <!-- Totals -->
-                <div class="space-y-4">
-                  <div class="flex justify-between">
-                    <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
-                    <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.shipping') }}</span>
-                    <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
-                  </div>
-                  <div class="flex justify-between items-center py-4">
-                    <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
-                      {{ $t('checkout.summary.subtotal') }}
-                    </span>
-                    <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
-                      ${{ calculateSubtotal().toFixed(2) }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Complete Purchase Button -->
-                <button 
-                  class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
-                  @click="completePurchase"
-                >
-                  {{ $t('checkout.completePurchase') }}
-                </button>
+                </template>
               </div>
             </div>
           </div>
@@ -276,8 +367,38 @@
 </template>
 
 <script>
+import { useCartStore } from '@/stores/cartStore'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+
 export default {
   name: 'CheckoutPage',
+  setup() {
+    const cartStore = useCartStore()
+    const store = useStore()
+    const router = useRouter()
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+
+    const cartItems = computed(() => cartStore.items)
+
+    const continueShopping = () => {
+      router.push('/categories')
+    }
+
+    const removeItem = (index) => {
+      cartStore.removeItem(index)
+    }
+
+    return {
+      cartStore,
+      store,
+      continueShopping,
+      cartItems,
+      removeItem,
+      userData
+    }
+  },
   data() {
     return {
       sections: {
@@ -286,36 +407,48 @@ export default {
         payment: true
       },
       isDesktop: window.innerWidth >= 1024,
-      cartItems: [
-        {
-          name: 'Product Name 1',
-          price: 99.99,
-          quantity: 1,
-          image: '/img/product1.png'
-        },
-        {
-          name: 'Product Name 2',
-          price: 149.99,
-          quantity: 2,
-          image: '/img/product2.png'
-        }
+      formData: {
+        firstName: this.userData?.firstName || '',
+        lastName: this.userData?.lastName || '',
+        email: this.userData?.email || '',
+        phone: '',
+        address: '',
+        apartment: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: '',
+        cardHolder: '',
+        cardNumber: '',
+        expiryDate: '',
+        cvv: ''
+      },
+      showErrors: false
+    }
+  },
+  computed: {
+    subtotal() {
+      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+    },
+    formErrors() {
+      const errors = {}
+      const requiredFields = [
+        'firstName', 'lastName', 'email', 'phone',
+        'address', 'city', 'state', 'postalCode', 'country'
       ]
+
+      requiredFields.forEach(field => {
+        errors[field] = !this.formData[field]
+      })
+
+      return errors
+    },
+    hasErrors() {
+      return Object.values(this.formErrors).some(error => error)
     }
   },
   mounted() {
     window.addEventListener('resize', this.checkDesktop)
-    // Aqui você pode carregar os itens do carrinho
-    // Por exemplo, de uma store ou localStorage
-    this.cartItems = [
-      // Exemplo de dados
-      {
-        name: 'Produto 1',
-        price: 99.99,
-        quantity: 1,
-        image: '/img/product1.png'
-      }
-      // Adicione mais itens conforme necessário
-    ]
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkDesktop)
@@ -329,25 +462,20 @@ export default {
     checkDesktop() {
       this.isDesktop = window.innerWidth >= 1024
     },
-    calculateSubtotal() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+    validateForm() {
+      this.showErrors = true
+      return !this.hasErrors
     },
     async completePurchase() {
+      if (!this.validateForm()) {
+        return
+      }
       try {
-        // Aqui você pode adicionar a lógica de processamento do pedido
         console.log('Processing purchase...')
-        
-        // Redireciona para a página de agradecimento
         await this.$router.push('/thank-you')
       } catch (error) {
         console.error('Navigation error:', error)
       }
-    },
-    removeItem(index) {
-      this.cartItems.splice(index, 1)
-    },
-    calculateTotal() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
     }
   }
 }
@@ -410,3 +538,20 @@ input::placeholder {
   }
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

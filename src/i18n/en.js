@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 export default {
   header: {
     home: 'Home',
@@ -73,6 +74,7 @@ export default {
     addCart: 'ADD TO CART',
     quantity: 'Quantity',
     productAdded: "Product added to cart successfully!",
+    emptyCart: "Your shopping cart is empty"
   },
   shoppingCart: {
     title: 'SHOPPING CART',
@@ -83,7 +85,8 @@ export default {
     addNotes: 'Add Notes',
     notesPlaceholder: 'Add your notes here...',
     quantity: 'Quantity',
-    total: 'TOTAL'
+    total: 'TOTAL',
+    continueShopping: "CONTINUE SHOPPING"
   },
   categories: {
     shopByCategories: 'SHOP BY CATEGORIES',
@@ -124,6 +127,12 @@ export default {
     close: 'Close'
   },
   checkout: {
+    emptyCart: "Your cart is empty",
+    continueShopping: "CONTINUE SHOPPING",
+    completePurchase: "COMPLETE PURCHASE",
+    summary: {
+      title: "ORDER SUMMARY"
+    },
     title: 'CHECKOUT',
     personalDetails: 'Personal Details',
     firstName: 'First Name',
@@ -166,7 +175,8 @@ export default {
       subtotal: 'SUBTOTAL',
       total: 'TOTAL'
     },
-    completePurchase: 'COMPLETE PURCHASE'
+    completePurchase: 'COMPLETE PURCHASE',
+    fieldRequired: 'This field is required'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
@@ -302,6 +312,11 @@ export default {
     showingResults: 'Showing {count} results'
   }
 }
+
+
+
+
+
 
 
 

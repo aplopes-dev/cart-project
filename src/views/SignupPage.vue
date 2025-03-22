@@ -167,7 +167,7 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref, getCurrentInstance } from 'vue'
 
@@ -176,6 +176,7 @@ export default {
   setup() {
     const { t } = useI18n()
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
     const app = getCurrentInstance()
     const toast = app.appContext.config.globalProperties.$toast
@@ -191,31 +192,42 @@ export default {
     const showPassword = ref(false)
     const showConfirmPassword = ref(false)
 
-    const handleSignup = async () => {
+    const validateForm = () => {
       showErrors.value = true
-
+      
+      // Verifica campos obrigatórios
       if (!firstName.value || !lastName.value || !email.value || !password.value || !confirmPassword.value) {
-        toast.error(t('auth.allFieldsRequired'))
         error.value = t('auth.allFieldsRequired')
-        return
+        return false
       }
 
-      if (password.value !== confirmPassword.value) {
-        toast.error(t('auth.passwordsDoNotMatch'))
-        error.value = t('auth.passwordsDoNotMatch')
-        return
-      }
-
+      // Verifica o comprimento mínimo da senha
       if (password.value.length < 6) {
-        toast.error(t('auth.passwordTooShort'))
         error.value = t('auth.passwordTooShort')
-        return
+        return false
       }
 
+      // Verifica se as senhas coincidem
+      if (password.value !== confirmPassword.value) {
+        error.value = t('auth.passwordsDoNotMatch')
+        return false
+      }
+
+      return true
+    }
+
+    const handleSignup = async () => {
       try {
+        // Validação do formulário
+        if (!validateForm()) {
+          toast.error(error.value)
+          return
+        }
+
         isLoading.value = true
         error.value = ''
 
+        // Realizar o signup
         await store.dispatch('signup', {
           firstName: firstName.value,
           lastName: lastName.value,
@@ -223,33 +235,35 @@ export default {
           password: password.value
         })
 
-        // Substituir checkAuth por updateUser
+        // Atualizar informações do usuário
         await store.dispatch('updateUser')
         
         toast.success(t('auth.signupSuccess'))
-        showErrors.value = false
-        
-        setTimeout(() => {
-          router.push('/')
-        }, 1500)
 
-      } catch (err) {
-        let errorMessage = t('auth.signupError')
-        
-        // Tratando erros específicos da API
-        if (err.response?.status === 400) {
-          if (err.response.data?.message?.includes('email')) {
-            errorMessage = t('auth.emailAlreadyExists')
-          } else if (err.response.data?.message?.includes('password')) {
-            errorMessage = t('auth.invalidPassword')
-          }
+        // Verificar e realizar o redirecionamento
+        const redirectPath = route.query.redirect
+        console.log('Redirect path after signup:', redirectPath) // Debug
+
+        if (redirectPath) {
+          await router.push(redirectPath)
+        } else {
+          await router.push('/')
         }
-
-        toast.error(errorMessage)
-        error.value = errorMessage
+      } catch (err) {
+        console.error('Signup error:', err)
+        error.value = t('auth.signupError')
+        toast.error(error.value)
       } finally {
         isLoading.value = false
       }
+    }
+
+    const goToLogin = () => {
+      const query = route.query.redirect ? { redirect: route.query.redirect } : {}
+      router.push({ 
+        path: '/login',
+        query
+      })
     }
 
     return {
@@ -264,6 +278,7 @@ export default {
       showPassword,
       showConfirmPassword,
       handleSignup,
+      goToLogin,
       t
     }
   }
@@ -286,6 +301,12 @@ input[type="text"] {
   padding-right: 2.5rem;
 }
 </style>
+
+
+
+
+
+
 
 
 

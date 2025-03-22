@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 export default {
   header: {
     home: 'Accueil',
@@ -72,7 +73,8 @@ export default {
     addToCart: 'AJOUTER',
     addCart: 'AJOUTER',
     quantity: 'Quantité',
-    productAdded: "Produit ajouté au panier avec succès !"
+    productAdded: "Produit ajouté au panier avec succès !",
+    emptyCart: "Votre panier est vide"
   },
   shoppingCart: {
     title: 'PANIER',
@@ -83,7 +85,8 @@ export default {
     addNotes: 'Ajouter des notes',
     notesPlaceholder: 'Ajoutez vos notes ici...',
     quantity: 'Quantité',
-    total: 'TOTAL'
+    total: 'TOTAL',
+    continueShopping: "CONTINUER VOS ACHATS"
   },
   categories: {
     shopByCategories: 'ACHETER PAR CATÉGORIES',
@@ -123,6 +126,12 @@ export default {
     close: 'Fermer'
   },
   checkout: {
+    emptyCart: "Votre panier est vide",
+    continueShopping: "CONTINUER VOS ACHATS",
+    completePurchase: "FINALISER L'ACHAT",
+    summary: {
+      title: "RÉSUMÉ DE LA COMMANDE"
+    },
     title: 'PAIEMENT',
     personalDetails: 'Informations Personnelles',
     firstName: 'Prénom',
@@ -165,7 +174,8 @@ export default {
       subtotal: 'SOUS-TOTAL',
       total: 'TOTAL'
     },
-    completePurchase: 'FINALISER L\'ACHAT'
+    completePurchase: 'FINALISER L\'ACHAT',
+    fieldRequired: 'Ce champ est obligatoire'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -256,6 +266,11 @@ export default {
     noResults: 'Aucun produit trouvé'
   }
 }
+
+
+
+
+
 
 
 
