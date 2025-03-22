@@ -1,5 +1,14 @@
 <template>
   <div class="shopping-cart-page">
+    <!-- Mensagem de erro -->
+    <div 
+      v-if="showError" 
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+      role="alert"
+    >
+      <span class="block sm:inline">{{ errorMessage }}</span>
+    </div>
+
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
@@ -130,10 +139,11 @@
 
 <script>
 import { useCartStore } from '@/stores/cartStore'
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { productService } from '@/services/productService'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
@@ -141,7 +151,43 @@ export default defineComponent({
     const cartStore = useCartStore()
     const store = useStore()
     const router = useRouter()
-    return { cartStore, store, router }
+    const route = useRoute()
+    const { t } = useI18n()
+
+    // Mover estados para composables
+    const showError = ref(false)
+    const errorMessage = ref('')
+
+    // Mover showErrorMessage para dentro do setup
+    const showErrorMessage = (message) => {
+      errorMessage.value = message
+      showError.value = true
+      
+      // Limpar a query string
+      router.replace({
+        query: {}
+      })
+
+      // Esconder a mensagem após 5 segundos
+      setTimeout(() => {
+        showError.value = false
+      }, 5000)
+    }
+
+    onMounted(() => {
+      if (route.query.error === 'empty_cart') {
+        showErrorMessage(t('cart.emptyCart'))
+      }
+    })
+
+    return {
+      cartStore,
+      store,
+      router,
+      showError,
+      errorMessage,
+      showErrorMessage
+    }
   },
   data() {
     return {
@@ -242,6 +288,8 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
+
 
 
 

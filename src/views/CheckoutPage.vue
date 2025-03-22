@@ -34,10 +34,10 @@
                       type="text" 
                       v-model="formData.firstName"
                       :placeholder="$t('checkout.firstNamePlaceholder')"
-                      :disabled="userData?.firstName"
+                      :disabled="isFieldDisabled.firstName"
                       :class="[
                         'w-full p-4 border-2 rounded font-archivo text-base',
-                        userData?.firstName ? 'bg-gray-100' : 'bg-white',
+                        isFieldDisabled.firstName ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.firstName) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -51,10 +51,10 @@
                       type="text" 
                       v-model="formData.lastName"
                       :placeholder="$t('checkout.lastNamePlaceholder')"
-                      :disabled="userData?.lastName"
+                      :disabled="isFieldDisabled.lastName"
                       :class="[
                         'w-full p-4 border-2 rounded font-archivo text-base',
-                        userData?.lastName ? 'bg-gray-100' : 'bg-white',
+                        isFieldDisabled.lastName ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.lastName) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -68,10 +68,10 @@
                       type="email" 
                       v-model="formData.email"
                       :placeholder="$t('checkout.emailPlaceholder')"
-                      :disabled="userData?.email"
+                      :disabled="isFieldDisabled.email"
                       :class="[
                         'w-full p-4 border-2 rounded font-archivo text-base',
-                        userData?.email ? 'bg-gray-100' : 'bg-white',
+                        isFieldDisabled.email ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.email) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -371,6 +371,8 @@ import { useCartStore } from '@/stores/cartStore'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import api from '@/services/api'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'CheckoutPage',
@@ -378,7 +380,13 @@ export default {
     const cartStore = useCartStore()
     const store = useStore()
     const router = useRouter()
-    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    const { t } = useI18n()
+
+    // Adicionar computed para dados do usuário
+    const userData = computed(() => {
+      const user = localStorage.getItem('user')
+      return user ? JSON.parse(user) : null
+    })
 
     const cartItems = computed(() => cartStore.items)
 
@@ -393,13 +401,18 @@ export default {
     return {
       cartStore,
       store,
+      router, // Importante: passar o router para os methods
       continueShopping,
       cartItems,
       removeItem,
+      t,
       userData
     }
   },
   data() {
+    // Inicializar formData com dados do usuário se disponível
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    
     return {
       sections: {
         personal: true,
@@ -408,10 +421,10 @@ export default {
       },
       isDesktop: window.innerWidth >= 1024,
       formData: {
-        firstName: this.userData?.firstName || '',
-        lastName: this.userData?.lastName || '',
-        email: this.userData?.email || '',
-        phone: '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '', // Adicionar inicialização do telefone
         address: '',
         apartment: '',
         city: '',
@@ -423,7 +436,10 @@ export default {
         expiryDate: '',
         cvv: ''
       },
-      showErrors: false
+      showErrors: false,
+      error: null,
+      showErrorAlert: false,
+      loading: false
     }
   },
   computed: {
@@ -445,6 +461,15 @@ export default {
     },
     hasErrors() {
       return Object.values(this.formErrors).some(error => error)
+    },
+    // Adicionar computed properties para verificar se campos devem estar desabilitados
+    isFieldDisabled() {
+      return {
+        firstName: !!this.userData?.firstName,
+        lastName: !!this.userData?.lastName,
+        email: !!this.userData?.email
+        // Não incluímos o telefone aqui para que ele permaneça editável
+      }
     }
   },
   mounted() {
@@ -470,12 +495,69 @@ export default {
       if (!this.validateForm()) {
         return
       }
+
+      this.loading = true
+      this.error = null
+      this.showErrorAlert = false
+
       try {
-        console.log('Processing purchase...')
-        await this.$router.push('/thank-you')
+        const orderData = {
+          address: this.formData.address,
+          apartment: this.formData.apartment,
+          city: this.formData.city,
+          state: this.formData.state,
+          postalCode: this.formData.postalCode,
+          country: this.formData.country,
+          phone: this.formData.phone
+        }
+
+        const response = await api.post('/orders', orderData)
+        
+        if (response.data) {
+          this.cartStore.$reset()
+          await this.$router.push({
+            name: 'ThankYou',
+            params: { orderNumber: response.data.order_number }
+          })
+        }
       } catch (error) {
-        console.error('Navigation error:', error)
+        console.error('Error creating order:', error)
+        
+        const errorMessage = error.response?.data?.message || 'An error occurred while processing your order'
+        this.$toast.error(errorMessage, {
+          position: 'top-right',
+          duration: 3000
+        })
+
+        if (error.response?.data?.message === 'Cart is empty. Please add items before checking out.') {
+          this.cartStore.$reset()
+        }
+      } finally {
+        this.loading = false
       }
+    }
+  },
+  watch: {
+    // Adicionar watcher para atualizar campos quando userData mudar
+    userData: {
+      handler(newUserData) {
+        if (newUserData) {
+          this.formData.firstName = newUserData.firstName || this.formData.firstName
+          this.formData.lastName = newUserData.lastName || this.formData.lastName
+          this.formData.email = newUserData.email || this.formData.email
+          this.formData.phone = newUserData.phone || this.formData.phone // Adicionar atualização do telefone
+        }
+      },
+      immediate: true
+    }
+  },
+  async beforeRouteEnter(to, from, next) {
+    const cartStore = useCartStore();
+    
+    if (!cartStore.items.length) {
+      next('/shopping-cart');
+    } else {
+      next();
     }
   }
 }
@@ -538,6 +620,20 @@ input::placeholder {
   }
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

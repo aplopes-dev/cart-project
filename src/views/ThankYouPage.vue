@@ -19,7 +19,7 @@
 
           <!-- Order Number -->
           <p class="font-archivo text-[22px] leading-[32px] text-black/70">
-            {{ $t('thankYou.orderNumber') }}{{ orderId }}
+            {{ $t('thankYou.orderNumber') }}{{ orderNumber }}
           </p>
 
           <!-- Email Message -->
@@ -53,18 +53,13 @@ export default {
   },
   data() {
     return {
-      orderId: null
+      orderNumber: null
     }
   },
   created() {
-    this.orderId = this.generateOrderId()
+    this.orderNumber = this.$route.params.orderNumber
   },
   methods: {
-    generateOrderId() {
-      const year = new Date().getFullYear()
-      const random = Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
-      return `${year}-${random}`
-    },
     goToHome() {
       this.$router.push('/')
     }
