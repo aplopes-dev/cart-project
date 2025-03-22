@@ -493,14 +493,16 @@ export default {
     },
     async completePurchase() {
       if (!this.validateForm()) {
-        return
+        return;
       }
 
-      this.loading = true
-      this.error = null
-      this.showErrorAlert = false
+      this.loading = true;
+      this.error = null;
 
       try {
+        // Sincroniza o carrinho com o backend
+        await this.cartStore.syncCartWithBackend();
+
         const orderData = {
           address: this.formData.address,
           apartment: this.formData.apartment,
@@ -509,31 +511,41 @@ export default {
           postalCode: this.formData.postalCode,
           country: this.formData.country,
           phone: this.formData.phone
-        }
+        };
 
-        const response = await api.post('/orders', orderData)
+        // Criar pedido
+        const response = await api.post('/orders', orderData);
         
-        if (response.data) {
-          this.cartStore.$reset()
-          await this.$router.push({
+        console.log('Order creation response:', response.data);
+        console.log('Order number:', response.data.order_number);
+        
+        if (response.data && response.data.order_number) {
+          // Limpa o carrinho no Pinia após o pedido ser criado com sucesso
+          await this.cartStore.clearCart();
+          
+          // Redireciona para a página de agradecimento com o número do pedido
+          await this.router.push({
             name: 'ThankYou',
             params: { orderNumber: response.data.order_number }
-          })
+          });
+        } else {
+          throw new Error('Order number not received from server');
         }
+
       } catch (error) {
-        console.error('Error creating order:', error)
+        console.error('Error creating order:', error);
         
-        const errorMessage = error.response?.data?.message || 'An error occurred while processing your order'
+        const errorMessage = error.response?.data?.message || 'An error occurred while processing your order';
         this.$toast.error(errorMessage, {
           position: 'top-right',
           duration: 3000
-        })
+        });
 
         if (error.response?.data?.message === 'Cart is empty. Please add items before checking out.') {
-          this.cartStore.$reset()
+          await this.cartStore.clearCart();
         }
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     }
   },
@@ -620,31 +632,6 @@ input::placeholder {
   }
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import api from '@/services/api'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
@@ -71,9 +72,38 @@ export const useCartStore = defineStore('cart', {
     $reset() {
       this.items = []
       this.isOpen = false
+    },
+
+    async clearCart() {
+      this.items = [];
+      this.isOpen = false;
+      
+      const userId = JSON.parse(localStorage.getItem('user'))?.id;
+      if (userId) {
+        localStorage.removeItem(`cart_${userId}`);
+      }
+    },
+
+    async syncCartWithBackend() {
+      try {
+        await api.post('/cart/sync', {
+          items: this.items.map(item => ({
+            productId: item.id,
+            quantity: item.quantity
+          }))
+        });
+      } catch (error) {
+        console.error('Error syncing cart:', error);
+        throw error;
+      }
     }
   }
 })
+
+
+
+
+
 
 
 

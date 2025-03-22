@@ -58,9 +58,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/thank-you',
+    path: '/thank-you/:orderNumber',
     name: 'ThankYou',
-    component: ThankYouPage
+    component: ThankYouPage,
+    props: true
   },
   {
     path: '/product/:id',
@@ -123,6 +124,7 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
 
 
 

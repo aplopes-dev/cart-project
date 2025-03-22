@@ -44,23 +44,33 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'ThankYouPage',
+  props: {
+    orderNumber: {
+      type: String,
+      required: true
+    }
+  },
   setup() {
     const { t } = useI18n()
-    return { t }
-  },
-  data() {
-    return {
-      orderNumber: null
+    const router = useRouter()
+    
+    const goToHome = () => {
+      router.push('/')
+    }
+
+    return { 
+      t,
+      goToHome
     }
   },
   created() {
-    this.orderNumber = this.$route.params.orderNumber
-  },
-  methods: {
-    goToHome() {
+    console.log('Order number prop:', this.orderNumber);
+    
+    if (!this.orderNumber) {
       this.$router.push('/')
     }
   }
@@ -72,3 +82,9 @@ export default {
   min-height: calc(100vh - 180px); /* Ajuste conforme necessário para compensar header e footer */
 }
 </style>
+
+
+
+
+
+
