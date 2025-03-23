@@ -4,7 +4,17 @@ const API_URL = process.env.VUE_APP_API_URL
 
 export const productService = {
   async getProducts(filters = {}) {
-    const { categoryId, brands, minPrice, maxPrice, page = 1, limit = 9, sortBy = 'featured' } = filters
+    const { 
+      categoryId, 
+      brands, 
+      minPrice, 
+      maxPrice, 
+      page = 1, 
+      limit = 9, 
+      sortBy = 'featured',
+      search  // Adicionando o parâmetro search
+    } = filters
+    
     const response = await axios.get(`${API_URL}/products`, { 
       params: {
         categoryId,
@@ -13,7 +23,8 @@ export const productService = {
         maxPrice,
         page,
         limit,
-        sortBy
+        sortBy,
+        search  // Incluindo o parâmetro search na requisição
       }
     })
     return response.data
@@ -49,6 +60,7 @@ export const productService = {
     }
   }
 }
+
 
 
 

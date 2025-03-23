@@ -114,6 +114,9 @@
           <!-- Segunda linha: Carrinho e Sign in (apenas mobile) -->
           <div class="flex md:hidden justify-end items-center gap-6 mt-0.5">
             <button @click="toggleCart" class="relative flex items-center">
+              <div v-if="cartStore.itemCount > 0" class="absolute -top-2 -right-2 bg-empire-yellow text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                {{ cartStore.itemCount }}
+              </div>
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
@@ -320,6 +323,9 @@
           <!-- Cart and Sign In -->
           <div class="flex items-center gap-6">
             <button @click="toggleCart" class="relative flex items-center">
+              <div v-if="cartStore.itemCount > 0" class="absolute -top-2 -right-2 bg-empire-yellow text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                {{ cartStore.itemCount }}
+              </div>
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
@@ -377,42 +383,72 @@
 
           <!-- Search - Desktop -->
           <div class="relative hidden md:block">
-            <div class="flex items-center justify-between px-4 py-2 w-full md:w-[213px] h-[42px] border-2 border-white rounded-full">
+            <div class="flex items-center justify-between px-4 py-2 w-full md:w-[300px] h-[42px] border-2 border-white rounded-full bg-opacity-20 backdrop-blur-sm">
               <input
                 type="text"
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
                 @keyup.enter="handleSearch"
-                class="bg-transparent text-[15px] leading-7 text-white font-archivo font-medium w-full focus:outline-none"
+                @input="handleSearchInput"
+                @keydown.down="navigateResults('down')"
+                @keydown.up="navigateResults('up')"
+                @keydown.esc="closeSearch"
+                class="bg-transparent text-[15px] leading-7 text-white font-archivo font-medium w-full focus:outline-none placeholder-white/70"
+                ref="searchInput"
               />
-              <button @click="handleSearch">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <button @click="handleSearch" class="hover:opacity-80 transition-opacity">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
                   <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
               </button>
             </div>
             
-            <!-- Autocomplete dropdown - Desktop -->
+            <!-- Resultados da busca -->
             <div 
-              v-if="showAutocomplete && filteredProducts.length > 0"
-              class="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
+              v-if="showAutocomplete"
+              class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl mt-2 max-h-[400px] overflow-y-auto z-50 border border-gray-200"
             >
-              <div 
-                v-for="product in filteredProducts" 
-                :key="product.id"
-                @click="selectProduct(product)"
-                class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
-              >
-                <img 
-                  :src="product.image" 
-                  :alt="product.name"
-                  @error="handleImageError"
-                  class="w-12 h-12 object-cover rounded"
-                />
-                <div>
-                  <div class="text-black font-archivo font-medium">{{ product.name }}</div>
-                  <div class="text-gray-600 text-sm">${{ product.price.toFixed(2) }}</div>
+              <!-- Loading state -->
+              <div v-if="isSearching" class="p-4 text-center text-gray-600">
+                <div class="animate-spin inline-block w-6 h-6 border-2 border-gray-300 border-t-primary rounded-full"></div>
+              </div>
+
+              <!-- Results -->
+              <div v-else-if="filteredProducts.length > 0">
+                <div 
+                  v-for="(product, index) in filteredProducts" 
+                  :key="product.id"
+                  @click="selectProduct(product)"
+                  @mouseenter="selectedIndex = index"
+                  :class="[
+                    'flex items-center gap-3 p-3 cursor-pointer transition-colors duration-200',
+                    selectedIndex === index ? 'bg-gray-200 text-black font-bold' : 'hover:bg-gray-200 hover:text-black hover:font-bold'
+                  ]"
+                >
+                  <div class="relative w-12 h-12 flex-shrink-0">
+                    <img 
+                      :src="product.image" 
+                      :alt="product.name"
+                      class="w-full h-full object-cover rounded"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                    />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-archivo font-medium truncate transition-colors duration-200">
+                      <span v-html="highlightMatch(product.name, searchQuery)"></span>
+                    </div>
+                    <div class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
+                  </div>
                 </div>
+              </div>
+
+              <!-- No results -->
+              <div 
+                v-else-if="searchQuery && !isSearching"
+                class="p-4 text-center text-gray-600"
+              >
+                <div class="text-sm">Nenhum produto encontrado</div>
+                <div class="text-xs mt-1 text-gray-500">Tente buscar com outros termos</div>
               </div>
             </div>
           </div>
@@ -425,16 +461,69 @@
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
                 @keyup.enter="handleSearch"
-                class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
+                @input="handleSearchInput"
+                @keydown.down="navigateResults('down')"
+                @keydown.up="navigateResults('up')"
+                @keydown.esc="closeSearch"
+                class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none placeholder-white/70"
               />
               <button 
                 @click="handleSearch"
-                class="absolute right-4 top-1/2 transform -translate-y-1/2"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
               >
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
                   <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
               </button>
+            </div>
+
+            <!-- Mobile Results -->
+            <div 
+              v-if="showAutocomplete"
+              class="absolute left-4 right-4 mt-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl z-50 max-h-[60vh] overflow-y-auto border border-gray-200"
+            >
+              <!-- Loading state -->
+              <div v-if="isSearching" class="p-4 text-center text-gray-600">
+                <div class="animate-spin inline-block w-6 h-6 border-2 border-gray-300 border-t-primary rounded-full"></div>
+              </div>
+
+              <!-- Results -->
+              <div v-else-if="filteredProducts.length > 0">
+                <div 
+                  v-for="(product, index) in filteredProducts" 
+                  :key="product.id"
+                  @click="selectProduct(product)"
+                  @mouseenter="selectedIndex = index"
+                  :class="[
+                    'flex items-center gap-3 p-3 cursor-pointer transition-colors duration-200',
+                    selectedIndex === index ? 'bg-gray-200 text-black font-bold' : 'hover:bg-gray-200 hover:text-black hover:font-bold'
+                  ]"
+                >
+                  <div class="relative w-12 h-12 flex-shrink-0">
+                    <img 
+                      :src="product.image" 
+                      :alt="product.name"
+                      class="w-full h-full object-cover rounded"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                    />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-archivo font-medium truncate transition-colors duration-200">
+                      <span v-html="highlightMatch(product.name, searchQuery)"></span>
+                    </div>
+                    <div class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- No results -->
+              <div 
+                v-else-if="searchQuery && !isSearching"
+                class="p-4 text-center text-gray-600"
+              >
+                <div class="text-sm">Nenhum produto encontrado</div>
+                <div class="text-xs mt-1 text-gray-500">Tente buscar com outros termos</div>
+              </div>
             </div>
           </div>
         </div>
@@ -533,7 +622,7 @@
                 />
                 <div>
                   <div class="text-black font-archivo font-medium">{{ product.name }}</div>
-                  <div class="text-gray-600 text-sm">${{ product.price.toFixed(2) }}</div>
+                  <div class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
                 </div>
               </div>
             </div>
@@ -560,6 +649,9 @@ import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore'
 import CartWidget from '../cart/CartWidget.vue'
 import { categoryService } from '@/services/categoryService'
+import { productService } from '@/services/productService'
+import { debounce } from 'lodash'
+import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 
 const router = useRouter()
 const route = useRoute()
@@ -595,12 +687,15 @@ const isLanguageDropdownOpen = ref(false)
 const isUserMenuOpen = ref(false)
 const selectedLanguage = ref('FR')
 const searchQuery = ref('')
+const filteredProducts = ref([])
 const showAutocomplete = ref(false)
 const showCategoryDropdown = ref(false)
 const logoUrl = ref('/images/logo.png')
 const categories = ref([])
 const loading = ref(false)
 const error = ref(null)
+const isSearching = ref(false)
+const selectedIndex = ref(-1)
 
 // Constantes
 const flagImages = {
@@ -861,6 +956,98 @@ watch(() => authState.value.isAuthenticated, (newValue) => {
     }
   }
 })
+
+// Adicione esta função para buscar produtos
+const searchProducts = async (query) => {
+  if (!query || query.length < 2) {
+    filteredProducts.value = []
+    showAutocomplete.value = false
+    return
+  }
+
+  try {
+    isSearching.value = true
+    const response = await productService.getProducts({ 
+      search: query,  // Aqui está o parâmetro que estava faltando
+      limit: 5 
+    })
+    filteredProducts.value = response.items || []
+    showAutocomplete.value = true
+  } catch (error) {
+    console.error('Error searching products:', error)
+    filteredProducts.value = []
+  } finally {
+    isSearching.value = false
+  }
+}
+
+// Adicione o debounce para a busca
+const debouncedSearch = debounce(searchProducts, 300)
+
+// Adicione este watch
+watch(searchQuery, (newValue) => {
+  debouncedSearch(newValue)
+})
+
+// Adicione esta função para formatar o preço
+const formatPrice = (price) => {
+  const numPrice = Number(price)
+  return !isNaN(numPrice) 
+    ? `$${numPrice.toFixed(2)}`
+    : '$0.00'
+}
+
+// Adicione esta função para destacar a correspondência na busca
+const highlightMatch = (text, query) => {
+  const regex = new RegExp(`(${query})`, 'gi')
+  return text.replace(regex, '<span class="!text-primary!">$1</span>')
+}
+
+// Adicione esta função para navegar pelos resultados da busca
+const navigateResults = (direction) => {
+  if (!showAutocomplete.value || !filteredProducts.value.length) return
+
+  if (direction === 'down') {
+    selectedIndex.value = Math.min(selectedIndex.value + 1, filteredProducts.value.length - 1)
+  } else if (direction === 'up') {
+    selectedIndex.value = Math.max(selectedIndex.value - 1, -1)
+  }
+
+  // Se pressionar enter com um item selecionado
+  if (selectedIndex.value >= 0) {
+    const selectedProduct = filteredProducts.value[selectedIndex.value]
+    if (selectedProduct) {
+      selectProduct(selectedProduct)
+    }
+  }
+}
+
+// Adicione esta função para fechar a busca
+const closeSearch = () => {
+  showAutocomplete.value = false
+  searchQuery.value = ''
+  selectedIndex.value = -1
+}
+
+// Modifique a função handleSearchInput existente
+const handleSearchInput = (event) => {
+  const value = event.target.value.trim()
+  selectedIndex.value = -1 // Reset selection on new input
+  
+  if (value.length >= 2) {
+    debouncedSearch(value)
+  } else {
+    filteredProducts.value = []
+    showAutocomplete.value = false
+  }
+}
+
+// Adicione ao watch existente
+watch(showAutocomplete, (newValue) => {
+  if (!newValue) {
+    selectedIndex.value = -1
+  }
+})
 </script>
 
 <style scoped>
@@ -973,5 +1160,56 @@ input {
     display: flex;
     justify-content: center;
   }
+}
+
+.search-container {
+  position: relative;
+}
+
+:deep(mark) {
+  padding: 0;
+  background-color: rgba(255, 221, 0, 0.3);
+  border-radius: 2px;
+}
+
+/* Animações */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Scrollbar personalizada */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 </style>
