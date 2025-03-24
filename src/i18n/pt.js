@@ -323,7 +323,10 @@ export default {
     managePassword: 'Alterar Senha',
     logout: 'Sair',
     logoutDescription: 'Encerre sua sessão no sistema',
-    signOut: 'Sair da Conta'
+    signOut: 'Sair da Conta',
+    settings: 'Configurações do Sistema',
+    settingsDescription: 'Configure as preferências do sistema e configurações gerais',
+    manageSettings: 'Gerenciar Configurações',
   },
   profile: {
     title: 'Editar Perfil',
@@ -374,6 +377,7 @@ export default {
     passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
   }
 }
+
 
 
 

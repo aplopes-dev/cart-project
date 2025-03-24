@@ -343,7 +343,10 @@ export default {
     managePassword: 'Change Password',
     logout: 'Logout',
     logoutDescription: 'Sign out from the system',
-    signOut: 'Sign Out'
+    signOut: 'Sign Out',
+    settings: 'System Settings',
+    settingsDescription: 'Configure system preferences and general settings',
+    manageSettings: 'Manage Settings'
   },
   profile: {
     title: 'Edit Profile',
@@ -394,6 +397,7 @@ export default {
     passwordTooShort: 'Password must be at least 6 characters long'
   }
 }
+
 
 
 

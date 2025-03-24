@@ -74,34 +74,61 @@
             <!-- Order Items -->
             <div v-if="isOrderExpanded(order.id)">
               <div class="mt-4 border-t border-black/10 pt-4">
-                <div v-for="item in order.items" :key="item.product_id" class="flex items-center justify-between space-x-4">
-                  <div class="flex items-center gap-8 w-full">
-                    <div class="flex items-center gap-4 min-w-[400px] max-w-[400px]">
+                <div v-for="item in order.items" :key="item.product_id" class="flex items-start sm:items-center gap-4 w-full">
+                  <!-- Container principal do produto -->
+                  <div class="flex items-start gap-2 flex-1 min-w-0">
+                    <!-- Imagem -->
+                    <router-link 
+                      v-if="item.product_id"
+                      :to="`/product/${item.product_id}`"
+                      class="shrink-0"
+                    >
                       <img 
                         :src="item.image" 
                         :alt="item.product_name"
                         @error="handleImageError"
-                        class="w-16 h-16 object-cover rounded shrink-0"
+                        class="w-16 h-16 object-cover rounded"
                       />
-                      
-                      <router-link 
-                        v-if="item.product_id"
-                        :to="`/product/${item.product_id}`"
-                        class="hover:text-empire-yellow transition-colors truncate"
-                      >
-                        {{ item.product_name }}
-                      </router-link>
-                      <span v-else class="truncate">{{ item.product_name }}</span>
-                    </div>
+                    </router-link>
+                    <img 
+                      v-else
+                      :src="item.image" 
+                      :alt="item.product_name"
+                      @error="handleImageError"
+                      class="w-16 h-16 object-cover rounded shrink-0"
+                    />
                     
-                    <p class="text-sm text-black/60 w-[200px] shrink-0">
-                      {{ $t('orders.quantity') }}: {{ item.quantity }} x {{ formatPrice(item.unit_price) }}
-                    </p>
+                    <!-- Container do nome e quantidade -->
+                    <div class="flex flex-col sm:flex-row items-start gap-2 min-w-0 flex-1">
+                      <!-- Nome do produto -->
+                      <div class="min-w-0 sm:w-[250px]">
+                        <router-link 
+                          v-if="item.product_id"
+                          :to="`/product/${item.product_id}`"
+                          class="hover:text-empire-yellow transition-colors text-base sm:text-lg block truncate"
+                        >
+                          {{ item.product_name }}
+                        </router-link>
+                        <span v-else class="text-base sm:text-lg block truncate">{{ item.product_name }}</span>
+                      </div>
+                      
+                      <!-- Quantidade e preço unitário -->
+                      <div class="flex items-center gap-1 font-archivo text-xs sm:text-base whitespace-nowrap sm:mx-auto sm:pt-4">
+                        <div class="flex items-center justify-center bg-black/5 px-2 sm:px-3 py-1 rounded">
+                          <span class="font-semibold">{{ item.quantity }}</span>
+                          <span class="mx-1 sm:mx-2 text-black/60">x</span>
+                          <span class="sm:text-sm">{{ formatPrice(item.unit_price) }}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  <p class="font-archivo-narrow font-semibold text-right w-[120px] shrink-0">
-                    {{ formatPrice(item.total_price) }}
-                  </p>
+                  <!-- Preço total com largura fixa -->
+                  <div class="w-[80px] sm:w-[120px] flex-shrink-0 text-right sm:self-center">
+                    <p class="font-archivo-narrow font-semibold text-sm sm:text-xl">
+                      {{ formatPrice(item.total_price) }}
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -318,6 +345,8 @@ const handleImageError = (e) => {
   white-space: nowrap;
 }
 </style>
+
+
 
 
 

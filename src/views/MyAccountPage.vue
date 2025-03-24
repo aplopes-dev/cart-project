@@ -53,20 +53,6 @@
             </router-link>
           </div>
 
-          <!-- Card - Favoritos -->
-          <div class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
-            <div class="flex items-center gap-3">
-              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('myAccount.favorites') }}</h2>
-            </div>
-            <p class="text-black/70 font-archivo text-base">{{ $t('myAccount.favoritesDescription') }}</p>
-            <router-link to="/favorites" class="text-empire-yellow hover:underline mt-auto font-archivo">
-              {{ $t('myAccount.viewFavorites') }}
-            </router-link>
-          </div>
-
           <!-- Card - Segurança -->
           <div class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
             <div class="flex items-center gap-3">
@@ -95,6 +81,21 @@
             <button @click="handleLogout" class="text-empire-yellow hover:underline mt-auto font-archivo text-left">
               {{ $t('myAccount.signOut') }}
             </button>
+          </div>
+
+          <!-- Card - Configurações do Sistema -->
+          <div class="bg-red-50 p-8 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('myAccount.settings') }}</h2>
+            </div>
+            <p class="text-black/70 font-archivo text-base">{{ $t('myAccount.settingsDescription') }}</p>
+            <router-link to="/settings" class="text-empire-yellow hover:underline mt-auto font-archivo">
+              {{ $t('myAccount.manageSettings') }}
+            </router-link>
           </div>
         </div>
       </div>
@@ -145,6 +146,9 @@ const handleLogout = async () => {
   router.replace('/');
 }
 </script>
+
+
+
 
 
 

@@ -323,7 +323,10 @@ export default {
     managePassword: 'Changer le Mot de Passe',
     logout: 'Déconnexion',
     logoutDescription: 'Déconnectez-vous du système',
-    signOut: 'Se Déconnecter'
+    signOut: 'Se Déconnecter',
+    settings: 'Paramètres Système',
+    settingsDescription: 'Configurez les préférences du système et les paramètres généraux',
+    manageSettings: 'Gérer les Paramètres',
   },
   profile: {
     title: 'Modifier le Profil',
@@ -374,6 +377,7 @@ export default {
     passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
   }
 }
+
 
 
 

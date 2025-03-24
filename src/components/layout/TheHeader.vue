@@ -420,7 +420,6 @@
                 type="text"
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
-                @keyup.enter="handleSearch"
                 @input="handleSearchInput"
                 @keydown.down="navigateResults('down')"
                 @keydown.up="navigateResults('up')"
@@ -492,7 +491,6 @@
                 type="text"
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
-                @keyup.enter="handleSearch"
                 @input="handleSearchInput"
                 @keydown.down="navigateResults('down')"
                 @keydown.up="navigateResults('up')"
@@ -623,11 +621,10 @@
                 type="text"
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
-                @keyup.enter="handleSearch"
+                @input="handleSearchInput"
                 class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
               />
-              <button 
-                @click="handleSearch"
+              <button                 
                 class="absolute right-4 top-1/2 transform -translate-y-1/2"
               >
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -756,18 +753,7 @@ const toggleCart = () => {
   cartStore.toggleCart()
 }
 
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({
-      path: '/search',
-      query: { q: searchQuery.value }
-    })
-    showAutocomplete.value = false
-    if (isMobileMenuOpen.value) {
-      toggleMobileMenu()
-    }
-  }
-}
+
 
 const selectProduct = (product) => {
   router.push(`/product/${product.id}`)
