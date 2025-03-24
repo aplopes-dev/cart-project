@@ -19,6 +19,7 @@
         <CartSummary
           :subtotal="subtotal"
           :shipping="shipping"
+          :taxes="taxes"
           :total="total"
           @checkout="handleCheckout"
         />
@@ -46,9 +47,10 @@ export default defineComponent({
   data() {
     return {
       cartItems: [], // Será integrado com Pinia
-      subtotal: 'R$ 0,00',
-      shipping: 'R$ 0,00',
-      total: 'R$ 0,00'
+      subtotal: '0.00',
+      shipping: '0.00',
+      taxes: '5.00',
+      total: '0.00'
     }
   },
   methods: {
@@ -64,7 +66,22 @@ export default defineComponent({
     },
     updateTotals() {
       // Implementar cálculo de totais
-      console.log('Atualizando totais...')
+      const subtotalValue = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      this.subtotal = subtotalValue.toFixed(2)
+      
+      // Exemplo de cálculo de impostos (10%)
+      this.taxes = (subtotalValue * 0.10).toFixed(2)
+      
+      // Exemplo de cálculo de frete (fixo ou baseado em regras)
+      this.shipping = this.calculateShipping()
+      
+      // Total final
+      this.total = (parseFloat(this.subtotal) + parseFloat(this.shipping) + parseFloat(this.taxes)).toFixed(2)
+    },
+    
+    calculateShipping() {
+      // Implemente sua lógica de cálculo de frete aqui
+      return '10.00' // Valor fixo como exemplo
     }
   }
 })

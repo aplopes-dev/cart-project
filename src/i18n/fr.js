@@ -355,7 +355,10 @@ export default {
       processing: 'En Cours',
       completed: 'Terminée',
       cancelled: 'Annulée'
-    }
+    },
+    shipping: 'Frais de livraison',
+    taxes: 'Taxes',
+    total: 'Total'
   },
   security: {
     title: 'Sécurité',
@@ -371,6 +374,7 @@ export default {
     passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
   }
 }
+
 
 
 

@@ -19,7 +19,8 @@ export const authService = {
           email: decodedToken.email,
           firstName: decodedToken.firstName,
           lastName: decodedToken.lastName,
-          id: decodedToken.sub
+          id: decodedToken.sub,
+          phone: decodedToken.phone // Adicionando phone aos dados decodificados
         }
         
         localStorage.setItem('token', token)
@@ -60,7 +61,18 @@ export const authService = {
 
   getCurrentUser() {
     const userStr = localStorage.getItem('user')
-    return userStr ? JSON.parse(userStr) : null
+    if (!userStr) return null
+    
+    try {
+      const user = JSON.parse(userStr)
+      return {
+        ...user,
+        phone: user.phone || '' // Garantindo que phone sempre exista, mesmo que vazio
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e)
+      return null
+    }
   },
 
   isAuthenticated() {
@@ -78,6 +90,7 @@ export const authService = {
     }
   }
 }
+
 
 
 

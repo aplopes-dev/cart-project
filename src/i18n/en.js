@@ -375,7 +375,10 @@ export default {
       processing: 'Processing',
       completed: 'Completed',
       cancelled: 'Cancelled'
-    }
+    },
+    shipping: 'Shipping',
+    taxes: 'Taxes',
+    total: 'Total'
   },
   security: {
     title: 'Security',
@@ -391,6 +394,7 @@ export default {
     passwordTooShort: 'Password must be at least 6 characters long'
   }
 }
+
 
 
 

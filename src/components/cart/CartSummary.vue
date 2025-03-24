@@ -6,10 +6,17 @@
         <span class="font-archivo text-base md:text-xl text-black/70">{{ $t('cart.subtotal') }}</span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ subtotal }}</span>
       </div>
+      
       <div class="flex justify-between items-center">
         <span class="font-archivo text-base md:text-xl text-black/70">{{ $t('cart.shipping') }}</span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ shipping }}</span>
       </div>
+
+      <div class="flex justify-between items-center">
+        <span class="font-archivo text-base md:text-xl text-black/70">{{ $t('cart.taxes') }}</span>
+        <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">${{ taxes }}</span>
+      </div>
+
       <div class="border-t border-black/25 pt-4">
         <div class="flex justify-between items-center">
           <span class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('cart.total') }}</span>
@@ -33,15 +40,20 @@ export default {
   name: 'CartSummary',
   props: {
     subtotal: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
     },
     shipping: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
     },
+    taxes: {
+      type: [Number, String],
+      required: true,
+      default: '0.00'
+    },
     total: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
     }
   },
@@ -52,3 +64,4 @@ export default {
   }
 }
 </script>
+

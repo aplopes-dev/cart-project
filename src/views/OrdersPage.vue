@@ -62,7 +62,7 @@
                 </p>
               </div>
               <div class="text-right">
-                <p class="font-archivo-narrow font-semibold text-xl">
+                <p v-if="!isOrderExpanded(order.id)" class="font-archivo-narrow font-semibold text-xl">
                   {{ formatPrice(order.total) }}
                 </p>
                 <span :class="getStatusClass(order.status.toLowerCase())" class="inline-block px-3 py-1 rounded-full text-sm">
@@ -72,37 +72,122 @@
             </div>
 
             <!-- Order Items -->
-            <div v-if="isOrderExpanded(order.id)" class="mt-4 border-t border-black/10 pt-4">
-              <div v-for="item in order.items" :key="item.product_name" class="flex justify-between items-center py-2">
-                <div class="flex-1">
-                  <p class="font-archivo">{{ item.product_name }}</p>
-                  <p class="text-sm text-black/60">
-                    {{ $t('orders.quantity') }}: {{ item.quantity }} x {{ formatPrice(item.unit_price) }}
+            <div v-if="isOrderExpanded(order.id)">
+              <div class="mt-4 border-t border-black/10 pt-4">
+                <div v-for="item in order.items" :key="item.product_id" class="flex items-center justify-between space-x-4">
+                  <div class="flex items-center gap-8 w-full">
+                    <div class="flex items-center gap-4 min-w-[400px] max-w-[400px]">
+                      <img 
+                        :src="item.image" 
+                        :alt="item.product_name"
+                        @error="handleImageError"
+                        class="w-16 h-16 object-cover rounded shrink-0"
+                      />
+                      
+                      <router-link 
+                        v-if="item.product_id"
+                        :to="`/product/${item.product_id}`"
+                        class="hover:text-empire-yellow transition-colors truncate"
+                      >
+                        {{ item.product_name }}
+                      </router-link>
+                      <span v-else class="truncate">{{ item.product_name }}</span>
+                    </div>
+                    
+                    <p class="text-sm text-black/60 w-[200px] shrink-0">
+                      {{ $t('orders.quantity') }}: {{ item.quantity }} x {{ formatPrice(item.unit_price) }}
+                    </p>
+                  </div>
+                  
+                  <p class="font-archivo-narrow font-semibold text-right w-[120px] shrink-0">
+                    {{ formatPrice(item.total_price) }}
                   </p>
                 </div>
-                <p class="font-archivo-narrow font-semibold">
-                  {{ formatPrice(item.total_price) }}
-                </p>
+              </div>
+
+              <!-- Sumário do pedido -->
+              <div class="border-t border-black/10 mt-6 pt-4">
+                <div class="flex flex-col gap-2 items-end">
+                  <div class="flex justify-end gap-8 w-full">
+                    <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
+                    <span class="font-archivo w-[120px] text-right">
+                      {{ formatPrice(order.shipping_cost) }}
+                    </span>
+                  </div>
+                  
+                  <div class="flex justify-end gap-8 w-full">
+                    <span class="font-archivo text-black/70">{{ $t('orders.taxes') }}</span>
+                    <span class="font-archivo w-[120px] text-right">
+                      {{ formatPrice(order.tax) }}
+                    </span>
+                  </div>
+
+                  <div class="flex justify-end gap-8 w-full pt-2 border-t border-black/10">
+                    <span class="font-archivo-narrow font-semibold text-xl">{{ $t('orders.total') }}</span>
+                    <span class="font-archivo-narrow font-semibold text-xl w-[120px] text-right">
+                      {{ formatPrice(order.total) }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Pagination -->
-        <div v-if="totalPages > 1" class="mt-8 flex justify-center gap-2">
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            @click="changePage(page)"
-            :class="[
-              'px-4 py-2 rounded',
-              currentPage === page 
-                ? 'bg-empire-yellow text-black' 
-                : 'bg-gray-200 hover:bg-gray-300'
-            ]"
-          >
-            {{ page }}
-          </button>
+        <!-- Paginação -->
+        <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
+          <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
+            <!-- Botão Previous -->
+            <button 
+              class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+              :disabled="currentPage === 1"
+              @click="changePage(currentPage - 1)"
+            >
+              <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.previous') }}</span>
+            </button>
+
+            <!-- Números das Páginas -->
+            <div class="flex gap-1 md:gap-2">
+              <button 
+                v-for="page in displayedPages" 
+                :key="page"
+                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
+                :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
+                @click="changePage(page)"
+              >
+                {{ page }}
+              </button>
+            </div>
+
+            <!-- Botão Next -->
+            <button 
+              class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+              :disabled="currentPage === totalPages"
+              @click="changePage(currentPage + 1)"
+            >
+              <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.next') }}</span>
+              <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 15L12.5 10L7.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Contador de Items na paginação -->
+          <div class="flex justify-center">
+            <span class="font-inter text-sm md:text-base">
+              {{ totalItems === 0 
+                ? $t('categoryPage.noResults') 
+                : $t('categoryPage.itemsCount', { 
+                    start: itemRange.start, 
+                    end: itemRange.end, 
+                    total: totalItems 
+                  }) 
+              }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -110,16 +195,44 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '@/services/api' // Importando o serviço api configurado
+import { ref, onMounted, computed } from 'vue'
+import api from '@/services/api'
+
+// Definindo a constante diretamente como é feito em outros componentes
+const PLACEHOLDER_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 
 const orders = ref([])
 const loading = ref(false)
 const error = ref(null)
 const currentPage = ref(1)
 const totalPages = ref(1)
+const totalItems = ref(0)
+const itemsPerPage = 5
 const expandedOrders = ref([]) // Adicionado ref para controlar as orders expandidas
-const itemsPerPage = 5 // Alterado de 10 para 5
+
+// Computed para páginas a serem exibidas
+const displayedPages = computed(() => {
+  const pages = []
+  const maxVisiblePages = 5
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
+  let end = Math.min(totalPages.value, start + maxVisiblePages - 1)
+
+  if (end - start + 1 < maxVisiblePages) {
+    start = Math.max(1, end - maxVisiblePages + 1)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
+// Computed property para calcular o intervalo de itens
+const itemRange = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage + 1
+  const end = Math.min(start + itemsPerPage - 1, totalItems.value)
+  return { start, end }
+})
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('en-US', {
@@ -172,6 +285,7 @@ const fetchOrders = async (page = 1) => {
     }))
     currentPage.value = response.data.page
     totalPages.value = response.data.totalPages
+    totalItems.value = response.data.total // Adicione esta linha para obter o total de itens
   } catch (err) {
     console.error('Error fetching orders:', err)
     error.value = 'Error fetching orders'
@@ -180,16 +294,48 @@ const fetchOrders = async (page = 1) => {
   }
 }
 
-const changePage = (page) => {
-  if (page !== currentPage.value) {
-    fetchOrders(page)
+const changePage = async (page) => {
+  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
+    await fetchOrders(page)
+    // Opcional: Rolar para o topo da lista
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
 onMounted(() => {
   fetchOrders()
 })
+
+const handleImageError = (e) => {
+  e.target.src = PLACEHOLDER_IMAGE_BASE64
+}
 </script>
+
+<style scoped>
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

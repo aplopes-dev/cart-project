@@ -355,7 +355,10 @@ export default {
       processing: 'Em Processamento',
       completed: 'Concluído',
       cancelled: 'Cancelado'
-    }
+    },
+    shipping: 'Frete',
+    taxes: 'Impostos',
+    total: 'Total'
   },
   security: {
     title: 'Segurança',
@@ -371,6 +374,7 @@ export default {
     passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
   }
 }
+
 
 
 

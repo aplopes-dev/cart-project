@@ -151,7 +151,8 @@ export const useCartStore = defineStore('cart', {
       if (userId) {
         localStorage.removeItem(`cart_${userId}`)
         try {
-          await api.delete(`/cart/${userId}`)
+          // Alterando a chamada da API para usar o endpoint correto
+          await api.delete('/cart') // Removido o userId da URL
         } catch (error) {
           console.error('Error clearing cart from database:', error)
         }
@@ -192,6 +193,8 @@ export const useCartStore = defineStore('cart', {
     }
   }
 })
+
+
 
 
 
