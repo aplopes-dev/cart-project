@@ -21,7 +21,10 @@
                class="bg-black/30 p-6 md:p-8 rounded-lg">
             <h3 class="font-archivo-narrow text-xl text-empire-yellow mb-2">{{ position.title }}</h3>
             <p class="text-empire-white-70 mb-4">{{ position.description }}</p>
-            <button class="bg-empire-yellow text-black px-6 py-2 rounded-full hover:bg-empire-yellow/90 transition-colors">
+            <button 
+              @click="applyForPosition(position.title)"
+              class="bg-empire-yellow text-black px-6 py-2 rounded-full hover:bg-empire-yellow/90 transition-colors"
+            >
               {{ $t('career.apply') }}
             </button>
           </div>
@@ -50,6 +53,17 @@ export default {
           description: this.$t('career.openings.position3.description')
         }
       ]
+    }
+  },
+  methods: {
+    applyForPosition(positionTitle) {
+      this.$router.push({
+        path: '/contact',
+        query: {
+          subject: 'job_application',
+          position: positionTitle
+        }
+      })
     }
   }
 }

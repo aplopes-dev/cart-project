@@ -15,7 +15,8 @@ export default {
     searchProducts: 'Search Products',
     close: 'Close',
     greeting: 'Hello',
-    logout: 'Logout'
+    logout: 'Logout',
+    myAccount: 'My Account'
   },
   auth: {
     signIn: 'SIGN IN',
@@ -105,7 +106,8 @@ export default {
   hero: {
     bestShop: 'Your Best Online Shop',
     specialOffers: 'Special Offers',
-    newCollection: 'New Collection'
+    newCollection: 'New Collection',
+    shopNow: 'Shop Now'
   },
   products: {
     newProducts: 'NEW PRODUCTS',
@@ -124,7 +126,8 @@ export default {
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
-    close: 'Close'
+    close: 'Close',
+    back: 'Back'
   },
   checkout: {
     emptyCart: "Your cart is empty",
@@ -226,27 +229,27 @@ export default {
     supplier4: 'Global leader in pipe systems and solutions for various applications.'
   },
   career: {
-    title: 'Join Our Team',
+    title: 'Career Opportunities',
     whyJoin: {
-      title: 'Why Join Empire?',
-      benefit1: 'Competitive compensation and benefits package',
-      benefit2: 'Professional development opportunities',
-      benefit3: 'Positive and inclusive work environment',
-      benefit4: 'Career growth potential'
+      title: 'Why Join Our Team?',
+      benefit1: 'Competitive salary and benefits package',
+      benefit2: 'Professional growth and development opportunities',
+      benefit3: 'Dynamic and innovative work environment',
+      benefit4: 'Work-life balance and flexible schedule'
     },
     openings: {
       title: 'Current Openings',
       position1: {
-        title: 'Sales Representative',
-        description: 'Looking for experienced sales professionals to join our growing team.'
+        title: 'Software Developer',
+        description: 'Join our development team to create innovative solutions using cutting-edge technologies.'
       },
       position2: {
-        title: 'Technical Support Specialist',
-        description: 'Support our customers with product knowledge and technical expertise.'
+        title: 'UX/UI Designer',
+        description: 'Help us create beautiful and intuitive user experiences for our digital products.'
       },
       position3: {
-        title: 'Warehouse Manager',
-        description: 'Manage our warehouse operations and lead a team of logistics professionals.'
+        title: 'Product Manager',
+        description: 'Lead product strategy and development to deliver exceptional value to our customers.'
       }
     },
     apply: 'Apply Now'
@@ -268,10 +271,20 @@ export default {
         general: 'General Inquiry',
         support: 'Technical Support',
         sales: 'Sales',
-        other: 'Other'
+        other: 'Other',
+        jobApplication: 'Job Application'
       },
       message: 'Message',
-      submit: 'Send Message'
+      submit: 'Send Message',
+      resume: 'Resume/CV',
+      chooseFile: 'Choose File',
+      noFileChosen: 'No file chosen',
+      acceptedFormats: 'Accepted formats: PDF, DOC, DOCX (max 5MB)',
+      resumeRequired: 'Please attach your resume',
+      invalidFileType: 'Invalid file type. Please upload a PDF or Word document.',
+      fileTooLarge: 'File is too large. Maximum size is 5MB.',
+      submitSuccess: 'Your message has been sent successfully!',
+      submitError: 'There was an error sending your message. Please try again.'
     }
   },
   productDetails: {
@@ -310,29 +323,74 @@ export default {
     outOfStock: 'Out of Stock',
     noResults: 'No products found',
     showingResults: 'Showing {count} results'
+  },
+  myAccount: {
+    title: 'My Account',
+    orders: 'Orders',
+    ordersDescription: 'Track your orders and view purchase history',
+    viewOrders: 'View Orders',
+    personalInfo: 'Personal Info',
+    personalInfoDescription: 'Manage your personal information and contact details',
+    editProfile: 'Edit Profile',
+    addresses: 'Addresses',
+    addressesDescription: 'Manage your delivery addresses',
+    manageAddresses: 'Manage Addresses',
+    favorites: 'Favorites',
+    favoritesDescription: 'View your list of favorite products',
+    viewFavorites: 'View Favorites',
+    security: 'Security',
+    securityDescription: 'Change your password and manage account security',
+    managePassword: 'Change Password',
+    logout: 'Logout',
+    logoutDescription: 'Sign out from the system',
+    signOut: 'Sign Out'
+  },
+  profile: {
+    title: 'Edit Profile',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    email: 'Email',
+    phone: 'Phone',
+    firstNamePlaceholder: 'Enter your first name',
+    lastNamePlaceholder: 'Enter your last name',
+    phonePlaceholder: 'Enter your phone number',
+    emailNotEditable: 'Email cannot be edited',
+    save: 'Save Changes',
+    saving: 'Saving...',
+    cancel: 'Cancel',
+    fieldRequired: 'This field is required',
+    requiredFieldsError: 'Please fill in all required fields',
+    updateError: 'Error updating profile. Please try again.',
+    updateSuccess: 'Profile updated successfully!'
+  },
+  orders: {
+    title: 'My Orders',
+    orderNumber: 'Order #{number}',
+    noOrders: 'You haven\'t placed any orders yet',
+    startShopping: 'Start Shopping',
+    fetchError: 'Error loading orders. Please try again.',
+    quantity: 'Quantity',
+    status: {
+      pending: 'Pending',
+      processing: 'Processing',
+      completed: 'Completed',
+      cancelled: 'Cancelled'
+    }
+  },
+  security: {
+    title: 'Security',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    confirmNewPassword: 'Confirm new password',
+    updatePassword: 'Update password',
+    passwordUpdated: 'Password updated successfully',
+    currentPasswordIncorrect: 'Current password is incorrect',
+    updateError: 'Error updating password',
+    allFieldsRequired: 'All fields are required',
+    passwordsDoNotMatch: 'Passwords do not match',
+    passwordTooShort: 'Password must be at least 6 characters long'
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

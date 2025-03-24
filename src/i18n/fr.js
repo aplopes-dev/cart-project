@@ -15,7 +15,8 @@ export default {
     searchProducts: 'Rechercher des Produits',
     close: 'Fermer',
     greeting: 'Bonjour',
-    logout: 'Déconnexion'
+    logout: 'Déconnexion',
+    myAccount: 'Mon Compte'
   },
   auth: {
     signIn: 'CONNEXION',
@@ -105,7 +106,8 @@ export default {
   hero: {
     bestShop: 'Votre Meilleure Boutique en Ligne',
     specialOffers: 'Offres Spéciales',
-    newCollection: 'Nouvelle Collection'
+    newCollection: 'Nouvelle Collection',
+    shopNow: 'Acheter Maintenant'
   },
   products: {
     newProducts: 'NOUVEAUX PRODUITS',
@@ -123,7 +125,8 @@ export default {
     save: 'Enregistrer',
     delete: 'Supprimer',
     edit: 'Modifier',
-    close: 'Fermer'
+    close: 'Fermer',
+    back: 'Retour'
   },
   checkout: {
     emptyCart: "Votre panier est vide",
@@ -222,10 +225,20 @@ export default {
         general: 'Demande Générale',
         support: 'Support Technique',
         sales: 'Ventes',
-        other: 'Autre'
+        other: 'Autre',
+        jobApplication: 'Candidature d\'emploi'
       },
       message: 'Message',
-      submit: 'Envoyer le Message'
+      submit: 'Envoyer le Message',
+      resume: 'CV',
+      chooseFile: 'Choisir un fichier',
+      noFileChosen: 'Aucun fichier choisi',
+      acceptedFormats: 'Formats acceptés : PDF, DOC, DOCX (max 5MB)',
+      resumeRequired: 'Veuillez joindre votre CV',
+      invalidFileType: 'Type de fichier invalide. Veuillez télécharger un document PDF ou Word.',
+      fileTooLarge: 'Le fichier est trop volumineux. La taille maximale est de 5MB.',
+      submitSuccess: 'Votre message a été envoyé avec succès!',
+      submitError: 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer.'
     }
   },
   productDetails: {
@@ -264,8 +277,112 @@ export default {
     addToCart: 'AJOUTER AU PANIER',
     outOfStock: 'Rupture de Stock',
     noResults: 'Aucun produit trouvé'
+  },
+  career: {
+    title: 'Opportunités de Carrière',
+    whyJoin: {
+      title: 'Pourquoi Nous Rejoindre ?',
+      benefit1: 'Salaire et avantages compétitifs',
+      benefit2: 'Opportunités de croissance et développement professionnel',
+      benefit3: 'Environnement de travail dynamique et innovant',
+      benefit4: 'Équilibre travail-vie personnelle et horaires flexibles'
+    },
+    openings: {
+      title: 'Postes Disponibles',
+      position1: {
+        title: 'Développeur Logiciel',
+        description: 'Rejoignez notre équipe de développement pour créer des solutions innovantes avec des technologies de pointe.'
+      },
+      position2: {
+        title: 'Designer UX/UI',
+        description: 'Aidez-nous à créer des expériences utilisateur belles et intuitives pour nos produits numériques.'
+      },
+      position3: {
+        title: 'Chef de Produit',
+        description: 'Dirigez la stratégie et le développement des produits pour offrir une valeur exceptionnelle à nos clients.'
+      }
+    },
+    apply: 'Postuler'
+  },
+  myAccount: {
+    title: 'Mon Compte',
+    orders: 'Commandes',
+    ordersDescription: 'Suivez vos commandes et consultez l\'historique des achats',
+    viewOrders: 'Voir les Commandes',
+    personalInfo: 'Informations Personnelles',
+    personalInfoDescription: 'Gérez vos informations personnelles et coordonnées',
+    editProfile: 'Modifier le Profil',
+    addresses: 'Adresses',
+    addressesDescription: 'Gérez vos adresses de livraison',
+    manageAddresses: 'Gérer les Adresses',
+    favorites: 'Favoris',
+    favoritesDescription: 'Consultez votre liste de produits favoris',
+    viewFavorites: 'Voir les Favoris',
+    security: 'Sécurité',
+    securityDescription: 'Changez votre mot de passe et gérez la sécurité du compte',
+    managePassword: 'Changer le Mot de Passe',
+    logout: 'Déconnexion',
+    logoutDescription: 'Déconnectez-vous du système',
+    signOut: 'Se Déconnecter'
+  },
+  profile: {
+    title: 'Modifier le Profil',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'E-mail',
+    phone: 'Téléphone',
+    firstNamePlaceholder: 'Entrez votre prénom',
+    lastNamePlaceholder: 'Entrez votre nom',
+    phonePlaceholder: 'Entrez votre numéro de téléphone',
+    emailNotEditable: "L'e-mail ne peut pas être modifié",
+    save: 'Enregistrer les Modifications',
+    saving: 'Enregistrement...',
+    cancel: 'Annuler',
+    fieldRequired: 'Ce champ est obligatoire',
+    requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
+    updateError: 'Erreur lors de la mise à jour du profil. Veuillez réessayer.',
+    updateSuccess: 'Profil mis à jour avec succès!'
+  },
+  orders: {
+    title: 'Mes Commandes',
+    orderNumber: 'Commande #{number}',
+    noOrders: 'Vous n\'avez pas encore passé de commande',
+    startShopping: 'Commencer les Achats',
+    fetchError: 'Erreur lors du chargement des commandes. Veuillez réessayer.',
+    quantity: 'Quantité',
+    status: {
+      pending: 'En Attente',
+      processing: 'En Cours',
+      completed: 'Terminée',
+      cancelled: 'Annulée'
+    }
+  },
+  security: {
+    title: 'Sécurité',
+    currentPassword: 'Mot de passe actuel',
+    newPassword: 'Nouveau mot de passe',
+    confirmNewPassword: 'Confirmer le nouveau mot de passe',
+    updatePassword: 'Mettre à jour le mot de passe',
+    passwordUpdated: 'Mot de passe mis à jour avec succès',
+    currentPasswordIncorrect: 'Mot de passe actuel incorrect',
+    updateError: 'Erreur lors de la mise à jour du mot de passe',
+    allFieldsRequired: 'Tous les champs sont obligatoires',
+    passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
+    passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

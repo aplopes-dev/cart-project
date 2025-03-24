@@ -142,6 +142,22 @@
                   v-show="isUserMenuOpen"
                   class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50"
                 >
+                  <router-link
+                    to="/my-account"
+                    class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <svg 
+                      class="w-4 h-4" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="2"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {{ $t('header.myAccount') }}
+                  </router-link>
                   <button
                     @click="handleLogout"
                     class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -351,6 +367,22 @@
                   v-show="isUserMenuOpen"
                   class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
                 >
+                  <router-link
+                    to="/my-account"
+                    class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  >
+                    <svg 
+                      class="w-5 h-5" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="2"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {{ $t('header.myAccount') }}
+                  </router-link>
                   <button
                     @click="handleLogout"
                     class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"

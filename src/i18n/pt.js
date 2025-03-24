@@ -15,6 +15,7 @@ export default {
     searchProducts: 'Buscar Produtos',
     close: 'Fechar',
     greeting: 'Olá',
+    myAccount: 'Minha Conta',
     logout: 'Sair'
   },
   auth: {
@@ -105,7 +106,8 @@ export default {
   hero: {
     bestShop: 'Sua Melhor Loja Online',
     specialOffers: 'Ofertas Especiais',
-    newCollection: 'Nova Coleção'
+    newCollection: 'Nova Coleção',
+    shopNow: 'Comprar Agora'
   },
   products: {
     newProducts: 'NOVOS PRODUTOS',
@@ -223,10 +225,20 @@ export default {
         general: 'Consulta Geral',
         support: 'Suporte Técnico',
         sales: 'Vendas',
-        other: 'Outro'
+        other: 'Outro',
+        jobApplication: 'Candidatura para Vaga'
       },
       message: 'Mensagem',
-      submit: 'Enviar Mensagem'
+      submit: 'Enviar Mensagem',
+      resume: 'Currículo',
+      chooseFile: 'Escolher Arquivo',
+      noFileChosen: 'Nenhum arquivo selecionado',
+      acceptedFormats: 'Formatos aceitos: PDF, DOC, DOCX (máx 5MB)',
+      resumeRequired: 'Por favor, anexe seu currículo',
+      invalidFileType: 'Tipo de arquivo inválido. Por favor, envie um documento PDF ou Word.',
+      fileTooLarge: 'Arquivo muito grande. Tamanho máximo é 5MB.',
+      submitSuccess: 'Sua mensagem foi enviada com sucesso!',
+      submitError: 'Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.'
     }
   },
   productDetails: {
@@ -265,8 +277,111 @@ export default {
     addToCart: 'ADICIONAR AO CARRINHO',
     outOfStock: 'Fora de Estoque',
     noResults: 'Não encontramos nenhum produto'
+  },
+  career: {
+    title: 'Oportunidades de Carreira',
+    whyJoin: {
+      title: 'Por Que Se Juntar a Nossa Equipe?',
+      benefit1: 'Salário e benefícios competitivos',
+      benefit2: 'Oportunidades de crescimento e desenvolvimento profissional',
+      benefit3: 'Ambiente de trabalho dinâmico e inovador',
+      benefit4: 'Equilíbrio entre trabalho e vida pessoal com horário flexível'
+    },
+    openings: {
+      title: 'Vagas Disponíveis',
+      position1: {
+        title: 'Desenvolvedor de Software',
+        description: 'Junte-se à nossa equipe de desenvolvimento para criar soluções inovadoras usando tecnologias de ponta.'
+      },
+      position2: {
+        title: 'Designer UX/UI',
+        description: 'Ajude-nos a criar experiências de usuário bonitas e intuitivas para nossos produtos digitais.'
+      },
+      position3: {
+        title: 'Gerente de Produto',
+        description: 'Lidere a estratégia e desenvolvimento de produtos para entregar valor excepcional aos nossos clientes.'
+      }
+    },
+    apply: 'Candidatar-se'
+  },
+  myAccount: {
+    title: 'Minha Conta',
+    orders: 'Pedidos',
+    ordersDescription: 'Acompanhe seus pedidos e veja o histórico de compras',
+    viewOrders: 'Ver Pedidos',
+    personalInfo: 'Dados Pessoais',
+    personalInfoDescription: 'Gerencie suas informações pessoais e dados de contato',
+    editProfile: 'Editar Perfil',
+    addresses: 'Endereços',
+    addressesDescription: 'Gerencie seus endereços de entrega',
+    manageAddresses: 'Gerenciar Endereços',
+    favorites: 'Favoritos',
+    favoritesDescription: 'Veja sua lista de produtos favoritos',
+    viewFavorites: 'Ver Favoritos',
+    security: 'Segurança',
+    securityDescription: 'Altere sua senha e gerencie a segurança da conta',
+    managePassword: 'Alterar Senha',
+    logout: 'Sair',
+    logoutDescription: 'Encerre sua sessão no sistema',
+    signOut: 'Sair da Conta'
+  },
+  profile: {
+    title: 'Editar Perfil',
+    firstName: 'Nome',
+    lastName: 'Sobrenome',
+    email: 'E-mail',
+    phone: 'Telefone',
+    firstNamePlaceholder: 'Digite seu nome',
+    lastNamePlaceholder: 'Digite seu sobrenome',
+    phonePlaceholder: 'Digite seu telefone',
+    emailNotEditable: 'O e-mail não pode ser editado',
+    save: 'Salvar Alterações',
+    saving: 'Salvando...',
+    cancel: 'Cancelar',
+    fieldRequired: 'Este campo é obrigatório',
+    requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
+    updateError: 'Erro ao atualizar perfil. Por favor, tente novamente.',
+    updateSuccess: 'Perfil atualizado com sucesso!'
+  },
+  orders: {
+    title: 'Meus Pedidos',
+    orderNumber: 'Pedido #{number}',
+    noOrders: 'Você ainda não fez nenhum pedido',
+    startShopping: 'Começar a Comprar',
+    fetchError: 'Erro ao carregar pedidos. Por favor, tente novamente.',
+    quantity: 'Quantidade',
+    status: {
+      pending: 'Pendente',
+      processing: 'Em Processamento',
+      completed: 'Concluído',
+      cancelled: 'Cancelado'
+    }
+  },
+  security: {
+    title: 'Segurança',
+    currentPassword: 'Senha atual',
+    newPassword: 'Nova senha',
+    confirmNewPassword: 'Confirmar nova senha',
+    updatePassword: 'Atualizar senha',
+    passwordUpdated: 'Senha atualizada com sucesso',
+    currentPasswordIncorrect: 'Senha atual incorreta',
+    updateError: 'Erro ao atualizar senha',
+    allFieldsRequired: 'Todos os campos são obrigatórios',
+    passwordsDoNotMatch: 'As senhas não coincidem',
+    passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -47,7 +47,7 @@
         <div class="bg-[#FAFAFA] p-8 rounded-lg">
           <h2 class="font-archivo-narrow text-2xl text-black mb-6">{{ $t('contact.form.title') }}</h2>
           
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+          <form @submit.prevent="handleSubmit" class="space-y-6" enctype="multipart/form-data">
             <!-- Nome -->
             <div>
               <label class="block font-archivo text-sm mb-2" for="name">
@@ -104,6 +104,7 @@
                 <option value="general">{{ $t('contact.form.subjects.general') }}</option>
                 <option value="support">{{ $t('contact.form.subjects.support') }}</option>
                 <option value="sales">{{ $t('contact.form.subjects.sales') }}</option>
+                <option value="job_application">{{ $t('contact.form.subjects.jobApplication') }}</option>
                 <option value="other">{{ $t('contact.form.subjects.other') }}</option>
               </select>
             </div>
@@ -120,6 +121,39 @@
                 class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
                 required
               ></textarea>
+            </div>
+
+            <!-- Campo de upload de currículo - mostrado apenas para job applications -->
+            <div v-if="formData.subject === 'job_application'">
+              <label class="block font-archivo text-sm mb-2" for="resume">
+                {{ $t('contact.form.resume') }} *
+              </label>
+              <div class="flex items-center gap-2">
+                <input 
+                  type="file"
+                  id="resume"
+                  ref="resumeInput"
+                  @change="handleFileChange"
+                  accept=".pdf,.doc,.docx"
+                  class="hidden"
+                >
+                <button 
+                  type="button"
+                  @click="$refs.resumeInput.click()"
+                  class="px-4 py-2 border-2 border-black/25 rounded font-archivo text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
+                >
+                  {{ $t('contact.form.chooseFile') }}
+                </button>
+                <span class="text-sm text-gray-600">
+                  {{ selectedFileName || $t('contact.form.noFileChosen') }}
+                </span>
+              </div>
+              <p class="text-sm text-gray-500 mt-1">
+                {{ $t('contact.form.acceptedFormats') }}
+              </p>
+              <span v-if="showErrors && formData.subject === 'job_application' && !resumeFile" class="text-red-500 text-sm mt-1">
+                {{ $t('contact.form.resumeRequired') }}
+              </span>
             </div>
 
             <!-- Botão de Envio -->
@@ -147,22 +181,100 @@ export default {
         phone: '',
         subject: '',
         message: ''
+      },
+      resumeFile: null,
+      selectedFileName: '',
+      showErrors: false
+    }
+  },
+  created() {
+    if (this.$route.query.subject === 'job_application') {
+      this.formData.subject = 'job_application'
+      if (this.$route.query.position) {
+        this.formData.message = `I would like to apply for the position of ${this.$route.query.position}`
       }
     }
   },
   methods: {
-    handleSubmit() {
-      // Aqui você pode implementar a lógica de envio do formulário
-      console.log('Form submitted:', this.formData)
-      // Resetar o formulário após o envio
-      this.formData = {
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+    handleFileChange(event) {
+      const file = event.target.files[0]
+      if (file) {
+        // Verificar o tipo e tamanho do arquivo
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+        const maxSize = 5 * 1024 * 1024 // 5MB
+
+        if (!allowedTypes.includes(file.type)) {
+          alert(this.$t('contact.form.invalidFileType'))
+          this.$refs.resumeInput.value = ''
+          this.resumeFile = null
+          this.selectedFileName = ''
+          return
+        }
+
+        if (file.size > maxSize) {
+          alert(this.$t('contact.form.fileTooLarge'))
+          this.$refs.resumeInput.value = ''
+          this.resumeFile = null
+          this.selectedFileName = ''
+          return
+        }
+
+        this.resumeFile = file
+        this.selectedFileName = file.name
+      } else {
+        this.resumeFile = null
+        this.selectedFileName = ''
+      }
+    },
+    async handleSubmit() {
+      this.showErrors = true
+
+      // Validar se o currículo foi anexado para candidaturas
+      if (this.formData.subject === 'job_application' && !this.resumeFile) {
+        return
+      }
+
+      // Criar FormData para enviar arquivo
+      const formData = new FormData()
+      formData.append('name', this.formData.name)
+      formData.append('email', this.formData.email)
+      formData.append('phone', this.formData.phone)
+      formData.append('subject', this.formData.subject)
+      formData.append('message', this.formData.message)
+      
+      if (this.resumeFile) {
+        formData.append('resume', this.resumeFile)
+      }
+
+      try {
+        // Enviar para a API
+        await axios.post('/api/contact', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+
+        // Limpar formulário após envio
+        this.formData = {
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        }
+        this.resumeFile = null
+        this.selectedFileName = ''
+        this.$refs.resumeInput.value = ''
+        this.showErrors = false
+
+        // Mostrar mensagem de sucesso
+        alert(this.$t('contact.form.submitSuccess'))
+      } catch (error) {
+        console.error('Error submitting form:', error)
+        alert(this.$t('contact.form.submitError'))
       }
     }
   }
 }
 </script>
+

@@ -18,9 +18,9 @@
         <div class="text-center text-white px-4 md:px-8">
           <h1 class="text-4xl md:text-6xl font-bold mb-4 md:mb-6">{{ images[currentSlide].title }}</h1>
           <p class="text-lg md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto">{{ images[currentSlide].description }}</p>
-          <button class="bg-white text-black px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-gray-100 transition-colors">
-            Shop Now
-          </button>
+          <router-link to="/categories" class="bg-white text-black px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-gray-100 transition-colors">
+            {{ $t('hero.shopNow') }}
+          </router-link>
         </div>
       </div>
 
@@ -128,3 +128,6 @@ export default {
   opacity: 0;
 }
 </style>
+
+
+

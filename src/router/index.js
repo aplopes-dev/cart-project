@@ -8,6 +8,10 @@ import CheckoutPage from '@/views/CheckoutPage.vue'
 import ThankYouPage from '@/views/ThankYouPage.vue'
 import CategoryPage from '@/views/CategoryPage.vue'
 import ContactView from '@/views/ContactView.vue'
+import MyAccountPage from '../views/MyAccountPage.vue'
+import ProfilePage from '../views/ProfilePage.vue'
+import OrdersPage from '../views/OrdersPage.vue'
+import SecurityPage from '../views/SecurityPage.vue'
 
 const routes = [
   {
@@ -93,6 +97,30 @@ const routes = [
     path: '/reset-password/:token',
     name: 'ResetPassword',
     component: () => import('../views/ResetPasswordPage.vue')
+  },
+  {
+    path: '/my-account',
+    name: 'MyAccount',
+    component: MyAccountPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: OrdersPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/security',
+    name: 'Security',
+    component: SecurityPage,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -124,6 +152,10 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
+
+
+
 
 
 
