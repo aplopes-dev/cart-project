@@ -324,9 +324,21 @@ export default {
     logout: 'Déconnexion',
     logoutDescription: 'Déconnectez-vous du système',
     signOut: 'Se Déconnecter',
-    settings: 'Paramètres Système',
-    settingsDescription: 'Configurez les préférences du système et les paramètres généraux',
+    settings: 'Paramètres du Système',
+    settingsDescription: 'Configurez les données financières, le contenu du site et les informations de l\'entreprise',
     manageSettings: 'Gérer les Paramètres',
+  },
+  systemSettings: {
+    title: 'Paramètres du Système',
+    financial: 'Paramètres Financiers',
+    financialDescription: 'Gérez les données financières, les modes de paiement et les paramètres fiscaux',
+    manageFinancial: 'Gérer les paramètres financiers',
+    content: 'Contenu du Site',
+    contentDescription: 'Configurez les pages d\'histoire, fournisseurs et carrières de l\'entreprise',
+    manageContent: 'Gérer le contenu',
+    company: 'Informations de l\'Entreprise',
+    companyDescription: 'Mettez à jour l\'email, l\'adresse et le téléphone de l\'entreprise',
+    manageCompany: 'Gérer les données de l\'entreprise'
   },
   profile: {
     title: 'Modifier le Profil',
@@ -375,8 +387,152 @@ export default {
     allFieldsRequired: 'Tous les champs sont obligatoires',
     passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
     passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
+  },
+  financial: {
+    title: 'Paramètres Financiers',
+    currencyCode: 'Code de la Devise',
+    currencyCodePlaceholder: 'Ex: EUR, CAD, USD',
+    currencySymbol: 'Symbole de la Devise',
+    currencySymbolPlaceholder: 'Ex: €, $, £',
+    taxRate: 'Taux de Taxe',
+    taxRatePlaceholder: 'Entrez le taux de taxe en %',
+    minOrderValue: 'Montant Minimum de Commande',
+    minOrderValuePlaceholder: 'Entrez le montant minimum de commande',
+    freeShippingThreshold: 'Seuil de Livraison Gratuite',
+    freeShippingThresholdPlaceholder: 'Entrez le montant minimum pour la livraison gratuite',
+    requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
+    updateSuccess: 'Paramètres financiers mis à jour avec succès',
+    updateError: 'Erreur lors de la mise à jour des paramètres financiers',
+    loadError: 'Erreur lors du chargement des paramètres financiers',
+    fieldRequired: 'Ce champ est obligatoire',
+  },
+  company: {
+    name: 'Nom de l\'entreprise',
+    namePlaceholder: 'Entrez le nom de l\'entreprise',
+    email: 'E-mail',
+    emailPlaceholder: 'Entrez l\'e-mail de l\'entreprise',
+    phone: 'Téléphone',
+    phonePlaceholder: 'Entrez le téléphone de l\'entreprise',
+    address: 'Adresse',
+    addressPlaceholder: 'Entrez l\'adresse de l\'entreprise',
+    loadError: 'Erreur lors du chargement des données de l\'entreprise',
+    updateSuccess: 'Informations de l\'entreprise mises à jour avec succès',
+    updateError: 'Erreur lors de la mise à jour des informations de l\'entreprise',
+    requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
+    fieldRequired: 'Ce champ est obligatoire',
+    saving: 'Enregistrement...',
+    save: 'Enregistrer'
+  },
+  content: {
+    history: {
+      title: 'Histoire',
+      description: 'Gérez le contenu historique de l\'entreprise, la chronologie et les étapes importantes',
+      manage: 'Gérer l\'histoire',
+      breadcrumb: 'Histoire',
+      form: {
+        title: 'Titre',
+        titlePlaceholder: 'Entrez le titre de la section...',
+        text: 'Contenu',
+        textPlaceholder: 'Entrez le contenu de la section...',
+        add: 'AJOUTER UNE SECTION',
+        edit: 'MODIFIER LA SECTION'
+      },
+      actions: {
+        hide: 'Masquer la section',
+        show: 'Afficher la section',
+        edit: 'Modifier la section',
+        delete: 'Supprimer la section'
+      },
+      confirmDelete: 'Êtes-vous sûr de vouloir supprimer cette section ?',
+      success: {
+        add: 'Section ajoutée avec succès',
+        edit: 'Section mise à jour avec succès',
+        delete: 'Section supprimée avec succès'
+      },
+      error: {
+        add: 'Erreur lors de l\'ajout de la section',
+        edit: 'Erreur lors de la mise à jour de la section',
+        delete: 'Erreur lors de la suppression de la section'
+      }
+    },
+    suppliers: {
+      title: 'Fournisseurs',
+      description: 'Gérer les informations et les partenariats avec les fournisseurs',
+      manage: 'Gérer les fournisseurs',
+      breadcrumb: 'Fournisseurs',
+      form: {
+        title: 'Titre',
+        titlePlaceholder: 'Entrez le nom du fournisseur...',
+        text: 'Description',
+        textPlaceholder: 'Entrez la description du fournisseur...',
+        add: 'AJOUTER UN FOURNISSEUR',
+        edit: 'MODIFIER LE FOURNISSEUR'
+      },
+      actions: {
+        hide: 'Masquer le fournisseur',
+        show: 'Afficher le fournisseur',
+        edit: 'Modifier le fournisseur',
+        delete: 'Supprimer le fournisseur'
+      },
+      confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce fournisseur ?',
+      success: {
+        add: 'Fournisseur ajouté avec succès',
+        edit: 'Fournisseur mis à jour avec succès',
+        delete: 'Fournisseur supprimé avec succès'
+      },
+      error: {
+        add: 'Erreur lors de l\'ajout du fournisseur',
+        edit: 'Erreur lors de la mise à jour du fournisseur',
+        delete: 'Erreur lors de la suppression du fournisseur'
+      }
+    },
+    career: {
+      title: 'Carrière',
+      description: 'Gérez les offres d\'emploi, les exigences et le processus de candidature',
+      manage: 'Gérer la carrière',
+      breadcrumb: 'Carrière'
+    }
+  },
+  addresses: {
+    title: 'Mes Adresses',
+    address: 'Adresse',
+    addNew: 'Ajouter une Nouvelle Adresse',
+    street: 'Rue',
+    streetPlaceholder: 'Entrez le nom de la rue',
+    number: 'Numéro',
+    numberPlaceholder: 'Entrez le numéro',
+    complement: 'Complément',
+    complementPlaceholder: 'Entrez le complément (optionnel)',
+    neighborhood: 'Quartier',
+    neighborhoodPlaceholder: 'Entrez le quartier',
+    city: 'Ville',
+    cityPlaceholder: 'Entrez la ville',
+    state: 'État/Province',
+    statePlaceholder: 'Entrez l\'état ou la province',
+    postalCode: 'Code Postal',
+    postalCodePlaceholder: 'Entrez le code postal',
+    setAsDefault: 'Définir comme adresse par défaut',
+    deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
+    saveSuccess: 'Adresse enregistrée avec succès',
+    deleteSuccess: 'Adresse supprimée avec succès',
+    error: 'Une erreur est survenue. Veuillez réessayer.'
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

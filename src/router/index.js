@@ -121,6 +121,60 @@ const routes = [
     name: 'Security',
     component: SecurityPage,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/SystemSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/financial',
+    name: 'FinancialSettings',
+    component: () => import('../views/settings/FinancialSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/content',
+    name: 'ContentSettings',
+    component: () => import('../views/settings/ContentSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/content',
+    name: 'Content',
+    component: () => import('../views/settings/ContentSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/content/history',
+    name: 'ContentHistorySettings',
+    component: () => import('../views/settings/content/HistorySettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/content/suppliers',
+    name: 'ContentSuppliersSettings',
+    component: () => import('../views/settings/content/SuppliersSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/content/career',
+    name: 'ContentCareerSettings',
+    component: () => import('../views/settings/content/CareerSettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings/company',
+    name: 'CompanySettings',
+    component: () => import('../views/settings/CompanySettingsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/addresses',
+    name: 'Addresses',
+    component: () => import('../views/AddressesPage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -152,6 +206,16 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
+
+
+
+
+
+
+
+
+
 
 
 

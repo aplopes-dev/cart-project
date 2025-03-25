@@ -345,8 +345,38 @@ export default {
     logoutDescription: 'Sign out from the system',
     signOut: 'Sign Out',
     settings: 'System Settings',
-    settingsDescription: 'Configure system preferences and general settings',
+    settingsDescription: 'Configure financial data, website content and company information',
     manageSettings: 'Manage Settings'
+  },
+  systemSettings: {
+    title: 'System Settings',
+    financial: 'Financial Settings',
+    financialDescription: 'Manage financial data, payment methods and tax settings',
+    manageFinancial: 'Manage financial settings',
+    content: 'Website Content',
+    contentDescription: 'Configure company history, suppliers and career pages',
+    manageContent: 'Manage content',
+    company: 'Company Information',
+    companyDescription: 'Update company email, address and phone information',
+    manageCompany: 'Manage company data'
+  },
+  financial: {
+    title: 'Financial Settings',
+    currencyCode: 'Currency Code',
+    currencyCodePlaceholder: 'Ex: USD, CAD, EUR',
+    currencySymbol: 'Currency Symbol',
+    currencySymbolPlaceholder: 'Ex: $, €, £',
+    taxRate: 'Tax Rate',
+    taxRatePlaceholder: 'Enter tax rate in %',
+    minOrderValue: 'Minimum Order Value',
+    minOrderValuePlaceholder: 'Enter minimum order value',
+    freeShippingThreshold: 'Free Shipping Threshold',
+    freeShippingThresholdPlaceholder: 'Enter minimum value for free shipping',
+    requiredFieldsError: 'Please fill in all required fields',
+    updateSuccess: 'Financial settings updated successfully',
+    updateError: 'Error updating financial settings',
+    loadError: 'Error loading financial settings',
+    fieldRequired: 'This field is required'
   },
   profile: {
     title: 'Edit Profile',
@@ -395,8 +425,133 @@ export default {
     allFieldsRequired: 'All fields are required',
     passwordsDoNotMatch: 'Passwords do not match',
     passwordTooShort: 'Password must be at least 6 characters long'
+  },
+  company: {
+    name: 'Company Name',
+    namePlaceholder: 'Enter company name',
+    email: 'Email',
+    emailPlaceholder: 'Enter company email',
+    phone: 'Phone',
+    phonePlaceholder: 'Enter company phone',
+    address: 'Address',
+    addressPlaceholder: 'Enter company address',
+    loadError: 'Error loading company data',
+    updateSuccess: 'Company information updated successfully',
+    updateError: 'Error updating company information',
+    requiredFieldsError: 'Please fill in all required fields',
+    fieldRequired: 'This field is required',
+    saving: 'Saving...',
+    save: 'Save'
+  },
+  content: {
+    history: {
+      title: 'History',
+      description: 'Manage company history content, timeline and milestones',
+      manage: 'Manage history',
+      breadcrumb: 'History',
+      form: {
+        title: 'Title',
+        titlePlaceholder: 'Enter section title...',
+        text: 'Content',
+        textPlaceholder: 'Enter section content...',
+        add: 'ADD SECTION',
+        edit: 'EDIT SECTION'
+      },
+      actions: {
+        hide: 'Hide section',
+        show: 'Show section',
+        edit: 'Edit section',
+        delete: 'Delete section'
+      },
+      confirmDelete: 'Are you sure you want to delete this section?',
+      success: {
+        add: 'Section added successfully',
+        edit: 'Section updated successfully',
+        delete: 'Section deleted successfully'
+      },
+      error: {
+        add: 'Error adding section',
+        edit: 'Error updating section',
+        delete: 'Error deleting section'
+      }
+    },
+    suppliers: {
+      title: 'Suppliers',
+      description: 'Manage supplier information and partnerships',
+      manage: 'Manage suppliers',
+      breadcrumb: 'Suppliers',
+      form: {
+        title: 'Title',
+        titlePlaceholder: 'Enter supplier name...',
+        text: 'Description',
+        textPlaceholder: 'Enter supplier description...',
+        add: 'ADD SUPPLIER',
+        edit: 'EDIT SUPPLIER'
+      },
+      actions: {
+        hide: 'Hide supplier',
+        show: 'Show supplier',
+        edit: 'Edit supplier',
+        delete: 'Delete supplier'
+      },
+      confirmDelete: 'Are you sure you want to delete this supplier?',
+      success: {
+        add: 'Supplier added successfully',
+        edit: 'Supplier updated successfully',
+        delete: 'Supplier deleted successfully'
+      },
+      error: {
+        add: 'Error adding supplier',
+        edit: 'Error updating supplier',
+        delete: 'Error deleting supplier'
+      }
+    },
+    career: {
+      title: 'Career',
+      description: 'Manage job opportunities, requirements and application process',
+      manage: 'Manage career',
+      breadcrumb: 'Career'
+    }
+  },
+  addresses: {
+    title: 'My Addresses',
+    address: 'Address',
+    addNew: 'Add New Address',
+    street: 'Street',
+    streetPlaceholder: 'Enter street name',
+    number: 'Number',
+    numberPlaceholder: 'Enter number',
+    complement: 'Complement',
+    complementPlaceholder: 'Enter complement (optional)',
+    neighborhood: 'Neighborhood',
+    neighborhoodPlaceholder: 'Enter neighborhood',
+    city: 'City',
+    cityPlaceholder: 'Enter city',
+    state: 'State/Province',
+    statePlaceholder: 'Enter state or province',
+    postalCode: 'Postal Code',
+    postalCodePlaceholder: 'Enter postal code',
+    setAsDefault: 'Set as default address',
+    deleteConfirm: 'Are you sure you want to delete this address?',
+    saveSuccess: 'Address saved successfully',
+    deleteSuccess: 'Address deleted successfully',
+    error: 'An error occurred. Please try again.'
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

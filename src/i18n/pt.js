@@ -325,8 +325,38 @@ export default {
     logoutDescription: 'Encerre sua sessão no sistema',
     signOut: 'Sair da Conta',
     settings: 'Configurações do Sistema',
-    settingsDescription: 'Configure as preferências do sistema e configurações gerais',
+    settingsDescription: 'Configure dados financeiros, conteúdo do site e informações da empresa',
     manageSettings: 'Gerenciar Configurações',
+  },
+  systemSettings: {
+    title: 'Configurações do Sistema',
+    financial: 'Configurações Financeiras',
+    financialDescription: 'Gerencie dados financeiros, métodos de pagamento e configurações fiscais',
+    manageFinancial: 'Gerenciar configurações financeiras',
+    content: 'Conteúdo do Site',
+    contentDescription: 'Configure as páginas de história, fornecedores e carreiras da empresa',
+    manageContent: 'Gerenciar conteúdo',
+    company: 'Informações da Empresa',
+    companyDescription: 'Atualize email, endereço e telefone da empresa',
+    manageCompany: 'Gerenciar dados da empresa'
+  },
+  financial: {
+    title: 'Configurações Financeiras',
+    currencyCode: 'Código da Moeda',
+    currencyCodePlaceholder: 'Digite o código da moeda (ex: BRL)',
+    currencySymbol: 'Símbolo da Moeda',
+    currencySymbolPlaceholder: 'Digite o símbolo da moeda (ex: R$)',
+    taxRate: 'Taxa de Imposto',
+    taxRatePlaceholder: 'Digite a taxa de imposto',
+    minOrderValue: 'Valor Mínimo do Pedido',
+    minOrderValuePlaceholder: 'Digite o valor mínimo do pedido',
+    freeShippingThreshold: 'Valor Mínimo para Frete Grátis',
+    freeShippingThresholdPlaceholder: 'Digite o valor mínimo para frete grátis',
+    loadError: 'Erro ao carregar as configurações financeiras',
+    updateError: 'Erro ao atualizar as configurações financeiras',
+    updateSuccess: 'Configurações financeiras atualizadas com sucesso',
+    requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
+    fieldRequired: 'Este campo é obrigatório',
   },
   profile: {
     title: 'Editar Perfil',
@@ -375,8 +405,133 @@ export default {
     allFieldsRequired: 'Todos os campos são obrigatórios',
     passwordsDoNotMatch: 'As senhas não coincidem',
     passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
+  },
+  company: {
+    name: 'Nome da Empresa',
+    namePlaceholder: 'Digite o nome da empresa',
+    email: 'E-mail',
+    emailPlaceholder: 'Digite o e-mail da empresa',
+    phone: 'Telefone',
+    phonePlaceholder: 'Digite o telefone da empresa',
+    address: 'Endereço',
+    addressPlaceholder: 'Digite o endereço da empresa',
+    loadError: 'Erro ao carregar dados da empresa',
+    updateSuccess: 'Informações da empresa atualizadas com sucesso',
+    updateError: 'Erro ao atualizar informações da empresa',
+    requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
+    fieldRequired: 'Este campo é obrigatório',
+    saving: 'Salvando...',
+    save: 'Salvar'
+  },
+  content: {
+    history: {
+      title: 'História',
+      description: 'Gerenciar conteúdo da história da empresa, linha do tempo e marcos',
+      manage: 'Gerenciar história',
+      breadcrumb: 'História',
+      form: {
+        title: 'Título',
+        titlePlaceholder: 'Digite o título da seção...',
+        text: 'Conteúdo',
+        textPlaceholder: 'Digite o conteúdo da seção...',
+        add: 'ADICIONAR SEÇÃO',
+        edit: 'EDITAR SEÇÃO'
+      },
+      actions: {
+        hide: 'Ocultar seção',
+        show: 'Mostrar seção',
+        edit: 'Editar seção',
+        delete: 'Excluir seção'
+      },
+      confirmDelete: 'Tem certeza que deseja excluir esta seção?',
+      success: {
+        add: 'Seção adicionada com sucesso',
+        edit: 'Seção atualizada com sucesso',
+        delete: 'Seção excluída com sucesso'
+      },
+      error: {
+        add: 'Erro ao adicionar seção',
+        edit: 'Erro ao atualizar seção',
+        delete: 'Erro ao excluir seção'
+      }
+    },
+    suppliers: {
+      title: 'Fornecedores',
+      description: 'Gerenciar informações e parcerias com fornecedores',
+      manage: 'Gerenciar fornecedores',
+      breadcrumb: 'Fornecedores',
+      form: {
+        title: 'Título',
+        titlePlaceholder: 'Digite o nome do fornecedor...',
+        text: 'Descrição',
+        textPlaceholder: 'Digite a descrição do fornecedor...',
+        add: 'ADICIONAR FORNECEDOR',
+        edit: 'EDITAR FORNECEDOR'
+      },
+      actions: {
+        hide: 'Ocultar fornecedor',
+        show: 'Mostrar fornecedor',
+        edit: 'Editar fornecedor',
+        delete: 'Excluir fornecedor'
+      },
+      confirmDelete: 'Tem certeza que deseja excluir este fornecedor?',
+      success: {
+        add: 'Fornecedor adicionado com sucesso',
+        edit: 'Fornecedor atualizado com sucesso',
+        delete: 'Fornecedor excluído com sucesso'
+      },
+      error: {
+        add: 'Erro ao adicionar fornecedor',
+        edit: 'Erro ao atualizar fornecedor',
+        delete: 'Erro ao excluir fornecedor'
+      }
+    },
+    career: {
+      title: 'Carreira',
+      description: 'Gerencie oportunidades de trabalho, requisitos e processo de candidatura',
+      manage: 'Gerenciar carreira',
+      breadcrumb: 'Carreira'
+    }
+  },
+  addresses: {
+    title: 'Meus Endereços',
+    address: 'Endereço',
+    addNew: 'Adicionar Novo Endereço',
+    street: 'Rua',
+    streetPlaceholder: 'Digite o nome da rua',
+    number: 'Número',
+    numberPlaceholder: 'Digite o número',
+    complement: 'Complemento',
+    complementPlaceholder: 'Digite o complemento (opcional)',
+    neighborhood: 'Bairro',
+    neighborhoodPlaceholder: 'Digite o bairro',
+    city: 'Cidade',
+    cityPlaceholder: 'Digite a cidade',
+    state: 'Estado',
+    statePlaceholder: 'Digite o estado',
+    postalCode: 'CEP',
+    postalCodePlaceholder: 'Digite o CEP',
+    setAsDefault: 'Definir como endereço padrão',
+    deleteConfirm: 'Tem certeza que deseja excluir este endereço?',
+    saveSuccess: 'Endereço salvo com sucesso',
+    deleteSuccess: 'Endereço excluído com sucesso',
+    error: 'Ocorreu um erro. Por favor, tente novamente.'
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
