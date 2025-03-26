@@ -379,7 +379,9 @@ export default {
     updateSuccess: 'Financial settings updated successfully',
     updateError: 'Error updating financial settings',
     loadError: 'Error loading financial settings',
-    fieldRequired: 'This field is required'
+    fieldRequired: 'This field is required',
+    shippingCost: 'Shipping Cost',
+    shippingCostPlaceholder: 'Enter shipping cost'
   },
   profile: {
     title: 'Edit Profile',

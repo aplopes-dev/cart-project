@@ -405,6 +405,8 @@ export default {
     updateError: 'Erreur lors de la mise à jour des paramètres financiers',
     loadError: 'Erreur lors du chargement des paramètres financiers',
     fieldRequired: 'Ce champ est obligatoire',
+    shippingCost: 'Frais de Livraison',
+    shippingCostPlaceholder: 'Entrez les frais de livraison'
   },
   company: {
     name: 'Nom de l\'entreprise',
