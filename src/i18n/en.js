@@ -208,6 +208,8 @@ export default {
   },
   history: {
     title: 'Our History',
+    loading: 'Loading...',
+    fetchError: 'Error loading history',
     foundation: {
       title: 'Foundation',
       text: 'Founded in 1945, Empire Canada began as a small family-owned plumbing supply store in Montreal. Our founders vision was to provide quality products and exceptional service to local contractors and homeowners.'
@@ -222,6 +224,7 @@ export default {
     }
   },
   suppliers: {
+    pageTitle: 'Our Suppliers',
     title: 'Our Suppliers',
     supplier1: 'Leading manufacturer of high-quality plumbing fixtures and fittings, known for innovation and reliability.',
     supplier2: 'Specialized in advanced heating solutions and energy-efficient systems.',
@@ -452,10 +455,13 @@ export default {
       form: {
         title: 'Title',
         titlePlaceholder: 'Enter section title...',
-        text: 'Content',
-        textPlaceholder: 'Enter section content...',
+        content: 'Content',
+        contentPlaceholder: 'Enter section content...',
+        year: 'Year',
+        yearPlaceholder: 'Enter the year...',
         add: 'ADD SECTION',
-        edit: 'EDIT SECTION'
+        edit: 'EDIT SECTION',
+        cancel: 'Cancel'
       },
       actions: {
         hide: 'Hide section',
@@ -463,47 +469,60 @@ export default {
         edit: 'Edit section',
         delete: 'Delete section'
       },
-      confirmDelete: 'Are you sure you want to delete this section?',
-      success: {
-        add: 'Section added successfully',
-        edit: 'Section updated successfully',
-        delete: 'Section deleted successfully'
+      deleteModal: {
+        title: "Confirm deletion",
+        message: "Are you sure you want to delete this history item? This action cannot be undone.",
+        cancel: "Cancel",
+        confirm: "Delete"
       },
-      error: {
-        add: 'Error adding section',
-        edit: 'Error updating section',
-        delete: 'Error deleting section'
+      messages: {
+        addSuccess: 'Section added successfully',
+        updateSuccess: 'Section updated successfully',
+        deleteSuccess: 'Section deleted successfully',
+        visibilitySuccess: 'Section visibility updated successfully',
+        loadError: 'Error loading history items',
+        addError: 'Error adding section',
+        updateError: 'Error updating section',
+        deleteError: 'Error deleting section',
+        visibilityError: 'Error updating section visibility'
       }
     },
     suppliers: {
-      title: 'Suppliers',
-      description: 'Manage supplier information and partnerships',
-      manage: 'Manage suppliers',
-      breadcrumb: 'Suppliers',
+      title: "Suppliers",
+      description: "Manage supplier content",
+      manage: "Manage suppliers",
+      breadcrumb: "Suppliers",
       form: {
-        title: 'Title',
-        titlePlaceholder: 'Enter supplier name...',
-        text: 'Description',
-        textPlaceholder: 'Enter supplier description...',
-        add: 'ADD SUPPLIER',
-        edit: 'EDIT SUPPLIER'
+        title: "Title",
+        titlePlaceholder: "Enter title",
+        content: "Content",
+        contentPlaceholder: "Enter content",
+        add: "Add",
+        edit: "Save changes",
+        cancel: "Cancel"
       },
       actions: {
-        hide: 'Hide supplier',
-        show: 'Show supplier',
-        edit: 'Edit supplier',
-        delete: 'Delete supplier'
+        edit: "Edit item",
+        delete: "Delete item",
+        show: "Show item",
+        hide: "Hide item"
       },
-      confirmDelete: 'Are you sure you want to delete this supplier?',
-      success: {
-        add: 'Supplier added successfully',
-        edit: 'Supplier updated successfully',
-        delete: 'Supplier deleted successfully'
+      deleteModal: {
+        title: "Delete Supplier Item",
+        message: "Are you sure you want to delete this item? This action cannot be undone.",
+        confirm: "Delete",
+        cancel: "Cancel"
       },
-      error: {
-        add: 'Error adding supplier',
-        edit: 'Error updating supplier',
-        delete: 'Error deleting supplier'
+      messages: {
+        addSuccess: "Supplier item added successfully",
+        updateSuccess: "Supplier item updated successfully",
+        deleteSuccess: "Supplier item deleted successfully",
+        visibilitySuccess: "Visibility updated successfully",
+        loadError: "Failed to load supplier items",
+        addError: "Failed to add supplier item",
+        updateError: "Failed to update supplier item",
+        deleteError: "Failed to delete supplier item",
+        visibilityError: "Failed to update visibility"
       }
     },
     career: {
@@ -538,6 +557,14 @@ export default {
     error: 'An error occurred. Please try again.'
   }
 }
+
+
+
+
+
+
+
+
 
 
 

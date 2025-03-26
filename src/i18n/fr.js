@@ -425,17 +425,20 @@ export default {
   },
   content: {
     history: {
-      title: 'Histoire',
-      description: 'Gérez le contenu historique de l\'entreprise, la chronologie et les étapes importantes',
+      title: 'Notre Histoire',
+      description: 'Gérer le contenu historique de l\'entreprise, la chronologie et les étapes importantes',
       manage: 'Gérer l\'histoire',
       breadcrumb: 'Histoire',
       form: {
         title: 'Titre',
         titlePlaceholder: 'Entrez le titre de la section...',
-        text: 'Contenu',
-        textPlaceholder: 'Entrez le contenu de la section...',
+        content: 'Contenu',
+        contentPlaceholder: 'Entrez le contenu de la section...',
+        year: 'Année',
+        yearPlaceholder: 'Entrez l\'année...',
         add: 'AJOUTER UNE SECTION',
-        edit: 'MODIFIER LA SECTION'
+        edit: 'MODIFIER LA SECTION',
+        cancel: 'Annuler'
       },
       actions: {
         hide: 'Masquer la section',
@@ -444,46 +447,76 @@ export default {
         delete: 'Supprimer la section'
       },
       confirmDelete: 'Êtes-vous sûr de vouloir supprimer cette section ?',
-      success: {
-        add: 'Section ajoutée avec succès',
-        edit: 'Section mise à jour avec succès',
-        delete: 'Section supprimée avec succès'
+      deleteModal: {
+        title: "Confirmer la suppression",
+        message: "Êtes-vous sûr de vouloir supprimer cet élément de l'historique ? Cette action ne peut pas être annulée.",
+        cancel: "Annuler",
+        confirm: "Supprimer"
       },
-      error: {
-        add: 'Erreur lors de l\'ajout de la section',
-        edit: 'Erreur lors de la mise à jour de la section',
-        delete: 'Erreur lors de la suppression de la section'
+      messages: {
+        addSuccess: 'Section ajoutée avec succès',
+        updateSuccess: 'Section mise à jour avec succès',
+        deleteSuccess: 'Section supprimée avec succès',
+        visibilitySuccess: 'Visibilité de la section mise à jour avec succès',
+        loadError: 'Erreur lors du chargement des éléments historiques',
+        addError: 'Erreur lors de l\'ajout de la section',
+        updateError: 'Erreur lors de la mise à jour de la section',
+        deleteError: 'Erreur lors de la suppression de la section',
+        visibilityError: 'Erreur lors de la mise à jour de la visibilité de la section',
+        deleteSuccess: "Élément supprimé avec succès",
+        deleteError: "Erreur lors de la suppression de l'élément"
+      },
+      loading: 'Chargement...',
+      fetchError: 'Erreur lors du chargement de l\'historique',
+      foundation: {
+        title: 'Fondation',
+        text: 'Fondée en 1945, Empire Canada a débuté comme une petite boutique familiale de fournitures de plomberie à Montréal. La vision de nos fondateurs était de fournir des produits de qualité et un service exceptionnel aux entrepreneurs locaux et aux propriétaires.'
+      },
+      growth: {
+        title: 'Croissance et Évolution',
+        text: 'Grâce à des décennies de dévouement et d\'innovation, nous avons étendu nos opérations à travers le Canada, nous établissant comme un fournisseur leader dans l\'industrie de la plomberie et du chauffage.'
+      },
+      today: {
+        title: 'Empire Aujourd\'hui',
+        text: 'Aujourd\'hui, Empire Canada est un distributeur national avec plus de 50 emplacements, servant des milliers de professionnels tout en maintenant notre engagement envers la qualité et le service client.'
       }
     },
     suppliers: {
-      title: 'Fournisseurs',
-      description: 'Gérer les informations et les partenariats avec les fournisseurs',
-      manage: 'Gérer les fournisseurs',
-      breadcrumb: 'Fournisseurs',
+      title: "Fournisseurs",
+      description: "Gérer le contenu des fournisseurs",
+      manage: "Gérer les fournisseurs",
+      breadcrumb: "Fournisseurs",
       form: {
-        title: 'Titre',
-        titlePlaceholder: 'Entrez le nom du fournisseur...',
-        text: 'Description',
-        textPlaceholder: 'Entrez la description du fournisseur...',
-        add: 'AJOUTER UN FOURNISSEUR',
-        edit: 'MODIFIER LE FOURNISSEUR'
+        title: "Titre",
+        titlePlaceholder: "Entrez le titre",
+        content: "Contenu",
+        contentPlaceholder: "Entrez le contenu",
+        add: "Ajouter",
+        edit: "Sauvegarder",
+        cancel: "Annuler"
       },
       actions: {
-        hide: 'Masquer le fournisseur',
-        show: 'Afficher le fournisseur',
-        edit: 'Modifier le fournisseur',
-        delete: 'Supprimer le fournisseur'
+        edit: "Modifier",
+        delete: "Supprimer",
+        show: "Afficher",
+        hide: "Masquer"
       },
-      confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce fournisseur ?',
-      success: {
-        add: 'Fournisseur ajouté avec succès',
-        edit: 'Fournisseur mis à jour avec succès',
-        delete: 'Fournisseur supprimé avec succès'
+      deleteModal: {
+        title: "Supprimer le fournisseur",
+        message: "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.",
+        confirm: "Supprimer",
+        cancel: "Annuler"
       },
-      error: {
-        add: 'Erreur lors de l\'ajout du fournisseur',
-        edit: 'Erreur lors de la mise à jour du fournisseur',
-        delete: 'Erreur lors de la suppression du fournisseur'
+      messages: {
+        addSuccess: "Fournisseur ajouté avec succès",
+        updateSuccess: "Fournisseur mis à jour avec succès",
+        deleteSuccess: "Fournisseur supprimé avec succès",
+        visibilitySuccess: "Visibilité mise à jour avec succès",
+        loadError: "Erreur lors du chargement des fournisseurs",
+        addError: "Erreur lors de l'ajout du fournisseur",
+        updateError: "Erreur lors de la mise à jour du fournisseur",
+        deleteError: "Erreur lors de la suppression du fournisseur",
+        visibilityError: "Erreur lors de la mise à jour de la visibilité"
       }
     },
     career: {
@@ -516,8 +549,23 @@ export default {
     saveSuccess: 'Adresse enregistrée avec succès',
     deleteSuccess: 'Adresse supprimée avec succès',
     error: 'Une erreur est survenue. Veuillez réessayer.'
+  },
+  suppliers: {
+    pageTitle: 'Nos Fournisseurs',
+    title: 'Nos Fournisseurs'
+  },
+  history: {
+    pageTitle: 'Notre Histoire',
+    title: 'Notre Histoire'  
   }
 }
+
+
+
+
+
+
+
 
 
 

@@ -425,17 +425,20 @@ export default {
   },
   content: {
     history: {
-      title: 'História',
+      title: 'Nossa História',
       description: 'Gerenciar conteúdo da história da empresa, linha do tempo e marcos',
       manage: 'Gerenciar história',
       breadcrumb: 'História',
       form: {
         title: 'Título',
         titlePlaceholder: 'Digite o título da seção...',
-        text: 'Conteúdo',
-        textPlaceholder: 'Digite o conteúdo da seção...',
+        content: 'Conteúdo',
+        contentPlaceholder: 'Digite o conteúdo da seção...',
+        year: 'Ano',
+        yearPlaceholder: 'Digite o ano...',
         add: 'ADICIONAR SEÇÃO',
-        edit: 'EDITAR SEÇÃO'
+        edit: 'EDITAR SEÇÃO',
+        cancel: 'Cancelar'
       },
       actions: {
         hide: 'Ocultar seção',
@@ -444,46 +447,76 @@ export default {
         delete: 'Excluir seção'
       },
       confirmDelete: 'Tem certeza que deseja excluir esta seção?',
-      success: {
-        add: 'Seção adicionada com sucesso',
-        edit: 'Seção atualizada com sucesso',
-        delete: 'Seção excluída com sucesso'
+      deleteModal: {
+        title: "Confirmar exclusão",
+        message: "Tem certeza que deseja excluir este item do histórico? Esta ação não pode ser desfeita.",
+        cancel: "Cancelar",
+        confirm: "Excluir"
       },
-      error: {
-        add: 'Erro ao adicionar seção',
-        edit: 'Erro ao atualizar seção',
-        delete: 'Erro ao excluir seção'
+      messages: {
+        addSuccess: 'Seção adicionada com sucesso',
+        updateSuccess: 'Seção atualizada com sucesso',
+        deleteSuccess: 'Seção excluída com sucesso',
+        visibilitySuccess: 'Visibilidade da seção atualizada com sucesso',
+        loadError: 'Erro ao carregar itens do histórico',
+        addError: 'Erro ao adicionar seção',
+        updateError: 'Erro ao atualizar seção',
+        deleteError: 'Erro ao excluir seção',
+        visibilityError: 'Erro ao atualizar visibilidade da seção',
+        deleteSuccess: "Item excluído com sucesso",
+        deleteError: "Erro ao excluir item"
+      },
+      loading: 'Carregando...',
+      fetchError: 'Erro ao carregar o histórico',
+      foundation: {
+        title: 'Fundação',
+        text: 'Fundada em 1945, a Empire Canada começou como uma pequena loja familiar de materiais hidráulicos em Montreal. A visão de nossos fundadores era fornecer produtos de qualidade e serviço excepcional para empreiteiros locais e proprietários.'
+      },
+      growth: {
+        title: 'Crescimento e Evolução',
+        text: 'Através de décadas de dedicação e inovação, expandimos nossas operações por todo o Canadá, nos estabelecendo como um fornecedor líder na indústria de hidráulica e aquecimento.'
+      },
+      today: {
+        title: 'Empire Hoje',
+        text: 'Hoje, a Empire Canada é uma distribuidora nacional com mais de 50 locais, atendendo milhares de profissionais e mantendo nosso compromisso com qualidade e atendimento ao cliente.'
       }
     },
     suppliers: {
-      title: 'Fornecedores',
-      description: 'Gerenciar informações e parcerias com fornecedores',
-      manage: 'Gerenciar fornecedores',
-      breadcrumb: 'Fornecedores',
+      title: "Fornecedores",
+      description: "Gerenciar conteúdo dos fornecedores",
+      manage: "Gerenciar fornecedores",
+      breadcrumb: "Fornecedores",
       form: {
-        title: 'Título',
-        titlePlaceholder: 'Digite o nome do fornecedor...',
-        text: 'Descrição',
-        textPlaceholder: 'Digite a descrição do fornecedor...',
-        add: 'ADICIONAR FORNECEDOR',
-        edit: 'EDITAR FORNECEDOR'
+        title: "Título",
+        titlePlaceholder: "Digite o título",
+        content: "Conteúdo",
+        contentPlaceholder: "Digite o conteúdo",
+        add: "Adicionar",
+        edit: "Salvar alterações",
+        cancel: "Cancelar"
       },
       actions: {
-        hide: 'Ocultar fornecedor',
-        show: 'Mostrar fornecedor',
-        edit: 'Editar fornecedor',
-        delete: 'Excluir fornecedor'
+        edit: "Editar item",
+        delete: "Excluir item",
+        show: "Mostrar item",
+        hide: "Ocultar item"
       },
-      confirmDelete: 'Tem certeza que deseja excluir este fornecedor?',
-      success: {
-        add: 'Fornecedor adicionado com sucesso',
-        edit: 'Fornecedor atualizado com sucesso',
-        delete: 'Fornecedor excluído com sucesso'
+      deleteModal: {
+        title: "Excluir Fornecedor",
+        message: "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.",
+        confirm: "Excluir",
+        cancel: "Cancelar"
       },
-      error: {
-        add: 'Erro ao adicionar fornecedor',
-        edit: 'Erro ao atualizar fornecedor',
-        delete: 'Erro ao excluir fornecedor'
+      messages: {
+        addSuccess: "Fornecedor adicionado com sucesso",
+        updateSuccess: "Fornecedor atualizado com sucesso",
+        deleteSuccess: "Fornecedor excluído com sucesso",
+        visibilitySuccess: "Visibilidade atualizada com sucesso",
+        loadError: "Erro ao carregar fornecedores",
+        addError: "Erro ao adicionar fornecedor",
+        updateError: "Erro ao atualizar fornecedor",
+        deleteError: "Erro ao excluir fornecedor",
+        visibilityError: "Erro ao atualizar visibilidade"
       }
     },
     career: {
@@ -516,8 +549,24 @@ export default {
     saveSuccess: 'Endereço salvo com sucesso',
     deleteSuccess: 'Endereço excluído com sucesso',
     error: 'Ocorreu um erro. Por favor, tente novamente.'
+  },
+  suppliers: {
+    pageTitle: 'Nossos Fornecedores',
+    title: 'Nossos Fornecedores'  
+  },
+  history: {
+    pageTitle: 'Nossa História',
+    title: 'Nossa História'  
   }
 }
+
+
+
+
+
+
+
+
 
 
 

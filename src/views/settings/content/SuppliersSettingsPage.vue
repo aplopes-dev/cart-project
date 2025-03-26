@@ -27,7 +27,7 @@
         <div class="mb-8">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
             {{ $t('content.suppliers.title') }}
-          </h1>
+          </h1>         
         </div>
 
         <!-- Form -->
@@ -44,21 +44,29 @@
             </div>
 
             <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.suppliers.form.text') }}</label>
+              <label class="block font-archivo text-sm mb-2">{{ $t('content.suppliers.form.content') }}</label>
               <textarea 
-                v-model="formData.text"
+                v-model="formData.content"
                 rows="4"
                 class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
-                :placeholder="$t('content.suppliers.form.textPlaceholder')"
+                :placeholder="$t('content.suppliers.form.contentPlaceholder')"
               ></textarea>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end gap-4">
+              <button 
+                v-if="editingId"
+                type="button"
+                @click="cancelEdit"
+                class="bg-gray-200 text-black px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+              >
+                {{ $t('content.suppliers.form.cancel') }}
+              </button>
               <button 
                 type="submit"
                 class="bg-black text-empire-yellow px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
               >
-                {{ $t('content.suppliers.form.add') }}
+                {{ $t(editingId ? 'content.suppliers.form.edit' : 'content.suppliers.form.add') }}
               </button>
             </div>
           </form>
@@ -70,14 +78,14 @@
             v-for="(item, index) in supplierItems" 
             :key="index"
             class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
-            :class="{ 'opacity-50': !item.visible }"
+            :class="{ 'opacity-50': !item.is_active }"
           >
             <!-- Botões de ação -->
             <div class="absolute top-4 right-4 flex gap-4">
               <button 
                 @click="toggleVisibility(index)"
                 class="hover:opacity-70 transition-opacity"
-                :title="item.visible ? $t('content.suppliers.actions.hide') : $t('content.suppliers.actions.show')"
+                :title="$t(item.is_active ? 'content.suppliers.actions.hide' : 'content.suppliers.actions.show')"
               >
                 <svg 
                   class="w-6 h-6" 
@@ -87,11 +95,11 @@
                   stroke-width="2"
                 >
                   <path 
-                    v-if="item.visible"
+                    v-if="item.is_active"
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                   <path 
-                    v-if="item.visible"
+                    v-if="item.is_active"
                     d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"
                   />
                   <path 
@@ -99,7 +107,7 @@
                     d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
                   />
                   <line 
-                    v-if="!item.visible"
+                    v-if="!item.is_active"
                     x1="1" 
                     y1="1" 
                     x2="23" 
@@ -133,66 +141,169 @@
             </div>
 
             <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
-            <p class="text-black">{{ item.text }}</p>
+            <p class="text-black">{{ item.content }}</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div 
+    v-if="showDeleteModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <h3 class="text-xl font-archivo-narrow mb-4">
+        {{ $t('content.suppliers.deleteModal.title') }}
+      </h3>
+      <p class="mb-8 text-black/70">
+        {{ $t('content.suppliers.deleteModal.message') }}
+      </p>
+      <div class="flex justify-end gap-4">
+        <button
+          @click="showDeleteModal = false"
+          class="px-6 py-2 border border-black/25 rounded hover:bg-black/5"
+        >
+          {{ $t('content.suppliers.deleteModal.cancel') }}
+        </button>
+        <button
+          @click="confirmDelete"
+          class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          {{ $t('content.suppliers.deleteModal.confirm') }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
+import api from '@/services/api'
 
 const { t } = useI18n()
+const app = getCurrentInstance()
+const toast = app.appContext.config.globalProperties.$toast
+
+const loading = ref(false)
+const error = ref(null)
+const supplierItems = ref([])
+const editingId = ref(null)
+const showDeleteModal = ref(false)
+const itemToDelete = ref(null)
 
 const formData = ref({
   title: '',
-  text: ''
+  content: '',
+  is_active: true,
+  type: 'supplier'
 })
 
-const supplierItems = ref([
-  {
-    title: 'Fornecedor A',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    visible: true
-  },
-  {
-    title: 'Fornecedor B',
-    text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    visible: true
-  },
-  {
-    title: 'Fornecedor C',
-    text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    visible: true
+const resetForm = () => {
+  formData.value = {
+    title: '',
+    content: '',
+    is_active: true,
+    type: 'supplier'
   }
-])
+  editingId.value = null
+}
 
-const handleSubmit = () => {
-  if (formData.value.title && formData.value.text) {
-    supplierItems.value.push({
-      title: formData.value.title,
-      text: formData.value.text,
-      visible: true
-    })
-    formData.value = { title: '', text: '' }
+const loadSupplierItems = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const response = await api.get('/settings/suppliers')
+    supplierItems.value = response.data
+  } catch (err) {
+    console.error('Error:', err)
+    error.value = t('content.suppliers.messages.loadError')
+    toast.error(error.value)
+  } finally {
+    loading.value = false
   }
 }
 
-const toggleVisibility = (index) => {
-  supplierItems.value[index].visible = !supplierItems.value[index].visible
+const handleSubmit = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    if (editingId.value) {
+      await api.put(`/settings/suppliers/${editingId.value}`, formData.value)
+      toast.success(t('content.suppliers.messages.updateSuccess'))
+    } else {
+      await api.post('/settings/suppliers', formData.value)
+      toast.success(t('content.suppliers.messages.addSuccess'))
+    }
+    await loadSupplierItems()
+    resetForm()
+  } catch (err) {
+    console.error('Error:', err)
+    error.value = t(editingId.value ? 'content.suppliers.messages.updateError' : 'content.suppliers.messages.addError')
+    toast.error(error.value)
+  } finally {
+    loading.value = false
+  }
 }
 
 const editItem = (index) => {
-  formData.value = { ...supplierItems.value[index] }
-  supplierItems.value.splice(index, 1)
+  const item = supplierItems.value[index]
+  editingId.value = item.id
+  formData.value = {
+    title: item.title,
+    content: item.content,
+    is_active: item.is_active,
+    type: 'supplier'
+  }
+}
+
+const cancelEdit = () => {
+  resetForm()
+}
+
+const toggleVisibility = async (index) => {
+  const item = supplierItems.value[index]
+  try {
+    await api.put(`/settings/suppliers/${item.id}`, {
+      ...item,
+      is_active: !item.is_active,
+      type: 'supplier'
+    })
+    await loadSupplierItems()
+    toast.success(t('content.suppliers.messages.visibilitySuccess'))
+  } catch (err) {
+    console.error('Error:', err)
+    toast.error(t('content.suppliers.messages.visibilityError'))
+  }
 }
 
 const deleteItem = (index) => {
-  if (confirm(t('content.suppliers.confirmDelete'))) {
-    supplierItems.value.splice(index, 1)
+  itemToDelete.value = supplierItems.value[index]
+  showDeleteModal.value = true
+}
+
+const confirmDelete = async () => {
+  if (!itemToDelete.value) return
+
+  try {
+    await api.delete(`/settings/suppliers/${itemToDelete.value.id}`)
+    await loadSupplierItems()
+    toast.success(t('content.suppliers.messages.deleteSuccess'))
+  } catch (err) {
+    console.error('Error:', err)
+    toast.error(t('content.suppliers.messages.deleteError'))
+  } finally {
+    showDeleteModal.value = false
+    itemToDelete.value = null
   }
 }
+
+onMounted(() => {
+  loadSupplierItems()
+})
 </script>
+
