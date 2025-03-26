@@ -357,6 +357,8 @@ export default {
     updateSuccess: 'Configurações financeiras atualizadas com sucesso',
     requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
     fieldRequired: 'Este campo é obrigatório',
+    shippingCost: 'Valor do Frete',
+    shippingCostPlaceholder: 'Digite o valor do frete'
   },
   profile: {
     title: 'Editar Perfil',
