@@ -14,7 +14,8 @@ const formData = ref({
   min_order_value: '',
   free_shipping_threshold: '',
   currency_code: '',
-  currency_symbol: ''
+  currency_symbol: '',
+  shipping_cost: ''
 })
 
 const loading = ref(false)
@@ -35,6 +36,7 @@ const loadFinancialSettings = async () => {
         tax_rate: settings.tax_rate ? parseFloat(settings.tax_rate).toFixed(2) : '0.00',
         min_order_value: settings.min_order_value ? parseFloat(settings.min_order_value).toFixed(2) : '0.00',
         free_shipping_threshold: settings.free_shipping_threshold ? parseFloat(settings.free_shipping_threshold).toFixed(2) : '0.00',
+        shipping_cost: settings.shipping_cost ? parseFloat(settings.shipping_cost).toFixed(2) : '0.00',
         currency_code: settings.currency_code,
         currency_symbol: settings.currency_symbol
       }
@@ -68,6 +70,7 @@ const handleSubmit = async () => {
       tax_rate: parseFloat(formData.value.tax_rate),
       min_order_value: parseFloat(formData.value.min_order_value) || 0,
       free_shipping_threshold: parseFloat(formData.value.free_shipping_threshold) || 0,
+      shipping_cost: parseFloat(formData.value.shipping_cost) || 0,
       currency_code: formData.value.currency_code,
       currency_symbol: formData.value.currency_symbol
     }
@@ -200,6 +203,19 @@ onMounted(() => {
                 step="0.01"
                 min="0"
                 :placeholder="$t('financial.freeShippingThresholdPlaceholder')"
+                class="w-full p-4 border border-gray-300"
+              >
+            </div>
+
+            <!-- Shipping Cost -->
+            <div>
+              <label class="block font-archivo text-sm mb-2">{{ $t('financial.shippingCost') }}</label>
+              <input 
+                type="number"
+                v-model="formData.shipping_cost"
+                step="0.01"
+                min="0"
+                :placeholder="$t('financial.shippingCostPlaceholder')"
                 class="w-full p-4 border border-gray-300"
               >
             </div>
