@@ -396,6 +396,8 @@ export default {
     currencySymbolPlaceholder: 'Ex: €, $, £',
     taxRate: 'Taux de Taxe',
     taxRatePlaceholder: 'Entrez le taux de taxe en %',
+    discountPercentage: 'Pourcentage de Remise',
+    discountPercentagePlaceholder: 'Entrez le pourcentage de remise',
     minOrderValue: 'Montant Minimum de Commande',
     minOrderValuePlaceholder: 'Entrez le montant minimum de commande',
     freeShippingThreshold: 'Seuil de Livraison Gratuite',
