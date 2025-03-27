@@ -74,7 +74,7 @@
           {{ $t('cart.subtotal') }}
         </span>
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
-          ${{ cartStore.subtotal.toFixed(2) }}
+          {{ total }}
         </span>
       </div>
       
@@ -108,20 +108,34 @@
 
 <script>
 import { useCartStore } from '@/stores/cartStore'
+import { ref, onMounted } from 'vue'
+import { settingsService } from '@/services/settingsService'
 
 export default {
   name: 'CartWidget',
   setup() {
     const cartStore = useCartStore()
-    return { cartStore }
+    const currencySymbol = ref('$')
+
+    const loadCurrencySymbol = async () => {
+      try {
+        const settings = await settingsService.getFinancialSettings()
+        currencySymbol.value = settings.currency_symbol
+      } catch (error) {
+        console.error('Error loading currency symbol:', error)
+      }
+    }
+
+    onMounted(() => {
+      loadCurrencySymbol()
+    })
+
+    return { cartStore, currencySymbol }
   },
   methods: {
     formatPrice(price) {
       const numPrice = Number(price)
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(numPrice)
+      return `${this.currencySymbol}${numPrice.toFixed(2)}`
     },
     checkout() {
       this.cartStore.closeCart()
@@ -134,6 +148,12 @@ export default {
     goToCategories() {
       this.cartStore.closeCart()
       this.$router.push('/categories')
+    }
+  },
+  computed: {
+    total() {
+      // Usar o getter subtotal do store que já faz o cálculo correto
+      return this.formatPrice(this.cartStore.subtotal)
     }
   }
 }
@@ -341,6 +361,9 @@ export default {
   }
 }
 </style>
+
+
+
 
 
 

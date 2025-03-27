@@ -105,7 +105,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">514 745-1080</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.phone }}</span>
                   </div>
                 </div>
                 <div class="flex">
@@ -115,7 +115,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.contact.email') }}</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.email }}</span>
                   </div>
                 </div>
                 <div class="flex">
@@ -125,7 +125,7 @@
                     </svg>
                   </div>
                   <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.contact.address') }}</span>
+                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.address }}</span>
                   </div>
                 </div>
               </div>
@@ -136,7 +136,7 @@
         <!-- Copyright -->
         <div class="flex justify-center items-center w-full mt-8 md:mt-0">
           <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70 text-center">
-            {{ $t('footer.copyright') }}
+            © Copyright {{ companyData.name }} {{ new Date().getFullYear() }} | {{ $t('footer.allRightsReserved') }}
           </span>
         </div>
       </div>
@@ -145,13 +145,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { categoryService } from '@/services/categoryService'
+import api from '@/services/api'
+import eventBus from '@/utils/eventBus'
 
 const router = useRouter()
 const logoUrl = ref('/images/logo.png')
 const categories = ref([])
+const companyData = ref({
+  name: '',
+  email: '',
+  phone: '',
+  address: ''
+})
 
 const handleImageError = (e) => {
   console.error('Error loading image:', e)
@@ -163,18 +171,47 @@ const navigateToCategory = (categoryId) => {
   router.push(`/categories/${categoryId}`)
 }
 
-// Função para buscar categorias
-const fetchCategories = async () => {
+const loadCategories = async () => {
   try {
-    const response = await categoryService.getCategories()
-    categories.value = response
-  } catch (err) {
-    console.error('Error fetching categories:', err)
-    categories.value = []
+    categories.value = await categoryService.getCategories()
+  } catch (error) {
+    console.error('Error loading categories:', error)
   }
 }
 
-onMounted(async () => {
-  await fetchCategories()
+const loadCompanyData = async () => {
+  try {
+    const response = await api.get('/settings/company')
+    companyData.value = {
+      name: response.data.company_name || '',
+      email: response.data.email || '',
+      phone: response.data.phone || '',
+      address: response.data.address || ''
+    }
+    console.log('Company data updated:', companyData.value) // Debug log
+  } catch (err) {
+    console.error('Error loading company data:', err)
+  }
+}
+
+// Event handler
+const updateCompanyDataHandler = async () => {
+  console.log('Company data update event received') // Debug log
+  await loadCompanyData()
+}
+
+onMounted(() => {
+  loadCategories()
+  loadCompanyData()
+  eventBus.on('company-data-updated', updateCompanyDataHandler)
+})
+
+onUnmounted(() => {
+  eventBus.off('company-data-updated', updateCompanyDataHandler)
 })
 </script>
+
+
+
+
+

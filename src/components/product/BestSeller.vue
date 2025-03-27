@@ -27,9 +27,9 @@
                 class="w-full max-w-[320px] md:max-w-[100%] h-[280px] md:h-[320px] object-cover" 
               />
               
-              <div class="flex flex-col items-start gap-4 w-full p-6">
-                <div class="flex flex-col gap-2 md:gap-4">
-                  <h3 class="font-archivo-narrow font-semibold text-[28px] md:text-[34px] leading-[32px] md:leading-[40px] text-black/70 text-center w-full line-clamp-1">
+              <div class="flex flex-col items-center gap-4 w-full p-6">
+                <div class="flex flex-col gap-2 md:gap-4 w-full">
+                  <h3 class="font-archivo-narrow font-semibold text-[22px] md:text-[28px] leading-[26px] md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
                     {{ product.name }}
                   </h3>
                   <p class="font-archivo font-medium text-[16px] md:text-[20px] leading-[18px] md:leading-[22px] text-black/70 text-center w-full line-clamp-2">
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="w-full text-center mb-4">
-                  <p class="font-archivo-narrow font-semibold text-[28px] md:text-[34px] leading-[32px] md:leading-[40px]">
+                  <p class="font-archivo-narrow font-semibold text-[28px] md:text-[30px] leading-[32px] md:leading-[36px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
@@ -74,6 +74,7 @@
 
 <script>
 import { productService } from '@/services/productService'
+import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
 
@@ -89,7 +90,8 @@ export default {
   data() {
     return {
       bestSellers: [],
-      showToast: false
+      showToast: false,
+      currencySymbol: '$'
     }
   },
   setup() {
@@ -98,24 +100,19 @@ export default {
   },
   async created() {
     try {
-      // Sempre busca mais produtos para garantir que teremos 5 após a filtragem
-      const response = await productService.getProducts({ 
-        limit: 10, // Aumentando o limite para ter mais produtos para filtrar
-        sortBy: 'featured'
-      })
+      const [response, settings] = await Promise.all([
+        productService.getProducts({ 
+          limit: 10,
+          sortBy: 'featured'
+        }),
+        settingsService.getFinancialSettings()
+      ])
       
-      // Filtra o produto atual de forma mais explícita
       this.bestSellers = response.items
-        .filter(product => {
-          // Converte ambos para string e compara
-          const productId = String(product.id)
-          const currentId = String(this.currentProductId)
-          return productId !== currentId
-        })
+        .filter(product => String(product.id) !== String(this.currentProductId))
         .slice(0, 5)
-
-      console.log('Current Product ID:', this.currentProductId)
-      console.log('Filtered Products:', this.bestSellers.map(p => p.id))
+      
+      this.currencySymbol = settings.currency_symbol
 
     } catch (error) {
       console.error('Error fetching best sellers:', error)
@@ -157,10 +154,7 @@ export default {
       eventBus.emit('reload-product-details')
     },
     formatPrice(price) {
-      return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-      }).format(price)
+      return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
     addToCart(product) {
       const item = {
@@ -193,6 +187,13 @@ export default {
   display: none;  /* Chrome, Safari and Opera */
 }
 </style>
+
+
+
+
+
+
+
 
 
 

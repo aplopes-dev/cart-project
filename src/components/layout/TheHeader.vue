@@ -78,7 +78,7 @@
                   v-show="showEmailTooltip" 
                   class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
                 >
-                  {{ $t('contact.email') }}
+                  {{ companyData.email }}
                 </div>
               </div>
 
@@ -98,7 +98,7 @@
                   v-show="showPhoneTooltip" 
                   class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
                 >
-                  514 745-1080
+                  {{ companyData.phone }}
                 </div>
               </div>
 
@@ -153,7 +153,7 @@
                       stroke="currentColor" 
                       stroke-width="2"
                     >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <path d="M20 21v-2a4 4 0 01-4-4H8a4 4 0 01-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     {{ $t('header.myAccount') }}
@@ -201,7 +201,7 @@
               </div>
               <div class="flex flex-col justify-center w-[137px] h-[56px]">
                 <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">{{ $t('header.callUsToday') }}</span>
-                <span class="font-archivo font-bold text-[19px] leading-7 text-white">514 745-1080</span>
+                <span class="font-archivo font-bold text-[19px] leading-7 text-white">{{ companyData.phone }}</span>
               </div>
             </div>
 
@@ -215,7 +215,7 @@
               </div>
               <div class="flex flex-col justify-center w-[166px] h-[56px]">
                 <span class="font-archivo font-medium text-[15px] leading-7 text-empire-yellow">{{ $t('header.chatWithUs') }}</span>
-                <span class="font-archivo font-bold text-[19px] leading-7 text-white">{{ $t('contact.email') }}</span>
+                <span class="font-archivo font-bold text-[19px] leading-7 text-white">{{ companyData.email }}</span>
               </div>
             </div>
           </div>
@@ -681,6 +681,8 @@ import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { debounce } from 'lodash'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import api from '@/services/api'
+import eventBus from '@/utils/eventBus'
 
 const router = useRouter()
 const route = useRoute()
@@ -725,6 +727,14 @@ const loading = ref(false)
 const error = ref(null)
 const isSearching = ref(false)
 const selectedIndex = ref(-1)
+
+// Adicione esta ref para os dados da empresa
+const companyData = ref({
+  name: '',
+  email: '',
+  phone: '',
+  address: ''
+})
 
 // Constantes
 const flagImages = {
@@ -1065,6 +1075,38 @@ watch(showAutocomplete, (newValue) => {
   if (!newValue) {
     selectedIndex.value = -1
   }
+})
+
+// Adicione esta função para carregar os dados da empresa
+const loadCompanyData = async () => {
+  try {
+    const response = await api.get('/settings/company')
+    companyData.value = {
+      name: response.data.company_name || '',
+      email: response.data.email || '',
+      phone: response.data.phone || '',
+      address: response.data.address || ''
+    }
+    console.log('Header company data updated:', companyData.value)
+  } catch (err) {
+    console.error('Error loading company data:', err)
+  }
+}
+
+// Adicione o handler do evento
+const updateCompanyDataHandler = async () => {
+  console.log('Header received company data update event')
+  await loadCompanyData()
+}
+
+// Atualize onMounted e onUnmounted
+onMounted(() => {
+  loadCompanyData()
+  eventBus.on('company-data-updated', updateCompanyDataHandler)
+})
+
+onUnmounted(() => {
+  eventBus.off('company-data-updated', updateCompanyDataHandler)
 })
 </script>
 

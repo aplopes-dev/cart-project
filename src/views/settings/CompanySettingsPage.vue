@@ -133,6 +133,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getCurrentInstance } from 'vue'
 import api from '@/services/api'
+import eventBus from '@/utils/eventBus'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -187,6 +188,8 @@ const handleSubmit = async () => {
     
     await api.put('/settings/company', dataToSubmit)
     toast.success(t('company.updateSuccess'))
+    console.log('Emitting company-data-updated event') // Debug log
+    eventBus.emit('company-data-updated')
   } catch (err) {
     console.error('Error updating company settings:', err)
     toast.error(t('company.updateError'))
@@ -204,6 +207,9 @@ onMounted(() => {
   loadCompanyData()
 })
 </script>
+
+
+
 
 
 

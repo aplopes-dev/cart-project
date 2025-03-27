@@ -203,7 +203,7 @@ export default {
       email: 'info@empirecanada.ca',
       address: '2320, rue Cohen, Saint-Laurent, QC H4R 2N8'
     },
-    copyright: '© Copyright Empire Canada 2025 | Tous Droits Réservés'
+    allRightsReserved: 'Tous Droits Réservés'
   },
   contact: {
     title: 'Contactez-nous',

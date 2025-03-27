@@ -79,7 +79,9 @@
             <!-- Total -->
             <div class="col-span-1 md:col-span-3 flex items-start justify-between md:justify-end">
               <span class="md:hidden font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
-              <span class="font-archivo-narrow font-semibold text-xl">${{ (item.price * item.quantity).toFixed(2) }}</span>
+              <span class="font-archivo-narrow font-semibold text-xl">
+                {{ formatPrice(item.price * item.quantity) }}
+              </span>
             </div>
           </div>
         </div>
@@ -118,7 +120,9 @@
         <div class="py-6 max-w-[456px] ml-auto">
           <div class="flex justify-between items-center mb-4">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.subtotal') }}</span>
-            <span class="font-archivo-narrow font-semibold text-xl">${{ subtotal.toFixed(2) }}</span>
+            <span class="font-archivo-narrow font-semibold text-xl">
+              {{ formatPrice(subtotal) }}
+            </span>
           </div>
 
           <p class="font-archivo text-black/70 mb-6">
@@ -144,6 +148,7 @@ import { productService } from '@/services/productService'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { settingsService } from '@/services/settingsService'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
@@ -153,6 +158,16 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const { t } = useI18n()
+    const currencySymbol = ref('$')
+
+    const loadCurrencySymbol = async () => {
+      try {
+        const settings = await settingsService.getFinancialSettings()
+        currencySymbol.value = settings.currency_symbol
+      } catch (error) {
+        console.error('Error loading currency symbol:', error)
+      }
+    }
 
     // Mover estados para composables
     const showError = ref(false)
@@ -175,6 +190,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      loadCurrencySymbol()
       if (route.query.error === 'empty_cart') {
         showErrorMessage(t('cart.emptyCart'))
       }
@@ -186,7 +202,8 @@ export default defineComponent({
       router,
       showError,
       errorMessage,
-      showErrorMessage
+      showErrorMessage,
+      currencySymbol
     }
   },
   data() {
@@ -201,9 +218,7 @@ export default defineComponent({
       return this.cartStore.items
     },
     subtotal() {
-      return this.cartItems.reduce((total, item) => {
-        return total + (item.price * item.quantity)
-      }, 0)
+      return this.cartStore.subtotal // Usar diretamente o valor do store
     }
   },
   methods: {
@@ -244,10 +259,7 @@ export default defineComponent({
       }
     },
     formatPrice(price) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(price)
+      return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
     async fetchProductDetails(productId) {
       try {
@@ -288,6 +300,12 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
+
+
+
+
+
 
 
 

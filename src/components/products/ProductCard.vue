@@ -30,6 +30,11 @@
           {{ formatPrice(product.price) }}
         </p>
         
+        <!-- Debug info em desenvolvimento -->
+        <small v-if="process.env.NODE_ENV === 'development'" class="text-xs text-gray-500">
+          Symbol: {{ currencySymbol }} | Price: {{ product.price }}
+        </small>
+
         <!-- Botão Adicionar ao Carrinho -->
         <button 
           @click="addToCart"
@@ -43,37 +48,71 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { useCartStore } from '@/stores/cartStore'
+import { settingsService } from '@/services/settingsService'
 
 export default defineComponent({
   name: 'ProductCard',
   props: {
+    currencySymbol: {
+      type: String,
+      required: true, // Tornar obrigatório
+      default: '$'
+    },
     product: {
       type: Object,
-      required: true,
-      default: () => ({
-        id: '',
-        name: '',
-        price: 0,
-        image: '',
-        isNew: false
-      })
+      required: true
     }
   },
-  setup() {
+  setup(props) {
     const cartStore = useCartStore()
     const { t } = useI18n()
+
+    console.log('ProductCard Setup - Initial props:', {
+      product: props.product,
+      currencySymbol: props.currencySymbol
+    })
+
     return { cartStore, t }
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat('fr-FR', {
-        style: 'currency',
-        currency: 'EUR'
-      }).format(price)
+      if (!price) return `${this.currencySymbol}0.00`
+      
+      console.log('🏷️ formatPrice called:', {
+        price,
+        currencySymbol: this.currencySymbol,
+        productId: this.product.id
+      })
+
+      const numericPrice = Number(price)
+      if (isNaN(numericPrice)) return `${this.currencySymbol}0.00`
+
+      try {
+        const formatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+          .format(numericPrice)
+          .replace('$', this.currencySymbol)
+
+        console.log('💰 Formatted result:', {
+          original: numericPrice,
+          formatted,
+          currencySymbol: this.currencySymbol,
+          productId: this.product.id
+        })
+
+        return formatted
+      } catch (error) {
+        console.error('Error formatting price:', error)
+        return `${this.currencySymbol}${numericPrice.toFixed(2)}`
+      }
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
@@ -88,7 +127,42 @@ export default defineComponent({
       }
       this.cartStore.addItem(item)
     }
+  },
+  watch: {
+    currencySymbol: {
+      immediate: true,
+      handler(newValue) {
+        console.log('👀 Currency symbol changed:', {
+          new: newValue,
+          productId: this.product.id
+        })
+      }
+    }
+  },
+  mounted() {
+    console.log('ProductCard Mounted:', {
+      productName: this.product.name,
+      price: this.product.price,
+      currencySymbol: this.currencySymbol,
+      formattedPrice: this.formatPrice(this.product.price)
+    })
+  },
+  computed: {
+    formattedPrice() {
+      const formatted = this.formatPrice(this.product.price)
+      console.log('🏷️ Computed formattedPrice:', {
+        originalPrice: this.product.price,
+        formatted: formatted
+      })
+      return formatted
+    }
   }
 })
 </script>
+
+
+
+
+
+
 

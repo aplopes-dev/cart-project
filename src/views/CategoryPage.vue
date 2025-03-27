@@ -341,7 +341,7 @@
                     </p>
                     <div class="mt-auto w-full">
                       <p class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
-                        ${{ Number(product.price).toFixed(2) }}
+                        {{ formatPrice(product.price) }}
                       </p>
                       <!-- Wrap the button in a div that stops event propagation -->
                       <div @click.stop>
@@ -492,6 +492,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/productService'
 import { categoryService } from '@/services/categoryService'
+import { settingsService } from '@/services/settingsService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { debounce } from 'lodash'
@@ -519,6 +520,54 @@ const isDragging = ref(false)
 const tempPriceRange = ref([0, 1000]) // Nova ref para armazenar valores temporários
 const cartStore = useCartStore()
 const showToast = ref(false)
+const currencySymbol = ref('$')
+
+// Função para carregar as configurações financeiras
+const loadFinancialSettings = async () => {
+  try {
+    const settings = await settingsService.getFinancialSettings()
+    console.log('🔧 Financial Settings loaded:', settings)
+    currencySymbol.value = settings.currency_symbol
+    console.log('💱 Currency Symbol set to:', currencySymbol.value)
+  } catch (error) {
+    console.error('Error loading financial settings:', error)
+  }
+}
+
+const fetchFilteredProducts = async () => {
+  try {
+    loading.value = true
+    
+    // Carregar produtos e configurações em paralelo
+    const [productsResponse, settings] = await Promise.all([
+      productService.getProducts({
+        categoryId: selectedCategory.value,
+        brands: selectedBrands.value,
+        minPrice: priceRange.value[0],
+        maxPrice: priceRange.value[1],
+        page: currentPage.value,
+        limit: itemsPerPage.value,
+        sortBy: sortBy.value
+      }),
+      settingsService.getFinancialSettings()
+    ])
+
+    products.value = productsResponse.items
+    totalItems.value = productsResponse.total
+    totalPages.value = Math.ceil(productsResponse.total / itemsPerPage.value)
+    
+    // Atualizar o símbolo da moeda
+    currencySymbol.value = settings.currency_symbol
+    console.log('💱 Updated currency symbol:', currencySymbol.value)
+    
+  } catch (err) {
+    console.error('Error fetching data:', err)
+    error.value = 'Error loading products'
+    products.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
 const handleSort = () => {
   currentPage.value = 1 // Reset para primeira página ao mudar ordenação
@@ -584,33 +633,6 @@ const fetchBrands = async (categoryId = null) => {
     console.error('Error fetching brands:', err)
     error.value = 'Error loading brands'
     brands.value = []
-  }
-}
-
-const fetchFilteredProducts = async () => {
-  console.log('📡 Chamando fetchFilteredProducts - isDragging:', isDragging.value)
-  try {
-    loading.value = true
-    const filters = {
-      categoryId: selectedCategory.value,
-      brands: selectedBrands.value,
-      minPrice: priceRange.value[0],
-      maxPrice: priceRange.value[1],
-      page: currentPage.value,
-      limit: itemsPerPage.value, // Use itemsPerPage aqui
-      sortBy: sortBy.value
-    }
-    
-    const response = await productService.getProducts(filters)
-    products.value = response.items
-    totalItems.value = response.total
-    totalPages.value = Math.ceil(response.total / itemsPerPage.value)
-  } catch (err) {
-    console.error('Error fetching filtered products:', err)
-    error.value = 'Error loading products'
-    products.value = []
-  } finally {
-    loading.value = false
   }
 }
 
@@ -682,14 +704,12 @@ const selectCategoryBySlug = async (slug) => {
 
 onMounted(async () => {
   try {
+    await loadFinancialSettings() // Adicionar esta linha
     await fetchCategories()
     
-    // Se tiver slug na rota, seleciona a categoria específica
     if (route.params.slug) {
       await selectCategoryBySlug(route.params.slug)
-    } 
-    // Se não tiver slug, seleciona a primeira categoria
-    else {
+    } else {
       selectFirstCategory()
     }
     
@@ -765,6 +785,10 @@ watch(isDragging, (newValue) => {
 
 const navigateToProduct = (productId) => {
   router.push(`/product/${productId}`)
+}
+
+const formatPrice = (price) => {
+  return `${currencySymbol.value}${Number(price).toFixed(2)}`
 }
 
 </script>
@@ -920,5 +944,18 @@ select:focus {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

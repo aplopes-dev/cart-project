@@ -155,16 +155,33 @@
 import { useI18n } from 'vue-i18n'
 import { useCartStore } from '@/stores/cartStore'
 import { productService } from '@/services/productService'
+import { settingsService } from '@/services/settingsService'
+import { ref, onMounted } from 'vue'
 
 export default {
   name: 'NewProducts',
   setup() {
     const i18n = useI18n()
     const cartStore = useCartStore()
-    
+    const currencySymbol = ref('$')
+
+    const loadCurrencySymbol = async () => {
+      try {
+        const settings = await settingsService.getFinancialSettings()
+        currencySymbol.value = settings.currency_symbol
+      } catch (error) {
+        console.error('Error loading currency symbol:', error)
+      }
+    }
+
+    onMounted(() => {
+      loadCurrencySymbol()
+    })
+
     return {
       t: i18n.t,
-      cartStore
+      cartStore,
+      currencySymbol
     }
   },
   data() {
@@ -180,15 +197,19 @@ export default {
   },
   async created() {
     try {
-      const response = await productService.getProducts({ 
-        limit: 10,
-        page: 1,
-        sortBy: 'featured'
-      })
-      this.products = response.items
-      this.quantities = Array(response.items.length).fill(1)
+      const [productsResponse, settings] = await Promise.all([
+        productService.getProducts({ 
+          limit: 10,
+          page: 1,
+          sortBy: 'featured'
+        }),
+        settingsService.getFinancialSettings()
+      ])
+      this.products = productsResponse.items
+      this.quantities = Array(productsResponse.items.length).fill(1)
+      this.currencySymbol = settings.currency_symbol
     } catch (err) {
-      console.error('Error fetching products:', err)
+      console.error('Error fetching data:', err)
       this.products = []
     }
   },
@@ -203,11 +224,7 @@ export default {
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        currencyDisplay: 'symbol'
-      }).format(price)
+      return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
     nextSlide() {
       if (this.currentSlide >= this.maxSlides) {
@@ -310,6 +327,13 @@ export default {
   transition: opacity 0.3s ease-in-out;
 }
 </style>
+
+
+
+
+
+
+
 
 
 

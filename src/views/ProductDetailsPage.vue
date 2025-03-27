@@ -168,8 +168,10 @@ import ProductQuantitySelector from '@/components/product/ProductQuantitySelecto
 import BestSeller from '@/components/product/BestSeller.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { productService } from '@/services/productService'
+import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
+import { ref, onMounted } from 'vue'
 
 export default {
   name: 'ProductDetailsPage',
@@ -179,7 +181,25 @@ export default {
   },
   setup() {
     const cartStore = useCartStore()
-    return { cartStore }
+    const currencySymbol = ref('$')
+
+    const loadCurrencySymbol = async () => {
+      try {
+        const settings = await settingsService.getFinancialSettings()
+        currencySymbol.value = settings.currency_symbol
+      } catch (error) {
+        console.error('Error loading currency symbol:', error)
+      }
+    }
+
+    onMounted(() => {
+      loadCurrencySymbol()
+    })
+
+    return {
+      cartStore,
+      currencySymbol
+    }
   },
   data() {
     return {
@@ -223,10 +243,7 @@ export default {
   },
   methods: {
     formatPrice(price) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(price)
+      return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
 
     calculateOriginalPrice(price) {
@@ -237,7 +254,10 @@ export default {
         this.loading = true
         this.error = null
         const productId = this.$route.params.id
-        const productData = await productService.getProductById(productId)
+        const [productData, settings] = await Promise.all([
+          productService.getProductById(productId),
+          settingsService.getFinancialSettings()
+        ])
         
         if (!productData) {
           throw new Error('Product not found')
@@ -247,6 +267,7 @@ export default {
           ...productData,
           category: productData.category || null
         }
+        this.currencySymbol = settings.currency_symbol
 
         // Reseta estados importantes
         this.selectedColor = null
@@ -309,6 +330,10 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
+
+
+
+
 
 
 
