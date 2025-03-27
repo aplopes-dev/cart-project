@@ -531,7 +531,39 @@ export default {
       title: 'Career',
       description: 'Manage job opportunities, requirements and application process',
       manage: 'Manage career',
-      breadcrumb: 'Career'
+      breadcrumb: 'Career',
+      form: {
+        title: 'Job Position',
+        titlePlaceholder: 'Enter job position...',
+        content: 'Job Description',
+        contentPlaceholder: 'Enter job description...',
+        add: 'ADD JOB',
+        edit: 'EDIT JOB',
+        cancel: 'Cancel'
+      },
+      actions: {
+        hide: 'Hide section',
+        show: 'Show section',
+        edit: 'Edit section',
+        delete: 'Delete section'
+      },
+      modal: {
+        deleteTitle: 'Confirm deletion',
+        deleteMessage: 'Are you sure you want to delete this career section? This action cannot be undone.',
+        cancel: 'Cancel',
+        confirm: 'Delete'
+      },
+      messages: {
+        addSuccess: 'Section added successfully',
+        updateSuccess: 'Section updated successfully',
+        deleteSuccess: 'Section deleted successfully',
+        visibilitySuccess: 'Section visibility updated successfully',
+        loadError: 'Error loading career items',
+        addError: 'Error adding section',
+        updateError: 'Error updating section',
+        deleteError: 'Error deleting section',
+        visibilityError: 'Error updating section visibility'
+      }
     }
   },
   addresses: {

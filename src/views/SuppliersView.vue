@@ -14,7 +14,7 @@
       <div v-else class="space-y-8">
         <div v-for="supplier in activeSuppliers" :key="supplier.id" class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg">
           <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ supplier.title }}</h2>
-          <p class="text-black">{{ supplier.content }}</p>
+          <p class="text-black whitespace-pre-wrap">{{ supplier.content }}</p>
         </div>
       </div>
     </div>
@@ -64,4 +64,5 @@ export default {
   }
 }
 </script>
+
 

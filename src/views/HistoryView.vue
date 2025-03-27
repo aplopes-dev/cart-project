@@ -18,7 +18,7 @@
           class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg"
         >
           <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
-          <p class="text-black">{{ item.content }}</p>
+          <p class="text-black whitespace-pre-wrap">{{ item.content }}</p>
         </div>
       </div>
     </div>
@@ -68,6 +68,7 @@ onMounted(() => {
 <style scoped>
 /* Mantenha os estilos existentes inalterados */
 </style>
+
 
 
 

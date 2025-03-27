@@ -27,151 +27,281 @@
         <div class="mb-8">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
             {{ $t('content.career.title') }}
-          </h1>
+          </h1>         
         </div>
 
-        <!-- Form Content -->
-        <div class="space-y-8">
-          <!-- Why Join Section -->
-          <div class="bg-[#FAFAFA] p-6 rounded-lg">
-            <h2 class="font-archivo-narrow text-2xl mb-6">{{ $t('career.whyJoin.title') }}</h2>
-            <div class="space-y-4">
-              <div v-for="(benefit, index) in benefits" :key="index" class="flex gap-4">
-                <input
-                  type="text"
-                  v-model="benefit.text"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
-                  :placeholder="$t('content.history.form.textPlaceholder')"
-                />
-                <button
-                  @click="removeBenefit(index)"
-                  class="text-red-500 hover:text-red-700"
+        <!-- Form -->
+        <div class="bg-[#FAFAFA] p-8 mb-8">
+          <form @submit.prevent="handleSubmit" class="space-y-6">
+            <div>
+              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.title') }}</label>
+              <input 
+                type="text"
+                v-model="formData.title"
+                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                :placeholder="$t('content.career.form.titlePlaceholder')"
+              />
+            </div>
+
+            <div>
+              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.content') }}</label>
+              <textarea 
+                v-model="formData.content"
+                rows="4"
+                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
+                :placeholder="$t('content.career.form.contentPlaceholder')"
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-4">
+              <button 
+                v-if="editingId"
+                type="button"
+                @click="cancelEdit"
+                class="bg-gray-200 text-black px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+              >
+                {{ $t('content.career.form.cancel') }}
+              </button>
+              <button 
+                type="submit"
+                class="bg-black text-empire-yellow px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+              >
+                {{ $t(editingId ? 'content.career.form.edit' : 'content.career.form.add') }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista de Cards -->
+        <div class="space-y-6">
+          <div 
+            v-for="(item, index) in careerItems" 
+            :key="index"
+            class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
+            :class="{ 'opacity-50': !item.is_active }"
+          >
+            <!-- Botões de ação -->
+            <div class="absolute top-4 right-4 flex gap-4">
+              <button 
+                @click="toggleVisibility(index)"
+                class="hover:opacity-70 transition-opacity"
+                :title="$t(item.is_active ? 'content.career.actions.hide' : 'content.career.actions.show')"
+              >
+                <svg 
+                  class="w-6 h-6" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  stroke-width="2"
                 >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <button
-                @click="addBenefit"
-                class="text-empire-yellow hover:text-empire-yellow/80 font-archivo"
+                  <path 
+                    v-if="item.is_active"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path 
+                    v-if="item.is_active"
+                    d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"
+                  />
+                  <path 
+                    v-else
+                    d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
+                  />
+                  <line 
+                    v-if="!item.is_active"
+                    x1="1" 
+                    y1="1" 
+                    x2="23" 
+                    y2="23"
+                  />
+                </svg>
+              </button>
+
+              <button 
+                @click="editItem(index)"
+                class="hover:opacity-70 transition-opacity"
+                :title="$t('content.career.actions.edit')"
               >
-                + {{ $t('content.history.form.add') }}
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+
+              <button 
+                @click="deleteItem(index)"
+                class="hover:opacity-70 transition-opacity"
+                :title="$t('content.career.actions.delete')"
+              >
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                  <line x1="10" y1="11" x2="10" y2="17"/>
+                  <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
               </button>
             </div>
-          </div>
 
-          <!-- Job Positions Section -->
-          <div class="bg-[#FAFAFA] p-6 rounded-lg">
-            <h2 class="font-archivo-narrow text-2xl mb-6">{{ $t('career.openings.title') }}</h2>
-            <div class="space-y-6">
-              <div v-for="(position, index) in positions" :key="index" class="space-y-4 p-4 border border-gray-200 rounded-lg">
-                <div class="flex justify-between items-start">
-                  <div class="flex-1 space-y-4">
-                    <input
-                      type="text"
-                      v-model="position.title"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
-                      :placeholder="$t('content.history.form.titlePlaceholder')"
-                    />
-                    <textarea
-                      v-model="position.description"
-                      rows="3"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
-                      :placeholder="$t('content.history.form.textPlaceholder')"
-                    ></textarea>
-                  </div>
-                  <button
-                    @click="removePosition(index)"
-                    class="text-red-500 hover:text-red-700 ml-4"
-                  >
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <button
-                @click="addPosition"
-                class="text-empire-yellow hover:text-empire-yellow/80 font-archivo"
-              >
-                + {{ $t('content.history.form.add') }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Save Button -->
-          <div class="flex justify-end">
-            <button
-              @click="saveChanges"
-              class="bg-empire-yellow text-black px-8 py-3 rounded-lg font-archivo hover:bg-empire-yellow/80"
-              :disabled="saving"
-            >
-              {{ saving ? $t('profile.saving') : $t('profile.save') }}
-            </button>
+            <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
+            <p class="text-black whitespace-pre-wrap">{{ item.content }}</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div 
+    v-if="showDeleteModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <h3 class="text-xl font-archivo-narrow mb-4">{{ $t('content.career.modal.deleteTitle') }}</h3>
+      <p class="text-black/70 mb-6">{{ $t('content.career.modal.deleteMessage') }}</p>
+      <div class="flex justify-end gap-4">
+        <button 
+          @click="showDeleteModal = false"
+          class="px-6 py-2 text-black/70 hover:text-black"
+        >
+          {{ $t('content.career.modal.cancel') }}
+        </button>
+        <button 
+          @click="confirmDelete"
+          class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          {{ $t('content.career.modal.confirm') }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
+import api from '@/services/api'
 
 const { t } = useI18n()
+const app = getCurrentInstance()
+const toast = app.appContext.config.globalProperties.$toast
 
-const benefits = ref([
-  { text: t('career.whyJoin.benefit1') },
-  { text: t('career.whyJoin.benefit2') },
-  { text: t('career.whyJoin.benefit3') },
-  { text: t('career.whyJoin.benefit4') }
-])
+const loading = ref(false)
+const error = ref(null)
+const careerItems = ref([])
+const editingId = ref(null)
+const showDeleteModal = ref(false)
+const itemToDelete = ref(null)
 
-const positions = ref([
-  {
-    title: t('career.openings.position1.title'),
-    description: t('career.openings.position1.description')
-  },
-  {
-    title: t('career.openings.position2.title'),
-    description: t('career.openings.position2.description')
-  },
-  {
-    title: t('career.openings.position3.title'),
-    description: t('career.openings.position3.description')
+const formData = ref({
+  title: '',
+  content: '',
+  is_active: true,
+  type: 'career'
+})
+
+const resetForm = () => {
+  formData.value = {
+    title: '',
+    content: '',
+    is_active: true,
+    type: 'career'
   }
-])
-
-const saving = ref(false)
-
-const addBenefit = () => {
-  benefits.value.push({ text: '' })
+  editingId.value = null
 }
 
-const removeBenefit = (index) => {
-  benefits.value.splice(index, 1)
-}
+const loadCareerItems = async () => {
+  loading.value = true
+  error.value = null
 
-const addPosition = () => {
-  positions.value.push({ title: '', description: '' })
-}
-
-const removePosition = (index) => {
-  positions.value.splice(index, 1)
-}
-
-const saveChanges = async () => {
-  saving.value = true
   try {
-    // Implement save logic here
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message or handle response
-  } catch (error) {
-    // Handle error
+    const response = await api.get('/settings/careers')
+    careerItems.value = response.data
+  } catch (err) {
+    console.error('Error:', err)
+    error.value = t('content.career.messages.loadError')
+    toast.error(error.value)
   } finally {
-    saving.value = false
+    loading.value = false
   }
 }
+
+const handleSubmit = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    if (editingId.value) {
+      await api.put(`/settings/careers/${editingId.value}`, formData.value)
+      toast.success(t('content.career.messages.updateSuccess'))
+    } else {
+      await api.post('/settings/careers', formData.value)
+      toast.success(t('content.career.messages.addSuccess'))
+    }
+    await loadCareerItems()
+    resetForm()
+  } catch (err) {
+    console.error('Error:', err)
+    error.value = t(editingId.value ? 'content.career.messages.updateError' : 'content.career.messages.addError')
+    toast.error(error.value)
+  } finally {
+    loading.value = false
+  }
+}
+
+const editItem = (index) => {
+  const item = careerItems.value[index]
+  editingId.value = item.id
+  formData.value = {
+    title: item.title,
+    content: item.content,
+    is_active: item.is_active,
+    type: 'career'
+  }
+}
+
+const cancelEdit = () => {
+  resetForm()
+}
+
+const toggleVisibility = async (index) => {
+  const item = careerItems.value[index]
+  try {
+    await api.put(`/settings/careers/${item.id}`, {
+      ...item,
+      is_active: !item.is_active,
+      type: 'career'
+    })
+    await loadCareerItems()
+    toast.success(t('content.career.messages.visibilitySuccess'))
+  } catch (err) {
+    console.error('Error:', err)
+    toast.error(t('content.career.messages.visibilityError'))
+  }
+}
+
+const deleteItem = (index) => {
+  itemToDelete.value = careerItems.value[index]
+  showDeleteModal.value = true
+}
+
+const confirmDelete = async () => {
+  if (!itemToDelete.value) return
+
+  try {
+    await api.delete(`/settings/careers/${itemToDelete.value.id}`)
+    await loadCareerItems()
+    toast.success(t('content.career.messages.deleteSuccess'))
+  } catch (err) {
+    console.error('Error:', err)
+    toast.error(t('content.career.messages.deleteError'))
+  } finally {
+    showDeleteModal.value = false
+    itemToDelete.value = null
+  }
+}
+
+onMounted(() => {
+  loadCareerItems()
+})
 </script>
+
+
+

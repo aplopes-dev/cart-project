@@ -523,9 +523,41 @@ export default {
     },
     career: {
       title: 'Carrière',
-      description: 'Gérez les offres d\'emploi, les exigences et le processus de candidature',
+      description: 'Gérer les offres d\'emploi, les exigences et le processus de candidature',
       manage: 'Gérer la carrière',
-      breadcrumb: 'Carrière'
+      breadcrumb: 'Carrière',
+      form: {
+        title: 'Poste',
+        titlePlaceholder: 'Entrez le poste...',
+        content: 'Description du poste',
+        contentPlaceholder: 'Entrez la description du poste...',
+        add: 'AJOUTER UN POSTE',
+        edit: 'MODIFIER LE POSTE',
+        cancel: 'Annuler'
+      },
+      actions: {
+        hide: 'Masquer la section',
+        show: 'Afficher la section',
+        edit: 'Modifier la section',
+        delete: 'Supprimer la section'
+      },
+      modal: {
+        deleteTitle: 'Confirmer la suppression',
+        deleteMessage: 'Êtes-vous sûr de vouloir supprimer cette section de carrière ? Cette action ne peut pas être annulée.',
+        cancel: 'Annuler',
+        confirm: 'Supprimer'
+      },
+      messages: {
+        addSuccess: 'Section ajoutée avec succès',
+        updateSuccess: 'Section mise à jour avec succès',
+        deleteSuccess: 'Section supprimée avec succès',
+        visibilitySuccess: 'Visibilité de la section mise à jour avec succès',
+        loadError: 'Erreur lors du chargement des éléments de carrière',
+        addError: 'Erreur lors de l\'ajout de la section',
+        updateError: 'Erreur lors de la mise à jour de la section',
+        deleteError: 'Erreur lors de la suppression de la section',
+        visibilityError: 'Erreur lors de la mise à jour de la visibilité'
+      }
     }
   },
   addresses: {

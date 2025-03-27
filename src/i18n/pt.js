@@ -525,7 +525,39 @@ export default {
       title: 'Carreira',
       description: 'Gerencie oportunidades de trabalho, requisitos e processo de candidatura',
       manage: 'Gerenciar carreira',
-      breadcrumb: 'Carreira'
+      breadcrumb: 'Carreira',
+      form: {
+        title: 'Vaga',
+        titlePlaceholder: 'Digite o nome da vaga...',
+        content: 'Descrição da vaga',
+        contentPlaceholder: 'Digite a descrição da vaga...',
+        add: 'ADICIONAR VAGA',
+        edit: 'EDITAR VAGA',
+        cancel: 'Cancelar'
+      },
+      actions: {
+        hide: 'Ocultar seção',
+        show: 'Mostrar seção',
+        edit: 'Editar seção',
+        delete: 'Excluir seção'
+      },
+      modal: {
+        deleteTitle: 'Confirmar exclusão',
+        deleteMessage: 'Tem certeza que deseja excluir esta seção de carreira? Esta ação não pode ser desfeita.',
+        cancel: 'Cancelar',
+        confirm: 'Excluir'
+      },
+      messages: {
+        addSuccess: 'Seção adicionada com sucesso',
+        updateSuccess: 'Seção atualizada com sucesso',
+        deleteSuccess: 'Seção excluída com sucesso',
+        visibilitySuccess: 'Visibilidade da seção atualizada com sucesso',
+        loadError: 'Erro ao carregar itens de carreira',
+        addError: 'Erro ao adicionar seção',
+        updateError: 'Erro ao atualizar seção',
+        deleteError: 'Erro ao excluir seção',
+        visibilityError: 'Erro ao atualizar visibilidade da seção'
+      }
     }
   },
   addresses: {
