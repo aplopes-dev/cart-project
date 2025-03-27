@@ -130,6 +130,10 @@ export default {
     back: 'Back'
   },
   checkout: {
+    calculating: "Calculating",
+    processing: "Processing",
+    errorCalculating: "Error calculating values",
+    errorProcessingOrder: "Error processing order",
     emptyCart: "Your cart is empty",
     continueShopping: "CONTINUE SHOPPING",
     completePurchase: "COMPLETE PURCHASE",
@@ -178,8 +182,12 @@ export default {
       subtotal: 'SUBTOTAL',
       total: 'TOTAL'
     },
+    errorLoadingAddress: 'Error loading default address',
     completePurchase: 'COMPLETE PURCHASE',
-    fieldRequired: 'This field is required'
+    fieldRequired: 'This field is required',
+    changeAddress: 'Change address',
+    selectAddress: 'Select delivery address',
+    useThisAddress: 'Use this address'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
@@ -590,7 +598,8 @@ export default {
     deleteConfirm: 'Are you sure you want to delete this address?',
     saveSuccess: 'Address saved successfully',
     deleteSuccess: 'Address deleted successfully',
-    error: 'An error occurred. Please try again.'
+    error: 'An error occurred. Please try again.',
+    default: 'Default'
   }
 }
 
