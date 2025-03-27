@@ -348,6 +348,8 @@ export default {
     currencySymbolPlaceholder: 'Digite o símbolo da moeda (ex: R$)',
     taxRate: 'Taxa de Imposto',
     taxRatePlaceholder: 'Digite a taxa de imposto',
+    discountPercentage: 'Porcentual de Desconto',
+    discountPercentagePlaceholder: 'Digite a porcentagem de desconto',
     minOrderValue: 'Valor Mínimo do Pedido',
     minOrderValuePlaceholder: 'Digite o valor mínimo do pedido',
     freeShippingThreshold: 'Valor Mínimo para Frete Grátis',
