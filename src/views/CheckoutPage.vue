@@ -99,8 +99,18 @@
 
               <!-- Shipping Address Section -->
               <section>
-                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
+                <div class="flex items-center justify-between mb-6 relative pr-12">
                   <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
+                  
+                  <!-- Botão modificado com novo estilo -->
+                  <button 
+                    @click="showAddressModal = true"
+                    class="font-archivo-narrow px-4 py-2 border border-black hover:bg-empire-yellow transition-colors duration-200"
+                  >
+                    {{ $t('checkout.changeAddress') }}
+                  </button>
+
+                  <!-- Seta para mobile -->
                   <svg 
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.shipping }"
@@ -364,6 +374,12 @@
       </div>
     </div>
   </div>
+  <AddressSelectionModal
+    :show="showAddressModal"
+    :addresses="addressStore.addresses"
+    @close="showAddressModal = false"
+    @select="updateShippingAddress"
+  />
 </template>
 
 <script>
@@ -373,11 +389,17 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import api from '@/services/api'
 import { useI18n } from 'vue-i18n'
+import { useAddressStore } from '@/stores/address'
+import AddressSelectionModal from '@/components/address/AddressSelectionModal.vue'
 
 export default {
   name: 'CheckoutPage',
+  components: {
+    AddressSelectionModal
+  },
   setup() {
     const cartStore = useCartStore()
+    const addressStore = useAddressStore()
     const store = useStore()
     const router = useRouter()
     const { t } = useI18n()
@@ -400,6 +422,7 @@ export default {
 
     return {
       cartStore,
+      addressStore,
       store,
       router, // Importante: passar o router para os methods
       continueShopping,
@@ -439,7 +462,8 @@ export default {
       showErrors: false,
       error: null,
       showErrorAlert: false,
-      loading: false
+      loading: false,
+      showAddressModal: false
     }
   },
   computed: {
@@ -547,6 +571,14 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    updateShippingAddress(address) {
+      this.formData.address = address.address
+      this.formData.apartment = address.apartment
+      this.formData.city = address.city
+      this.formData.state = address.state
+      this.formData.postalCode = address.postalCode
+      this.formData.country = address.country
     }
   },
   watch: {
@@ -570,6 +602,25 @@ export default {
       next('/shopping-cart');
     } else {
       next();
+    }
+  },
+  async created() {
+    // Carregar endereço padrão do usuário
+    try {
+      await this.addressStore.fetchAddresses()
+      const defaultAddress = this.addressStore.addresses.find(addr => addr.isDefault)
+      
+      if (defaultAddress) {
+        this.formData.address = defaultAddress.address
+        this.formData.apartment = defaultAddress.apartment
+        this.formData.city = defaultAddress.city
+        this.formData.state = defaultAddress.state
+        this.formData.postalCode = defaultAddress.postalCode
+        this.formData.country = defaultAddress.country
+      }
+    } catch (error) {
+      console.error('Error loading default address:', error)
+      this.$toast.error(this.$t('checkout.errorLoadingAddress'))
     }
   }
 }
