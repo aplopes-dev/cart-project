@@ -371,6 +371,8 @@ export default {
     currencySymbolPlaceholder: 'Ex: $, €, £',
     taxRate: 'Tax Rate',
     taxRatePlaceholder: 'Enter tax rate in %',
+    discountPercentage: 'Discount Percentage',
+    discountPercentagePlaceholder: 'Enter discount percentage',
     minOrderValue: 'Minimum Order Value',
     minOrderValuePlaceholder: 'Enter minimum order value',
     freeShippingThreshold: 'Free Shipping Threshold',
