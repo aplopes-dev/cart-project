@@ -15,7 +15,8 @@ const formData = ref({
   free_shipping_threshold: '',
   currency_code: '',
   currency_symbol: '',
-  shipping_cost: ''
+  shipping_cost: '',
+  discount_percentage: ''
 })
 
 const loading = ref(false)
@@ -37,6 +38,7 @@ const loadFinancialSettings = async () => {
         min_order_value: settings.min_order_value ? parseFloat(settings.min_order_value).toFixed(2) : '0.00',
         free_shipping_threshold: settings.free_shipping_threshold ? parseFloat(settings.free_shipping_threshold).toFixed(2) : '0.00',
         shipping_cost: settings.shipping_cost ? parseFloat(settings.shipping_cost).toFixed(2) : '0.00',
+        discount_percentage: settings.discount_percentage ? parseFloat(settings.discount_percentage).toFixed(2) : '0.00',
         currency_code: settings.currency_code,
         currency_symbol: settings.currency_symbol
       }
@@ -71,6 +73,7 @@ const handleSubmit = async () => {
       min_order_value: parseFloat(formData.value.min_order_value) || 0,
       free_shipping_threshold: parseFloat(formData.value.free_shipping_threshold) || 0,
       shipping_cost: parseFloat(formData.value.shipping_cost) || 0,
+      discount_percentage: parseFloat(formData.value.discount_percentage) || 0,
       currency_code: formData.value.currency_code,
       currency_symbol: formData.value.currency_symbol
     }
@@ -179,6 +182,19 @@ onMounted(() => {
               <span v-if="showErrors && !formData.tax_rate" class="text-red-500 text-sm mt-1">
                 {{ $t('financial.fieldRequired') }}
               </span>
+            </div>
+
+            <div>
+              <label class="block font-archivo text-sm mb-2">{{ $t('financial.discountPercentage') }} (%)</label>
+              <input 
+                type="number"
+                v-model="formData.discount_percentage"
+                step="0.01"
+                min="0"
+                max="100"
+                :placeholder="$t('financial.discountPercentagePlaceholder')"
+                class="w-full p-4 border border-gray-300"
+              >
             </div>
 
             <!-- Minimum Order Value -->
