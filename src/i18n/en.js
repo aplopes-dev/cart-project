@@ -598,8 +598,23 @@ export default {
     deleteConfirm: 'Are you sure you want to delete this address?',
     saveSuccess: 'Address saved successfully',
     deleteSuccess: 'Address deleted successfully',
+    deleteError: 'Error deleting address',
     error: 'An error occurred. Please try again.',
-    default: 'Default'
+    default: 'Default',
+    requiredField: 'This field is required',
+    saveSuccess: 'Addresses saved successfully',
+    saveError: 'Error saving addresses',
+    loadError: 'Error loading addresses',
+    deleteConfirm: 'Are you sure you want to delete this address?',
+    deleteSuccess: 'Address deleted successfully',
+    deleteError: 'Error deleting address',
+    fillAllRequired: 'Please fill in all required fields',
+    deleteModal: {
+      title: 'Delete Address',
+      message: 'Are you sure you want to delete this address?',
+      cancel: 'Cancel',
+      confirm: 'Delete'
+    }
   }
 }
 

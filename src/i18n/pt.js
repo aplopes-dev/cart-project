@@ -588,8 +588,23 @@ export default {
     deleteConfirm: 'Tem certeza que deseja excluir este endereço?',
     saveSuccess: 'Endereço salvo com sucesso',
     deleteSuccess: 'Endereço excluído com sucesso',
+    deleteError: 'Erro ao excluir endereço',
     error: 'Ocorreu um erro. Por favor, tente novamente.',
-    default: 'Padrão'
+    default: 'Padrão',
+    requiredField: 'Este campo é obrigatório',
+    saveSuccess: 'Endereços salvos com sucesso',
+    saveError: 'Erro ao salvar endereços',
+    loadError: 'Erro ao carregar endereços',
+    deleteConfirm: 'Tem certeza que deseja excluir este endereço?',
+    deleteSuccess: 'Endereço excluído com sucesso',
+    deleteError: 'Erro ao excluir endereço',
+    fillAllRequired: 'Preencha todos os campos obrigatórios',
+    deleteModal: {
+      title: 'Excluir Endereço',
+      message: 'Tem certeza que deseja excluir este endereço?',
+      cancel: 'Cancelar',
+      confirm: 'Excluir'
+    }
   },
   suppliers: {
     pageTitle: 'Nossos Fornecedores',

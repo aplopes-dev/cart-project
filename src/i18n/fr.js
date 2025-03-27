@@ -592,8 +592,23 @@ export default {
     deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
     saveSuccess: 'Adresse enregistrée avec succès',
     deleteSuccess: 'Adresse supprimée avec succès',
+    deleteError: 'Erreur lors de la suppression de l\'adresse',
     error: 'Une erreur est survenue. Veuillez réessayer.',
-    default: 'Par défaut'
+    default: 'Par défaut',
+    requiredField: 'Ce champ est obligatoire',
+    saveSuccess: 'Adresses enregistrées avec succès',
+    saveError: 'Erreur lors de l\'enregistrement des adresses',
+    loadError: 'Erreur lors du chargement des adresses',
+    deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
+    deleteSuccess: 'Adresse supprimée avec succès',
+    deleteError: 'Erreur lors de la suppression de l\'adresse',
+    fillAllRequired: 'Veuillez remplir tous les champs obligatoires',
+    deleteModal: {
+      title: 'Supprimer l\'adresse',
+      message: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
+      cancel: 'Annuler',
+      confirm: 'Supprimer'
+    }
   },
   suppliers: {
     pageTitle: 'Nos Fournisseurs',

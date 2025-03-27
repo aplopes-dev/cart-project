@@ -53,8 +53,14 @@
                   type="text"
                   v-model="address.street"
                   :placeholder="$t('addresses.streetPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.street ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.street" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- Number -->
@@ -64,8 +70,14 @@
                   type="text"
                   v-model="address.number"
                   :placeholder="$t('addresses.numberPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.number ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.number" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- Complement -->
@@ -86,8 +98,14 @@
                   type="text"
                   v-model="address.neighborhood"
                   :placeholder="$t('addresses.neighborhoodPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.neighborhood ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.neighborhood" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- City -->
@@ -97,8 +115,14 @@
                   type="text"
                   v-model="address.city"
                   :placeholder="$t('addresses.cityPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.city ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.city" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- State -->
@@ -108,8 +132,14 @@
                   type="text"
                   v-model="address.state"
                   :placeholder="$t('addresses.statePlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.state ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.state" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- Postal Code -->
@@ -119,8 +149,14 @@
                   type="text"
                   v-model="address.postalCode"
                   :placeholder="$t('addresses.postalCodePlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  :class="[
+                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    showErrors && !address.postalCode ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                  ]"
                 />
+                <span v-if="showErrors && !address.postalCode" class="text-red-500 text-sm mt-1">
+                  {{ $t('addresses.requiredField') }}
+                </span>
               </div>
 
               <!-- Default Address Checkbox -->
@@ -160,40 +196,196 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div 
+    v-if="showDeleteModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <h3 class="font-archivo-narrow text-2xl mb-4">
+        {{ $t('addresses.deleteModal.title') }}
+      </h3>
+      <p class="text-black/70 mb-8">
+        {{ $t('addresses.deleteModal.message') }}
+      </p>
+      <div class="flex justify-end gap-4">
+        <button 
+          @click="showDeleteModal = false"
+          class="bg-gray-200 text-black px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
+        >
+          {{ $t('addresses.deleteModal.cancel') }}
+        </button>
+        <button 
+          @click="confirmDelete"
+          class="bg-red-600 text-white px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
+        >
+          {{ $t('addresses.deleteModal.confirm') }}
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import api from '@/services/api'
 
-/* eslint-disable no-unused-vars */
 const { t } = useI18n()
-/* eslint-enable no-unused-vars */
+const app = getCurrentInstance()
+const toast = app.appContext.config.globalProperties.$toast
+const router = useRouter()
 
-const addresses = ref([
-  {
-    street: '',
-    number: '',
-    complement: '',
-    neighborhood: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    isDefault: false
-  }
-])
-
+const addresses = ref([])
 const saving = ref(false)
+const showErrors = ref(false)
+const showDeleteModal = ref(false)
+const addressToDelete = ref(null)
 
-// Função para lidar com a mudança do endereço padrão
-const handleDefaultChange = (changedIndex) => {
-  addresses.value = addresses.value.map((address, index) => ({
-    ...address,
-    isDefault: index === changedIndex
-  }))
+// Função para validar endereço
+const validateAddress = (address) => {
+  const requiredFields = [
+    'street',
+    'number',         // Adicionado como obrigatório
+    'neighborhood',   // Adicionado como obrigatório
+    'city',
+    'state',
+    'postalCode'
+  ]
+  return requiredFields.every(field => address[field]?.trim())
 }
 
+// Função para validar todos os endereços
+const validateAddresses = () => {
+  return addresses.value.every(validateAddress)
+}
+
+// Carregar endereços do usuário
+const loadAddresses = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
+
+    const response = await api.get(`/users/${user.id}/addresses`);
+    addresses.value = response.data.map(addr => ({
+      id: addr.id, // Garantir que o ID está sendo mapeado
+      street: addr.address,
+      number: addr.number,
+      complement: addr.complement,
+      neighborhood: addr.neighborhood,
+      city: addr.city,
+      state: addr.state,
+      postalCode: addr.postal_code,
+      country: addr.country,
+      isDefault: addr.is_default
+    }));
+  } catch (error) {
+    console.error('Error loading addresses:', error);
+    if (error.message === 'User ID not found') {
+      toast.error('User session expired. Please login again.');
+      router.push('/login');
+    } else {
+      toast.error(t('addresses.loadError'));
+    }
+  }
+}
+
+// Salvar endereços
+const saveAddresses = async () => {
+  showErrors.value = true  // Só mostra erros quando tentar salvar
+  
+  if (!validateAddresses()) {
+    toast.error(t('addresses.fillAllRequired'))
+    return
+  }
+
+  saving.value = true
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    
+    if (!user.id) {
+      throw new Error('User ID not found')
+    }
+
+    const formattedAddresses = addresses.value.map(addr => ({
+      address: addr.street,
+      number: addr.number,         // Adicionado
+      complement: addr.complement,
+      neighborhood: addr.neighborhood, // Adicionado
+      city: addr.city,
+      state: addr.state,
+      postal_code: addr.postalCode,
+      country: 'Canada',
+      is_default: addr.isDefault
+    }))
+
+    await api.put(`/users/${user.id}/addresses`, formattedAddresses)
+    toast.success(t('addresses.saveSuccess'))
+  } catch (error) {
+    console.error('Error saving addresses:', error)
+    if (error.message === 'User ID not found') {
+      toast.error('User session expired. Please login again.')
+      router.push('/login')
+    } else {
+      toast.error(t('addresses.saveError'))
+    }
+  } finally {
+    saving.value = false
+  }
+}
+
+// Remover endereço
+const removeAddress = (index) => {
+  addressToDelete.value = index
+  showDeleteModal.value = true
+}
+
+// Nova função para confirmar a exclusão
+const confirmDelete = async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
+
+    const addressToRemove = addresses.value[addressToDelete.value];
+    
+    // Verificar se o endereço tem ID
+    if (!addressToRemove.id) {
+      // Se não tiver ID, apenas remove do array local
+      addresses.value.splice(addressToDelete.value, 1);
+    } else {
+      // Se tiver ID, chama a API para remover
+      await api.delete(`/users/${user.id}/addresses/${addressToRemove.id}`);
+      addresses.value.splice(addressToDelete.value, 1);
+    }
+    
+    if (addresses.value.length === 0) {
+      addAddress();
+    }
+    
+    toast.success(t('addresses.deleteSuccess'));
+  } catch (error) {
+    console.error('Error deleting address:', error);
+    if (error.message === 'User ID not found') {
+      toast.error('User session expired. Please login again.');
+      router.push('/login');
+    } else {
+      toast.error(t('addresses.deleteError'));
+    }
+  } finally {
+    showDeleteModal.value = false;
+    addressToDelete.value = null;
+  }
+}
+
+// Adicionar novo endereço
 const addAddress = () => {
+  showErrors.value = false  // Resetar os erros ao adicionar novo endereço
   addresses.value.push({
     street: '',
     number: '',
@@ -202,39 +394,40 @@ const addAddress = () => {
     city: '',
     state: '',
     postalCode: '',
-    isDefault: false
+    country: 'Canada',
+    isDefault: addresses.value.length === 0
   })
 }
 
-const removeAddress = (index) => {
-  const removedAddress = addresses.value[index]
-  addresses.value.splice(index, 1)
-  
-  // Se o endereço removido era o padrão e ainda existem outros endereços,
-  // define o primeiro endereço como padrão
-  if (removedAddress.isDefault && addresses.value.length > 0) {
-    addresses.value[0].isDefault = true
-  }
+// Lidar com mudança de endereço padrão
+const handleDefaultChange = (changedIndex) => {
+  addresses.value = addresses.value.map((address, index) => ({
+    ...address,
+    isDefault: index === changedIndex
+  }))
 }
 
-const saveAddresses = async () => {
-  saving.value = true
-  try {
-    // Implement save logic here
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message or handle response
-  } catch (error) {
-    // Handle error
-  } finally {
-    saving.value = false
-  }
-}
-
-// Garantir que sempre haja um endereço padrão se houver endereços cadastrados
-watch(addresses, (newAddresses) => {
-  if (newAddresses.length > 0 && !newAddresses.some(addr => addr.isDefault)) {
-    newAddresses[0].isDefault = true
-  }
-}, { deep: true })
+onMounted(() => {
+  loadAddresses()
+})
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
