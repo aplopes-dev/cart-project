@@ -178,7 +178,11 @@ export default {
     completePurchase: "FINALIZAR COMPRA",
     summary: {
       title: "RESUMO DO PEDIDO"
-    }
+    },
+    errorLoadingAddress: 'Erro ao carregar endereço padrão',
+    changeAddress: 'Alterar endereço',
+    selectAddress: 'Selecionar endereço de entrega',
+    useThisAddress: 'Usar este endereço'
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',
@@ -348,6 +352,8 @@ export default {
     currencySymbolPlaceholder: 'Digite o símbolo da moeda (ex: R$)',
     taxRate: 'Taxa de Imposto',
     taxRatePlaceholder: 'Digite a taxa de imposto',
+    discountPercentage: 'Porcentual de Desconto',
+    discountPercentagePlaceholder: 'Digite a porcentagem de desconto',
     minOrderValue: 'Valor Mínimo do Pedido',
     minOrderValuePlaceholder: 'Digite o valor mínimo do pedido',
     freeShippingThreshold: 'Valor Mínimo para Frete Grátis',
@@ -582,7 +588,8 @@ export default {
     deleteConfirm: 'Tem certeza que deseja excluir este endereço?',
     saveSuccess: 'Endereço salvo com sucesso',
     deleteSuccess: 'Endereço excluído com sucesso',
-    error: 'Ocorreu um erro. Por favor, tente novamente.'
+    error: 'Ocorreu um erro. Por favor, tente novamente.',
+    default: 'Padrão'
   },
   suppliers: {
     pageTitle: 'Nossos Fornecedores',

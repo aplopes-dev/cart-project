@@ -129,6 +129,10 @@ export default {
     back: 'Retour'
   },
   checkout: {
+    calculating: "Calcul en cours",
+    processing: "Traitement en cours",
+    errorCalculating: "Erreur lors du calcul des valeurs",
+    errorProcessingOrder: "Erreur lors du traitement de la commande",
     emptyCart: "Votre panier est vide",
     continueShopping: "CONTINUER VOS ACHATS",
     completePurchase: "FINALISER L'ACHAT",
@@ -177,8 +181,12 @@ export default {
       subtotal: 'SOUS-TOTAL',
       total: 'TOTAL'
     },
+    errorLoadingAddress: "Erreur lors du chargement de l'adresse par défaut",
     completePurchase: 'FINALISER L\'ACHAT',
-    fieldRequired: 'Ce champ est obligatoire'
+    fieldRequired: 'Ce champ est obligatoire',
+    changeAddress: 'Changer l\'adresse',
+    selectAddress: 'Sélectionner l\'adresse de livraison',
+    useThisAddress: 'Utiliser cette adresse'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -396,6 +404,8 @@ export default {
     currencySymbolPlaceholder: 'Ex: €, $, £',
     taxRate: 'Taux de Taxe',
     taxRatePlaceholder: 'Entrez le taux de taxe en %',
+    discountPercentage: 'Pourcentage de Remise',
+    discountPercentagePlaceholder: 'Entrez le pourcentage de remise',
     minOrderValue: 'Montant Minimum de Commande',
     minOrderValuePlaceholder: 'Entrez le montant minimum de commande',
     freeShippingThreshold: 'Seuil de Livraison Gratuite',
@@ -582,7 +592,8 @@ export default {
     deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
     saveSuccess: 'Adresse enregistrée avec succès',
     deleteSuccess: 'Adresse supprimée avec succès',
-    error: 'Une erreur est survenue. Veuillez réessayer.'
+    error: 'Une erreur est survenue. Veuillez réessayer.',
+    default: 'Par défaut'
   },
   suppliers: {
     pageTitle: 'Nos Fournisseurs',
