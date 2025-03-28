@@ -104,7 +104,7 @@
                   
                   <!-- Botão modificado com novo estilo -->
                   <button 
-                    @click="showAddressModal = true"
+                    @click="openAddressModal"
                     class="font-archivo-narrow px-4 py-2 border border-black hover:bg-empire-yellow transition-colors duration-200"
                   >
                     {{ $t('checkout.changeAddress') }}
@@ -139,6 +139,24 @@
                       {{ $t('checkout.fieldRequired') }}
                     </span>
                   </div>
+
+                  <!-- Número -->
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.number') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.number"
+                      :placeholder="$t('checkout.numberPlaceholder')"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.number) ? 'border-red-500' : 'border-black/25'
+                      ]"
+                    >
+                    <span v-if="showErrors && formErrors.number" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
+                  </div>
+
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
                     <input 
@@ -376,7 +394,7 @@
   </div>
   <AddressSelectionModal
     :show="showAddressModal"
-    :addresses="addressStore.addresses"
+    :current-address-id="currentAddressId"
     @close="showAddressModal = false"
     @select="updateShippingAddress"
   />
@@ -389,8 +407,8 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import api from '@/services/api'
 import { useI18n } from 'vue-i18n'
-import { useAddressStore } from '@/stores/address'
 import AddressSelectionModal from '@/components/address/AddressSelectionModal.vue'
+import { useAddressStore } from '@/stores/addressStore'
 
 export default {
   name: 'CheckoutPage',
@@ -399,10 +417,10 @@ export default {
   },
   setup() {
     const cartStore = useCartStore()
-    const addressStore = useAddressStore()
     const store = useStore()
     const router = useRouter()
     const { t } = useI18n()
+    const addressStore = useAddressStore()
 
     // Adicionar computed para dados do usuário
     const userData = computed(() => {
@@ -422,14 +440,14 @@ export default {
 
     return {
       cartStore,
-      addressStore,
       store,
       router, // Importante: passar o router para os methods
       continueShopping,
       cartItems,
       removeItem,
       t,
-      userData
+      userData,
+      addressStore
     }
   },
   data() {
@@ -449,6 +467,7 @@ export default {
         email: user.email || '',
         phone: user.phone || '', // Adicionar inicialização do telefone
         address: '',
+        number: '', // Adicionado campo number
         apartment: '',
         city: '',
         state: '',
@@ -463,7 +482,8 @@ export default {
       error: null,
       showErrorAlert: false,
       loading: false,
-      showAddressModal: false
+      showAddressModal: false,
+      currentAddressId: null
     }
   },
   computed: {
@@ -474,7 +494,7 @@ export default {
       const errors = {}
       const requiredFields = [
         'firstName', 'lastName', 'email', 'phone',
-        'address', 'city', 'state', 'postalCode', 'country'
+        'address', 'number', 'city', 'state', 'postalCode', 'country' // Adicionado number aos campos obrigatórios
       ]
 
       requiredFields.forEach(field => {
@@ -503,6 +523,23 @@ export default {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
+    openAddressModal() {
+      // Primeiro, calculamos a posição desejada
+      const windowHeight = window.innerHeight;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      const targetPosition = scrollPosition + (windowHeight * 0.2); // 20% da altura da janela
+
+      // Fazemos o scroll suave
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+
+      // Abrimos o modal após um pequeno delay para dar tempo do scroll terminar
+      setTimeout(() => {
+        this.showAddressModal = true;
+      }, 300);
+    },
     toggleSection(section) {
       if (!this.isDesktop) {
         this.sections[section] = !this.sections[section]
@@ -574,11 +611,13 @@ export default {
     },
     updateShippingAddress(address) {
       this.formData.address = address.address
+      this.formData.number = address.number // Adicionado number
       this.formData.apartment = address.apartment
       this.formData.city = address.city
       this.formData.state = address.state
       this.formData.postalCode = address.postalCode
       this.formData.country = address.country
+      this.currentAddressId = address.id
     }
   },
   watch: {
@@ -612,11 +651,13 @@ export default {
       
       if (defaultAddress) {
         this.formData.address = defaultAddress.address
+        this.formData.number = defaultAddress.number // Adicionado number
         this.formData.apartment = defaultAddress.apartment
         this.formData.city = defaultAddress.city
         this.formData.state = defaultAddress.state
         this.formData.postalCode = defaultAddress.postalCode
         this.formData.country = defaultAddress.country
+        this.currentAddressId = defaultAddress.id
       }
     } catch (error) {
       console.error('Error loading default address:', error)

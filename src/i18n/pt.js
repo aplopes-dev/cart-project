@@ -140,11 +140,13 @@ export default {
     phone: 'Telefone',
     phonePlaceholder: 'Digite seu telefone...',
     
-    shippingDetails: 'Dados de Entrega',
+    shippingDetails: 'DETALHES DE ENVIO',
     address: 'Endereço',
     addressPlaceholder: 'Digite seu endereço...',
-    apartment: 'Apartamento/Complemento',
-    apartmentPlaceholder: 'Número do apartamento (opcional)...',
+    number: 'Número',
+    numberPlaceholder: 'Digite o número...',
+    apartment: 'Complemento',
+    apartmentPlaceholder: 'Digite o complemento...',
     city: 'Cidade',
     cityPlaceholder: 'Digite sua cidade...',
     state: 'Estado',
@@ -181,8 +183,9 @@ export default {
     },
     errorLoadingAddress: 'Erro ao carregar endereço padrão',
     changeAddress: 'Alterar endereço',
-    selectAddress: 'Selecionar endereço de entrega',
-    useThisAddress: 'Usar este endereço'
+    selectAddress: 'Selecione o endereço de entrega',
+    useThisAddress: 'Usar este endereço',
+    manageAddresses: 'Gerenciar endereços'
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',

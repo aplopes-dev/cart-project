@@ -150,7 +150,7 @@ export default {
     phone: 'Téléphone',
     phonePlaceholder: 'Entrez votre numéro de téléphone...',
     
-    shippingDetails: 'Détails de Livraison',
+    shippingDetails: 'DÉTAILS DE LIVRAISON',
     address: 'Adresse',
     addressPlaceholder: 'Entrez votre adresse...',
     apartment: 'Appartement/Suite',
@@ -186,7 +186,8 @@ export default {
     fieldRequired: 'Ce champ est obligatoire',
     changeAddress: 'Changer l\'adresse',
     selectAddress: 'Sélectionner l\'adresse de livraison',
-    useThisAddress: 'Utiliser cette adresse'
+    useThisAddress: 'Utiliser cette adresse',
+    manageAddresses: 'Gérer les adresses'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',

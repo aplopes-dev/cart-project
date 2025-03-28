@@ -151,11 +151,13 @@ export default {
     phone: 'Phone',
     phonePlaceholder: 'Enter your phone number...',
     
-    shippingDetails: 'Shipping Details',
+    shippingDetails: 'SHIPPING DETAILS',
     address: 'Address',
     addressPlaceholder: 'Enter your address...',
-    apartment: 'Apartment/Suite',
-    apartmentPlaceholder: 'Apartment number (optional)...',
+    number: 'Number',
+    numberPlaceholder: 'Enter the number...',
+    apartment: 'Additional Info',
+    apartmentPlaceholder: 'Enter additional info...',
     city: 'City',
     cityPlaceholder: 'Enter your city...',
     state: 'State/Province',
@@ -187,7 +189,8 @@ export default {
     fieldRequired: 'This field is required',
     changeAddress: 'Change address',
     selectAddress: 'Select delivery address',
-    useThisAddress: 'Use this address'
+    useThisAddress: 'Use this address',
+    manageAddresses: 'Manage addresses'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
