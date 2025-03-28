@@ -258,6 +258,7 @@ export default {
     shopNow: 'COMPRAR AGORA',
     selectColor: 'Cor',
     selectSize: 'Tamanho',
+    selectWeight: "Selecionar Peso",
     // eslint-disable-next-line no-dupe-keys
     description: 'DESCRIÇÃO',
     bestSellers: 'MAIS VENDIDOS',
@@ -439,7 +440,21 @@ export default {
     requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
     fieldRequired: 'Este campo é obrigatório',
     saving: 'Salvando...',
-    save: 'Salvar'
+    save: 'Salvar',
+    contacts: {
+      sectionTitle: 'Contatos da Empresa',
+      title: 'Gerenciar Contatos',
+      manage: 'Gerenciar Contatos',
+      name: 'Nome',
+      email: 'Email',
+      phone: 'Telefone',
+      address: 'Endereço',
+      department: 'Departamento',
+      add: 'Adicionar Contato',
+      edit: 'Editar Contato',
+      deleteConfirmation: 'Excluir Contato',
+      deleteWarning: 'Esta ação não pode ser desfeita. Tem certeza que deseja excluir este contato?'
+    }
   },
   content: {
     history: {
@@ -611,7 +626,7 @@ export default {
     fillAllRequired: 'Preencha todos os campos obrigatórios',
     deleteModal: {
       title: 'Excluir Endereço',
-      message: 'Tem certeza que deseja excluir este endereço?',
+      message: 'Tem certeza que deseja excluir este endereço? Esta ação não pode ser desfeita.',
       cancel: 'Cancelar',
       confirm: 'Excluir'
     },

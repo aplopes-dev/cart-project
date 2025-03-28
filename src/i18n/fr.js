@@ -256,6 +256,7 @@ export default {
     shopNow: 'ACHETER MAINTENANT',
     selectColor: 'Couleur',
     selectSize: 'Taille',
+    selectWeight: "Sélectionner le Poids",
     // eslint-disable-next-line no-dupe-keys
     description: 'DESCRIPTION',
     bestSellers: 'MEILLEURES VENTES',
@@ -437,7 +438,20 @@ export default {
     requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
     fieldRequired: 'Ce champ est obligatoire',
     saving: 'Enregistrement...',
-    save: 'Enregistrer'
+    save: 'Enregistrer',
+    contacts: {
+      sectionTitle: 'Contacts de l\'entreprise',
+      title: 'Gérer les contacts',
+      manage: 'Gérer les contacts',
+      name: 'Nom',
+      email: 'Courriel',
+      phone: 'Téléphone',
+      address: 'Adresse',
+      add: 'Ajouter un contact',
+      edit: 'Modifier le contact',
+      deleteConfirmation: 'Supprimer le Contact',
+      deleteWarning: 'Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir supprimer ce contact ?'
+    }
   },
   content: {
     history: {
@@ -608,8 +622,8 @@ export default {
     deleteError: 'Erreur lors de la suppression de l\'adresse',
     fillAllRequired: 'Veuillez remplir tous les champs obligatoires',
     deleteModal: {
-      title: 'Supprimer l\'adresse',
-      message: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
+      title: 'Supprimer l\'Adresse',
+      message: 'Êtes-vous sûr de vouloir supprimer cette adresse ? Cette action ne peut pas être annulée.',
       cancel: 'Annuler',
       confirm: 'Supprimer'
     },

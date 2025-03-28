@@ -6,7 +6,7 @@
     <!-- Shopping Cart Section -->
     <section class="shopping-cart flex-grow overflow-y-auto">
       <div class="cart-header">
-        <h1 class="text-2xl md:text-[34px]">{{ $t('cart.shoppingCart') }}</h1>
+        <h1 class="text-2xl md:text-[34px]">{{ $t('shoppingCart.title') }}</h1>
         <button class="close-button" @click="cartStore.closeCart()" :aria-label="$t('cart.close')">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="black" stroke-width="2" stroke-linecap="round"/>
@@ -361,6 +361,9 @@ export default {
   }
 }
 </style>
+
+
+
 
 
 

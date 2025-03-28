@@ -306,6 +306,7 @@ export default {
     shopNow: 'SHOP NOW',
     selectColor: 'Color',
     selectSize: 'Size',
+    selectWeight: "Select Weight",
     // eslint-disable-next-line no-dupe-keys
     description: 'DESCRIPTION',
     bestSellers: 'BEST SELLERS',
@@ -461,7 +462,21 @@ export default {
     requiredFieldsError: 'Please fill in all required fields',
     fieldRequired: 'This field is required',
     saving: 'Saving...',
-    save: 'Save'
+    save: 'Save',
+    contacts: {
+      sectionTitle: 'Company Contacts',
+      title: 'Manage Contacts',
+      manage: 'Manage Contacts',
+      name: 'Name',
+      email: 'Email',
+      phone: 'Phone',
+      address: 'Address',
+      department: 'Department',
+      add: 'Add Contact',
+      edit: 'Edit Contact',
+      deleteConfirmation: 'Delete Contact',
+      deleteWarning: 'This action cannot be undone. Are you sure you want to delete this contact?'
+    }
   },
   content: {
     history: {
@@ -617,7 +632,7 @@ export default {
     noAddresses: 'You have no saved addresses',
     deleteModal: {
       title: 'Delete Address',
-      message: 'Are you sure you want to delete this address?',
+      message: 'Are you sure you want to delete this address? This action cannot be undone.',
       cancel: 'Cancel',
       confirm: 'Delete'
     }

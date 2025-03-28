@@ -33,7 +33,8 @@
                   <img 
                     :src="product.image" 
                     :alt="product.name" 
-                    class="w-full md:w-[307.35px] h-[200px] md:h-[281.87px] object-cover"
+                    class="w-full h-[200px] md:h-[281.87px] object-cover object-center"
+                    @error="handleImageError"
                   >
                   
                   <!-- Informações do Produto -->
@@ -327,6 +328,8 @@ export default {
   transition: opacity 0.3s ease-in-out;
 }
 </style>
+
+
 
 
 

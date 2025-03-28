@@ -26,15 +26,30 @@
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img 
-                :src="selectedImage || product.mainImage" 
+                :src="selectedImage || product.image" 
                 :alt="product.name"
+                @error="handleImageError"
                 class="max-w-full max-h-full object-contain"
               >
             </div>
             <!-- Thumbnail Images -->
             <div class="grid grid-cols-4 gap-4">
+              <!-- Principal Image Thumbnail -->
               <button 
-                v-for="(image, index) in product.images" 
+                @click="selectedImage = product.image"
+                class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
+                :class="{'border-2 border-black': selectedImage === product.image}"
+              >
+                <img 
+                  :src="product.image" 
+                  :alt="`${product.name} main view`"
+                  @error="handleImageError"
+                  class="w-full h-full object-contain"
+                >
+              </button>
+              <!-- Additional Images Thumbnails -->
+              <button 
+                v-for="(image, index) in processedImages" 
                 :key="index"
                 @click="selectedImage = image"
                 class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
@@ -42,7 +57,8 @@
               >
                 <img 
                   :src="image" 
-                  :alt="`${product.name} view ${index + 1}`" 
+                  :alt="`${product.name} view ${index + 1}`"
+                  @error="handleImageError"
                   class="w-full h-full object-contain"
                 >
               </button>
@@ -71,40 +87,71 @@
                 {{ product.description }}
               </p>
 
-              <!-- Color Selection -->
-              <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
-                <div class="grid grid-cols-4 gap-4">
-                  <button 
-                    v-for="color in product.colors" 
-                    :key="color"
-                    @click="selectedColor = color"
-                    class="h-12 border-2"
-                    :class="[
-                      selectedColor === color ? 'border-black' : 'border-black/70',
-                      'hover:border-black transition-colors'
-                    ]"
-                    :style="{ backgroundColor: color }"
-                  />
+              <!-- Características do Produto -->
+              <div class="space-y-6">
+                <!-- Cores -->
+                <div v-if="product.characteristics?.COLOR?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
+                  <div class="flex flex-wrap gap-4">
+                    <button 
+                      v-for="color in product.characteristics.COLOR" 
+                      :key="color"
+                      @click="selectedColor = color"
+                      class="w-12 h-12 rounded-full border-2 transition-all duration-200"
+                      :style="{ 
+                        backgroundColor: color,
+                        borderColor: isWhiteOrLight(color) 
+                          ? (selectedColor === color ? 'black' : '#CCCCCC')
+                          : (selectedColor === color ? 'black' : 'transparent')
+                      }"
+                      :class="[
+                        selectedColor === color ? 'border-black' : '',
+                        isWhiteOrLight(color) ? 'ring-1 ring-gray-200' : ''
+                      ]"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <!-- Size Selection -->
-              <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
-                <div class="grid grid-cols-4 gap-4">
-                  <button 
-                    v-for="size in product.sizes" 
-                    :key="size"
-                    @click="selectedSize = size"
-                    class="h-12 border-2"
-                    :class="[
-                      selectedSize === size ? 'border-black bg-black text-white' : 'border-black/70',
-                      'hover:bg-black hover:text-white transition-colors'
-                    ]"
-                  >
-                    {{ size }}
-                  </button>
+                <!-- Tamanhos -->
+                <div v-if="product.characteristics?.SIZE?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
+                  <div class="grid grid-cols-4 gap-4">
+                    <button 
+                      v-for="size in product.characteristics.SIZE" 
+                      :key="size"
+                      @click="selectedSize = size"
+                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      :class="[
+                        selectedSize === size 
+                          ? 'border-black bg-black text-white' 
+                          : 'border-black/70 hover:border-black',
+                        'hover:bg-black hover:text-white'
+                      ]"
+                    >
+                      {{ size }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Pesos -->
+                <div v-if="product.characteristics?.WEIGHT?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectWeight') }}</label>
+                  <div class="grid grid-cols-4 gap-4">
+                    <button 
+                      v-for="weight in product.characteristics.WEIGHT" 
+                      :key="weight"
+                      @click="selectedWeight = weight"
+                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      :class="[
+                        selectedWeight === weight 
+                          ? 'border-black bg-black text-white' 
+                          : 'border-black/70 hover:border-black',
+                        'hover:bg-black hover:text-white'
+                      ]"
+                    >
+                      {{ weight }}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -184,6 +231,17 @@ export default {
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
 
+    const isWhiteOrLight = (color) => {
+      // Verifica se é branco ou variações de branco
+      if (color.toLowerCase() === '#ffffff' || 
+          color.toLowerCase() === '#fff' || 
+          color.toLowerCase() === 'white' ||
+          color.toLowerCase() === 'rgb(255, 255, 255)') {
+        return true;
+      }
+      return false;
+    }
+
     const loadCurrencySymbol = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
@@ -199,7 +257,8 @@ export default {
 
     return {
       cartStore,
-      currencySymbol
+      currencySymbol,
+      isWhiteOrLight // Expondo a função para o template
     }
   },
   data() {
@@ -211,15 +270,18 @@ export default {
         description: '',
         technical_description: '',
         image: '',
+        images: [],
+        characteristics: null,
         category: null
       },
       loading: true,
       error: null,
       selectedColor: null,
       selectedSize: null,
+      selectedWeight: null, // Adicionando selectedWeight
       selectedImage: null,
       showToast: false,
-      discountPercentage: 0 // Novo campo para armazenar o desconto
+      discountPercentage: 0
     }
   },
   created() {
@@ -255,43 +317,41 @@ export default {
     },
     async loadProduct() {
       try {
-        this.loading = true;
-        this.error = null;
-        const productId = this.$route.params.id;
+        this.loading = true
+        this.error = null
+        const productId = this.$route.params.id
         
-        // Carrega o produto e as configurações financeiras em paralelo
         const [productData, financialSettings] = await Promise.all([
           productService.getProductById(productId),
           settingsService.getFinancialSettings()
-        ]);
+        ])
         
         if (!productData) {
-          throw new Error('Product not found');
+          throw new Error('Product not found')
         }
 
+        // Atualiza o produto
         this.product = {
           ...productData,
-          category: productData.category || null
-        };
+          image: productData.image || PLACEHOLDER_IMAGE_BASE64,
+          images: productData.images || ''
+        }
         
-        // Atualiza o símbolo da moeda e o percentual de desconto
-        this.currencySymbol = financialSettings.currency_symbol;
-        this.discountPercentage = financialSettings.discount_percentage || 0;
+        // Atualiza configurações financeiras
+        this.currencySymbol = financialSettings.currency_symbol
+        this.discountPercentage = financialSettings.discount_percentage || 0
 
-        // Reseta estados importantes
-        this.selectedColor = null;
-        this.selectedSize = null;
-        this.selectedImage = null;
+        // Define a imagem inicial como a principal
+        this.selectedImage = this.product.image
         
-        // Rola a página para o topo
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0)
         
       } catch (err) {
-        console.error('Error loading product:', err);
-        this.error = 'Failed to load product details';
-        this.$router.push('/404');
+        console.error('Error loading product:', err)
+        this.error = 'Failed to load product details'
+        this.$router.push('/404')
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     handleAddToCart(quantity) {
@@ -302,7 +362,7 @@ export default {
         color: this.selectedColor,
         size: this.selectedSize,
         quantity: quantity,
-        image: this.selectedImage || this.product.mainImage
+        image: this.selectedImage || this.product.image
       }
       
       this.cartStore.addItem(item)
@@ -315,6 +375,7 @@ export default {
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.onerror = null // Previne loop infinito
     },
     showSuccessToast() {
       this.showToast = true
@@ -337,6 +398,15 @@ export default {
     originalPrice() {
       if (!this.hasDiscount) return null;
       return this.calculateOriginalPrice(this.product.price);
+    },
+    processedImages() {
+      if (!this.product.images) return []
+      // Se images for uma string, divide por vírgula e remove espaços em branco
+      if (typeof this.product.images === 'string') {
+        return this.product.images.split(',').map(img => img.trim())
+      }
+      // Se já for um array, retorna como está
+      return this.product.images
     }
   }
 }
@@ -347,15 +417,6 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
-
-
-
-
-
-
-
-
-
 
 
 

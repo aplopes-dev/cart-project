@@ -24,7 +24,7 @@
               <img 
                 :src="product.image" 
                 :alt="product.name" 
-                class="w-full max-w-[320px] md:max-w-[100%] h-[280px] md:h-[320px] object-cover" 
+                class="w-[80%] max-w-[280px] h-[200px] md:h-[280px] object-contain object-center mx-auto" 
               />
               
               <div class="flex flex-col items-center gap-4 w-full p-6">
@@ -187,6 +187,7 @@ export default {
   display: none;  /* Chrome, Safari and Opera */
 }
 </style>
+
 
 
 
