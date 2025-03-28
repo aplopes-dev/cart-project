@@ -112,6 +112,7 @@
               rows="4"
               class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base resize-none focus:outline-none focus:border-black"
               :placeholder="$t('shoppingCart.notesPlaceholder')"
+              @input="checkoutStore.setOrderNotes($event.target.value)"
             ></textarea>
           </div>
         </div>
@@ -133,7 +134,7 @@
             class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
             @click="handleButtonClick"
           >
-            {{ cartItems.length ? $t('shoppingCart.checkout') : $t('shoppingCart.continueShopping') }}
+            {{ cartItems.length ? $t('cart.checkout') : $t('shoppingCart.continueShopping') }}
           </button>
         </div>
       </div>
@@ -149,6 +150,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { settingsService } from '@/services/settingsService'
+import { useCheckoutStore } from '@/stores/checkoutStore'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
@@ -159,6 +161,7 @@ export default defineComponent({
     const route = useRoute()
     const { t } = useI18n()
     const currencySymbol = ref('$')
+    const checkoutStore = useCheckoutStore()
 
     const loadCurrencySymbol = async () => {
       try {
@@ -203,7 +206,8 @@ export default defineComponent({
       showError,
       errorMessage,
       showErrorMessage,
-      currencySymbol
+      currencySymbol,
+      checkoutStore
     }
   },
   data() {
@@ -285,6 +289,9 @@ export default defineComponent({
           })
         }
       }
+    },
+    notes(newValue) {
+      this.checkoutStore.setOrderNotes(newValue)
     }
   }
 })
@@ -300,6 +307,9 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
+
+
 
 
 

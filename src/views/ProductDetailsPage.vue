@@ -61,8 +61,9 @@
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>
-                <p class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
-                  {{ formatPrice(calculateOriginalPrice(product.price)) }}
+                <p v-if="hasDiscount" 
+                   class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
+                  {{ formatPrice(originalPrice) }}
                 </p>
               </div>
 
@@ -217,7 +218,8 @@ export default {
       selectedColor: null,
       selectedSize: null,
       selectedImage: null,
-      showToast: false
+      showToast: false,
+      discountPercentage: 0 // Novo campo para armazenar o desconto
     }
   },
   created() {
@@ -247,42 +249,49 @@ export default {
     },
 
     calculateOriginalPrice(price) {
-      return price * 1.3 // Aumenta o preço em 30%
+      // Calcula o preço original baseado no desconto configurado
+      if (!this.discountPercentage) return price;
+      return price / (1 - (this.discountPercentage / 100));
     },
     async loadProduct() {
       try {
-        this.loading = true
-        this.error = null
-        const productId = this.$route.params.id
-        const [productData, settings] = await Promise.all([
+        this.loading = true;
+        this.error = null;
+        const productId = this.$route.params.id;
+        
+        // Carrega o produto e as configurações financeiras em paralelo
+        const [productData, financialSettings] = await Promise.all([
           productService.getProductById(productId),
           settingsService.getFinancialSettings()
-        ])
+        ]);
         
         if (!productData) {
-          throw new Error('Product not found')
+          throw new Error('Product not found');
         }
 
         this.product = {
           ...productData,
           category: productData.category || null
-        }
-        this.currencySymbol = settings.currency_symbol
+        };
+        
+        // Atualiza o símbolo da moeda e o percentual de desconto
+        this.currencySymbol = financialSettings.currency_symbol;
+        this.discountPercentage = financialSettings.discount_percentage || 0;
 
         // Reseta estados importantes
-        this.selectedColor = null
-        this.selectedSize = null
-        this.selectedImage = null
+        this.selectedColor = null;
+        this.selectedSize = null;
+        this.selectedImage = null;
         
         // Rola a página para o topo
-        window.scrollTo(0, 0)
+        window.scrollTo(0, 0);
         
       } catch (err) {
-        console.error('Error loading product:', err)
-        this.error = 'Failed to load product details'
-        this.$router.push('/404')
+        console.error('Error loading product:', err);
+        this.error = 'Failed to load product details';
+        this.$router.push('/404');
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     handleAddToCart(quantity) {
@@ -320,6 +329,14 @@ export default {
     },
     getDescription() {
       return this.product?.technical_description || this.product?.description || ''
+    },
+    hasDiscount() {
+      return this.discountPercentage > 0;
+    },
+    
+    originalPrice() {
+      if (!this.hasDiscount) return null;
+      return this.calculateOriginalPrice(this.product.price);
     }
   }
 }
@@ -330,6 +347,8 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
+
+
 
 
 

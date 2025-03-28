@@ -62,7 +62,7 @@ export default {
     shoppingCart: 'PANIER',
     subtotal: 'SOUS-TOTAL',
     taxesAndShipping: 'Taxes et frais de livraison calculés à la caisse',
-    checkout: 'PAYER',
+    checkout: 'CHECKOUT',
     orderSummary: 'RÉSUMÉ DE LA COMMANDE',
     shipping: 'Livraison',
     total: 'TOTAL',
@@ -75,7 +75,8 @@ export default {
     addCart: 'AJOUTER',
     quantity: 'Quantité',
     productAdded: "Produit ajouté au panier avec succès !",
-    emptyCart: "Votre panier est vide"
+    emptyCart: "Votre panier est vide",
+    freeShipping: "Livraison Gratuite"
   },
   shoppingCart: {
     title: 'PANIER',
@@ -136,9 +137,7 @@ export default {
     emptyCart: "Votre panier est vide",
     continueShopping: "CONTINUER VOS ACHATS",
     completePurchase: "FINALISER L'ACHAT",
-    summary: {
-      title: "RÉSUMÉ DE LA COMMANDE"
-    },
+    
     title: 'PAIEMENT',
     personalDetails: 'Informations Personnelles',
     firstName: 'Prénom',
@@ -150,7 +149,7 @@ export default {
     phone: 'Téléphone',
     phonePlaceholder: 'Entrez votre numéro de téléphone...',
     
-    shippingDetails: 'DÉTAILS DE LIVRAISON',
+    shippingDetails: 'Détails de Livraison',
     address: 'Adresse',
     addressPlaceholder: 'Entrez votre adresse...',
     apartment: 'Appartement/Suite',
@@ -175,11 +174,11 @@ export default {
     cvvPlaceholder: '123',
     
     summary: {
-      title: 'RÉSUMÉ',
-      taxes: 'Taxes',
-      shipping: 'Frais de livraison',
-      subtotal: 'SOUS-TOTAL',
-      total: 'TOTAL'
+      title: "RÉSUMÉ DE LA COMMANDE",
+      taxes: "TAXES",
+      shipping: "LIVRAISON",
+      total: "TOTAL",
+      freeShipping: "Livraison Gratuite"
     },
     errorLoadingAddress: "Erreur lors du chargement de l'adresse par défaut",
     completePurchase: 'FINALISER L\'ACHAT',
@@ -187,7 +186,9 @@ export default {
     changeAddress: 'Changer l\'adresse',
     selectAddress: 'Sélectionner l\'adresse de livraison',
     useThisAddress: 'Utiliser cette adresse',
-    manageAddresses: 'Gérer les adresses'
+    manageAddresses: 'Gérer les adresses',
+    neighborhood: 'Quartier',
+    neighborhoodPlaceholder: 'Entrez votre quartier'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -382,7 +383,9 @@ export default {
     },
     shipping: 'Frais de livraison',
     taxes: 'Taxes',
-    total: 'Total'
+    total: 'Total',
+    notes: 'Notes de Commande',
+    noNotes: 'Aucune note pour cette commande'
   },
   security: {
     title: 'Sécurité',
@@ -609,7 +612,8 @@ export default {
       message: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
       cancel: 'Annuler',
       confirm: 'Supprimer'
-    }
+    },
+    noAddresses: "Vous n'avez pas d'adresses enregistrées"
   },
   suppliers: {
     pageTitle: 'Nos Fournisseurs',

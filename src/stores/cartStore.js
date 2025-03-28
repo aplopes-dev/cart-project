@@ -10,7 +10,13 @@ export const useCartStore = defineStore('cart', {
   getters: {
     totalItems: (state) => state.items.length,
     subtotal: (state) => state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-    itemCount: (state) => state.items.reduce((total, item) => total + item.quantity, 0)
+    itemCount: (state) => state.items.reduce((total, item) => total + item.quantity, 0),
+    total: (state) => {
+      const subtotalValue = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      const shippingValue = parseFloat(state.shipping || 0)
+      const taxesValue = parseFloat(state.taxes || 0)
+      return (subtotalValue + shippingValue + taxesValue).toFixed(2)
+    }
   },
   
   actions: {
@@ -193,6 +199,8 @@ export const useCartStore = defineStore('cart', {
     }
   }
 })
+
+
 
 
 

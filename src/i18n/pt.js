@@ -62,7 +62,7 @@ export default {
     shoppingCart: 'CARRINHO DE COMPRAS',
     subtotal: 'SUBTOTAL',
     taxesAndShipping: 'Impostos e frete calculados no checkout',
-    checkout: 'FINALIZAR COMPRA',
+    checkout: 'CHECKOUT',
     orderSummary: 'RESUMO DO PEDIDO',
     shipping: 'Frete',
     total: 'TOTAL',
@@ -75,7 +75,8 @@ export default {
     addCart: 'ADICIONAR AO CARRINHO',
     quantity: 'Quantidade',
     productAdded: "Produto adicionado ao carrinho com sucesso!",
-    emptyCart: "Seu carrinho está vazio"
+    emptyCart: "Seu carrinho está vazio",
+    freeShipping: "Frete Grátis"
   },
   shoppingCart: {
     title: 'CARRINHO DE COMPRAS',
@@ -140,7 +141,7 @@ export default {
     phone: 'Telefone',
     phonePlaceholder: 'Digite seu telefone...',
     
-    shippingDetails: 'DETALHES DE ENVIO',
+    shippingDetails: 'Detalhes de Envio',
     address: 'Endereço',
     addressPlaceholder: 'Digite seu endereço...',
     number: 'Número',
@@ -166,26 +167,30 @@ export default {
     cvv: 'CVV',
     cvvPlaceholder: '123',
     
-    summary: {
-      title: 'RESUMO',
-      taxes: 'Impostos',
-      shipping: 'Frete',
-      subtotal: 'SUBTOTAL',
-      total: 'TOTAL'
-    },
+    
     completePurchase: 'FINALIZAR COMPRA',
     fieldRequired: 'Este campo é obrigatório',
     emptyCart: "Seu carrinho está vazio",
     continueShopping: "CONTINUAR COMPRANDO",
     completePurchase: "FINALIZAR COMPRA",
     summary: {
-      title: "RESUMO DO PEDIDO"
+      title: "RESUMO DO PEDIDO",
+      taxes: "IMPOSTOS",
+      shipping: "FRETE",
+      total: "TOTAL",
+      freeShipping: "Frete Grátis"
     },
     errorLoadingAddress: 'Erro ao carregar endereço padrão',
     changeAddress: 'Alterar endereço',
     selectAddress: 'Selecione o endereço de entrega',
     useThisAddress: 'Usar este endereço',
-    manageAddresses: 'Gerenciar endereços'
+    manageAddresses: 'Gerenciar endereços',
+    calculating: "Calculando",
+    processing: "Processando",
+    errorCalculating: "Erro ao calcular valores",
+    errorProcessingOrder: "Erro ao processar pedido",
+    neighborhood: 'Bairro',
+    neighborhoodPlaceholder: 'Digite seu bairro'
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',
@@ -402,7 +407,9 @@ export default {
     },
     shipping: 'Frete',
     taxes: 'Impostos',
-    total: 'Total'
+    total: 'Total',
+    notes: 'Observações do Pedido',
+    noNotes: 'Nenhuma observação para este pedido'
   },
   security: {
     title: 'Segurança',
@@ -607,7 +614,8 @@ export default {
       message: 'Tem certeza que deseja excluir este endereço?',
       cancel: 'Cancelar',
       confirm: 'Excluir'
-    }
+    },
+    noAddresses: 'Você não possui endereços cadastrados'
   },
   suppliers: {
     pageTitle: 'Nossos Fornecedores',

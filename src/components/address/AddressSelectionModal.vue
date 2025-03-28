@@ -164,6 +164,7 @@ export default {
           id: addr.id,
           address: addr.address,
           number: addr.number,
+          neighborhood: addr.neighborhood, // Adicionado neighborhood
           apartment: addr.complement,
           city: addr.city,
           state: addr.state,

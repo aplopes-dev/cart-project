@@ -59,10 +59,9 @@ export default {
     passwordTooShort: 'Password must be at least 6 characters long'
   },
   cart: {
-    shoppingCart: 'SHOPPING CART',
+    checkout: 'CHECKOUT',
     subtotal: 'SUBTOTAL',
     taxesAndShipping: 'Taxes and shipping calculated at checkout',
-    checkout: 'CHECKOUT',
     orderSummary: 'ORDER SUMMARY',
     shipping: 'Shipping',
     total: 'TOTAL',
@@ -75,7 +74,8 @@ export default {
     addCart: 'ADD TO CART',
     quantity: 'Quantity',
     productAdded: "Product added to cart successfully!",
-    emptyCart: "Your shopping cart is empty"
+    emptyCart: "Your shopping cart is empty",
+    freeShipping: "Free Shipping"
   },
   shoppingCart: {
     title: 'SHOPPING CART',
@@ -137,9 +137,7 @@ export default {
     emptyCart: "Your cart is empty",
     continueShopping: "CONTINUE SHOPPING",
     completePurchase: "COMPLETE PURCHASE",
-    summary: {
-      title: "ORDER SUMMARY"
-    },
+    
     title: 'CHECKOUT',
     personalDetails: 'Personal Details',
     firstName: 'First Name',
@@ -151,7 +149,7 @@ export default {
     phone: 'Phone',
     phonePlaceholder: 'Enter your phone number...',
     
-    shippingDetails: 'SHIPPING DETAILS',
+    shippingDetails: 'Shipping Details',
     address: 'Address',
     addressPlaceholder: 'Enter your address...',
     number: 'Number',
@@ -178,11 +176,11 @@ export default {
     cvvPlaceholder: '123',
     
     summary: {
-      title: 'SUMMARY',
-      taxes: 'Taxes',
-      shipping: 'Shipping',
-      subtotal: 'SUBTOTAL',
-      total: 'TOTAL'
+      title: "ORDER SUMMARY",
+      taxes: "TAXES",
+      shipping: "SHIPPING",
+      total: "TOTAL",
+      freeShipping: "Free Shipping"
     },
     errorLoadingAddress: 'Error loading default address',
     completePurchase: 'COMPLETE PURCHASE',
@@ -190,7 +188,9 @@ export default {
     changeAddress: 'Change address',
     selectAddress: 'Select delivery address',
     useThisAddress: 'Use this address',
-    manageAddresses: 'Manage addresses'
+    manageAddresses: 'Manage addresses',
+    neighborhood: 'Neighborhood',
+    neighborhoodPlaceholder: 'Enter your neighborhood'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
@@ -429,7 +429,9 @@ export default {
     },
     shipping: 'Shipping',
     taxes: 'Taxes',
-    total: 'Total'
+    total: 'Total',
+    notes: 'Order Notes',
+    noNotes: 'No notes for this order'
   },
   security: {
     title: 'Security',
@@ -612,6 +614,7 @@ export default {
     deleteSuccess: 'Address deleted successfully',
     deleteError: 'Error deleting address',
     fillAllRequired: 'Please fill in all required fields',
+    noAddresses: 'You have no saved addresses',
     deleteModal: {
       title: 'Delete Address',
       message: 'Are you sure you want to delete this address?',

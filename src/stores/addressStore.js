@@ -22,6 +22,7 @@ export const useAddressStore = defineStore('address', {
           id: addr.id,
           address: addr.address,
           number: addr.number,
+          neighborhood: addr.neighborhood,
           apartment: addr.complement,
           city: addr.city,
           state: addr.state,
