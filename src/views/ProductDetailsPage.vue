@@ -26,7 +26,7 @@
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img 
-                :src="selectedImage || product.mainImage" 
+                :src="selectedImage || product.image" 
                 :alt="product.name"
                 class="max-w-full max-h-full object-contain"
               >
