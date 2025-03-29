@@ -62,7 +62,7 @@ export default {
     shoppingCart: 'PANIER',
     subtotal: 'SOUS-TOTAL',
     taxesAndShipping: 'Taxes et frais de livraison calculés à la caisse',
-    checkout: 'PAYER',
+    checkout: 'CHECKOUT',
     orderSummary: 'RÉSUMÉ DE LA COMMANDE',
     shipping: 'Livraison',
     total: 'TOTAL',
@@ -75,7 +75,8 @@ export default {
     addCart: 'AJOUTER',
     quantity: 'Quantité',
     productAdded: "Produit ajouté au panier avec succès !",
-    emptyCart: "Votre panier est vide"
+    emptyCart: "Votre panier est vide",
+    freeShipping: "Livraison Gratuite"
   },
   shoppingCart: {
     title: 'PANIER',
@@ -136,9 +137,7 @@ export default {
     emptyCart: "Votre panier est vide",
     continueShopping: "CONTINUER VOS ACHATS",
     completePurchase: "FINALISER L'ACHAT",
-    summary: {
-      title: "RÉSUMÉ DE LA COMMANDE"
-    },
+    
     title: 'PAIEMENT',
     personalDetails: 'Informations Personnelles',
     firstName: 'Prénom',
@@ -150,7 +149,7 @@ export default {
     phone: 'Téléphone',
     phonePlaceholder: 'Entrez votre numéro de téléphone...',
     
-    shippingDetails: 'DÉTAILS DE LIVRAISON',
+    shippingDetails: 'Détails de Livraison',
     address: 'Adresse',
     addressPlaceholder: 'Entrez votre adresse...',
     apartment: 'Appartement/Suite',
@@ -175,11 +174,11 @@ export default {
     cvvPlaceholder: '123',
     
     summary: {
-      title: 'RÉSUMÉ',
-      taxes: 'Taxes',
-      shipping: 'Frais de livraison',
-      subtotal: 'SOUS-TOTAL',
-      total: 'TOTAL'
+      title: "RÉSUMÉ DE LA COMMANDE",
+      taxes: "TAXES",
+      shipping: "LIVRAISON",
+      total: "TOTAL",
+      freeShipping: "Livraison Gratuite"
     },
     errorLoadingAddress: "Erreur lors du chargement de l'adresse par défaut",
     completePurchase: 'FINALISER L\'ACHAT',
@@ -187,7 +186,9 @@ export default {
     changeAddress: 'Changer l\'adresse',
     selectAddress: 'Sélectionner l\'adresse de livraison',
     useThisAddress: 'Utiliser cette adresse',
-    manageAddresses: 'Gérer les adresses'
+    manageAddresses: 'Gérer les adresses',
+    neighborhood: 'Quartier',
+    neighborhoodPlaceholder: 'Entrez votre quartier'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -255,6 +256,7 @@ export default {
     shopNow: 'ACHETER MAINTENANT',
     selectColor: 'Couleur',
     selectSize: 'Taille',
+    selectWeight: "Sélectionner le Poids",
     // eslint-disable-next-line no-dupe-keys
     description: 'DESCRIPTION',
     bestSellers: 'MEILLEURES VENTES',
@@ -382,7 +384,9 @@ export default {
     },
     shipping: 'Frais de livraison',
     taxes: 'Taxes',
-    total: 'Total'
+    total: 'Total',
+    notes: 'Notes de Commande',
+    noNotes: 'Aucune note pour cette commande'
   },
   security: {
     title: 'Sécurité',
@@ -434,7 +438,20 @@ export default {
     requiredFieldsError: 'Veuillez remplir tous les champs obligatoires',
     fieldRequired: 'Ce champ est obligatoire',
     saving: 'Enregistrement...',
-    save: 'Enregistrer'
+    save: 'Enregistrer',
+    contacts: {
+      sectionTitle: 'Contacts de l\'entreprise',
+      title: 'Gérer les contacts',
+      manage: 'Gérer les contacts',
+      name: 'Nom',
+      email: 'Courriel',
+      phone: 'Téléphone',
+      address: 'Adresse',
+      add: 'Ajouter un contact',
+      edit: 'Modifier le contact',
+      deleteConfirmation: 'Supprimer le Contact',
+      deleteWarning: 'Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir supprimer ce contact ?'
+    }
   },
   content: {
     history: {
@@ -605,11 +622,12 @@ export default {
     deleteError: 'Erreur lors de la suppression de l\'adresse',
     fillAllRequired: 'Veuillez remplir tous les champs obligatoires',
     deleteModal: {
-      title: 'Supprimer l\'adresse',
-      message: 'Êtes-vous sûr de vouloir supprimer cette adresse?',
+      title: 'Supprimer l\'Adresse',
+      message: 'Êtes-vous sûr de vouloir supprimer cette adresse ? Cette action ne peut pas être annulée.',
       cancel: 'Annuler',
       confirm: 'Supprimer'
-    }
+    },
+    noAddresses: "Vous n'avez pas d'adresses enregistrées"
   },
   suppliers: {
     pageTitle: 'Nos Fournisseurs',

@@ -33,6 +33,7 @@ import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CartItem from '@/components/cart/CartItem.vue'
 import CartSummary from '@/components/cart/CartSummary.vue'
+import { useCheckoutStore } from '@/stores/checkoutStore'
 
 export default defineComponent({
   name: 'CartView',
@@ -42,7 +43,8 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
-    return { t }
+    const checkoutStore = useCheckoutStore()
+    return { t, checkoutStore }
   },
   data() {
     return {
@@ -65,24 +67,33 @@ export default defineComponent({
       this.$router.push('/checkout')
     },
     updateTotals() {
-      // Implementar cálculo de totais
+      // Subtotal é apenas a soma dos produtos
       const subtotalValue = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
       this.subtotal = subtotalValue.toFixed(2)
       
-      // Exemplo de cálculo de impostos (10%)
+      // Cálculo de impostos (10%)
       this.taxes = (subtotalValue * 0.10).toFixed(2)
       
-      // Exemplo de cálculo de frete (fixo ou baseado em regras)
+      // Cálculo do frete
       this.shipping = this.calculateShipping()
       
-      // Total final
-      this.total = (parseFloat(this.subtotal) + parseFloat(this.shipping) + parseFloat(this.taxes)).toFixed(2)
+      // Total é a soma de subtotal + frete + impostos
+      this.total = (
+        parseFloat(this.subtotal) +
+        parseFloat(this.shipping) +
+        parseFloat(this.taxes)
+      ).toFixed(2)
     },
     
     calculateShipping() {
       // Implemente sua lógica de cálculo de frete aqui
       return '10.00' // Valor fixo como exemplo
+    },
+    updateNotes(event) {
+      this.checkoutStore.setOrderNotes(event.target.value)
     }
   }
 })
 </script>
+
+

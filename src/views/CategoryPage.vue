@@ -329,7 +329,7 @@
                   <img 
                     :src="product.image" 
                     :alt="product.name"
-                    class="w-full aspect-square object-cover md:h-[400px] h-[250px]"
+                    class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
                     @error="handleImageError"
                   >
                   <div class="p-4 flex flex-col flex-grow">
@@ -944,6 +944,9 @@ select:focus {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 </style>
+
+
+
 
 
 

@@ -63,7 +63,7 @@
               </div>
               <div class="text-right">
                 <p v-if="!isOrderExpanded(order.id)" class="font-archivo-narrow font-semibold text-xl">
-                  {{ formatPrice(order.total) }}
+                  {{ formatPrice(calculateOrderTotal(order)) }}
                 </p>
                 <span :class="getStatusClass(order.status.toLowerCase())" class="inline-block px-3 py-1 rounded-full text-sm">
                   {{ order.status }}
@@ -134,26 +134,44 @@
 
               <!-- Sumário do pedido -->
               <div class="border-t border-black/10 mt-6 pt-4">
-                <div class="flex flex-col gap-2 items-end">
-                  <div class="flex justify-end gap-8 w-full">
-                    <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
-                    <span class="font-archivo w-[120px] text-right">
-                      {{ formatPrice(order.shipping_cost) }}
-                    </span>
-                  </div>
-                  
-                  <div class="flex justify-end gap-8 w-full">
-                    <span class="font-archivo text-black/70">{{ $t('orders.taxes') }}</span>
-                    <span class="font-archivo w-[120px] text-right">
-                      {{ formatPrice(order.tax) }}
-                    </span>
+                <div class="flex flex-wrap justify-between">
+                  <!-- Notes Section -->
+                  <div class="w-full md:w-1/2 mb-6 md:mb-0 pr-0 md:pr-8">
+                    <h4 class="font-archivo-narrow font-semibold text-xl mb-3">{{ $t('orders.notes') }}</h4>
+                    <div class="bg-black/5 rounded-lg p-4">
+                      <p v-if="order.notes" class="font-archivo text-sm whitespace-pre-wrap">
+                        {{ order.notes }}
+                      </p>
+                      <p v-else class="font-archivo text-sm text-black/50 italic">
+                        {{ $t('orders.noNotes') }}
+                      </p>
+                    </div>
                   </div>
 
-                  <div class="flex justify-end gap-8 w-full pt-2 border-t border-black/10">
-                    <span class="font-archivo-narrow font-semibold text-xl">{{ $t('orders.total') }}</span>
-                    <span class="font-archivo-narrow font-semibold text-xl w-[120px] text-right">
-                      {{ formatPrice(order.total) }}
-                    </span>
+                  <!-- Totals Section -->
+                  <div class="w-full md:w-auto">
+                    <div class="flex flex-col gap-2 items-end">
+                      <div class="flex justify-end gap-8 w-full">
+                        <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
+                        <span class="font-archivo w-[120px] text-right">
+                          {{ formatPrice(order.shipping_cost) }}
+                        </span>
+                      </div>
+                      
+                      <div class="flex justify-end gap-8 w-full">
+                        <span class="font-archivo text-black/70">{{ $t('orders.taxes') }}</span>
+                        <span class="font-archivo w-[120px] text-right">
+                          {{ formatPrice(order.tax_amount) }}
+                        </span>
+                      </div>
+
+                      <div class="flex justify-end gap-8 w-full pt-2 border-t border-black/10">
+                        <span class="font-archivo-narrow font-semibold text-xl">{{ $t('orders.total') }}</span>
+                        <span class="font-archivo-narrow font-semibold text-xl w-[120px] text-right">
+                          {{ formatPrice(calculateOrderTotal(order)) }}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -336,6 +354,14 @@ onMounted(() => {
 const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE_BASE64
 }
+
+const calculateOrderTotal = (order) => {
+  const subtotal = order.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0)
+  const shipping = parseFloat(order.shipping_cost) || 0
+  const tax = parseFloat(order.tax_amount) || 0
+  
+  return subtotal + shipping + tax
+}
 </script>
 
 <style scoped>
@@ -345,29 +371,6 @@ const handleImageError = (e) => {
   white-space: nowrap;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

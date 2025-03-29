@@ -200,28 +200,68 @@
   <!-- Modal de Confirmação de Exclusão -->
   <div 
     v-if="showDeleteModal" 
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
   >
-    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-      <h3 class="font-archivo-narrow text-2xl mb-4">
-        {{ $t('addresses.deleteModal.title') }}
-      </h3>
-      <p class="text-black/70 mb-8">
-        {{ $t('addresses.deleteModal.message') }}
-      </p>
-      <div class="flex justify-end gap-4">
-        <button 
-          @click="showDeleteModal = false"
-          class="bg-gray-200 text-black px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
-        >
-          {{ $t('addresses.deleteModal.cancel') }}
-        </button>
-        <button 
-          @click="confirmDelete"
-          class="bg-red-600 text-white px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
-        >
-          {{ $t('addresses.deleteModal.confirm') }}
-        </button>
+    <div class="flex items-center justify-center h-full translate-y-[-10%]">
+      <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <div class="bg-red-100 rounded-full p-3">
+              <svg 
+                class="w-6 h-6 text-red-600" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" 
+                  stroke-width="2" 
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-archivo-narrow font-semibold text-gray-900">
+                {{ $t('addresses.deleteModal.title') }}
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">
+                {{ $t('addresses.deleteModal.message') }}
+              </p>
+            </div>
+          </div>
+          <button 
+            @click="showDeleteModal = false"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Ações -->
+        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
+          <button
+            @click="showDeleteModal = false"
+            class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {{ $t('addresses.deleteModal.cancel') }}
+          </button>
+          <button
+            @click="confirmDelete"
+            class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {{ $t('addresses.deleteModal.confirm') }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -411,6 +451,7 @@ onMounted(() => {
   loadAddresses()
 })
 </script>
+
 
 
 

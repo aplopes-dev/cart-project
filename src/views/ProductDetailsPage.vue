@@ -26,15 +26,30 @@
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img 
-                :src="selectedImage || product.mainImage" 
+                :src="selectedImage || product.image" 
                 :alt="product.name"
+                @error="handleImageError"
                 class="max-w-full max-h-full object-contain"
               >
             </div>
             <!-- Thumbnail Images -->
             <div class="grid grid-cols-4 gap-4">
+              <!-- Principal Image Thumbnail -->
               <button 
-                v-for="(image, index) in product.images" 
+                @click="selectedImage = product.image"
+                class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
+                :class="{'border-2 border-black': selectedImage === product.image}"
+              >
+                <img 
+                  :src="product.image" 
+                  :alt="`${product.name} main view`"
+                  @error="handleImageError"
+                  class="w-full h-full object-contain"
+                >
+              </button>
+              <!-- Additional Images Thumbnails -->
+              <button 
+                v-for="(image, index) in processedImages" 
                 :key="index"
                 @click="selectedImage = image"
                 class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
@@ -42,7 +57,8 @@
               >
                 <img 
                   :src="image" 
-                  :alt="`${product.name} view ${index + 1}`" 
+                  :alt="`${product.name} view ${index + 1}`"
+                  @error="handleImageError"
                   class="w-full h-full object-contain"
                 >
               </button>
@@ -61,8 +77,9 @@
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>
-                <p class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
-                  {{ formatPrice(calculateOriginalPrice(product.price)) }}
+                <p v-if="hasDiscount" 
+                   class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
+                  {{ formatPrice(originalPrice) }}
                 </p>
               </div>
 
@@ -71,40 +88,71 @@
                 {{ getNormalDescription }}
               </p>
 
-              <!-- Color Selection -->
-              <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
-                <div class="grid grid-cols-4 gap-4">
-                  <button 
-                    v-for="color in product.colors" 
-                    :key="color"
-                    @click="selectedColor = color"
-                    class="h-12 border-2"
-                    :class="[
-                      selectedColor === color ? 'border-black' : 'border-black/70',
-                      'hover:border-black transition-colors'
-                    ]"
-                    :style="{ backgroundColor: color }"
-                  />
+              <!-- Características do Produto -->
+              <div class="space-y-6">
+                <!-- Cores -->
+                <div v-if="product.characteristics?.COLOR?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
+                  <div class="flex flex-wrap gap-4">
+                    <button 
+                      v-for="color in product.characteristics.COLOR" 
+                      :key="color"
+                      @click="selectedColor = color"
+                      class="w-12 h-12 rounded-full border-2 transition-all duration-200"
+                      :style="{ 
+                        backgroundColor: color,
+                        borderColor: isWhiteOrLight(color) 
+                          ? (selectedColor === color ? 'black' : '#CCCCCC')
+                          : (selectedColor === color ? 'black' : 'transparent')
+                      }"
+                      :class="[
+                        selectedColor === color ? 'border-black' : '',
+                        isWhiteOrLight(color) ? 'ring-1 ring-gray-200' : ''
+                      ]"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <!-- Size Selection -->
-              <div class="space-y-2">
-                <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
-                <div class="grid grid-cols-4 gap-4">
-                  <button 
-                    v-for="size in product.sizes" 
-                    :key="size"
-                    @click="selectedSize = size"
-                    class="h-12 border-2"
-                    :class="[
-                      selectedSize === size ? 'border-black bg-black text-white' : 'border-black/70',
-                      'hover:bg-black hover:text-white transition-colors'
-                    ]"
-                  >
-                    {{ size }}
-                  </button>
+                <!-- Tamanhos -->
+                <div v-if="product.characteristics?.SIZE?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
+                  <div class="grid grid-cols-4 gap-4">
+                    <button 
+                      v-for="size in product.characteristics.SIZE" 
+                      :key="size"
+                      @click="selectedSize = size"
+                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      :class="[
+                        selectedSize === size 
+                          ? 'border-black bg-black text-white' 
+                          : 'border-black/70 hover:border-black',
+                        'hover:bg-black hover:text-white'
+                      ]"
+                    >
+                      {{ size }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Pesos -->
+                <div v-if="product.characteristics?.WEIGHT?.length" class="space-y-2">
+                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectWeight') }}</label>
+                  <div class="grid grid-cols-4 gap-4">
+                    <button 
+                      v-for="weight in product.characteristics.WEIGHT" 
+                      :key="weight"
+                      @click="selectedWeight = weight"
+                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      :class="[
+                        selectedWeight === weight 
+                          ? 'border-black bg-black text-white' 
+                          : 'border-black/70 hover:border-black',
+                        'hover:bg-black hover:text-white'
+                      ]"
+                    >
+                      {{ weight }}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -185,6 +233,8 @@ export default {
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
 
+    // Removed unused isWhiteOrLight function
+
     const loadCurrencySymbol = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
@@ -217,14 +267,18 @@ export default {
         technical_description_pt: '',
         technical_description_fr: '',
         image: '',
+        images: [],
+        characteristics: null,
         category: null
       },
       loading: true,
       error: null,
       selectedColor: null,
       selectedSize: null,
+      selectedWeight: null, // Adicionando selectedWeight
       selectedImage: null,
-      showToast: false
+      showToast: false,
+      discountPercentage: 0
     }
   },
   created() {
@@ -254,14 +308,17 @@ export default {
     },
 
     calculateOriginalPrice(price) {
-      return price * 1.3 // Aumenta o preço em 30%
+      // Calcula o preço original baseado no desconto configurado
+      if (!this.discountPercentage) return price;
+      return price / (1 - (this.discountPercentage / 100));
     },
     async loadProduct() {
       try {
         this.loading = true
         this.error = null
         const productId = this.$route.params.id
-        const [productData, settings] = await Promise.all([
+        
+        const [productData, financialSettings] = await Promise.all([
           productService.getProductById(productId),
           settingsService.getFinancialSettings()
         ])
@@ -270,6 +327,7 @@ export default {
           throw new Error('Product not found')
         }
 
+        // Atualiza o produto
         this.product = {
           ...productData,
           description_en: productData.description_en || '',
@@ -281,14 +339,20 @@ export default {
           category: productData.category || null
         }
         
-        this.currencySymbol = settings.currency_symbol
+        this.currencySymbol = financialSettings.currency_symbol
 
         // Reseta estados importantes
         this.selectedColor = null
         this.selectedSize = null
         this.selectedImage = null
         
-        // Rola a página para o topo
+        // Atualiza configurações financeiras
+        this.currencySymbol = financialSettings.currency_symbol
+        this.discountPercentage = financialSettings.discount_percentage || 0
+
+        // Define a imagem inicial como a principal
+        this.selectedImage = this.product.image
+        
         window.scrollTo(0, 0)
         
       } catch (err) {
@@ -307,7 +371,7 @@ export default {
         color: this.selectedColor,
         size: this.selectedSize,
         quantity: quantity,
-        image: this.selectedImage || this.product.mainImage
+        image: this.selectedImage || this.product.image
       }
       
       this.cartStore.addItem(item)
@@ -320,6 +384,7 @@ export default {
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.onerror = null // Previne loop infinito
     },
     showSuccessToast() {
       this.showToast = true
@@ -351,29 +416,3 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

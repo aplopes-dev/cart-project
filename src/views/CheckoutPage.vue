@@ -99,29 +99,31 @@
 
               <!-- Shipping Address Section -->
               <section>
-                <div class="flex items-center justify-between mb-6 relative pr-12">
+                <div class="flex items-center justify-between cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
                   <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
                   
-                  <!-- Botão modificado com novo estilo -->
-                  <button 
-                    @click="openAddressModal"
-                    class="font-archivo-narrow px-4 py-2 border border-black hover:bg-empire-yellow transition-colors duration-200"
-                  >
-                    {{ $t('checkout.changeAddress') }}
-                  </button>
+                  <div class="flex items-center lg:absolute lg:right-0 lg:top-0">
+                    <button 
+                      @click.stop
+                      @click="openAddressModal"
+                      class="mobile-address-btn"
+                    >
+                      {{ $t('checkout.changeAddress') }}
+                    </button>
 
-                  <!-- Seta para mobile -->
-                  <svg 
-                    class="section-arrow lg:hidden absolute right-0"
-                    :class="{ 'rotate-270': sections.shipping }"
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
-                  </svg>
+                    <!-- Seta para mobile -->
+                    <svg 
+                      class="section-arrow lg:hidden ml-4 absolute right-0"
+                      :class="{ 'rotate-270': sections.shipping }"
+                      width="24" 
+                      height="24" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
+                    </svg>
+                  </div>
                 </div>
                 <div v-show="sections.shipping || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
@@ -153,6 +155,22 @@
                       ]"
                     >
                     <span v-if="showErrors && formErrors.number" class="text-red-500 text-sm mt-1">
+                      {{ $t('checkout.fieldRequired') }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.neighborhood') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.neighborhood"
+                      :placeholder="$t('checkout.neighborhoodPlaceholder')"
+                      :class="[
+                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        (showErrors && formErrors.neighborhood) ? 'border-red-500' : 'border-black/25'
+                      ]"
+                    >
+                    <span v-if="showErrors && formErrors.neighborhood" class="text-red-500 text-sm mt-1">
                       {{ $t('checkout.fieldRequired') }}
                     </span>
                   </div>
@@ -231,59 +249,71 @@
 
               <!-- Payment Section -->
               <section>
-                <div v-show="sections.payment || isDesktop">
-                  <div class="flex items-center justify-between mb-6">
-                    <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
-                    <div class="flex items-center gap-4">
-                      <img src="/images/payment/visa.png" alt="Visa" class="h-8">
-                      <img src="/images/payment/master.png" alt="Mastercard" class="h-8">
-                      <img src="/images/payment/paypal.png" alt="PayPal" class="h-8">
-                      <img src="/images/payment/stripe.png" alt="Stripe" class="h-8">
-                      <img src="/images/payment/google.png" alt="Google Pay" class="h-8">
-                    </div>
+                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
+                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
+                  
+                  <!-- Bandeiras dos cartões -->
+                  <div class="flex flex-wrap items-center gap-2 sm:gap-4 lg:ml-8">
+                    <img src="/images/payment/visa.png" alt="Visa" class="h-6 sm:h-8">
+                    <img src="/images/payment/master.png" alt="Mastercard" class="h-6 sm:h-8">
+                    <img src="/images/payment/paypal.png" alt="PayPal" class="h-6 sm:h-8">
+                    <img src="/images/payment/stripe.png" alt="Stripe" class="h-6 sm:h-8">
+                    <img src="/images/payment/google.png" alt="Google Pay" class="h-6 sm:h-8">
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
-                      <input 
-                        type="text" 
-                        v-model="formData.cardHolder"
-                        :placeholder="$t('checkout.cardHolderPlaceholder')"
-                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
-                        disabled
-                      >
-                    </div>
-                    <div class="md:col-span-2">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
-                      <input 
-                        type="text" 
-                        v-model="formData.cardNumber"
-                        :placeholder="$t('checkout.cardNumberPlaceholder')"
-                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
-                        disabled
-                      >
-                    </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
-                      <input 
-                        type="text" 
-                        v-model="formData.expiryDate"
-                        :placeholder="$t('checkout.expiryDatePlaceholder')"
-                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
-                        disabled
-                      >
-                    </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
-                      <input 
-                        type="text" 
-                        v-model="formData.cvv"
-                        :placeholder="$t('checkout.cvvPlaceholder')"
-                        class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
-                        disabled
-                      >
-                    </div>
+                  <!-- Seta para mobile -->
+                  <svg 
+                    class="section-arrow lg:hidden absolute right-0"
+                    :class="{ 'rotate-270': sections.payment }"
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
+                  </svg>
+                </div>
+                <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="md:col-span-2">
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.cardHolder"
+                      :placeholder="$t('checkout.cardHolderPlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      disabled
+                    >
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.cardNumber"
+                      :placeholder="$t('checkout.cardNumberPlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      disabled
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.expiryDate"
+                      :placeholder="$t('checkout.expiryDatePlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      disabled
+                    >
+                  </div>
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
+                    <input 
+                      type="text" 
+                      v-model="formData.cvv"
+                      :placeholder="$t('checkout.cvvPlaceholder')"
+                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      disabled
+                    >
                   </div>
                 </div>
               </section>
@@ -324,7 +354,7 @@
                           
                           <!-- Preço -->
                           <span class="font-archivo text-[22px] leading-[40px] text-black/70">
-                            ${{ (item.price * item.quantity).toFixed(2) }}
+                            {{ currencySymbol }}{{ (item.price * item.quantity).toFixed(2) }}
                           </span>
                         </div>
                       </div>
@@ -349,18 +379,23 @@
                   <div class="space-y-4">
                     <div class="flex justify-between">
                       <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
-                      <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
+                      <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateTaxes }}</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.shipping') }}</span>
-                      <span class="font-archivo text-[22px] leading-[40px]">$ 0.00</span>
+                      <span class="font-archivo text-[22px] leading-[40px]">
+                        {{ $t('checkout.summary.shipping') }}
+                        <span v-if="calculateShipping === '0.00'" class="text-green-600 text-sm ml-2">
+                          ({{ $t('checkout.summary.freeShipping') }}) 
+                        </span>
+                      </span>
+                      <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateShipping }}</span>
                     </div>
                     <div class="flex justify-between items-center py-4">
                       <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
-                        {{ $t('checkout.summary.subtotal') }}
+                        {{ $t('checkout.summary.total') }}
                       </span>
                       <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
-                        ${{ subtotal.toFixed(2) }}
+                        {{ currencySymbol }}{{ calculateTotal }}
                       </span>
                     </div>
                   </div>
@@ -404,11 +439,13 @@
 import { useCartStore } from '@/stores/cartStore'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import api from '@/services/api'
 import { useI18n } from 'vue-i18n'
 import AddressSelectionModal from '@/components/address/AddressSelectionModal.vue'
 import { useAddressStore } from '@/stores/addressStore'
+import { settingsService } from '@/services/settingsService'
+import { useCheckoutStore } from '@/stores/checkoutStore'
 
 export default {
   name: 'CheckoutPage',
@@ -421,6 +458,44 @@ export default {
     const router = useRouter()
     const { t } = useI18n()
     const addressStore = useAddressStore()
+    const checkoutStore = useCheckoutStore()
+    const currencySymbol = ref('$')
+    const taxRate = ref(0)
+    const shippingCost = ref(0)
+    const freeShippingThreshold = ref(0)
+
+    const loadFinancialSettings = async () => {
+      try {
+        const settings = await settingsService.getFinancialSettings()
+        currencySymbol.value = settings.currency_symbol
+        taxRate.value = settings.tax_rate
+        shippingCost.value = settings.shipping_cost
+        freeShippingThreshold.value = settings.free_shipping_threshold
+      } catch (error) {
+        console.error('Error loading financial settings:', error)
+      }
+    }
+
+    onMounted(() => {
+      loadFinancialSettings()
+    })
+
+    const calculateTaxes = computed(() => {
+      const subtotalValue = cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
+      return (subtotalValue * (taxRate.value / 100)).toFixed(2)
+    })
+
+    const calculateShipping = computed(() => {
+      const subtotalValue = cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
+      
+      // Se o valor total for maior que o limite para frete grátis, retorna 0
+      if (subtotalValue >= freeShippingThreshold.value) {
+        return '0.00'
+      }
+      
+      // Converte para número e formata com 2 casas decimais
+      return Number(shippingCost.value).toFixed(2)
+    })
 
     // Adicionar computed para dados do usuário
     const userData = computed(() => {
@@ -447,7 +522,11 @@ export default {
       removeItem,
       t,
       userData,
-      addressStore
+      addressStore,
+      currencySymbol,
+      calculateTaxes,
+      calculateShipping,
+      checkoutStore
     }
   },
   data() {
@@ -468,6 +547,7 @@ export default {
         phone: user.phone || '', // Adicionar inicialização do telefone
         address: '',
         number: '', // Adicionado campo number
+        neighborhood: '', // Adicionado campo neighborhood
         apartment: '',
         city: '',
         state: '',
@@ -494,7 +574,7 @@ export default {
       const errors = {}
       const requiredFields = [
         'firstName', 'lastName', 'email', 'phone',
-        'address', 'number', 'city', 'state', 'postalCode', 'country' // Adicionado number aos campos obrigatórios
+        'address', 'number', 'neighborhood', 'city', 'state', 'postalCode', 'country' // Adicionado neighborhood aos campos obrigatórios
       ]
 
       requiredFields.forEach(field => {
@@ -514,6 +594,13 @@ export default {
         email: !!this.userData?.email
         // Não incluímos o telefone aqui para que ele permaneça editável
       }
+    },
+    calculateTotal() {
+      const subtotalValue = this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+      const taxesValue = parseFloat(this.calculateTaxes)
+      const shippingValue = parseFloat(this.calculateShipping)
+      
+      return (subtotalValue + taxesValue + shippingValue).toFixed(2)
     }
   },
   mounted() {
@@ -564,27 +651,49 @@ export default {
         // Sincroniza o carrinho com o backend
         await this.cartStore.syncCartWithBackend();
 
+        // Atualiza o telefone do usuário se fornecido
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.id && this.formData.phone) {
+          try {
+            const response = await api.patch(`/users/${user.id}`, {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              phone: this.formData.phone
+            });
+
+            // Atualiza os dados do usuário no localStorage
+            localStorage.setItem('user', JSON.stringify({
+              ...user,
+              ...response.data
+            }));
+          } catch (error) {
+            console.error('Error updating user phone:', error);
+            // Continua com o checkout mesmo se falhar a atualização do telefone
+          }
+        }
+
         const orderData = {
           address: this.formData.address,
-          apartment: this.formData.apartment,
+          number: this.formData.number,
+          complement: this.formData.complement,
+          neighborhood: this.formData.neighborhood,
           city: this.formData.city,
           state: this.formData.state,
           postalCode: this.formData.postalCode,
           country: this.formData.country,
-          phone: this.formData.phone
+          notes: this.checkoutStore.orderNotes,
+          shippingCost: parseFloat(this.calculateShipping),
+          taxAmount: parseFloat(this.calculateTaxes)
         };
 
-        // Criar pedido
+        console.log('Order data being sent:', orderData);
+
         const response = await api.post('/orders', orderData);
         
-        console.log('Order creation response:', response.data);
-        console.log('Order number:', response.data.order_number);
-        
         if (response.data && response.data.order_number) {
-          // Limpa o carrinho no Pinia após o pedido ser criado com sucesso
           await this.cartStore.clearCart();
+          this.checkoutStore.clearCheckoutData();
           
-          // Redireciona para a página de agradecimento com o número do pedido
           await this.router.push({
             name: 'ThankYou',
             params: { orderNumber: response.data.order_number }
@@ -592,19 +701,10 @@ export default {
         } else {
           throw new Error('Order number not received from server');
         }
-
       } catch (error) {
         console.error('Error creating order:', error);
-        
-        const errorMessage = error.response?.data?.message || 'An error occurred while processing your order';
-        this.$toast.error(errorMessage, {
-          position: 'top-right',
-          duration: 3000
-        });
-
-        if (error.response?.data?.message === 'Cart is empty. Please add items before checking out.') {
-          await this.cartStore.clearCart();
-        }
+        this.error = this.$t('checkout.errorProcessingOrder');
+        this.showErrorAlert = true;
       } finally {
         this.loading = false;
       }
@@ -612,6 +712,7 @@ export default {
     updateShippingAddress(address) {
       this.formData.address = address.address
       this.formData.number = address.number // Adicionado number
+      this.formData.neighborhood = address.neighborhood // Adicionado neighborhood
       this.formData.apartment = address.apartment
       this.formData.city = address.city
       this.formData.state = address.state
@@ -652,6 +753,7 @@ export default {
       if (defaultAddress) {
         this.formData.address = defaultAddress.address
         this.formData.number = defaultAddress.number // Adicionado number
+        this.formData.neighborhood = defaultAddress.neighborhood // Adicionado neighborhood
         this.formData.apartment = defaultAddress.apartment
         this.formData.city = defaultAddress.city
         this.formData.state = defaultAddress.state
@@ -723,10 +825,32 @@ input::placeholder {
     display: none;
   }
 }
+
+@media (max-width: 1023px) {
+  .mobile-address-btn {
+    background-color: #FFCD29; /* empire-yellow */
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-address-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-address-btn {
+    background-color: #FFCD29;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
 </style>
-
-
-
-
-
-
