@@ -66,8 +66,9 @@
                 </p>
               </div>
 
-              <p class="font-archivo text-xl text-black/70">
-                {{ product.description }}
+              <!-- Descrição normal do produto -->
+              <p v-if="getNormalDescription" class="font-archivo text-xl text-black/70">
+                {{ getNormalDescription }}
               </p>
 
               <!-- Color Selection -->
@@ -126,16 +127,15 @@
           </div>
         </div>
 
-        <!-- Seção de descrição -->
+        <!-- Seção de descrição técnica -->
         <div class="mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-6">
           <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
             {{ $t('productDetails.description') }}
           </h2>
           
-          <!-- Descrição técnica -->
           <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
-            <pre v-if="hasDescription" 
-                 class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
+            <pre v-if="getTechnicalDescription" 
+                 class="whitespace-pre-line font-archivo">{{ getTechnicalDescription }}</pre>
             <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
           </div>
         </div>
@@ -172,6 +172,7 @@ import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'ProductDetailsPage',
@@ -180,6 +181,7 @@ export default {
     BestSeller
   },
   setup() {
+    const { locale } = useI18n()
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
 
@@ -198,7 +200,8 @@ export default {
 
     return {
       cartStore,
-      currencySymbol
+      currencySymbol,
+      currentLocale: locale
     }
   },
   data() {
@@ -207,8 +210,12 @@ export default {
         id: null,
         name: '',
         price: 0,
-        description: '',
-        technical_description: '',
+        description_en: '',
+        description_pt: '',
+        description_fr: '',
+        technical_description_en: '',
+        technical_description_pt: '',
+        technical_description_fr: '',
         image: '',
         category: null
       },
@@ -265,8 +272,15 @@ export default {
 
         this.product = {
           ...productData,
+          description_en: productData.description_en || '',
+          description_pt: productData.description_pt || '',
+          description_fr: productData.description_fr || '',
+          technical_description_en: productData.technical_description_en || '',
+          technical_description_pt: productData.technical_description_pt || '',
+          technical_description_fr: productData.technical_description_fr || '',
           category: productData.category || null
         }
+        
         this.currencySymbol = settings.currency_symbol
 
         // Reseta estados importantes
@@ -315,11 +329,18 @@ export default {
     }
   },
   computed: {
-    hasDescription() {
-      return Boolean(this.product?.technical_description || this.product?.description)
+    getNormalDescription() {
+      const locale = this.currentLocale.toLowerCase()
+      return this.product[`description_${locale}`] || ''
     },
-    getDescription() {
-      return this.product?.technical_description || this.product?.description || ''
+
+    getTechnicalDescription() {
+      const locale = this.currentLocale.toLowerCase()
+      return this.product[`technical_description_${locale}`] || ''
+    },
+
+    hasDescription() {
+      return Boolean(this.getTechnicalDescription || this.getNormalDescription)
     }
   }
 }
