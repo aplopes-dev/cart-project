@@ -26,30 +26,15 @@
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img 
-                :src="selectedImage || product.image" 
+                :src="selectedImage || product.mainImage" 
                 :alt="product.name"
-                @error="handleImageError"
                 class="max-w-full max-h-full object-contain"
               >
             </div>
             <!-- Thumbnail Images -->
             <div class="grid grid-cols-4 gap-4">
-              <!-- Principal Image Thumbnail -->
               <button 
-                @click="selectedImage = product.image"
-                class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
-                :class="{'border-2 border-black': selectedImage === product.image}"
-              >
-                <img 
-                  :src="product.image" 
-                  :alt="`${product.name} main view`"
-                  @error="handleImageError"
-                  class="w-full h-full object-contain"
-                >
-              </button>
-              <!-- Additional Images Thumbnails -->
-              <button 
-                v-for="(image, index) in processedImages" 
+                v-for="(image, index) in product.images" 
                 :key="index"
                 @click="selectedImage = image"
                 class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
@@ -57,8 +42,7 @@
               >
                 <img 
                   :src="image" 
-                  :alt="`${product.name} view ${index + 1}`"
-                  @error="handleImageError"
+                  :alt="`${product.name} view ${index + 1}`" 
                   class="w-full h-full object-contain"
                 >
               </button>
@@ -71,23 +55,23 @@
               <h1 class="font-archivo-narrow font-semibold text-[45px] leading-[52px] text-black/70">
                 {{ product.name }}
               </h1>
-              
+
               <!-- Preços -->
               <div class="flex items-center gap-4">
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>
-                <p v-if="hasDiscount" 
-                   class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
-                  {{ formatPrice(originalPrice) }}
-                </p>
+                <template v-if="hasDiscount">
+                  <p class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
+                    {{ formatPrice(calculateOriginalPrice(product.price)) }}
+                  </p>
+                </template>
               </div>
 
-              <!-- Descrição normal do produto -->
-              <p v-if="getNormalDescription" class="font-archivo text-xl text-black/70">
-                {{ getNormalDescription }}
-              </p>
+              <p class="font-archivo text-xl text-black/70">
+                {{ product.description }}
 
+              </p>
               <!-- Características do Produto -->
               <div class="space-y-6">
                 <!-- Cores -->
@@ -175,15 +159,16 @@
           </div>
         </div>
 
-        <!-- Seção de descrição técnica -->
+        <!-- Seção de descrição -->
         <div class="mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-6">
           <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
             {{ $t('productDetails.description') }}
           </h2>
-          
+
+          <!-- Descrição técnica -->
           <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
-            <pre v-if="getTechnicalDescription" 
-                 class="whitespace-pre-line font-archivo">{{ getTechnicalDescription }}</pre>
+            <pre v-if="hasDescription" 
+                 class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
             <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
           </div>
         </div>
@@ -217,10 +202,10 @@ import BestSeller from '@/components/product/BestSeller.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
-import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'ProductDetailsPage',
@@ -230,138 +215,140 @@ export default {
   },
   setup() {
     const { locale } = useI18n()
+    const route = useRoute()
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
+    const discountPercentage = ref(null) // Novo ref para o percentual de desconto
+    const product = ref({
+      id: null,
+      name: '',
+      price: 0,
+      description: '',
+      technical_description: '',
+      image: '',
+      category: null
+    })
+    const loading = ref(true)
+    const error = ref(null)
+    const selectedColor = ref(null)
+    const selectedSize = ref(null)
+    const selectedImage = ref(null)
+    const showToast = ref(false)
 
-    // Removed unused isWhiteOrLight function
+    // Observar mudanças no locale
+    watch(locale, (newLocale) => {
+      if (product.value) {
+        product.value = {
+          ...product.value,
+          description: product.value[`description_${newLocale}`] || product.value.description_en || '',
+          technical_description: product.value[`technical_description_${newLocale}`] || product.value.technical_description_en || ''
+        }
+      }
+    })
 
-    const loadCurrencySymbol = async () => {
+    const loadFinancialSettings = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
+        discountPercentage.value = settings.discount_percentage // Carrega o percentual de desconto
       } catch (error) {
-        console.error('Error loading currency symbol:', error)
+        console.error('Error loading financial settings:', error)
+        discountPercentage.value = null
+      }
+    }
+
+    const loadProduct = async () => {
+      try {
+        loading.value = true
+        error.value = null
+        const productId = route.params.id
+        await loadFinancialSettings() // Carrega as configurações financeiras
+        const productData = await productService.getProductById(productId)
+
+        // Garantir que images seja um array e incluir a imagem principal (image)
+        const allImages = [
+          productData.image, // Corrigido de mainImage para image
+          ...(productData.images || [])
+        ].filter(Boolean) // Remove valores null/undefined
+
+        product.value = {
+          ...productData,
+          images: allImages,
+          description: productData[`description_${locale.value}`] || productData.description_en || '',
+          technical_description: productData[`technical_description_${locale.value}`] || productData.technical_description_en || ''
+        }
+
+        selectedColor.value = null
+        selectedSize.value = null
+        selectedImage.value = productData.image // Corrigido de mainImage para image
+        window.scrollTo(0, 0)
+      } catch (err) {
+        console.error('Error loading product:', err)
+        error.value = 'Failed to load product details'
+      } finally {
+        loading.value = false
       }
     }
 
     onMounted(() => {
-      loadCurrencySymbol()
+      loadFinancialSettings()
+      loadProduct()
     })
 
+    // Watch para mudanças na rota
+    watch(
+      () => route.params.id,
+      (newId, oldId) => {
+        if (newId !== oldId) {
+          loadProduct()
+        }
+      }
+    )
+
     return {
+      product,
+      loading,
+      error,
+      selectedColor,
+      selectedSize,
+      selectedImage,
+      showToast,
       cartStore,
       currencySymbol,
-      currentLocale: locale
-    }
-  },
-  data() {
-    return {
-      product: {
-        id: null,
-        name: '',
-        price: 0,
-        description_en: '',
-        description_pt: '',
-        description_fr: '',
-        technical_description_en: '',
-        technical_description_pt: '',
-        technical_description_fr: '',
-        image: '',
-        images: [],
-        characteristics: null,
-        category: null
-      },
-      loading: true,
-      error: null,
-      selectedColor: null,
-      selectedSize: null,
-      selectedWeight: null, // Adicionando selectedWeight
-      selectedImage: null,
-      showToast: false,
-      discountPercentage: 0
-    }
-  },
-  created() {
-    this.loadProduct()
-    
-    // Usa o eventBus ao invés do $root
-    eventBus.on('reload-product-details', this.loadProduct)
-  },
-  beforeUnmount() {
-    // Remove o listener usando eventBus
-    eventBus.off('reload-product-details', this.loadProduct)
-  },
-  watch: {
-    // Observa mudanças no parâmetro da rota
-    '$route.params.id': {
-      handler(newId, oldId) {
-        if (newId !== oldId) {
-          this.loadProduct()
-        }
-      },
-      immediate: true
+      discountPercentage,
+      loadProduct
     }
   },
   methods: {
+    isWhiteOrLight(color) {
+      if (color.toLowerCase() === '#ffffff' || color.toLowerCase() === '#fff' || color.toLowerCase() === 'white') {
+        return true
+      }
+      
+      let r, g, b
+      if (color.startsWith('#')) {
+        const hex = color.replace('#', '')
+        r = parseInt(hex.substr(0, 2), 16)
+        g = parseInt(hex.substr(2, 2), 16)
+        b = parseInt(hex.substr(4, 2), 16)
+      } else if (color.startsWith('rgb')) {
+        const rgbValues = color.match(/\d+/g)
+        if (rgbValues) {
+          [r, g, b] = rgbValues.map(Number)
+        }
+      }
+      
+      const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
+      return yiq >= 128
+    },
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
 
     calculateOriginalPrice(price) {
-      // Calcula o preço original baseado no desconto configurado
-      if (!this.discountPercentage) return price;
-      return price / (1 - (this.discountPercentage / 100));
-    },
-    async loadProduct() {
-      try {
-        this.loading = true
-        this.error = null
-        const productId = this.$route.params.id
-        
-        const [productData, financialSettings] = await Promise.all([
-          productService.getProductById(productId),
-          settingsService.getFinancialSettings()
-        ])
-        
-        if (!productData) {
-          throw new Error('Product not found')
-        }
-
-        // Atualiza o produto
-        this.product = {
-          ...productData,
-          description_en: productData.description_en || '',
-          description_pt: productData.description_pt || '',
-          description_fr: productData.description_fr || '',
-          technical_description_en: productData.technical_description_en || '',
-          technical_description_pt: productData.technical_description_pt || '',
-          technical_description_fr: productData.technical_description_fr || '',
-          category: productData.category || null
-        }
-        
-        this.currencySymbol = financialSettings.currency_symbol
-
-        // Reseta estados importantes
-        this.selectedColor = null
-        this.selectedSize = null
-        this.selectedImage = null
-        
-        // Atualiza configurações financeiras
-        this.currencySymbol = financialSettings.currency_symbol
-        this.discountPercentage = financialSettings.discount_percentage || 0
-
-        // Define a imagem inicial como a principal
-        this.selectedImage = this.product.image
-        
-        window.scrollTo(0, 0)
-        
-      } catch (err) {
-        console.error('Error loading product:', err)
-        this.error = 'Failed to load product details'
-        this.$router.push('/404')
-      } finally {
-        this.loading = false
-      }
+      // Retorna null se não houver desconto ou se for zero
+      if (!this.discountPercentage || this.discountPercentage <= 0) return null
+      return price / (1 - (this.discountPercentage / 100))
     },
     handleAddToCart(quantity) {
       const item = {
@@ -371,7 +358,7 @@ export default {
         color: this.selectedColor,
         size: this.selectedSize,
         quantity: quantity,
-        image: this.selectedImage || this.product.image
+        image: this.selectedImage || this.product.image // Corrigido de mainImage para image
       }
       
       this.cartStore.addItem(item)
@@ -384,7 +371,6 @@ export default {
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
-      e.target.onerror = null // Previne loop infinito
     },
     showSuccessToast() {
       this.showToast = true
@@ -394,18 +380,22 @@ export default {
     }
   },
   computed: {
-    getNormalDescription() {
-      const locale = this.currentLocale.toLowerCase()
-      return this.product[`description_${locale}`] || ''
-    },
-
-    getTechnicalDescription() {
-      const locale = this.currentLocale.toLowerCase()
-      return this.product[`technical_description_${locale}`] || ''
-    },
-
     hasDescription() {
-      return Boolean(this.getTechnicalDescription || this.getNormalDescription)
+      return Boolean(this.product?.technical_description || this.product?.description)
+
+
+
+
+
+
+    },
+    getDescription() {
+      return this.product?.technical_description || this.product?.description || ''
+
+    },
+    hasDiscount() {
+      // Verifica se existe desconto E se é maior que zero
+      return !!this.discountPercentage && this.discountPercentage > 0
     }
   }
 }
@@ -416,3 +406,11 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
+
+
+
+
+
+
+
+

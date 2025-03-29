@@ -144,7 +144,7 @@
 
 <script>
 import { useCartStore } from '@/stores/cartStore'
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { productService } from '@/services/productService'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
@@ -159,9 +159,23 @@ export default defineComponent({
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
-    const { t } = useI18n()
+    const { t, locale } = useI18n()
     const currencySymbol = ref('$')
     const checkoutStore = useCheckoutStore()
+    const productDetails = ref({})
+
+    // Watch para atualizar descrições quando mudar o idioma
+    watch(locale, (newLocale) => {
+      Object.keys(productDetails.value).forEach(productId => {
+        if (productDetails.value[productId]) {
+          productDetails.value[productId] = {
+            ...productDetails.value[productId],
+            description: productDetails.value[productId][`description_${newLocale}`] || 
+                        productDetails.value[productId].description_en || ''
+          }
+        }
+      })
+    })
 
     const loadCurrencySymbol = async () => {
       try {
@@ -199,6 +213,28 @@ export default defineComponent({
       }
     })
 
+    const fetchProductDetails = async (productId) => {
+      try {
+        const details = await productService.getProductDetails(productId)
+        productDetails.value[productId] = {
+          ...details,
+          description: details[`description_${locale.value}`] || details.description_en || ''
+        }
+      } catch (error) {
+        console.error(`Error fetching details for product ${productId}:`, error)
+      }
+    }
+
+    watch(() => cartStore.items, (items) => {
+      if (items) {
+        items.forEach(item => {
+          if (!productDetails.value[item.id]) {
+            fetchProductDetails(item.id)
+          }
+        })
+      }
+    }, { immediate: true })
+
     return {
       cartStore,
       store,
@@ -207,12 +243,12 @@ export default defineComponent({
       errorMessage,
       showErrorMessage,
       currencySymbol,
-      checkoutStore
+      checkoutStore,
+      productDetails
     }
   },
   data() {
     return {
-      productDetails: {},
       showNotes: false,
       notes: ''
     }
@@ -265,31 +301,11 @@ export default defineComponent({
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
-    async fetchProductDetails(productId) {
-      try {
-        const details = await productService.getProductDetails(productId)
-        this.productDetails[productId] = details
-      } catch (error) {
-        console.error(`Error fetching details for product ${productId}:`, error)
-      }
-    },
     continueShopping() {
       this.$router.push('/categories')
     }
   },
   watch: {
-    cartItems: {
-      immediate: true,
-      handler(items) {
-        if (items) {
-          items.forEach(item => {
-            if (!this.productDetails[item.id]) {
-              this.fetchProductDetails(item.id)
-            }
-          })
-        }
-      }
-    },
     notes(newValue) {
       this.checkoutStore.setOrderNotes(newValue)
     }
@@ -307,6 +323,7 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 </style>
+
 
 
 

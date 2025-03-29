@@ -157,7 +157,7 @@ import { useI18n } from 'vue-i18n'
 import { useCartStore } from '@/stores/cartStore'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 export default {
   name: 'NewProducts',
@@ -165,6 +165,7 @@ export default {
     const i18n = useI18n()
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
+    const products = ref([])  // Adicionando ref para products
 
     const loadCurrencySymbol = async () => {
       try {
@@ -175,6 +176,16 @@ export default {
       }
     }
 
+    // Observar mudanças no locale
+    watch(() => i18n.locale.value, (newLocale) => {
+      if (products.value.length) {
+        products.value = products.value.map(product => ({
+          ...product,
+          description: product[`description_${newLocale}`] || product.description_en || ''
+        }))
+      }
+    })
+
     onMounted(() => {
       loadCurrencySymbol()
     })
@@ -182,14 +193,14 @@ export default {
     return {
       t: i18n.t,
       cartStore,
-      currencySymbol
+      currencySymbol,
+      products  // Expondo products
     }
   },
   data() {
     return {
       currentSlide: 0,
       quantities: [],
-      products: [],
       resizeHandler: null,
       touchStartX: 0,
       touchEndX: 0,
@@ -198,6 +209,7 @@ export default {
   },
   async created() {
     try {
+      const { locale } = useI18n()  // Obtendo locale do composable
       const [productsResponse, settings] = await Promise.all([
         productService.getProducts({ 
           limit: 10,
@@ -206,7 +218,10 @@ export default {
         }),
         settingsService.getFinancialSettings()
       ])
-      this.products = productsResponse.items
+      this.products = productsResponse.items.map(product => ({
+        ...product,
+        description: product[`description_${locale.value}`] || product.description_en || ''
+      }))
       this.quantities = Array(productsResponse.items.length).fill(1)
       this.currencySymbol = settings.currency_symbol
     } catch (err) {
@@ -328,6 +343,11 @@ export default {
   transition: opacity 0.3s ease-in-out;
 }
 </style>
+
+
+
+
+
 
 
 

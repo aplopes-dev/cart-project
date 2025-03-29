@@ -497,9 +497,11 @@ import ProductQuantitySelector from '@/components/product/ProductQuantitySelecto
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { debounce } from 'lodash'
 import { useCartStore } from '@/stores/cartStore'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
+const { locale } = useI18n() // Adicionando aqui no topo com os outros composables
 const currentPage = ref(1)
 const totalPages = ref(1)
 const products = ref([])
@@ -513,14 +515,24 @@ const showMobileFilters = ref(false)
 const isMobileFiltersExpanded = ref(false)
 const priceRange = ref([0, 1000])
 const maxPrice = ref(1000)
-const totalItems = ref(0) // Mantemos apenas esta declaração
-const itemsPerPage = ref(9) // Adicionando uma ref para o número de itens por página
+const totalItems = ref(0)
+const itemsPerPage = ref(9)
 const sortBy = ref('featured')
 const isDragging = ref(false)
-const tempPriceRange = ref([0, 1000]) // Nova ref para armazenar valores temporários
+const tempPriceRange = ref([0, 1000])
 const cartStore = useCartStore()
 const showToast = ref(false)
 const currencySymbol = ref('$')
+
+// Watch para atualizar descrições quando mudar o idioma
+watch(locale, (newLocale) => {
+  if (products.value.length) {
+    products.value = products.value.map(product => ({
+      ...product,
+      description: product[`description_${newLocale}`] || product.description_en || ''
+    }))
+  }
+})
 
 // Função para carregar as configurações financeiras
 const loadFinancialSettings = async () => {
@@ -538,7 +550,6 @@ const fetchFilteredProducts = async () => {
   try {
     loading.value = true
     
-    // Carregar produtos e configurações em paralelo
     const [productsResponse, settings] = await Promise.all([
       productService.getProducts({
         categoryId: selectedCategory.value,
@@ -552,13 +563,14 @@ const fetchFilteredProducts = async () => {
       settingsService.getFinancialSettings()
     ])
 
-    products.value = productsResponse.items
+    products.value = productsResponse.items.map(product => ({
+      ...product,
+      description: product[`description_${locale.value}`] || product.description_en || ''
+    }))
+    
     totalItems.value = productsResponse.total
     totalPages.value = Math.ceil(productsResponse.total / itemsPerPage.value)
-    
-    // Atualizar o símbolo da moeda
     currencySymbol.value = settings.currency_symbol
-    console.log('💱 Updated currency symbol:', currencySymbol.value)
     
   } catch (err) {
     console.error('Error fetching data:', err)
@@ -944,6 +956,12 @@ select:focus {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 </style>
+
+
+
+
+
+
 
 
 

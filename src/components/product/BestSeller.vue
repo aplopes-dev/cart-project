@@ -77,6 +77,8 @@ import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
+import { useI18n } from 'vue-i18n'
+import { ref, watch } from 'vue'
 
 export default {
   name: 'BestSeller',
@@ -87,19 +89,35 @@ export default {
       default: null
     }
   },
+  setup() {
+    const i18n = useI18n()
+    const cartStore = useCartStore()
+    const bestSellers = ref([])
+
+    // Observar mudanças no locale
+    watch(() => i18n.locale.value, (newLocale) => {
+      if (bestSellers.value.length) {
+        bestSellers.value = bestSellers.value.map(product => ({
+          ...product,
+          description: product[`description_${newLocale}`] || product.description_en || ''
+        }))
+      }
+    })
+
+    return {
+      cartStore,
+      bestSellers
+    }
+  },
   data() {
     return {
-      bestSellers: [],
       showToast: false,
       currencySymbol: '$'
     }
   },
-  setup() {
-    const cartStore = useCartStore()
-    return { cartStore }
-  },
   async created() {
     try {
+      const { locale } = useI18n()
       const [response, settings] = await Promise.all([
         productService.getProducts({ 
           limit: 10,
@@ -111,6 +129,10 @@ export default {
       this.bestSellers = response.items
         .filter(product => String(product.id) !== String(this.currentProductId))
         .slice(0, 5)
+        .map(product => ({
+          ...product,
+          description: product[`description_${locale.value}`] || product.description_en || ''
+        }))
       
       this.currencySymbol = settings.currency_symbol
 
@@ -187,6 +209,7 @@ export default {
   display: none;  /* Chrome, Safari and Opera */
 }
 </style>
+
 
 
 
