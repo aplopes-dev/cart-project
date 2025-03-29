@@ -83,8 +83,9 @@
                 </p>
               </div>
 
-              <p class="font-archivo text-xl text-black/70">
-                {{ product.description }}
+              <!-- Descrição normal do produto -->
+              <p v-if="getNormalDescription" class="font-archivo text-xl text-black/70">
+                {{ getNormalDescription }}
               </p>
 
               <!-- Características do Produto -->
@@ -174,16 +175,15 @@
           </div>
         </div>
 
-        <!-- Seção de descrição -->
+        <!-- Seção de descrição técnica -->
         <div class="mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-6">
           <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
             {{ $t('productDetails.description') }}
           </h2>
           
-          <!-- Descrição técnica -->
           <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
-            <pre v-if="hasDescription" 
-                 class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
+            <pre v-if="getTechnicalDescription" 
+                 class="whitespace-pre-line font-archivo">{{ getTechnicalDescription }}</pre>
             <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
           </div>
         </div>
@@ -220,6 +220,7 @@ import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'ProductDetailsPage',
@@ -228,19 +229,11 @@ export default {
     BestSeller
   },
   setup() {
+    const { locale } = useI18n()
     const cartStore = useCartStore()
     const currencySymbol = ref('$')
 
-    const isWhiteOrLight = (color) => {
-      // Verifica se é branco ou variações de branco
-      if (color.toLowerCase() === '#ffffff' || 
-          color.toLowerCase() === '#fff' || 
-          color.toLowerCase() === 'white' ||
-          color.toLowerCase() === 'rgb(255, 255, 255)') {
-        return true;
-      }
-      return false;
-    }
+    // Removed unused isWhiteOrLight function
 
     const loadCurrencySymbol = async () => {
       try {
@@ -258,7 +251,7 @@ export default {
     return {
       cartStore,
       currencySymbol,
-      isWhiteOrLight // Expondo a função para o template
+      currentLocale: locale
     }
   },
   data() {
@@ -267,8 +260,12 @@ export default {
         id: null,
         name: '',
         price: 0,
-        description: '',
-        technical_description: '',
+        description_en: '',
+        description_pt: '',
+        description_fr: '',
+        technical_description_en: '',
+        technical_description_pt: '',
+        technical_description_fr: '',
         image: '',
         images: [],
         characteristics: null,
@@ -333,9 +330,21 @@ export default {
         // Atualiza o produto
         this.product = {
           ...productData,
-          image: productData.image || PLACEHOLDER_IMAGE_BASE64,
-          images: productData.images || ''
+          description_en: productData.description_en || '',
+          description_pt: productData.description_pt || '',
+          description_fr: productData.description_fr || '',
+          technical_description_en: productData.technical_description_en || '',
+          technical_description_pt: productData.technical_description_pt || '',
+          technical_description_fr: productData.technical_description_fr || '',
+          category: productData.category || null
         }
+        
+        this.currencySymbol = financialSettings.currency_symbol
+
+        // Reseta estados importantes
+        this.selectedColor = null
+        this.selectedSize = null
+        this.selectedImage = null
         
         // Atualiza configurações financeiras
         this.currencySymbol = financialSettings.currency_symbol
@@ -385,28 +394,18 @@ export default {
     }
   },
   computed: {
+    getNormalDescription() {
+      const locale = this.currentLocale.toLowerCase()
+      return this.product[`description_${locale}`] || ''
+    },
+
+    getTechnicalDescription() {
+      const locale = this.currentLocale.toLowerCase()
+      return this.product[`technical_description_${locale}`] || ''
+    },
+
     hasDescription() {
-      return Boolean(this.product?.technical_description || this.product?.description)
-    },
-    getDescription() {
-      return this.product?.technical_description || this.product?.description || ''
-    },
-    hasDiscount() {
-      return this.discountPercentage > 0;
-    },
-    
-    originalPrice() {
-      if (!this.hasDiscount) return null;
-      return this.calculateOriginalPrice(this.product.price);
-    },
-    processedImages() {
-      if (!this.product.images) return []
-      // Se images for uma string, divide por vírgula e remove espaços em branco
-      if (typeof this.product.images === 'string') {
-        return this.product.images.split(',').map(img => img.trim())
-      }
-      // Se já for um array, retorna como está
-      return this.product.images
+      return Boolean(this.getTechnicalDescription || this.getNormalDescription)
     }
   }
 }
@@ -417,22 +416,3 @@ export default {
   font-family: 'Archivo', sans-serif;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
