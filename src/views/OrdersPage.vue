@@ -62,8 +62,11 @@
                 </p>
               </div>
               <div class="text-right">
-                <p v-if="!isOrderExpanded(order.id)" class="font-archivo-narrow font-semibold text-xl">
+                <p v-if="!isOrderExpanded(order.id) && !isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-xl">
                   {{ formatPrice(calculateOrderTotal(order)) }}
+                </p>
+                <p v-if="!isOrderExpanded(order.id) && isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-xl text-gray-500">
+                  {{ $t('orders.noPriceOrder') }}
                 </p>
                 <span :class="getStatusClass(order.status.toLowerCase())" class="inline-block px-3 py-1 rounded-full text-sm">
                   {{ order.status }}
@@ -117,16 +120,24 @@
                       <!-- Quantidade e preço unitário -->
                       <div class="flex items-center gap-1 font-archivo text-xs sm:text-base whitespace-nowrap sm:mx-auto sm:pt-4">
                         <div class="flex items-center justify-center bg-black/5 px-2 sm:px-3 py-1 rounded">
-                          <span class="font-semibold">{{ item.quantity }}</span>
-                          <span class="mx-1 sm:mx-2 text-black/60">x</span>
-                          <span class="sm:text-sm">{{ formatPrice(item.unit_price) }}</span>
+                          <!-- Quando tem preço, mostra quantidade, x, preço -->
+                          <template v-if="!isOrderWithoutPrices(order)">
+                            <span class="font-semibold">{{ item.quantity }}</span>
+                            <span class="mx-1 sm:mx-2 text-black/60">x</span>
+                            <span class="sm:text-sm">{{ formatPrice(item.unit_price) }}</span>
+                          </template>
+                          <!-- Quando não tem preço, mostra quantidade, x -->
+                          <template v-else>
+                            <span class="font-semibold">{{ item.quantity }}</span>
+                            <span class="mx-1 sm:mx-2 text-black/60">x</span>
+                          </template>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Preço total com largura fixa -->
-                  <div class="w-[80px] sm:w-[120px] flex-shrink-0 text-right sm:self-center">
+                  <!-- Preço total com largura fixa (exibido apenas se o pedido tiver preços) -->
+                  <div v-if="!isOrderWithoutPrices(order)" class="w-[80px] sm:w-[120px] flex-shrink-0 text-right sm:self-center">
                     <p class="font-archivo-narrow font-semibold text-sm sm:text-xl">
                       {{ formatPrice(item.total_price) }}
                     </p>
@@ -184,8 +195,8 @@
                     </div>
                   </div>
 
-                  <!-- Totals Section -->
-                  <div class="w-full md:w-1/3">
+                  <!-- Totals Section (exibido apenas se o pedido tiver preços) -->
+                  <div v-if="!isOrderWithoutPrices(order)" class="w-full md:w-1/3">
                     <div class="flex flex-col gap-2 items-end">
                       <div class="flex justify-end gap-8 w-full">
                         <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
@@ -206,6 +217,15 @@
                         <span class="font-archivo-narrow font-semibold text-xl w-[120px] text-right">
                           {{ formatPrice(calculateOrderTotal(order)) }}
                         </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Mensagem para pedidos sem preços -->
+                  <div v-if="isOrderWithoutPrices(order)" class="w-full md:w-1/3">
+                    <div class="flex flex-col gap-2 items-end">
+                      <div class="flex justify-end gap-8 w-full pt-2">
+                        <span class="font-archivo-narrow font-semibold text-xl text-gray-500">{{ $t('orders.noPriceOrder') }}</span>
                       </div>
                     </div>
                   </div>
@@ -391,7 +411,17 @@ const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE_BASE64
 }
 
+// Verifica se o pedido foi feito sem preços (toggle master desabilitado)
+const isOrderWithoutPrices = (order) => {
+  return order.total === null && order.shipping_cost === null && order.tax_amount === null
+}
+
 const calculateOrderTotal = (order) => {
+  // Se o pedido foi feito sem preços, retorna 0
+  if (isOrderWithoutPrices(order)) {
+    return 0
+  }
+
   const subtotal = order.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0)
   const shipping = parseFloat(order.shipping_cost) || 0
   const tax = parseFloat(order.tax_amount) || 0

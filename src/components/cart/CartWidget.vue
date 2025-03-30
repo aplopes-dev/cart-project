@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     v-if="cartStore.isOpen"
     class="fixed right-0 top-0 h-screen w-full md:w-[456px] bg-white shadow-cart z-50 flex flex-col px-4 md:px-6"
   >
@@ -17,7 +17,7 @@
       <template v-if="!cartStore.items.length">
         <div class="flex flex-col items-center justify-center h-full">
           <p class="font-archivo-narrow text-xl text-black/70 mb-6">{{ $t('cart.emptyCart') }}</p>
-          <button 
+          <button
             class="w-full h-[50px] md:h-[60px] bg-empire-yellow font-archivo-narrow font-semibold text-xl md:text-2xl text-black"
             @click="goToCategories"
           >
@@ -30,11 +30,11 @@
         <div class="cart-items">
           <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
             <img :src="item.image" :alt="item.name" class="item-image" />
-          
+
             <div class="item-details">
               <div class="item-info">
                 <h2>{{ item.name }}</h2>
-                <p class="price">{{ formatPrice(item.price) }}</p>
+                <p v-if="showPrices" class="price">{{ formatPrice(item.price) }}</p>
               </div>
 
               <div class="quantity-selector">
@@ -69,7 +69,7 @@
 
     <!-- Subtotal Section -->
     <div class="flex flex-col items-start w-full gap-2 mt-auto pb-4">
-      <div class="flex justify-between items-center py-2 w-full">
+      <div v-if="showPrices" class="flex justify-between items-center py-2 w-full">
         <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black/70">
           {{ $t('cart.subtotal') }}
         </span>
@@ -77,14 +77,14 @@
           {{ total }}
         </span>
       </div>
-      
-      <p class="font-archivo font-normal text-base md:text-lg text-black w-full">
+
+      <p v-if="showPrices" class="font-archivo font-normal text-base md:text-lg text-black w-full">
         {{ $t('cart.taxesAndShipping') }}
       </p>
 
       <!-- Buttons Section -->
       <div v-if="cartStore.items.length" class="flex flex-col items-start w-full gap-2">
-        <button 
+        <button
           class="flex justify-center items-center w-full h-[50px] md:h-[60px] border-3 border-black"
           @click="viewCart"
         >
@@ -93,7 +93,7 @@
           </span>
         </button>
 
-        <button 
+        <button
           class="flex justify-center items-center w-full h-[50px] md:h-[60px] bg-empire-yellow"
           @click="checkout"
         >
@@ -108,6 +108,7 @@
 
 <script>
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { ref, onMounted } from 'vue'
 import { settingsService } from '@/services/settingsService'
 
@@ -115,14 +116,33 @@ export default {
   name: 'CartWidget',
   setup() {
     const cartStore = useCartStore()
+    const togglesStore = useFinancialTogglesStore()
     const currencySymbol = ref('$')
+    const showPrices = ref(true) // Controla a visibilidade dos preços
 
     const loadCurrencySymbol = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
+
+        // Carrega o estado dos toggles
+        togglesStore.loadTogglesFromBackend({
+          currency_code_enabled: settings.currency_code_enabled,
+          currency_symbol_enabled: settings.currency_symbol_enabled,
+          tax_rate_enabled: settings.tax_rate_enabled,
+          discount_percentage_enabled: settings.discount_percentage_enabled,
+          min_order_value_enabled: settings.min_order_value_enabled,
+          free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+          shipping_cost_enabled: settings.shipping_cost_enabled,
+          master_toggle_enabled: settings.master_toggle_enabled
+        })
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (error) {
-        console.error('Error loading currency symbol:', error)
+        console.error('Error loading financial settings:', error)
       }
     }
 
@@ -130,7 +150,7 @@ export default {
       loadCurrencySymbol()
     })
 
-    return { cartStore, currencySymbol }
+    return { cartStore, currencySymbol, showPrices }
   },
   methods: {
     formatPrice(price) {

@@ -1,8 +1,8 @@
 <template>
   <div class="shopping-cart-page">
     <!-- Mensagem de erro -->
-    <div 
-      v-if="showError" 
+    <div
+      v-if="showError"
       class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
       role="alert"
     >
@@ -24,14 +24,14 @@
           <div class="col-span-3">
             <span class="font-archivo-narrow font-semibold text-xl ml-[100px]">{{ $t('shoppingCart.quantity') }}</span>
           </div>
-          <div class="col-span-3 text-right">
+          <div v-if="showPrices" class="col-span-3 text-right">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
           </div>
         </div>
 
         <!-- Lista de Produtos -->
         <div class="space-y-6 py-6">
-          <div v-for="(item, index) in cartItems" :key="index" 
+          <div v-for="(item, index) in cartItems" :key="index"
                class="grid grid-cols-1 md:grid-cols-12 gap-4 pb-6 border-b border-black/25">
             <!-- Produto Info -->
             <div class="col-span-1 md:col-span-6">
@@ -42,7 +42,7 @@
                   <p v-if="productDetails[item.id]?.description" class="font-archivo text-base md:text-xl text-black/70">
                     {{ productDetails[item.id].description }}
                   </p>
-                  
+
                   <!-- Options -->
                   <div class="mt-2 md:mt-4">
                     <p class="font-archivo text-base text-black/70">{{ item.description }}</p>
@@ -54,15 +54,15 @@
             <!-- Quantity -->
             <div class="col-span-1 md:col-span-3 flex items-start justify-center gap-4">
               <div class="flex items-center border border-black/25">
-                <button @click="decreaseQuantity(index)" 
+                <button @click="decreaseQuantity(index)"
                         class="px-4 py-2 text-xl hover:bg-black/5">-</button>
                 <span class="px-4 py-2 text-xl">{{ item.quantity }}</span>
-                <button @click="increaseQuantity(index)" 
+                <button @click="increaseQuantity(index)"
                         class="px-4 py-2 text-xl hover:bg-black/5">+</button>
               </div>
-              
+
               <!-- Ícone de Lixeira -->
-              <button 
+              <button
                 @click="removeItem(index)"
                 class="w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
               >
@@ -76,8 +76,8 @@
               </button>
             </div>
 
-            <!-- Total -->
-            <div class="col-span-1 md:col-span-3 flex items-start justify-between md:justify-end">
+            <!-- Total (exibido apenas se o toggle master estiver habilitado) -->
+            <div v-if="showPrices" class="col-span-1 md:col-span-3 flex items-start justify-between md:justify-end">
               <span class="md:hidden font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
               <span class="font-archivo-narrow font-semibold text-xl">
                 {{ formatPrice(item.price * item.quantity) }}
@@ -88,23 +88,23 @@
 
         <!-- Notes Section -->
         <div class="py-6 border-b border-black/25">
-          <button 
+          <button
             class="font-archivo-narrow font-semibold text-xl hover:opacity-70 flex items-center gap-2"
             @click="toggleNotes"
           >
             {{ $t('shoppingCart.addNotes') }}
-            <svg 
-              class="w-6 h-6 transition-transform" 
+            <svg
+              class="w-6 h-6 transition-transform"
               :class="{ 'rotate-180': showNotes }"
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               stroke-width="2"
             >
               <path d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          
+
           <!-- Textarea para notas -->
           <div v-if="showNotes" class="mt-4">
             <textarea
@@ -119,18 +119,18 @@
 
         <!-- Summary -->
         <div class="py-6 max-w-[456px] ml-auto">
-          <div class="flex justify-between items-center mb-4">
+          <div v-if="showPrices" class="flex justify-between items-center mb-4">
             <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.subtotal') }}</span>
             <span class="font-archivo-narrow font-semibold text-xl">
               {{ formatPrice(subtotal) }}
             </span>
           </div>
 
-          <p class="font-archivo text-black/70 mb-6">
+          <p v-if="showPrices" class="font-archivo text-black/70 mb-6">
             {{ $t('shoppingCart.taxesAndShipping') }}
           </p>
 
-          <button 
+          <button
             class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
             @click="handleButtonClick"
           >
@@ -151,6 +151,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
@@ -162,6 +163,8 @@ export default defineComponent({
     const { t, locale } = useI18n()
     const currencySymbol = ref('$')
     const checkoutStore = useCheckoutStore()
+    const togglesStore = useFinancialTogglesStore()
+    const showPrices = ref(true) // Controla a visibilidade dos preços
     const productDetails = ref({})
 
     // Watch para atualizar descrições quando mudar o idioma
@@ -170,7 +173,7 @@ export default defineComponent({
         if (productDetails.value[productId]) {
           productDetails.value[productId] = {
             ...productDetails.value[productId],
-            description: productDetails.value[productId][`description_${newLocale}`] || 
+            description: productDetails.value[productId][`description_${newLocale}`] ||
                         productDetails.value[productId].description_en || ''
           }
         }
@@ -181,8 +184,25 @@ export default defineComponent({
       try {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
+
+        // Carrega o estado dos toggles
+        togglesStore.loadTogglesFromBackend({
+          currency_code_enabled: settings.currency_code_enabled,
+          currency_symbol_enabled: settings.currency_symbol_enabled,
+          tax_rate_enabled: settings.tax_rate_enabled,
+          discount_percentage_enabled: settings.discount_percentage_enabled,
+          min_order_value_enabled: settings.min_order_value_enabled,
+          free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+          shipping_cost_enabled: settings.shipping_cost_enabled,
+          master_toggle_enabled: settings.master_toggle_enabled
+        })
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (error) {
-        console.error('Error loading currency symbol:', error)
+        console.error('Error loading financial settings:', error)
       }
     }
 
@@ -194,7 +214,7 @@ export default defineComponent({
     const showErrorMessage = (message) => {
       errorMessage.value = message
       showError.value = true
-      
+
       // Limpar a query string
       router.replace({
         query: {}
@@ -244,7 +264,8 @@ export default defineComponent({
       showErrorMessage,
       currencySymbol,
       checkoutStore,
-      productDetails
+      productDetails,
+      showPrices
     }
   },
   data() {
@@ -286,7 +307,7 @@ export default defineComponent({
       if (this.cartItems.length > 0) {
         if (!isAuthenticated) {
           console.log('User not authenticated, redirecting to login...')
-          this.$router.push({ 
+          this.$router.push({
             name: 'Login',
             query: { redirect: '/checkout' }
           })

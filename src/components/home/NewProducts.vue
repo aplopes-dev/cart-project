@@ -5,19 +5,19 @@
       <h2 class="w-full text-2xl md:text-[45px] leading-normal md:leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
         {{ $t('products.newProducts') }}
       </h2>
-      
+
       <!-- Container do Carrossel -->
       <div class="relative w-full carousel-container">
         <!-- Carrossel de Produtos -->
         <div class="relative w-full overflow-hidden px-4 md:px-[72px]">
-          <div 
+          <div
             class="flex transition-transform duration-300 ease-out"
             :style="{ transform: `translateX(-${currentSlide * slideWidth}%)` }"
           >
             <!-- Cards de Produto -->
-            <div 
-              v-for="(product, index) in products" 
-              :key="index" 
+            <div
+              v-for="(product, index) in products"
+              :key="index"
               :class="[
                 'flex-shrink-0 px-2 md:px-4 rotate-[0.21deg]',
                 'w-full md:w-1/3'
@@ -25,18 +25,18 @@
             >
               <div class="flex flex-col items-center h-auto md:h-[496.76px] bg-white border border-[#FAFAFA]">
                 <!-- Área clicável para detalhes do produto -->
-                <div 
+                <div
                   class="w-full cursor-pointer"
                   @click="navigateToProduct(product.id)"
                 >
                   <!-- Imagem do Produto -->
-                  <img 
-                    :src="product.image" 
-                    :alt="product.name" 
+                  <img
+                    :src="product.image"
+                    :alt="product.name"
                     class="w-full h-[200px] md:h-[281.87px] object-cover object-center"
                     @error="handleImageError"
                   >
-                  
+
                   <!-- Informações do Produto -->
                   <div class="flex flex-col items-center p-4 md:p-0 gap-2 md:gap-4 w-full md:w-[361.79px]">
                     <!-- Container Nome e Descrição -->
@@ -44,29 +44,29 @@
                       <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center">
                         {{ product.name }}
                       </h3>
-                      
+
                       <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center line-clamp-2 px-4 md:px-6 w-full">
                         {{ product.description }}
                       </p>
                     </div>
-                    
-                    <!-- Container Preço -->
-                    <div class="flex flex-col items-center mb-2">
+
+                    <!-- Container Preço (exibido apenas se o toggle master estiver habilitado) -->
+                    <div v-if="showPrices" class="flex flex-col items-center mb-2">
                       <p class="font-archivo-narrow font-semibold text-xl md:text-[28px] leading-tight md:leading-[34px] text-black text-center">
                         {{ formatPrice(product.price) }}
                       </p>
                     </div>
                   </div>
                 </div>
-                
-                <!-- Quantidade e Botão Adicionar ao Carrinho -->
+
+                <!-- Quantidade e Botão Adicionar ao Carrinho (sempre exibidos, independente do toggle master) -->
                 <div class="flex flex-col sm:flex-row items-start gap-2 w-full px-4 pb-4 mt-auto" @click.stop>
                   <!-- Select Field -->
                   <div class="w-full sm:w-[150px] h-[40px] sm:h-[60px]">
                     <!-- Select -->
                     <div class="flex flex-row justify-between items-center h-full px-2 md:px-4 py-2 md:py-3 gap-2 bg-white border-2 border-black">
                       <!-- Minus -->
-                      <button 
+                      <button
                         class="w-3 h-3 md:w-4 md:h-4"
                         @click="decrementQuantity(index)"
                       >
@@ -81,19 +81,19 @@
                       </span>
 
                       <!-- Plus -->
-                      <button 
+                      <button
                         class="w-3 h-3 md:w-4 md:h-4"
                         @click="incrementQuantity(index)"
                       >
-                        <svg 
-                          viewBox="0 0 16 16" 
-                          fill="none" 
+                        <svg
+                          viewBox="0 0 16 16"
+                          fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                           class="w-full h-full"
                         >
-                          <path 
-                            d="M8 3.33337V12.6667M3.33337 8H12.6667" 
-                            stroke="#1E1E1E" 
+                          <path
+                            d="M8 3.33337V12.6667M3.33337 8H12.6667"
+                            stroke="#1E1E1E"
                             stroke-width="1.6"
                             stroke-linecap="round"
                           />
@@ -103,7 +103,7 @@
                   </div>
 
                   <!-- Botão ADD CART -->
-                  <button 
+                  <button
                     class="w-full sm:flex-1 h-[40px] sm:h-[60px] bg-black"
                     @click="handleAddToCart(index)"
                   >
@@ -118,7 +118,7 @@
         </div>
 
         <!-- Botões de Navegação -->
-        <button 
+        <button
           @click="prevSlide"
           class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-[40px] h-[40px] md:w-[72px] md:h-[72px] bg-black flex items-center justify-center"
           :aria-label="$t('common.previous')"
@@ -128,7 +128,7 @@
           </svg>
         </button>
 
-        <button 
+        <button
           @click="nextSlide"
           class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[40px] h-[40px] md:w-[72px] md:h-[72px] bg-black flex items-center justify-center"
           :aria-label="$t('common.next')"
@@ -140,7 +140,7 @@
       </div>
     </div>
     <!-- Toast Message -->
-    <div 
+    <div
       v-if="showToast"
       class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
       :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
@@ -155,6 +155,7 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { ref, onMounted, watch } from 'vue'
@@ -164,15 +165,35 @@ export default {
   setup() {
     const i18n = useI18n()
     const cartStore = useCartStore()
+    const togglesStore = useFinancialTogglesStore()
     const currencySymbol = ref('$')
     const products = ref([])  // Adicionando ref para products
+    const showPrices = ref(true)  // Controla a visibilidade dos preços
 
-    const loadCurrencySymbol = async () => {
+    // Carrega as configurações financeiras e o estado dos toggles
+    const loadFinancialSettings = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
+
+        // Carrega o estado dos toggles
+        togglesStore.loadTogglesFromBackend({
+          currency_code_enabled: settings.currency_code_enabled,
+          currency_symbol_enabled: settings.currency_symbol_enabled,
+          tax_rate_enabled: settings.tax_rate_enabled,
+          discount_percentage_enabled: settings.discount_percentage_enabled,
+          min_order_value_enabled: settings.min_order_value_enabled,
+          free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+          shipping_cost_enabled: settings.shipping_cost_enabled,
+          master_toggle_enabled: settings.master_toggle_enabled
+        })
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (error) {
-        console.error('Error loading currency symbol:', error)
+        console.error('Error loading financial settings:', error)
       }
     }
 
@@ -187,14 +208,15 @@ export default {
     })
 
     onMounted(() => {
-      loadCurrencySymbol()
+      loadFinancialSettings()
     })
 
     return {
       t: i18n.t,
       cartStore,
       currencySymbol,
-      products  // Expondo products
+      products,  // Expondo products
+      showPrices  // Expondo showPrices
     }
   },
   data() {
@@ -210,20 +232,19 @@ export default {
   async created() {
     try {
       const { locale } = useI18n()  // Obtendo locale do composable
-      const [productsResponse, settings] = await Promise.all([
-        productService.getProducts({ 
-          limit: 10,
-          page: 1,
-          sortBy: 'featured'
-        }),
-        settingsService.getFinancialSettings()
-      ])
+      const productsResponse = await productService.getProducts({
+        limit: 10,
+        page: 1,
+        sortBy: 'featured'
+      })
+
       this.products = productsResponse.items.map(product => ({
         ...product,
         description: product[`description_${locale.value}`] || product.description_en || ''
       }))
       this.quantities = Array(productsResponse.items.length).fill(1)
-      this.currencySymbol = settings.currency_symbol
+
+      // Não precisamos mais carregar o currencySymbol aqui, pois já é carregado no setup
     } catch (err) {
       console.error('Error fetching data:', err)
       this.products = []
@@ -298,7 +319,7 @@ export default {
     handleAddToCart(index) {
       const product = this.products[index]
       const quantity = this.quantities[index]
-      
+
       const item = {
         id: product.id,
         name: product.name,
@@ -306,7 +327,7 @@ export default {
         quantity: quantity,
         image: product.image
       }
-      
+
       this.cartStore.addItem(item)
       this.showSuccessToast()
     },

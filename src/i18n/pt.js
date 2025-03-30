@@ -172,11 +172,10 @@ export default {
     cvvPlaceholder: '123',
 
 
-    completePurchase: 'FINALIZAR COMPRA',
+    completePurchase: 'FINALIZAR PEDIDO',
     fieldRequired: 'Este campo é obrigatório',
     emptyCart: "Seu carrinho está vazio",
     continueShopping: "CONTINUAR COMPRANDO",
-    completePurchase: "FINALIZAR COMPRA",
     summary: {
       title: "RESUMO DO PEDIDO",
       taxes: "IMPOSTOS",
@@ -446,7 +445,8 @@ export default {
     noNotes: 'Nenhuma observação para este pedido',
     shippingAddress: 'Endereço de Entrega',
     noShippingAddress: 'Nenhum endereço de entrega disponível',
-    neighborhood: 'Bairro'
+    neighborhood: 'Bairro',
+    noPriceOrder: 'Pedido sem preços'
   },
   security: {
     title: 'Segurança',

@@ -21,8 +21,8 @@
                 <!-- Lista de Categorias -->
                 <div class="border border-[#FAFAFA] transform rotate-[0.21deg] mb-12">
                   <div class="flex flex-col gap-3">
-                    <div 
-                      v-for="category in categories" 
+                    <div
+                      v-for="category in categories"
                       :key="category.id"
                       class="flex items-center px-6 py-1 gap-3 h-[24.09px] cursor-pointer hover:bg-gray-50"
                       :class="{ 'selected-category': selectedCategory === category.id }"
@@ -31,7 +31,7 @@
                       <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                       </svg>
-                      <span 
+                      <span
                         class="font-archivo text-[20px] leading-[22px]"
                         :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
                       >
@@ -42,8 +42,8 @@
                 </div>
               </div>
 
-                <!-- Filtro de Preço -->
-                <div class="flex flex-col gap-12 w-[328px] mb-12">
+                <!-- Filtro de Preço (exibido apenas se o toggle master estiver habilitado) -->
+                <div v-if="showPrices" class="flex flex-col gap-12 w-[328px] mb-12">
                   <!-- Título do Filtro -->
                   <div class="flex flex-col w-full">
                     <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
@@ -57,15 +57,15 @@
                   <div class="px-3">
                     <div class="flex justify-between items-center mb-2">
                       <span class="font-archivo text-sm">
-                        ${{ priceRange[0] }}
+                        {{ currencySymbol }}{{ priceRange[0] }}
                       </span>
                       <span class="font-archivo text-sm">
-                        ${{ priceRange[1] }}
+                        {{ currencySymbol }}{{ priceRange[1] }}
                       </span>
                     </div>
                     <div class="relative w-full h-8">
                       <div class="absolute w-full h-2 bg-[#E6E6E6] rounded-full top-3"></div>
-                      <div 
+                      <div
                         class="absolute h-2 bg-black rounded-full top-3"
                         :style="{ left: (priceRange[0] / maxPrice) * 100 + '%', right: 100 - (priceRange[1] / maxPrice) * 100 + '%' }"
                       ></div>
@@ -109,13 +109,13 @@
                   <!-- Conteúdo do Filtro -->
                   <div class="border border-[#FAFAFA] transform rotate-[0.21deg]">
                     <div class="flex flex-col gap-3">
-                      <label 
-                        v-for="brand in brands" 
-                        :key="brand.id" 
+                      <label
+                        v-for="brand in brands"
+                        :key="brand.id"
                         class="flex items-center px-6 py-1 gap-3 h-[24.09px]"
                       >
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           :value="brand.id"
                           v-model="selectedBrands"
                           class="w-6 h-6 accent-[#FBBD1E]"
@@ -137,52 +137,54 @@
           <div class="flex justify-between items-center p-3 border-2 border-black w-full h-16 mb-6">
             <div class="flex-1 flex items-center">
               <!-- Botão de Filtro Mobile -->
-              <button 
+              <button
                 @click="isMobileFiltersExpanded = !isMobileFiltersExpanded"
                 class="md:hidden flex items-center justify-center w-[36px] h-[36px] bg-black p-[6px]"
               >
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path 
-                    d="M4 4L9 12V18L15 21V12L20 4H4Z" 
-                    stroke="#FFDD00" 
-                    stroke-width="1.5" 
-                    stroke-linecap="round" 
+                  <path
+                    d="M4 4L9 12V18L15 21V12L20 4H4Z"
+                    stroke="#FFDD00"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
                     stroke-linejoin="round"
                   />
                 </svg>
               </button>
-              
+
               <!-- Texto de resultados - Visível apenas em desktop -->
               <span class="font-inter text-base hidden md:block">
-                {{ totalItems === 0 
-                  ? $t('categoryPage.noResults') 
-                  : $t('categoryPage.itemsCount', { 
-                      start: itemRange.start, 
-                      end: itemRange.end, 
-                      total: totalItems 
+                {{ totalItems === 0
+                  ? $t('categoryPage.noResults')
+                  : $t('categoryPage.itemsCount', {
+                      start: itemRange.start,
+                      end: itemRange.end,
+                      total: totalItems
                     })
                 }}
               </span>
             </div>
-            
+
             <div class="flex justify-end w-[240px]">
               <div class="relative w-full">
-                <select 
+                <select
                   v-model="sortBy"
                   class="w-full h-10 px-4 py-2 bg-white border border-[#D9D9D9] font-inter text-sm appearance-none cursor-pointer"
                   @change="handleSort"
                 >
-                  <option value="featured">{{ $t('categoryPage.sortBy.featured') }}</option>
-                  <option value="priceLowHigh">{{ $t('categoryPage.sortBy.priceLowHigh') }}</option>
-                  <option value="priceHighLow">{{ $t('categoryPage.sortBy.priceHighLow') }}</option>
-                  <option value="nameAZ">{{ $t('categoryPage.sortBy.nameAZ') }}</option>
-                  <option value="nameZA">{{ $t('categoryPage.sortBy.nameZA') }}</option>
+                  <option
+                    v-for="option in sortOptions"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ $t(option.label) }}
+                  </option>
                 </select>
                 <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#FFDD00">
@@ -194,7 +196,7 @@
           </div>
 
           <!-- Seção de Filtros Expansível Mobile -->
-          <div 
+          <div
             v-show="isMobileFiltersExpanded"
             class="w-full mb-6 transition-all duration-300"
           >
@@ -208,8 +210,8 @@
               <div class="border border-[#FAFAFA] p-4">
                 <!-- Conteúdo do filtro de categorias -->
                 <div class="flex flex-col gap-3">
-                  <div 
-                    v-for="category in categories" 
+                  <div
+                    v-for="category in categories"
                     :key="category.id"
                     class="flex items-center gap-3 cursor-pointer"
                     :class="{ 'selected-category': selectedCategory === category.id }"
@@ -218,7 +220,7 @@
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
-                    <span 
+                    <span
                       class="font-archivo text-[20px] leading-[22px]"
                       :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
                     >
@@ -229,8 +231,8 @@
               </div>
             </div>
 
-            <!-- Filtro de Preço -->
-            <div class="mb-6">
+            <!-- Filtro de Preço (exibido apenas se o toggle master estiver habilitado) -->
+            <div v-if="showPrices" class="mb-6">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
                   {{ $t('categoryPage.price') }}
@@ -239,15 +241,15 @@
               <div class="border border-[#FAFAFA] p-4">
                 <div class="flex justify-between items-center mb-2">
                   <span class="font-archivo text-sm">
-                    ${{ priceRange[0] }}
+                    {{ currencySymbol }}{{ priceRange[0] }}
                   </span>
                   <span class="font-archivo text-sm">
-                    ${{ priceRange[1] }}
+                    {{ currencySymbol }}{{ priceRange[1] }}
                   </span>
                 </div>
                 <div class="relative w-full h-8">
                   <div class="absolute w-full h-2 bg-[#E6E6E6] rounded-full top-3"></div>
-                  <div 
+                  <div
                     class="absolute h-2 bg-black rounded-full top-3"
                     :style="{ left: (priceRange[0] / maxPrice) * 100 + '%', right: 100 - (priceRange[1] / maxPrice) * 100 + '%' }"
                   ></div>
@@ -286,13 +288,13 @@
               </div>
               <div class="border border-[#FAFAFA] p-4">
                 <div class="flex flex-col gap-3">
-                  <label 
-                    v-for="brand in brands" 
-                    :key="brand.id" 
+                  <label
+                    v-for="brand in brands"
+                    :key="brand.id"
                     class="flex items-center gap-3 h-[24.09px]"
                   >
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       :value="brand.id"
                       v-model="selectedBrands"
                       class="w-6 h-6 accent-[#FBBD1E]"
@@ -315,19 +317,19 @@
               {{ error }}
             </div>
             <template v-else>
-              
-              <div 
-                v-for="product in filteredProducts" 
-                :key="product.id" 
+
+              <div
+                v-for="product in filteredProducts"
+                :key="product.id"
                 class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
               >
                 <!-- Wrap the clickable area in a div -->
-                <div 
+                <div
                   class="flex flex-col flex-grow cursor-pointer"
                   @click="navigateToProduct(product.id)"
                 >
-                  <img 
-                    :src="product.image" 
+                  <img
+                    :src="product.image"
                     :alt="product.name"
                     class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
                     @error="handleImageError"
@@ -340,19 +342,19 @@
                       {{ product.description }}
                     </p>
                     <div class="mt-auto w-full">
-                      <p class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
                         {{ formatPrice(product.price) }}
                       </p>
                       <!-- Wrap the button in a div that stops event propagation -->
                       <div @click.stop>
-                        <ProductQuantitySelector 
+                        <ProductQuantitySelector
                           @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>              
+              </div>
             </template>
           </div>
 
@@ -360,7 +362,7 @@
           <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
             <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
               <!-- Botão Previous -->
-              <button 
+              <button
                 class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
                 :disabled="currentPage === 1"
                 @click="handlePageChange(currentPage - 1)"
@@ -373,8 +375,8 @@
 
               <!-- Números das Páginas -->
               <div class="flex gap-1 md:gap-2">
-                <button 
-                  v-for="page in displayedPages" 
+                <button
+                  v-for="page in displayedPages"
                   :key="page"
                   class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
                   :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
@@ -385,7 +387,7 @@
               </div>
 
               <!-- Botão Next -->
-              <button 
+              <button
                 class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
                 :disabled="currentPage === totalPages"
                 @click="handlePageChange(currentPage + 1)"
@@ -400,13 +402,13 @@
             <!-- Contador de Items na paginação -->
             <div class="flex justify-center">
               <span class="font-inter text-sm md:text-base">
-                {{ totalItems === 0 
-                  ? $t('categoryPage.noResults') 
-                  : $t('categoryPage.itemsCount', { 
-                      start: itemRange.start, 
-                      end: itemRange.end, 
-                      total: totalItems 
-                    }) 
+                {{ totalItems === 0
+                  ? $t('categoryPage.noResults')
+                  : $t('categoryPage.itemsCount', {
+                      start: itemRange.start,
+                      end: itemRange.end,
+                      total: totalItems
+                    })
                 }}
               </span>
             </div>
@@ -416,18 +418,18 @@
     </div>
 
     <!-- Modal de Filtros Mobile -->
-    <div 
+    <div
       v-if="showMobileFilters"
       class="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden"
       @click="showMobileFilters = false"
     >
-      <div 
+      <div
         class="absolute right-0 top-0 bottom-0 w-[300px] bg-white p-6 overflow-y-auto"
         @click.stop
       >
         <div class="flex justify-between items-center mb-6">
           <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('categoryPage.filters') }}</h2>
-          <button 
+          <button
             @click="showMobileFilters = false"
             class="p-2"
           >
@@ -444,8 +446,8 @@
             <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.priceRange') }}</h3>
             <div class="space-y-2">
               <label v-for="range in priceRanges" :key="range.id" class="flex items-center gap-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   :value="range.id"
                   v-model="selectedPriceRanges"
                   class="w-5 h-5"
@@ -460,8 +462,8 @@
             <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.brand') }}</h3>
             <div class="space-y-2">
               <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   :value="brand.id"
                   v-model="selectedBrands"
                   class="w-5 h-5"
@@ -476,7 +478,7 @@
   </div>
 
   <!-- Toast Message -->
-  <div 
+  <div
     v-if="showToast"
     class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
     :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
@@ -497,6 +499,7 @@ import ProductQuantitySelector from '@/components/product/ProductQuantitySelecto
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { debounce } from 'lodash'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
@@ -521,8 +524,10 @@ const sortBy = ref('featured')
 const isDragging = ref(false)
 const tempPriceRange = ref([0, 1000])
 const cartStore = useCartStore()
+const togglesStore = useFinancialTogglesStore()
 const showToast = ref(false)
 const currencySymbol = ref('$')
+const showPrices = ref(true) // Controla a visibilidade dos preços
 
 // Watch para atualizar descrições quando mudar o idioma
 watch(locale, (newLocale) => {
@@ -534,6 +539,16 @@ watch(locale, (newLocale) => {
   }
 })
 
+// Watch para atualizar o valor de sortBy quando o estado do toggle master mudar
+watch(showPrices, (newValue) => {
+  // Se o toggle master for desabilitado e a ordenação atual for por preço,
+  // muda para a ordenação padrão (featured)
+  if (!newValue && (sortBy.value === 'priceLowHigh' || sortBy.value === 'priceHighLow')) {
+    sortBy.value = 'featured'
+    fetchFilteredProducts()
+  }
+})
+
 // Função para carregar as configurações financeiras
 const loadFinancialSettings = async () => {
   try {
@@ -541,6 +556,23 @@ const loadFinancialSettings = async () => {
     console.log('🔧 Financial Settings loaded:', settings)
     currencySymbol.value = settings.currency_symbol
     console.log('💱 Currency Symbol set to:', currencySymbol.value)
+
+    // Carrega o estado dos toggles
+    togglesStore.loadTogglesFromBackend({
+      currency_code_enabled: settings.currency_code_enabled,
+      currency_symbol_enabled: settings.currency_symbol_enabled,
+      tax_rate_enabled: settings.tax_rate_enabled,
+      discount_percentage_enabled: settings.discount_percentage_enabled,
+      min_order_value_enabled: settings.min_order_value_enabled,
+      free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+      shipping_cost_enabled: settings.shipping_cost_enabled,
+      master_toggle_enabled: settings.master_toggle_enabled
+    })
+
+    // Atualiza a visibilidade dos preços com base no toggle master
+    showPrices.value = togglesStore.masterToggle
+    console.log('Master toggle state:', togglesStore.masterToggle)
+    console.log('Show prices:', showPrices.value)
   } catch (error) {
     console.error('Error loading financial settings:', error)
   }
@@ -549,7 +581,7 @@ const loadFinancialSettings = async () => {
 const fetchFilteredProducts = async () => {
   try {
     loading.value = true
-    
+
     const [productsResponse, settings] = await Promise.all([
       productService.getProducts({
         categoryId: selectedCategory.value,
@@ -567,11 +599,11 @@ const fetchFilteredProducts = async () => {
       ...product,
       description: product[`description_${locale.value}`] || product.description_en || ''
     }))
-    
+
     totalItems.value = productsResponse.total
     totalPages.value = Math.ceil(productsResponse.total / itemsPerPage.value)
     currencySymbol.value = settings.currency_symbol
-    
+
   } catch (err) {
     console.error('Error fetching data:', err)
     error.value = 'Error loading products'
@@ -588,6 +620,25 @@ const handleSort = () => {
 
 // Computed property para filteredProducts
 const filteredProducts = computed(() => products.value)
+
+// Computed para opções de ordenação disponíveis
+const sortOptions = computed(() => {
+  const options = [
+    { value: 'featured', label: 'categoryPage.sortBy.featured' },
+    { value: 'nameAZ', label: 'categoryPage.sortBy.nameAZ' },
+    { value: 'nameZA', label: 'categoryPage.sortBy.nameZA' }
+  ]
+
+  // Adiciona opções de ordenação por preço apenas se o toggle master estiver habilitado
+  if (showPrices.value) {
+    options.splice(1, 0,
+      { value: 'priceLowHigh', label: 'categoryPage.sortBy.priceLowHigh' },
+      { value: 'priceHighLow', label: 'categoryPage.sortBy.priceHighLow' }
+    )
+  }
+
+  return options
+})
 
 // Computed para páginas a serem exibidas
 const displayedPages = computed(() => {
@@ -656,9 +707,9 @@ const handleImageError = (e) => {
 const selectCategory = async (categoryId) => {
   // Reset da página atual ao mudar de categoria
   currentPage.value = 1;
-  
+
   selectedCategory.value = selectedCategory.value === categoryId ? null : categoryId;
-  
+
   if (selectedCategory.value) {
     await fetchBrands(selectedCategory.value);
     selectedBrands.value = brands.value.map(brand => brand.id);
@@ -666,7 +717,7 @@ const selectCategory = async (categoryId) => {
     await fetchBrands();
     selectedBrands.value = [];
   }
-  
+
   // fetchFilteredProducts será chamado automaticamente pelo watcher
 }
 
@@ -678,7 +729,7 @@ const handleAddToCart = (product, quantity) => {
     quantity: quantity,
     image: product.image
   }
-  
+
   cartStore.addItem(cartItem)
   showSuccessToast()
 }
@@ -718,13 +769,13 @@ onMounted(async () => {
   try {
     await loadFinancialSettings() // Adicionar esta linha
     await fetchCategories()
-    
+
     if (route.params.slug) {
       await selectCategoryBySlug(route.params.slug)
     } else {
       selectFirstCategory()
     }
-    
+
     await fetchFilteredProducts()
   } catch (err) {
     console.error('Error in initialization:', err)
@@ -753,15 +804,15 @@ const debouncedFetchProducts = debounce(() => {
   })
 
   // Se NÃO está arrastando E os valores são diferentes, faz a requisição
-  if (!isDragging.value && 
-      (tempPriceRange.value[0] !== priceRange.value[0] || 
+  if (!isDragging.value &&
+      (tempPriceRange.value[0] !== priceRange.value[0] ||
        tempPriceRange.value[1] !== priceRange.value[1])) {
     console.log('🔄 Fazendo requisição após debounce')
     currentPage.value = 1
     fetchFilteredProducts()
     tempPriceRange.value = [...priceRange.value]
   } else {
-    console.log('❌ Requisição ignorada porque:', 
+    console.log('❌ Requisição ignorada porque:',
       isDragging.value ? 'ainda está arrastando' : 'valores não mudaram')
   }
 }, 500)
@@ -775,7 +826,7 @@ const handleRangeStart = () => {
 const handleRangeEnd = () => {
   isDragging.value = false
   console.log('🔴 isDragging:', isDragging.value, '- Fim do arrasto')
-  if (tempPriceRange.value[0] !== priceRange.value[0] || 
+  if (tempPriceRange.value[0] !== priceRange.value[0] ||
       tempPriceRange.value[1] !== priceRange.value[1]) {
     debouncedFetchProducts()
   }
@@ -787,9 +838,9 @@ watch(isDragging, (newValue) => {
     tempRange: tempPriceRange.value,
     currentRange: priceRange.value
   })
-  
-  if (!newValue && 
-      (tempPriceRange.value[0] !== priceRange.value[0] || 
+
+  if (!newValue &&
+      (tempPriceRange.value[0] !== priceRange.value[0] ||
        tempPriceRange.value[1] !== priceRange.value[1])) {
     debouncedFetchProducts()
   }

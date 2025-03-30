@@ -8,8 +8,8 @@
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
-            <router-link 
-              :to="`/categories/${product.category?.id}`" 
+            <router-link
+              :to="`/categories/${product.category?.id}`"
               class="hover:text-black"
             >
               {{ product.category?.name || 'Loading...' }}
@@ -25,24 +25,24 @@
           <div class="space-y-4">
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
-              <img 
-                :src="selectedImage || product.image" 
+              <img
+                :src="selectedImage || product.image"
                 :alt="product.name"
                 class="max-w-full max-h-full object-contain"
               >
             </div>
             <!-- Thumbnail Images -->
             <div class="grid grid-cols-4 gap-4">
-              <button 
-                v-for="(image, index) in product.images" 
+              <button
+                v-for="(image, index) in product.images"
                 :key="index"
                 @click="selectedImage = image"
                 class="aspect-[4/3] bg-[#FAFAFA] p-2 hover:opacity-80 transition-opacity"
                 :class="{'border-2 border-black': selectedImage === image}"
               >
-                <img 
-                  :src="image" 
-                  :alt="`${product.name} view ${index + 1}`" 
+                <img
+                  :src="image"
+                  :alt="`${product.name} view ${index + 1}`"
                   class="w-full h-full object-contain"
                 >
               </button>
@@ -56,8 +56,8 @@
                 {{ product.name }}
               </h1>
 
-              <!-- Preços -->
-              <div class="flex items-center gap-4">
+              <!-- Preços (exibidos apenas se o toggle master estiver habilitado) -->
+              <div v-if="showPrices" class="flex items-center gap-4">
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>
@@ -78,14 +78,14 @@
                 <div v-if="product.characteristics?.COLOR?.length" class="space-y-2">
                   <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
                   <div class="flex flex-wrap gap-4">
-                    <button 
-                      v-for="color in product.characteristics.COLOR" 
+                    <button
+                      v-for="color in product.characteristics.COLOR"
                       :key="color"
                       @click="selectedColor = color"
                       class="w-12 h-12 rounded-full border-2 transition-all duration-200"
-                      :style="{ 
+                      :style="{
                         backgroundColor: color,
-                        borderColor: isWhiteOrLight(color) 
+                        borderColor: isWhiteOrLight(color)
                           ? (selectedColor === color ? 'black' : '#CCCCCC')
                           : (selectedColor === color ? 'black' : 'transparent')
                       }"
@@ -101,14 +101,14 @@
                 <div v-if="product.characteristics?.SIZE?.length" class="space-y-2">
                   <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
                   <div class="grid grid-cols-4 gap-4">
-                    <button 
-                      v-for="size in product.characteristics.SIZE" 
+                    <button
+                      v-for="size in product.characteristics.SIZE"
                       :key="size"
                       @click="selectedSize = size"
                       class="h-12 border-2 font-archivo transition-all duration-200"
                       :class="[
-                        selectedSize === size 
-                          ? 'border-black bg-black text-white' 
+                        selectedSize === size
+                          ? 'border-black bg-black text-white'
                           : 'border-black/70 hover:border-black',
                         'hover:bg-black hover:text-white'
                       ]"
@@ -122,14 +122,14 @@
                 <div v-if="product.characteristics?.WEIGHT?.length" class="space-y-2">
                   <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectWeight') }}</label>
                   <div class="grid grid-cols-4 gap-4">
-                    <button 
-                      v-for="weight in product.characteristics.WEIGHT" 
+                    <button
+                      v-for="weight in product.characteristics.WEIGHT"
                       :key="weight"
                       @click="selectedWeight = weight"
                       class="h-12 border-2 font-archivo transition-all duration-200"
                       :class="[
-                        selectedWeight === weight 
-                          ? 'border-black bg-black text-white' 
+                        selectedWeight === weight
+                          ? 'border-black bg-black text-white'
                           : 'border-black/70 hover:border-black',
                         'hover:bg-black hover:text-white'
                       ]"
@@ -146,7 +146,7 @@
                 <ProductQuantitySelector @add-to-cart="handleAddToCart" />
 
                 <!-- Shop Now Button -->
-                <button 
+                <button
                   @click="handleShopNow"
                   class="w-full h-[70px] bg-empire-yellow"
                 >
@@ -167,7 +167,7 @@
 
           <!-- Descrição técnica -->
           <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
-            <pre v-if="hasDescription" 
+            <pre v-if="hasDescription"
                  class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
             <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
           </div>
@@ -176,8 +176,8 @@
 
       <!-- Best Sellers Section -->
       <div class="mt-16 w-full" style="max-width: 1408px; margin: 48px auto 0;">
-        <BestSeller 
-          :current-product-id="String(product?.id)" 
+        <BestSeller
+          :current-product-id="String(product?.id)"
           v-if="product?.id"
         />
       </div>
@@ -185,7 +185,7 @@
   </div>
 
   <!-- Toast Message -->
-  <div 
+  <div
     v-if="showToast"
     class="fixed bottom-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
     :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
@@ -203,6 +203,7 @@ import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -217,8 +218,10 @@ export default {
     const { locale } = useI18n()
     const route = useRoute()
     const cartStore = useCartStore()
+    const togglesStore = useFinancialTogglesStore()
     const currencySymbol = ref('$')
     const discountPercentage = ref(null) // Novo ref para o percentual de desconto
+    const showPrices = ref(true) // Controla a visibilidade dos preços
     const product = ref({
       id: null,
       name: '',
@@ -251,6 +254,23 @@ export default {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
         discountPercentage.value = settings.discount_percentage // Carrega o percentual de desconto
+
+        // Carrega o estado dos toggles
+        togglesStore.loadTogglesFromBackend({
+          currency_code_enabled: settings.currency_code_enabled,
+          currency_symbol_enabled: settings.currency_symbol_enabled,
+          tax_rate_enabled: settings.tax_rate_enabled,
+          discount_percentage_enabled: settings.discount_percentage_enabled,
+          min_order_value_enabled: settings.min_order_value_enabled,
+          free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+          shipping_cost_enabled: settings.shipping_cost_enabled,
+          master_toggle_enabled: settings.master_toggle_enabled
+        })
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (error) {
         console.error('Error loading financial settings:', error)
         discountPercentage.value = null
@@ -316,6 +336,7 @@ export default {
       cartStore,
       currencySymbol,
       discountPercentage,
+      showPrices,
       loadProduct
     }
   },
@@ -324,7 +345,7 @@ export default {
       if (color.toLowerCase() === '#ffffff' || color.toLowerCase() === '#fff' || color.toLowerCase() === 'white') {
         return true
       }
-      
+
       let r, g, b
       if (color.startsWith('#')) {
         const hex = color.replace('#', '')
@@ -337,7 +358,7 @@ export default {
           [r, g, b] = rgbValues.map(Number)
         }
       }
-      
+
       const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
       return yiq >= 128
     },
@@ -360,7 +381,7 @@ export default {
         quantity: quantity,
         image: this.selectedImage || this.product.image // Corrigido de mainImage para image
       }
-      
+
       this.cartStore.addItem(item)
       this.showSuccessToast()
     },

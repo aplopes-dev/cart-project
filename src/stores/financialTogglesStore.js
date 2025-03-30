@@ -27,11 +27,45 @@ export const useFinancialTogglesStore = defineStore('financialToggles', {
 
   actions: {
     setFieldToggle(field, value) {
-      this.fieldToggles[field] = value
+      // Regra 1: Se estiver habilitando qualquer toggle individual, o master toggle também deve ser habilitado
+      if (value === true) {
+        this.masterToggle = true
+
+        // Regra 2: Se estiver habilitando qualquer toggle individual, currency_code e currency_symbol também devem ser habilitados
+        this.fieldToggles.currency_code = true
+        this.fieldToggles.currency_symbol = true
+      }
+
+      // Regra 3: Se estiver desabilitando currency_code ou currency_symbol, ambos devem ser desabilitados e o master toggle também
+      if ((field === 'currency_code' || field === 'currency_symbol') && value === false) {
+        this.fieldToggles.currency_code = false
+        this.fieldToggles.currency_symbol = false
+
+        // Desabilita o master toggle, o que por sua vez desabilitará todos os outros toggles individuais
+        this.setMasterToggle(false)
+      } else {
+        // Para outros campos, apenas atualiza o valor normalmente
+        this.fieldToggles[field] = value
+      }
+
+      // Regra 4: Se todos os toggles individuais estiverem desabilitados, o master toggle também deve ser desabilitado
+      if (Object.values(this.fieldToggles).every(toggle => toggle === false)) {
+        this.masterToggle = false
+      }
     },
 
     setMasterToggle(value) {
       this.masterToggle = value
+
+      // Regra 1: Se o master toggle estiver sendo habilitado, todos os toggles individuais devem ser habilitados
+      if (value === true) {
+        this.setAllTogglesOnly(true)
+      }
+
+      // Regra 2: Se o master toggle estiver sendo desabilitado, todos os toggles individuais devem ser desabilitados
+      if (value === false) {
+        this.setAllTogglesOnly(false)
+      }
     },
 
     // Método para definir todos os toggles sem alterar o masterToggle
@@ -39,6 +73,8 @@ export const useFinancialTogglesStore = defineStore('financialToggles', {
       // Cria um novo objeto para garantir a reatividade
       const newToggles = {}
       Object.keys(this.fieldToggles).forEach(key => {
+        // Se o valor for true, todos os toggles são habilitados
+        // Se o valor for false, todos os toggles são desabilitados
         newToggles[key] = value
       })
       // Atualiza todos os toggles de uma vez

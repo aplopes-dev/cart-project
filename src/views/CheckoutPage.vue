@@ -15,13 +15,13 @@
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('personal')">
                   <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.personalDetails') }}</h2>
-                  <svg 
+                  <svg
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.personal }"
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
@@ -30,8 +30,8 @@
                 <div v-show="sections.personal || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.firstName') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.firstName"
                       :placeholder="$t('checkout.firstNamePlaceholder')"
                       :disabled="isFieldDisabled.firstName"
@@ -47,8 +47,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.lastName') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.lastName"
                       :placeholder="$t('checkout.lastNamePlaceholder')"
                       :disabled="isFieldDisabled.lastName"
@@ -64,8 +64,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.email') }}</label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       v-model="formData.email"
                       :placeholder="$t('checkout.emailPlaceholder')"
                       :disabled="isFieldDisabled.email"
@@ -81,8 +81,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.phone') }}</label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       v-model="formData.phone"
                       :placeholder="$t('checkout.phonePlaceholder')"
                       :class="[
@@ -101,9 +101,9 @@
               <section>
                 <div class="flex items-center justify-between cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
                   <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
-                  
+
                   <div class="flex items-center lg:absolute lg:right-0 lg:top-0">
-                    <button 
+                    <button
                       @click.stop
                       @click="openAddressModal"
                       class="mobile-address-btn"
@@ -112,13 +112,13 @@
                     </button>
 
                     <!-- Seta para mobile -->
-                    <svg 
+                    <svg
                       class="section-arrow lg:hidden ml-4 absolute right-0"
                       :class="{ 'rotate-270': sections.shipping }"
-                      width="24" 
-                      height="24" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
@@ -128,8 +128,8 @@
                 <div v-show="sections.shipping || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.address"
                       :placeholder="$t('checkout.addressPlaceholder')"
                       :class="[
@@ -145,8 +145,8 @@
                   <!-- Número -->
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.number') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.number"
                       :placeholder="$t('checkout.numberPlaceholder')"
                       :class="[
@@ -161,8 +161,8 @@
 
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.neighborhood') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.neighborhood"
                       :placeholder="$t('checkout.neighborhoodPlaceholder')"
                       :class="[
@@ -177,8 +177,8 @@
 
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.apartment"
                       :placeholder="$t('checkout.apartmentPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
@@ -186,8 +186,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.city"
                       :placeholder="$t('checkout.cityPlaceholder')"
                       :class="[
@@ -201,8 +201,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.state"
                       :placeholder="$t('checkout.statePlaceholder')"
                       :class="[
@@ -216,8 +216,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.postalCode"
                       :placeholder="$t('checkout.postalCodePlaceholder')"
                       :class="[
@@ -231,8 +231,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.country"
                       :placeholder="$t('checkout.countryPlaceholder')"
                       :class="[
@@ -251,7 +251,7 @@
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
                   <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
-                  
+
                   <!-- Bandeiras dos cartões -->
                   <div class="flex flex-wrap items-center gap-2 sm:gap-4 lg:ml-8">
                     <img src="/images/payment/visa.png" alt="Visa" class="h-6 sm:h-8">
@@ -262,13 +262,13 @@
                   </div>
 
                   <!-- Seta para mobile -->
-                  <svg 
+                  <svg
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.payment }"
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
@@ -277,8 +277,8 @@
                 <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="md:col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.cardHolder"
                       :placeholder="$t('checkout.cardHolderPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
@@ -287,8 +287,8 @@
                   </div>
                   <div class="md:col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.cardNumber"
                       :placeholder="$t('checkout.cardNumberPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
@@ -297,8 +297,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.expiryDate') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.expiryDate"
                       :placeholder="$t('checkout.expiryDatePlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
@@ -307,8 +307,8 @@
                   </div>
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cvv') }}</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       v-model="formData.cvv"
                       :placeholder="$t('checkout.cvvPlaceholder')"
                       class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
@@ -332,15 +332,15 @@
                 <template v-if="cartItems.length > 0">
                   <!-- Products List -->
                   <div class="space-y-0">
-                    <div v-for="(item, index) in cartItems" :key="index" 
+                    <div v-for="(item, index) in cartItems" :key="index"
                       class="flex items-start py-8 border-b border-black/25">
                       <!-- Imagem do Produto -->
-                      <img 
-                        :src="item.image" 
-                        :alt="item.name" 
+                      <img
+                        :src="item.image"
+                        :alt="item.name"
                         class="w-[120px] h-[110px] object-cover"
                       />
-                      
+
                       <!-- Container para nome e preço -->
                       <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
                         <div class="flex flex-col gap-2">
@@ -351,16 +351,16 @@
                             </div>
                             <span class="font-archivo text-[22px] leading-[40px] truncate">{{ item.name }}</span>
                           </div>
-                          
-                          <!-- Preço -->
-                          <span class="font-archivo text-[22px] leading-[40px] text-black/70">
+
+                          <!-- Preço (exibido apenas se o toggle master estiver habilitado) -->
+                          <span v-if="showPrices" class="font-archivo text-[22px] leading-[40px] text-black/70">
                             {{ currencySymbol }}{{ (item.price * item.quantity).toFixed(2) }}
                           </span>
                         </div>
                       </div>
 
                       <!-- Botão de remover -->
-                      <button 
+                      <button
                         class="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
                         @click="removeItem(index)"
                       >
@@ -375,8 +375,8 @@
                     </div>
                   </div>
 
-                  <!-- Totals -->
-                  <div class="space-y-4">
+                  <!-- Totals (exibidos apenas se o toggle master estiver habilitado) -->
+                  <div v-if="showPrices" class="space-y-4">
                     <div class="flex justify-between">
                       <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
                       <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateTaxes }}</span>
@@ -385,7 +385,7 @@
                       <span class="font-archivo text-[22px] leading-[40px]">
                         {{ $t('checkout.summary.shipping') }}
                         <span v-if="calculateShipping === '0.00'" class="text-green-600 text-sm ml-2">
-                          ({{ $t('checkout.summary.freeShipping') }}) 
+                          ({{ $t('checkout.summary.freeShipping') }})
                         </span>
                       </span>
                       <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateShipping }}</span>
@@ -401,7 +401,7 @@
                   </div>
 
                   <!-- Complete Purchase Button -->
-                  <button 
+                  <button
                     class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
                     @click="completePurchase"
                   >
@@ -412,7 +412,7 @@
                 <template v-else>
                   <div class="flex flex-col items-center gap-6 py-8">
                     <p class="font-archivo-narrow font-semibold text-2xl text-center">{{ $t('checkout.emptyCart') }}</p>
-                    <button 
+                    <button
                       class="bg-empire-yellow px-8 py-4 font-archivo-narrow font-semibold text-2xl"
                       @click="continueShopping"
                     >
@@ -446,6 +446,7 @@ import AddressSelectionModal from '@/components/address/AddressSelectionModal.vu
 import { useAddressStore } from '@/stores/addressStore'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 
 export default {
   name: 'CheckoutPage',
@@ -463,6 +464,8 @@ export default {
     const taxRate = ref(0)
     const shippingCost = ref(0)
     const freeShippingThreshold = ref(0)
+    const togglesStore = useFinancialTogglesStore()
+    const showPrices = ref(true) // Controla a visibilidade dos preços
 
     const loadFinancialSettings = async () => {
       try {
@@ -471,6 +474,23 @@ export default {
         taxRate.value = settings.tax_rate
         shippingCost.value = settings.shipping_cost
         freeShippingThreshold.value = settings.free_shipping_threshold
+
+        // Carrega o estado dos toggles
+        togglesStore.loadTogglesFromBackend({
+          currency_code_enabled: settings.currency_code_enabled,
+          currency_symbol_enabled: settings.currency_symbol_enabled,
+          tax_rate_enabled: settings.tax_rate_enabled,
+          discount_percentage_enabled: settings.discount_percentage_enabled,
+          min_order_value_enabled: settings.min_order_value_enabled,
+          free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+          shipping_cost_enabled: settings.shipping_cost_enabled,
+          master_toggle_enabled: settings.master_toggle_enabled
+        })
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (error) {
         console.error('Error loading financial settings:', error)
       }
@@ -487,12 +507,12 @@ export default {
 
     const calculateShipping = computed(() => {
       const subtotalValue = cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
-      
+
       // Se o valor total for maior que o limite para frete grátis, retorna 0
       if (subtotalValue >= freeShippingThreshold.value) {
         return '0.00'
       }
-      
+
       // Converte para número e formata com 2 casas decimais
       return Number(shippingCost.value).toFixed(2)
     })
@@ -526,13 +546,14 @@ export default {
       currencySymbol,
       calculateTaxes,
       calculateShipping,
-      checkoutStore
+      checkoutStore,
+      showPrices
     }
   },
   data() {
     // Inicializar formData com dados do usuário se disponível
     const user = JSON.parse(localStorage.getItem('user') || '{}')
-    
+
     return {
       sections: {
         personal: true,
@@ -599,7 +620,7 @@ export default {
       const subtotalValue = this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
       const taxesValue = parseFloat(this.calculateTaxes)
       const shippingValue = parseFloat(this.calculateShipping)
-      
+
       return (subtotalValue + taxesValue + shippingValue).toFixed(2)
     }
   },
@@ -682,18 +703,20 @@ export default {
           postalCode: this.formData.postalCode,
           country: this.formData.country,
           notes: this.checkoutStore.orderNotes,
-          shippingCost: parseFloat(this.calculateShipping),
-          taxAmount: parseFloat(this.calculateTaxes)
+          // Se o toggle master estiver desabilitado, envia valores null
+          // Agora o backend foi modificado para aceitar null para esses campos
+          shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
+          taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null
         };
 
         console.log('Order data being sent:', orderData);
 
         const response = await api.post('/orders', orderData);
-        
+
         if (response.data && response.data.order_number) {
           await this.cartStore.clearCart();
           this.checkoutStore.clearCheckoutData();
-          
+
           await this.router.push({
             name: 'ThankYou',
             params: { orderNumber: response.data.order_number }
@@ -737,7 +760,7 @@ export default {
   },
   async beforeRouteEnter(to, from, next) {
     const cartStore = useCartStore();
-    
+
     if (!cartStore.items.length) {
       next('/shopping-cart');
     } else {
@@ -749,7 +772,7 @@ export default {
     try {
       await this.addressStore.fetchAddresses()
       const defaultAddress = this.addressStore.addresses.find(addr => addr.isDefault)
-      
+
       if (defaultAddress) {
         this.formData.address = defaultAddress.address
         this.formData.number = defaultAddress.number // Adicionado number

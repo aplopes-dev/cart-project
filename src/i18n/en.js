@@ -139,7 +139,7 @@ export default {
     errorProcessingOrder: "Error processing order",
     emptyCart: "Your cart is empty",
     continueShopping: "CONTINUE SHOPPING",
-    completePurchase: "COMPLETE PURCHASE",
+    completePurchase: "COMPLETE ORDER",
 
     title: 'CHECKOUT',
     personalDetails: 'Personal Details',
@@ -186,7 +186,7 @@ export default {
       freeShipping: "Free Shipping"
     },
     errorLoadingAddress: 'Error loading default address',
-    completePurchase: 'COMPLETE PURCHASE',
+    completePurchase: 'COMPLETE ORDER',
     fieldRequired: 'This field is required',
     changeAddress: 'Change address',
     selectAddress: 'Select delivery address',
@@ -467,7 +467,8 @@ export default {
     noNotes: 'No notes for this order',
     shippingAddress: 'Shipping Address',
     noShippingAddress: 'No shipping address available',
-    neighborhood: 'Neighborhood'
+    neighborhood: 'Neighborhood',
+    noPriceOrder: 'Order without prices'
   },
   security: {
     title: 'Security',

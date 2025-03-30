@@ -77,9 +77,8 @@ const handleMasterToggleChange = () => {
 
   // Apenas se o usuário for um administrador
   if (isAdmin.value) {
-    // Aplicar a mudança a todos os toggles individuais
-    console.log('Applying change to all toggles:', masterToggle.value)
-    togglesStore.setAllTogglesOnly(masterToggle.value)
+    // Usa o método do store que já implementa a lógica correta
+    togglesStore.setMasterToggle(masterToggle.value)
   } else {
     // Se for MANAGER, restaura o estado original dos toggles
     togglesStore.restoreReadOnlyState()
@@ -170,7 +169,7 @@ const handleSubmit = async () => {
   showErrors.value = true
 
   // Verifica apenas os campos obrigatórios que estão habilitados
-  const requiredFields = ['tax_rate', 'currency_code', 'currency_symbol']
+  const requiredFields = ['currency_code', 'currency_symbol']
   const missingRequiredFields = requiredFields.filter(field =>
     fieldToggles.value[field] && !formData.value[field]
   )
@@ -236,6 +235,10 @@ onMounted(() => {
         <div class="mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
+            <span>/</span>
+            <router-link to="/my-account" class="hover:text-black">
+              {{ $t('myAccount.title') }}
+            </router-link>
             <span>/</span>
             <router-link to="/settings" class="hover:text-black">
               {{ $t('systemSettings.title') }}
@@ -308,7 +311,7 @@ onMounted(() => {
                     v-model="fieldToggles.currency_code"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('currency_code', fieldToggles.currency_code)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -345,7 +348,7 @@ onMounted(() => {
                     v-model="fieldToggles.currency_symbol"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('currency_symbol', fieldToggles.currency_symbol)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -381,7 +384,7 @@ onMounted(() => {
                     v-model="fieldToggles.tax_rate"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('tax_rate', fieldToggles.tax_rate)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -400,14 +403,12 @@ onMounted(() => {
                 :placeholder="$t('financial.taxRatePlaceholder')"
                 :class="[
                   'w-full p-4 border border-gray-300',
-                  (showErrors && !formData.tax_rate && fieldToggles.tax_rate) ? 'border-red-500' : '',
+                  // Tax rate não é obrigatório
                   !fieldToggles.tax_rate ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
                 ]"
               >
-              <span v-if="showErrors && !formData.tax_rate && fieldToggles.tax_rate" class="text-red-500 text-sm mt-1">
-                {{ $t('financial.fieldRequired') }}
-              </span>
+              <!-- Tax rate não é obrigatório -->
             </div>
 
             <!-- Discount Percentage -->
@@ -420,7 +421,7 @@ onMounted(() => {
                     v-model="fieldToggles.discount_percentage"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('discount_percentage', fieldToggles.discount_percentage)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -455,7 +456,7 @@ onMounted(() => {
                     v-model="fieldToggles.min_order_value"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('min_order_value', fieldToggles.min_order_value)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -489,7 +490,7 @@ onMounted(() => {
                     v-model="fieldToggles.free_shipping_threshold"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('free_shipping_threshold', fieldToggles.free_shipping_threshold)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',
@@ -523,7 +524,7 @@ onMounted(() => {
                     v-model="fieldToggles.shipping_cost"
                     class="sr-only peer"
                     :disabled="isReadOnly"
-                    @change="updateMasterToggle"
+                    @change="() => togglesStore.setFieldToggle('shipping_cost', fieldToggles.shipping_cost)"
                   >
                   <div :class="[
                     'w-9 h-5 rounded-full after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all',

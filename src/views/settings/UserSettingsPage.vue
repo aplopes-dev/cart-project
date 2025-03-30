@@ -3,16 +3,20 @@
   <div class="min-h-screen bg-white">
     <div class="container mx-auto px-4 py-8">
       <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 mb-8">
-        <router-link to="/my-account" class="text-gray-500 hover:text-black">
-          {{ $t('common.myAccount') }}
-        </router-link>
-        <span class="text-gray-500">/</span>
-        <router-link to="/settings" class="text-gray-500 hover:text-black">
-          {{ $t('systemSettings.title') }}
-        </router-link>
-        <span class="text-gray-500">/</span>
-        <span class="text-black">{{ $t('systemSettings.users') }}</span>
+      <div class="mb-8">
+        <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
+          <router-link to="/" class="hover:text-black">Home</router-link>
+          <span>/</span>
+          <router-link to="/my-account" class="hover:text-black">
+            {{ $t('myAccount.title') }}
+          </router-link>
+          <span>/</span>
+          <router-link to="/settings" class="hover:text-black">
+            {{ $t('systemSettings.title') }}
+          </router-link>
+          <span>/</span>
+          <span class="text-black">{{ $t('systemSettings.users') }}</span>
+        </nav>
       </div>
 
       <!-- Título da Página -->

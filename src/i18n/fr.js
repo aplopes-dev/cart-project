@@ -139,7 +139,7 @@ export default {
     errorProcessingOrder: "Erreur lors du traitement de la commande",
     emptyCart: "Votre panier est vide",
     continueShopping: "CONTINUER VOS ACHATS",
-    completePurchase: "FINALISER L'ACHAT",
+    completePurchase: "FINALISER LA COMMANDE",
 
     title: 'PAIEMENT',
     personalDetails: 'Informations Personnelles',
@@ -184,7 +184,7 @@ export default {
       freeShipping: "Livraison Gratuite"
     },
     errorLoadingAddress: "Erreur lors du chargement de l'adresse par défaut",
-    completePurchase: 'FINALISER L\'ACHAT',
+    completePurchase: 'FINALISER LA COMMANDE',
     fieldRequired: 'Ce champ est obligatoire',
     changeAddress: 'Changer l\'adresse',
     selectAddress: 'Sélectionner l\'adresse de livraison',
@@ -414,7 +414,8 @@ export default {
     noNotes: 'Aucune note pour cette commande',
     shippingAddress: 'Adresse de Livraison',
     noShippingAddress: 'Aucune adresse de livraison disponible',
-    neighborhood: 'Quartier'
+    neighborhood: 'Quartier',
+    noPriceOrder: 'Commande sans prix'
   },
   security: {
     title: 'Sécurité',

@@ -37,7 +37,7 @@
                   </p>
                 </div>
 
-                <div class="w-full text-center mb-4">
+                <div v-if="showPrices" class="w-full text-center mb-4">
                   <p class="font-archivo-narrow font-semibold text-[28px] md:text-[30px] leading-[32px] md:leading-[36px]">
                     {{ formatPrice(product.price) }}
                   </p>
@@ -77,6 +77,7 @@ import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import eventBus from '@/utils/eventBus'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 
@@ -92,7 +93,9 @@ export default {
   setup() {
     const i18n = useI18n()
     const cartStore = useCartStore()
+    const togglesStore = useFinancialTogglesStore()
     const bestSellers = ref([])
+    const showPrices = ref(true) // Controla a visibilidade dos preços
 
     // Observar mudanças no locale
     watch(() => i18n.locale.value, (newLocale) => {
@@ -106,7 +109,9 @@ export default {
 
     return {
       cartStore,
-      bestSellers
+      bestSellers,
+      showPrices,
+      togglesStore
     }
   },
   data() {
@@ -135,6 +140,23 @@ export default {
         }))
 
       this.currencySymbol = settings.currency_symbol
+
+      // Carrega o estado dos toggles
+      this.togglesStore.loadTogglesFromBackend({
+        currency_code_enabled: settings.currency_code_enabled,
+        currency_symbol_enabled: settings.currency_symbol_enabled,
+        tax_rate_enabled: settings.tax_rate_enabled,
+        discount_percentage_enabled: settings.discount_percentage_enabled,
+        min_order_value_enabled: settings.min_order_value_enabled,
+        free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+        shipping_cost_enabled: settings.shipping_cost_enabled,
+        master_toggle_enabled: settings.master_toggle_enabled
+      })
+
+      // Atualiza a visibilidade dos preços com base no toggle master
+      this.showPrices = this.togglesStore.masterToggle
+      console.log('Master toggle state:', this.togglesStore.masterToggle)
+      console.log('Show prices:', this.showPrices)
 
     } catch (error) {
       console.error('Error fetching best sellers:', error)
