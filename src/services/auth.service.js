@@ -10,22 +10,23 @@ export const authService = {
         email,
         password
       })
-      
+
       if (response.data.access_token) {
         const token = response.data.access_token
         const decodedToken = jwtDecode(token)
-        
+
         const userData = {
           email: decodedToken.email,
           firstName: decodedToken.firstName,
           lastName: decodedToken.lastName,
           id: decodedToken.sub,
-          phone: decodedToken.phone // Adicionando phone aos dados decodificados
+          phone: decodedToken.phone, // Adicionando phone aos dados decodificados
+          profile: decodedToken.profile // Adicionando profile aos dados decodificados
         }
-        
+
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(userData))
-        
+
         return {
           ...response.data,
           user: userData
@@ -46,7 +47,7 @@ export const authService = {
         email: userData.email,
         password: userData.password
       })
-      
+
       return this.login(userData.email, userData.password)
     } catch (error) {
       console.error('Signup error:', error)
@@ -62,12 +63,13 @@ export const authService = {
   getCurrentUser() {
     const userStr = localStorage.getItem('user')
     if (!userStr) return null
-    
+
     try {
       const user = JSON.parse(userStr)
       return {
         ...user,
-        phone: user.phone || '' // Garantindo que phone sempre exista, mesmo que vazio
+        phone: user.phone || '', // Garantindo que phone sempre exista, mesmo que vazio
+        profile: user.profile || 'USER' // Garantindo que profile sempre exista, com valor padrão 'USER'
       }
     } catch (e) {
       console.error('Error parsing user data:', e)
@@ -82,7 +84,7 @@ export const authService = {
     try {
       const decodedToken = jwtDecode(token)
       const currentTime = Date.now() / 1000
-      
+
       // Verifica se o token não está expirado
       return decodedToken.exp > currentTime
     } catch {

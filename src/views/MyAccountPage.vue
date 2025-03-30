@@ -83,8 +83,8 @@
             </button>
           </div>
 
-          <!-- Card - Configurações -->
-          <div class="bg-red-50 p-8 flex flex-col gap-4">
+          <!-- Card - Configurações (visível apenas para ADMIN e MANAGER) -->
+          <div v-permission="['ADMIN', 'MANAGER']" class="bg-red-50 p-8 flex flex-col gap-4">
             <div class="flex items-center gap-3">
               <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
@@ -108,6 +108,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore' // Corrigido o caminho do import
+// Nota: authorizationService é usado indiretamente pela diretiva v-permission
+// eslint-disable-next-line no-unused-vars
+import { authorizationService } from '@/services/authorization.service'
 
 const router = useRouter()
 const store = useStore()
@@ -116,7 +119,7 @@ useI18n()
 
 const handleLogout = async () => {
   const userId = JSON.parse(localStorage.getItem('user'))?.id;
-  
+
   if (userId) {
     try {
       // Recupera os dados do carrinho do localStorage antes de apagar
@@ -133,16 +136,16 @@ const handleLogout = async () => {
       console.error('Error syncing cart before logout:', error);
     }
   }
-  
+
   await store.dispatch('logout');
-  
+
   // Remove os dados do carrinho do localStorage
   localStorage.removeItem(`cart_${userId}`);
   localStorage.removeItem('user');
-  
+
   // Reset do estado do carrinho
   cartStore.$reset();
-  
+
   router.replace('/');
 }
 </script>

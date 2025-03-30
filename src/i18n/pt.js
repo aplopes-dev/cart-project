@@ -140,7 +140,7 @@ export default {
     emailPlaceholder: 'Digite seu e-mail...',
     phone: 'Telefone',
     phonePlaceholder: 'Digite seu telefone...',
-    
+
     shippingDetails: 'Detalhes de Envio',
     address: 'Endereço',
     addressPlaceholder: 'Digite seu endereço...',
@@ -156,7 +156,7 @@ export default {
     postalCodePlaceholder: 'Digite seu CEP...',
     country: 'País',
     countryPlaceholder: 'Selecione seu país...',
-    
+
     paymentDetails: 'Dados de Pagamento',
     cardHolder: 'Titular do Cartão',
     cardHolderPlaceholder: 'Nome completo no cartão...',
@@ -166,8 +166,8 @@ export default {
     expiryDatePlaceholder: 'MM/AA',
     cvv: 'CVV',
     cvvPlaceholder: '123',
-    
-    
+
+
     completePurchase: 'FINALIZAR COMPRA',
     fieldRequired: 'Este campo é obrigatório',
     emptyCart: "Seu carrinho está vazio",
@@ -373,7 +373,13 @@ export default {
     requiredFieldsError: 'Por favor, preencha todos os campos obrigatórios',
     fieldRequired: 'Este campo é obrigatório',
     shippingCost: 'Valor do Frete',
-    shippingCostPlaceholder: 'Digite o valor do frete'
+    shippingCostPlaceholder: 'Digite o valor do frete',
+    enableAllFields: 'Habilitar Todos os Campos',
+    enableAllFieldsDescription: 'Alterne para habilitar ou desabilitar todos os campos de uma vez',
+    noPermission: 'Você não tem permissão para editar estas configurações',
+    noPermissionToSave: 'Apenas administradores podem salvar alterações',
+    readOnlyMode: 'Modo Somente Leitura',
+    viewOnlyAccess: 'Como gerente, você pode apenas visualizar as configurações atuais, mas não pode modificá-las.'
   },
   profile: {
     title: 'Editar Perfil',
@@ -410,7 +416,10 @@ export default {
     taxes: 'Impostos',
     total: 'Total',
     notes: 'Observações do Pedido',
-    noNotes: 'Nenhuma observação para este pedido'
+    noNotes: 'Nenhuma observação para este pedido',
+    shippingAddress: 'Endereço de Entrega',
+    noShippingAddress: 'Nenhum endereço de entrega disponível',
+    neighborhood: 'Bairro'
   },
   security: {
     title: 'Segurança',
@@ -634,11 +643,17 @@ export default {
   },
   suppliers: {
     pageTitle: 'Nossos Fornecedores',
-    title: 'Nossos Fornecedores'  
+    title: 'Nossos Fornecedores'
   },
   history: {
     pageTitle: 'Nossa História',
-    title: 'Nossa História'  
+    title: 'Nossa História'
+  },
+  accessDenied: {
+    title: 'Acesso Negado',
+    message: 'Você não tem permissão para acessar esta página. Esta área é restrita apenas a administradores e gerentes.',
+    goHome: 'Ir para a Página Inicial',
+    goToAccount: 'Ir para Minha Conta'
   }
 }
 

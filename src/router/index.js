@@ -12,6 +12,7 @@ import MyAccountPage from '../views/MyAccountPage.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import OrdersPage from '../views/OrdersPage.vue'
 import SecurityPage from '../views/SecurityPage.vue'
+import AccessDeniedPage from '../views/AccessDeniedPage.vue'
 
 const routes = [
   {
@@ -126,56 +127,62 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/SystemSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/financial',
     name: 'FinancialSettings',
     component: () => import('../views/settings/FinancialSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/content',
     name: 'ContentSettings',
     component: () => import('../views/settings/ContentSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/content',
     name: 'Content',
     component: () => import('../views/settings/ContentSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/content/history',
     name: 'ContentHistorySettings',
     component: () => import('../views/settings/content/HistorySettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/content/suppliers',
     name: 'ContentSuppliersSettings',
     component: () => import('../views/settings/content/SuppliersSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/content/career',
     name: 'ContentCareerSettings',
     component: () => import('../views/settings/content/CareerSettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/settings/company',
     name: 'CompanySettings',
     component: () => import('../views/settings/CompanySettingsPage.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
     path: '/addresses',
     name: 'Addresses',
     component: () => import('../views/AddressesPage.vue'),
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/access-denied',
+    name: 'AccessDenied',
+    component: AccessDeniedPage
+  },
+
 ]
 
 const router = createRouter({
@@ -191,6 +198,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = authService.isAuthenticated()
+  const currentUser = authService.getCurrentUser()
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({
@@ -199,6 +207,21 @@ router.beforeEach((to, from, next) => {
     })
   } else if (to.meta.requiresGuest && isAuthenticated) {
     next('/')
+  } else if (to.meta.requiresProfile && isAuthenticated) {
+    // Verifica se o usuário tem o perfil necessário
+    const userProfile = currentUser?.profile || 'USER'
+    const requiredProfiles = to.meta.requiresProfile
+    const hasRequiredProfile = Array.isArray(requiredProfiles)
+      ? requiredProfiles.includes(userProfile)
+      : userProfile === requiredProfiles
+
+    if (!hasRequiredProfile) {
+      // Redireciona para a página de acesso negado se não tiver o perfil necessário
+      next('/access-denied')
+    } else {
+      window.scrollTo(0, 0)
+      next()
+    }
   } else {
     window.scrollTo(0, 0)
     next()

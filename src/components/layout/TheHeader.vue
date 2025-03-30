@@ -10,31 +10,31 @@
           <!-- Primeira linha: Logo, Email, Phone e Menu Sanduíche -->
           <div class="flex justify-end items-center w-full">
             <router-link to="/" class="mr-auto pl-0 md:pl-4"> <!-- Adicionado pl-0 para mobile e pl-4 para desktop -->
-              <img 
-                :src="logoUrl" 
-                alt="Logo" 
+              <img
+                :src="logoUrl"
+                alt="Logo"
                 class="w-[180px] h-[103.28px] object-contain"
                 @error="handleImageError"
               >
             </router-link>
-            
+
             <!-- Container dos ícones mobile -->
             <div class="flex items-center md:gap-6 gap-2 md:ml-0 md:hidden"> <!-- Corrigido a ordem das classes -->
               <!-- Language Selector Mobile -->
               <div class="relative md:hidden">
-                <button 
+                <button
                   @click="toggleLanguageDropdown"
                   class="language-selector flex items-center gap-2 bg-transparent cursor-pointer p-1"
                 >
-                  <img 
+                  <img
                     :src="flagImages[selectedLanguage]"
                     class="w-7 h-7"
                     :alt="`${selectedLanguage} flag`"
                   />
-                  <svg 
-                    class="w-4 h-4" 
+                  <svg
+                    class="w-4 h-4"
                     :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
-                    viewBox="0 0 24 24" 
+                    viewBox="0 0 24 24"
                     fill="#FFFFFF"
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
@@ -42,7 +42,7 @@
                 </button>
 
                 <!-- Dropdown Mobile -->
-                <div 
+                <div
                   v-show="isLanguageDropdownOpen"
                   class="absolute top-full right-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
                 >
@@ -52,7 +52,7 @@
                     @click="selectLanguage(lang)"
                     class="flex items-center justify-center w-full px-4 py-2 hover:bg-gray-100"
                   >
-                    <img 
+                    <img
                       :src="flagImages[lang]"
                       class="w-6 h-6"
                       :alt="`${lang} flag`"
@@ -60,10 +60,10 @@
                   </button>
                 </div>
               </div>
-              
+
               <!-- Email com tooltip -->
               <div class="relative">
-                <button 
+                <button
                   class="flex items-center"
                   @mouseenter="showEmailTooltip = true"
                   @mouseleave="showEmailTooltip = false"
@@ -74,8 +74,8 @@
                     <path d="M22 6l-10 7L2 6"/>
                   </svg>
                 </button>
-                <div 
-                  v-show="showEmailTooltip" 
+                <div
+                  v-show="showEmailTooltip"
                   class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
                 >
                   {{ companyData.email }}
@@ -84,7 +84,7 @@
 
               <!-- Phone com tooltip -->
               <div class="relative">
-                <button 
+                <button
                   class="flex items-center"
                   @mouseenter="showPhoneTooltip = true"
                   @mouseleave="showPhoneTooltip = false"
@@ -94,8 +94,8 @@
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
                   </svg>
                 </button>
-                <div 
-                  v-show="showPhoneTooltip" 
+                <div
+                  v-show="showPhoneTooltip"
                   class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
                 >
                   {{ companyData.phone }}
@@ -123,22 +123,22 @@
             </button>
             <template v-if="isAuthenticated">
               <div class="relative">
-                <button 
+                <button
                   @click="toggleUserMenu"
                   class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2"
                 >
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
-                  <svg 
-                    class="w-4 h-4" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
                     fill="#FFFFFF"
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </button>
-                
+
                 <!-- User Dropdown Menu Mobile -->
-                <div 
+                <div
                   v-show="isUserMenuOpen"
                   class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50"
                 >
@@ -146,11 +146,11 @@
                     to="/my-account"
                     class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    <svg 
-                      class="w-4 h-4" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      class="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       stroke-width="2"
                     >
                       <path d="M20 21v-2a4 4 0 01-4-4H8a4 4 0 01-4 4v2" />
@@ -162,11 +162,11 @@
                     @click="handleLogout"
                     class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    <svg 
-                      class="w-4 h-4" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      class="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       stroke-width="2"
                     >
                       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
@@ -178,10 +178,10 @@
                 </div>
               </div>
             </template>
-            
-            <router-link 
-              v-else 
-              to="/login" 
+
+            <router-link
+              v-else
+              to="/login"
               class="text-[15px] leading-7 text-white font-archivo font-medium"
             >
               {{ $t('header.signIn') }}
@@ -236,15 +236,15 @@
             {{ $t('header.suppliers') }}
           </router-link>
           <div class="relative category-dropdown">
-            <button 
+            <button
               @click="toggleCategoryDropdown"
               class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
             >
               {{ $t('header.shop') }}
-              <svg 
-                class="w-4 h-4" 
+              <svg
+                class="w-4 h-4"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
-                viewBox="0 0 24 24" 
+                viewBox="0 0 24 24"
                 fill="#FFFFFF"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
@@ -252,7 +252,7 @@
             </button>
 
             <!-- Categories Dropdown -->
-            <div 
+            <div
               v-if="showCategoryDropdown"
               class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
             >
@@ -272,9 +272,9 @@
               </div>
 
               <!-- Categories List -->
-              <div 
+              <div
                 v-else
-                v-for="category in categories" 
+                v-for="category in categories"
                 :key="category.id"
                 @click="navigateToCategory(category.id)"
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200"
@@ -295,20 +295,20 @@
         <div class="flex flex-wrap justify-center items-center gap-4">
           <!-- Language Desktop (ícones + texto) -->
           <div class="relative hidden md:block">
-            <button 
+            <button
               @click="toggleLanguageDropdown"
               class="language-selector flex items-center gap-2 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-2 pr-6"
             >
-              <img 
+              <img
                 :src="flagImages[selectedLanguage]"
                 class="w-5 h-5"
                 :alt="`${selectedLanguage} flag`"
               />
               {{ selectedLanguage }}
-              <svg 
-                class="w-4 h-4" 
+              <svg
+                class="w-4 h-4"
                 :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
-                viewBox="0 0 24 24" 
+                viewBox="0 0 24 24"
                 fill="#FFFFFF"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
@@ -316,7 +316,7 @@
             </button>
 
             <!-- Dropdown Desktop -->
-            <div 
+            <div
               v-show="isLanguageDropdownOpen"
               class="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg py-1 z-50 min-w-[100px]"
             >
@@ -326,7 +326,7 @@
                 @click="selectLanguage(lang)"
                 class="flex items-center gap-2 w-full px-4 py-2 text-black hover:bg-gray-100"
               >
-                <img 
+                <img
                   :src="flagImages[lang]"
                   class="w-5 h-5"
                   :alt="`${lang} flag`"
@@ -348,22 +348,22 @@
             </button>
             <template v-if="isAuthenticated">
               <div class="relative">
-                <button 
+                <button
                   @click="toggleUserMenu"
                   class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2"
                 >
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
-                  <svg 
-                    class="w-4 h-4" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
                     fill="#FFFFFF"
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </button>
-                
+
                 <!-- User Dropdown Menu -->
-                <div 
+                <div
                   v-show="isUserMenuOpen"
                   class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
                 >
@@ -371,11 +371,11 @@
                     to="/my-account"
                     class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
-                    <svg 
-                      class="w-5 h-5" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       stroke-width="2"
                     >
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -387,11 +387,11 @@
                     @click="handleLogout"
                     class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
                   >
-                    <svg 
-                      class="w-5 h-5" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      class="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       stroke-width="2"
                     >
                       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
@@ -403,10 +403,10 @@
                 </div>
               </div>
             </template>
-            
-            <router-link 
-              v-else 
-              to="/login" 
+
+            <router-link
+              v-else
+              to="/login"
               class="text-[15px] leading-7 text-white font-archivo font-medium"
             >
               {{ $t('header.signIn') }}
@@ -433,9 +433,9 @@
                 </svg>
               </button>
             </div>
-            
+
             <!-- Resultados da busca -->
-            <div 
+            <div
               v-if="showAutocomplete"
               class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl mt-2 max-h-[400px] overflow-y-auto z-50 border border-gray-200"
             >
@@ -446,8 +446,8 @@
 
               <!-- Results -->
               <div v-else-if="filteredProducts.length > 0">
-                <div 
-                  v-for="(product, index) in filteredProducts" 
+                <div
+                  v-for="(product, index) in filteredProducts"
                   :key="product.id"
                   @click="selectProduct(product)"
                   @mouseenter="selectedIndex = index"
@@ -457,8 +457,8 @@
                   ]"
                 >
                   <div class="relative w-12 h-12 flex-shrink-0">
-                    <img 
-                      :src="product.image" 
+                    <img
+                      :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
                       @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
@@ -474,7 +474,7 @@
               </div>
 
               <!-- No results -->
-              <div 
+              <div
                 v-else-if="searchQuery && !isSearching"
                 class="p-4 text-center text-gray-600"
               >
@@ -497,7 +497,7 @@
                 @keydown.esc="closeSearch"
                 class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none placeholder-white/70"
               />
-              <button 
+              <button
                 @click="handleSearch"
                 class="absolute right-4 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
               >
@@ -508,7 +508,7 @@
             </div>
 
             <!-- Mobile Results -->
-            <div 
+            <div
               v-if="showAutocomplete"
               class="absolute left-4 right-4 mt-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl z-50 max-h-[60vh] overflow-y-auto border border-gray-200"
             >
@@ -519,8 +519,8 @@
 
               <!-- Results -->
               <div v-else-if="filteredProducts.length > 0">
-                <div 
-                  v-for="(product, index) in filteredProducts" 
+                <div
+                  v-for="(product, index) in filteredProducts"
                   :key="product.id"
                   @click="selectProduct(product)"
                   @mouseenter="selectedIndex = index"
@@ -530,8 +530,8 @@
                   ]"
                 >
                   <div class="relative w-12 h-12 flex-shrink-0">
-                    <img 
-                      :src="product.image" 
+                    <img
+                      :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
                       @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
@@ -547,7 +547,7 @@
               </div>
 
               <!-- No results -->
-              <div 
+              <div
                 v-else-if="searchQuery && !isSearching"
                 class="p-4 text-center text-gray-600"
               >
@@ -571,30 +571,30 @@
           </router-link>
           <!-- Menu Loja mobile -->
           <div class="md:hidden category-dropdown relative">
-            <button 
+            <button
               @click="toggleCategoryDropdown"
               class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center w-full flex items-center justify-center gap-1"
             >
               {{ $t('header.shop') }}
-              <svg 
-                class="w-4 h-4" 
+              <svg
+                class="w-4 h-4"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
-                viewBox="0 0 24 24" 
+                viewBox="0 0 24 24"
                 fill="#FFFFFF"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
             </button>
-            
+
             <!-- Dropdown do menu Loja -->
-            <div 
+            <div
               v-if="showCategoryDropdown"
               class="absolute bg-white shadow-lg z-50 rounded-lg mt-12 left-1/2 transform -translate-x-1/2"
               style="width: 250px;"
             >
               <div class="max-h-[50vh] overflow-y-auto py-1">
-                <div 
-                  v-for="category in categories" 
+                <div
+                  v-for="category in categories"
                   :key="category.id"
                   @click="navigateToCategory(category.id)"
                   class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200 text-center"
@@ -613,7 +613,7 @@
           <router-link to="/contact" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
             {{ $t('header.contactUs') }}
           </router-link>
-       
+
           <!-- Mobile Search Button -->
           <div class="md:hidden col-span-4 mx-4 mt-2">
             <div class="relative flex items-center w-full">
@@ -624,7 +624,7 @@
                 @input="handleSearchInput"
                 class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
               />
-              <button                 
+              <button
                 class="absolute right-4 top-1/2 transform -translate-y-1/2"
               >
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -634,18 +634,18 @@
             </div>
 
             <!-- Autocomplete dropdown para mobile -->
-            <div 
+            <div
               v-if="showAutocomplete && filteredProducts.length > 0"
               class="absolute left-0 right-0 mt-2 mx-4 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
             >
-              <div 
-                v-for="product in filteredProducts" 
+              <div
+                v-for="product in filteredProducts"
                 :key="product.id"
                 @click="selectProduct(product)"
                 class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
               >
-                <img 
-                  :src="product.image" 
+                <img
+                  :src="product.image"
                   :alt="product.name"
                   class="w-12 h-12 object-cover rounded"
                 />
@@ -665,11 +665,11 @@
 </template>
 
 <script setup>
-import { 
-  ref, 
-  computed, 
-  onMounted, 
-  onUnmounted, 
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
   watch
 } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -700,7 +700,7 @@ const authState = ref({
 const updateAuthState = () => {
   const token = localStorage.getItem('token')
   const userData = localStorage.getItem('user')
-  
+
   authState.value = {
     isAuthenticated: !!token,
     user: userData ? JSON.parse(userData) : null
@@ -797,7 +797,7 @@ const navigateToCategory = (categoryId) => {
 // Método para logout
 const handleLogout = async () => {
   const userId = JSON.parse(localStorage.getItem('user'))?.id;
-  
+
   if (userId) {
     try {
       // Recupera os dados do carrinho do localStorage antes de apagar
@@ -814,17 +814,17 @@ const handleLogout = async () => {
       console.error('Error syncing cart before logout:', error);
     }
   }
-  
+
   await store.dispatch('logout');
   isUserMenuOpen.value = false;
-  
+
   // Remove os dados do carrinho do localStorage
   localStorage.removeItem(`cart_${userId}`);
   localStorage.removeItem('user');
-  
+
   // Reset do estado do carrinho
   cartStore.$reset();
-  
+
   updateAuthState();
   router.replace('/');
 }
@@ -927,7 +927,7 @@ onMounted(async () => {
     const languageButton = event.target.closest('.language-selector')
     const userButton = event.target.closest('.user-menu')
     const categoryButton = event.target.closest('.category-dropdown')
-    
+
     if (!languageButton && !userButton && !categoryButton) {
       isLanguageDropdownOpen.value = false
       isUserMenuOpen.value = false
@@ -957,7 +957,7 @@ onUnmounted(() => {
 // Verifica o token a cada renderização do componente
 onMounted(() => {
   updateAuthState()
-  
+
   const interval = setInterval(() => {
     updateAuthState()
   }, 1000) // Verifica a cada segundo
@@ -995,9 +995,9 @@ const searchProducts = async (query) => {
 
   try {
     isSearching.value = true
-    const response = await productService.getProducts({ 
+    const response = await productService.getProducts({
       search: query,  // Aqui está o parâmetro que estava faltando
-      limit: 5 
+      limit: 5
     })
     filteredProducts.value = response.items || []
     showAutocomplete.value = true
@@ -1020,7 +1020,7 @@ watch(searchQuery, (newValue) => {
 // Adicione esta função para formatar o preço
 const formatPrice = (price) => {
   const numPrice = Number(price)
-  return !isNaN(numPrice) 
+  return !isNaN(numPrice)
     ? `$${numPrice.toFixed(2)}`
     : '$0.00'
 }
@@ -1061,7 +1061,7 @@ const closeSearch = () => {
 const handleSearchInput = (event) => {
   const value = event.target.value.trim()
   selectedIndex.value = -1 // Reset selection on new input
-  
+
   if (value.length >= 2) {
     debouncedSearch(value)
   } else {

@@ -137,7 +137,7 @@ export default {
     emptyCart: "Votre panier est vide",
     continueShopping: "CONTINUER VOS ACHATS",
     completePurchase: "FINALISER L'ACHAT",
-    
+
     title: 'PAIEMENT',
     personalDetails: 'Informations Personnelles',
     firstName: 'Prénom',
@@ -148,7 +148,7 @@ export default {
     emailPlaceholder: 'Entrez votre e-mail...',
     phone: 'Téléphone',
     phonePlaceholder: 'Entrez votre numéro de téléphone...',
-    
+
     shippingDetails: 'Détails de Livraison',
     address: 'Adresse',
     addressPlaceholder: 'Entrez votre adresse...',
@@ -162,7 +162,7 @@ export default {
     postalCodePlaceholder: 'Entrez votre code postal...',
     country: 'Pays',
     countryPlaceholder: 'Sélectionnez votre pays...',
-    
+
     paymentDetails: 'Détails du Paiement',
     cardHolder: 'Nom sur la Carte',
     cardHolderPlaceholder: 'Nom complet sur la carte...',
@@ -172,7 +172,7 @@ export default {
     expiryDatePlaceholder: 'MM/AA',
     cvv: 'CVV',
     cvvPlaceholder: '123',
-    
+
     summary: {
       title: "RÉSUMÉ DE LA COMMANDE",
       taxes: "TAXES",
@@ -386,7 +386,10 @@ export default {
     taxes: 'Taxes',
     total: 'Total',
     notes: 'Notes de Commande',
-    noNotes: 'Aucune note pour cette commande'
+    noNotes: 'Aucune note pour cette commande',
+    shippingAddress: 'Adresse de Livraison',
+    noShippingAddress: 'Aucune adresse de livraison disponible',
+    neighborhood: 'Quartier'
   },
   security: {
     title: 'Sécurité',
@@ -421,7 +424,13 @@ export default {
     loadError: 'Erreur lors du chargement des paramètres financiers',
     fieldRequired: 'Ce champ est obligatoire',
     shippingCost: 'Frais de Livraison',
-    shippingCostPlaceholder: 'Entrez les frais de livraison'
+    shippingCostPlaceholder: 'Entrez les frais de livraison',
+    enableAllFields: 'Activer Tous les Champs',
+    enableAllFieldsDescription: 'Basculez pour activer ou désactiver tous les champs à la fois',
+    noPermission: 'Vous n\'avez pas la permission de modifier ces paramètres',
+    noPermissionToSave: 'Seuls les administrateurs peuvent enregistrer les modifications',
+    readOnlyMode: 'Mode Lecture Seule',
+    viewOnlyAccess: 'En tant que gestionnaire, vous pouvez uniquement consulter les paramètres actuels, mais vous ne pouvez pas les modifier.'
   },
   company: {
     name: 'Nom de l\'entreprise',
@@ -635,7 +644,13 @@ export default {
   },
   history: {
     pageTitle: 'Notre Histoire',
-    title: 'Notre Histoire'  
+    title: 'Notre Histoire'
+  },
+  accessDenied: {
+    title: 'Accès Refusé',
+    message: 'Vous n\'avez pas la permission d\'accéder à cette page. Cette zone est réservée aux administrateurs et aux gestionnaires uniquement.',
+    goHome: 'Aller à la Page d\'Accueil',
+    goToAccount: 'Aller à Mon Compte'
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center py-0 gap-4 w-full">
-    
+
     <!-- Best Sellers Section -->
     <div class="flex flex-col justify-center items-start w-full">
       <div class="w-full border-b border-black/25 mb-8">
@@ -11,28 +11,28 @@
 
       <div class="w-full overflow-x-auto pb-4">
         <div class="flex md:grid md:grid-cols-5 gap-6 min-w-max md:min-w-0">
-          <div 
-            v-for="product in bestSellers" 
-            :key="product.id" 
+          <div
+            v-for="product in bestSellers"
+            :key="product.id"
             class="w-[320px] md:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
           >
             <!-- Área clicável para navegação -->
-            <div 
+            <div
               class="w-full cursor-pointer"
               @click="navigateToProduct(product.id)"
             >
-              <img 
-                :src="product.image" 
-                :alt="product.name" 
-                class="w-[80%] max-w-[280px] h-[200px] md:h-[280px] object-contain object-center mx-auto" 
+              <img
+                :src="product.image"
+                :alt="product.name"
+                class="w-[80%] max-w-[280px] h-[200px] md:h-[280px] object-contain object-center mx-auto"
               />
-              
+
               <div class="flex flex-col items-center gap-4 w-full p-6">
                 <div class="flex flex-col gap-2 md:gap-4 w-full">
-                  <h3 class="font-archivo-narrow font-semibold text-[22px] md:text-[28px] leading-[26px] md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
+                  <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
                     {{ product.name }}
                   </h3>
-                  <p class="font-archivo font-medium text-[16px] md:text-[20px] leading-[18px] md:leading-[22px] text-black/70 text-center w-full line-clamp-2">
+                  <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center w-full line-clamp-2">
                     {{ product.description }}
                   </p>
                 </div>
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Botão Add Cart com evento de clique isolado -->
-            <button 
+            <button
               class="w-full h-[73.31px] bg-black"
               @click.stop="addToCart(product)"
             >
@@ -61,7 +61,7 @@
   </div>
 
   <!-- Toast Message -->
-  <div 
+  <div
     v-if="showToast"
     class="fixed top-4 right-4 bg-black text-empire-yellow px-6 py-4 rounded-md shadow-lg z-50 transition-opacity duration-300"
     :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
@@ -119,13 +119,13 @@ export default {
     try {
       const { locale } = useI18n()
       const [response, settings] = await Promise.all([
-        productService.getProducts({ 
+        productService.getProducts({
           limit: 10,
           sortBy: 'featured'
         }),
         settingsService.getFinancialSettings()
       ])
-      
+
       this.bestSellers = response.items
         .filter(product => String(product.id) !== String(this.currentProductId))
         .slice(0, 5)
@@ -133,7 +133,7 @@ export default {
           ...product,
           description: product[`description_${locale.value}`] || product.description_en || ''
         }))
-      
+
       this.currencySymbol = settings.currency_symbol
 
     } catch (error) {
@@ -153,11 +153,11 @@ export default {
   methods: {
     async loadBestSellers() {
       try {
-        const response = await productService.getProducts({ 
+        const response = await productService.getProducts({
           limit: 10,
           sortBy: 'featured'
         })
-        
+
         this.bestSellers = response.items
           .filter(product => String(product.id) !== String(this.currentProductId))
           .slice(0, 5)
@@ -172,7 +172,7 @@ export default {
         name: 'ProductDetails',
         params: { id: productId }
       })
-      
+
       eventBus.emit('reload-product-details')
     },
     formatPrice(price) {
@@ -207,6 +207,24 @@ export default {
 
 .overflow-x-auto::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
 

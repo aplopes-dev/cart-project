@@ -38,8 +38,8 @@
             <path d="M9 17h6M9 13h6M3 8h18v13H3V8zM3 8l2-4h14l2 4"/>
           </svg>
           <p class="text-xl font-archivo mb-4">{{ $t('orders.noOrders') }}</p>
-          <router-link 
-            to="/categories" 
+          <router-link
+            to="/categories"
             class="inline-block bg-empire-yellow text-black font-archivo font-semibold py-3 px-6 rounded hover:bg-yellow-400 transition-colors"
           >
             {{ $t('orders.startShopping') }}
@@ -49,7 +49,7 @@
         <!-- Orders List -->
         <div v-else class="space-y-6">
           <div v-for="order in orders" :key="order.id" class="border-2 border-black/10 rounded-lg p-6">
-            <div 
+            <div
               class="flex flex-wrap justify-between items-start gap-4 mb-4 cursor-pointer"
               @click="toggleOrder(order.id)"
             >
@@ -77,32 +77,34 @@
                 <div v-for="item in order.items" :key="item.product_id" class="flex items-start sm:items-center gap-4 w-full">
                   <!-- Container principal do produto -->
                   <div class="flex items-start gap-2 flex-1 min-w-0">
-                    <!-- Imagem -->
-                    <router-link 
-                      v-if="item.product_id"
-                      :to="`/product/${item.product_id}`"
-                      class="shrink-0"
-                    >
-                      <img 
-                        :src="item.image" 
+                    <!-- Imagem do produto -->
+                    <div class="shrink-0">
+                      <router-link
+                        v-if="item.product_id"
+                        :to="`/product/${item.product_id}`"
+                        class="block"
+                      >
+                        <img
+                          :src="item.image"
+                          :alt="item.product_name"
+                          @error="handleImageError"
+                          class="w-16 h-16 object-cover rounded"
+                        />
+                      </router-link>
+                      <img
+                        v-else
+                        :src="item.image"
                         :alt="item.product_name"
                         @error="handleImageError"
-                        class="w-16 h-16 object-cover rounded"
+                        class="w-16 h-16 object-cover rounded shrink-0"
                       />
-                    </router-link>
-                    <img 
-                      v-else
-                      :src="item.image" 
-                      :alt="item.product_name"
-                      @error="handleImageError"
-                      class="w-16 h-16 object-cover rounded shrink-0"
-                    />
-                    
+                    </div>
+
                     <!-- Container do nome e quantidade -->
                     <div class="flex flex-col sm:flex-row items-start gap-2 min-w-0 flex-1">
-                      <!-- Nome do produto -->
-                      <div class="min-w-0 sm:w-[250px]">
-                        <router-link 
+                      <!-- Nome do produto - centralizado verticalmente com a imagem -->
+                      <div class="min-w-0 sm:w-[250px] flex items-center h-16">  <!-- h-16 para igualar a altura da imagem -->
+                        <router-link
                           v-if="item.product_id"
                           :to="`/product/${item.product_id}`"
                           class="hover:text-empire-yellow transition-colors text-base sm:text-lg block truncate"
@@ -111,7 +113,7 @@
                         </router-link>
                         <span v-else class="text-base sm:text-lg block truncate">{{ item.product_name }}</span>
                       </div>
-                      
+
                       <!-- Quantidade e preço unitário -->
                       <div class="flex items-center gap-1 font-archivo text-xs sm:text-base whitespace-nowrap sm:mx-auto sm:pt-4">
                         <div class="flex items-center justify-center bg-black/5 px-2 sm:px-3 py-1 rounded">
@@ -122,7 +124,7 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- Preço total com largura fixa -->
                   <div class="w-[80px] sm:w-[120px] flex-shrink-0 text-right sm:self-center">
                     <p class="font-archivo-narrow font-semibold text-sm sm:text-xl">
@@ -135,21 +137,55 @@
               <!-- Sumário do pedido -->
               <div class="border-t border-black/10 mt-6 pt-4">
                 <div class="flex flex-wrap justify-between">
-                  <!-- Notes Section -->
-                  <div class="w-full md:w-1/2 mb-6 md:mb-0 pr-0 md:pr-8">
-                    <h4 class="font-archivo-narrow font-semibold text-xl mb-3">{{ $t('orders.notes') }}</h4>
-                    <div class="bg-black/5 rounded-lg p-4">
-                      <p v-if="order.notes" class="font-archivo text-sm whitespace-pre-wrap">
-                        {{ order.notes }}
-                      </p>
-                      <p v-else class="font-archivo text-sm text-black/50 italic">
-                        {{ $t('orders.noNotes') }}
-                      </p>
+                  <!-- Informações do pedido: Notas e Endereço -->
+                  <div class="w-full md:w-2/3 mb-6 md:mb-0 pr-0 md:pr-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <!-- Notes Section -->
+                      <div>
+                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.notes') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                          <p v-if="order.notes" class="font-archivo text-xs whitespace-pre-wrap notes-text">
+                            {{ order.notes }}
+                          </p>
+                          <p v-else class="font-archivo text-xs text-black/50 italic">
+                            {{ $t('orders.noNotes') }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <!-- Shipping Address Section -->
+                      <div>
+                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.shippingAddress') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                          <div v-if="order.address" class="flex items-start gap-2">
+                            <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <div class="font-archivo text-xs">
+                              <span class="font-medium">{{ order.customer_name }}</span>
+                              <span class="block">{{ order.address }}, {{ order.number }}{{ order.complement ? `, ${order.complement}` : '' }}</span>
+                              <span class="block" v-if="order.neighborhood">{{ order.neighborhood }}</span>
+                              <span class="block">{{ order.city }}, {{ order.state }} {{ order.postal_code }}</span>
+                              <span class="block" v-if="order.country">{{ order.country }}</span>
+                              <span class="block mt-1 flex items-center" v-if="order.phone">
+                                <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                                {{ order.phone }}
+                              </span>
+                            </div>
+                          </div>
+                          <p v-else class="font-archivo text-xs text-black/50 italic">
+                            {{ $t('orders.noShippingAddress') }}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <!-- Totals Section -->
-                  <div class="w-full md:w-auto">
+                  <div class="w-full md:w-1/3">
                     <div class="flex flex-col gap-2 items-end">
                       <div class="flex justify-end gap-8 w-full">
                         <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
@@ -157,7 +193,7 @@
                           {{ formatPrice(order.shipping_cost) }}
                         </span>
                       </div>
-                      
+
                       <div class="flex justify-end gap-8 w-full">
                         <span class="font-archivo text-black/70">{{ $t('orders.taxes') }}</span>
                         <span class="font-archivo w-[120px] text-right">
@@ -183,7 +219,7 @@
         <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
           <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
             <!-- Botão Previous -->
-            <button 
+            <button
               class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
               :disabled="currentPage === 1"
               @click="changePage(currentPage - 1)"
@@ -196,8 +232,8 @@
 
             <!-- Números das Páginas -->
             <div class="flex gap-1 md:gap-2">
-              <button 
-                v-for="page in displayedPages" 
+              <button
+                v-for="page in displayedPages"
                 :key="page"
                 class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
                 :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
@@ -208,7 +244,7 @@
             </div>
 
             <!-- Botão Next -->
-            <button 
+            <button
               class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
               :disabled="currentPage === totalPages"
               @click="changePage(currentPage + 1)"
@@ -223,13 +259,13 @@
           <!-- Contador de Items na paginação -->
           <div class="flex justify-center">
             <span class="font-inter text-sm md:text-base">
-              {{ totalItems === 0 
-                ? $t('categoryPage.noResults') 
-                : $t('categoryPage.itemsCount', { 
-                    start: itemRange.start, 
-                    end: itemRange.end, 
-                    total: totalItems 
-                  }) 
+              {{ totalItems === 0
+                ? $t('categoryPage.noResults')
+                : $t('categoryPage.itemsCount', {
+                    start: itemRange.start,
+                    end: itemRange.end,
+                    total: totalItems
+                  })
               }}
             </span>
           </div>
@@ -322,7 +358,7 @@ const fetchOrders = async (page = 1) => {
         limit: itemsPerPage
       }
     })
-    
+
     // Transformando os dados para incluir o status em caixa alta
     orders.value = response.data.items.map(order => ({
       ...order,
@@ -359,7 +395,7 @@ const calculateOrderTotal = (order) => {
   const subtotal = order.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0)
   const shipping = parseFloat(order.shipping_cost) || 0
   const tax = parseFloat(order.tax_amount) || 0
-  
+
   return subtotal + shipping + tax
 }
 </script>
@@ -369,6 +405,14 @@ const calculateOrderTotal = (order) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.notes-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
 

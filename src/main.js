@@ -6,6 +6,7 @@ import i18n from './i18n'
 import { Toast, options } from './plugins/toast'
 import './assets/tailwind.css'
 import { createPinia } from 'pinia'
+import { permission, hasPermission } from './directives/permission'
 
 const app = createApp(App)
 
@@ -16,6 +17,10 @@ app.use(Toast, options)
 
 const pinia = createPinia()
 app.use(pinia)
+
+// Registrar diretivas personalizadas
+app.directive('permission', permission)
+app.directive('has-permission', hasPermission)
 
 app.mount('#app')
 

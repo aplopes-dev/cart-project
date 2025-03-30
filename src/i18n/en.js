@@ -137,7 +137,7 @@ export default {
     emptyCart: "Your cart is empty",
     continueShopping: "CONTINUE SHOPPING",
     completePurchase: "COMPLETE PURCHASE",
-    
+
     title: 'CHECKOUT',
     personalDetails: 'Personal Details',
     firstName: 'First Name',
@@ -148,7 +148,7 @@ export default {
     emailPlaceholder: 'Enter your email...',
     phone: 'Phone',
     phonePlaceholder: 'Enter your phone number...',
-    
+
     shippingDetails: 'Shipping Details',
     address: 'Address',
     addressPlaceholder: 'Enter your address...',
@@ -164,7 +164,7 @@ export default {
     postalCodePlaceholder: 'Enter your postal code...',
     country: 'Country',
     countryPlaceholder: 'Select your country...',
-    
+
     paymentDetails: 'Payment Details',
     cardHolder: 'Card Holder',
     cardHolderPlaceholder: 'Full name on card...',
@@ -174,7 +174,7 @@ export default {
     expiryDatePlaceholder: 'MM/YY',
     cvv: 'CVV',
     cvvPlaceholder: '123',
-    
+
     summary: {
       title: "ORDER SUMMARY",
       taxes: "TAXES",
@@ -395,7 +395,13 @@ export default {
     loadError: 'Error loading financial settings',
     fieldRequired: 'This field is required',
     shippingCost: 'Shipping Cost',
-    shippingCostPlaceholder: 'Enter shipping cost'
+    shippingCostPlaceholder: 'Enter shipping cost',
+    enableAllFields: 'Enable All Fields',
+    enableAllFieldsDescription: 'Toggle to enable or disable all fields at once',
+    noPermission: 'You do not have permission to edit these settings',
+    noPermissionToSave: 'Only administrators can save changes',
+    readOnlyMode: 'Read-Only Mode',
+    viewOnlyAccess: 'As a manager, you can only view the current settings but cannot modify them.'
   },
   profile: {
     title: 'Edit Profile',
@@ -432,7 +438,10 @@ export default {
     taxes: 'Taxes',
     total: 'Total',
     notes: 'Order Notes',
-    noNotes: 'No notes for this order'
+    noNotes: 'No notes for this order',
+    shippingAddress: 'Shipping Address',
+    noShippingAddress: 'No shipping address available',
+    neighborhood: 'Neighborhood'
   },
   security: {
     title: 'Security',
@@ -636,6 +645,12 @@ export default {
       cancel: 'Cancel',
       confirm: 'Delete'
     }
+  },
+  accessDenied: {
+    title: 'Access Denied',
+    message: 'You do not have permission to access this page. This area is restricted to administrators and managers only.',
+    goHome: 'Go to Homepage',
+    goToAccount: 'Go to My Account'
   }
 }
 
