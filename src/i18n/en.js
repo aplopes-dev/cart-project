@@ -127,7 +127,10 @@ export default {
     delete: 'Delete',
     edit: 'Edit',
     close: 'Close',
-    back: 'Back'
+    back: 'Back',
+    saving: 'Saving...',
+    retry: 'Retry',
+    myAccount: 'My Account'
   },
   checkout: {
     calculating: "Calculating",
@@ -373,8 +376,31 @@ export default {
     manageContent: 'Manage content',
     company: 'Company Information',
     companyDescription: 'Update company email, address and phone information',
-    manageCompany: 'Manage company data'
+    manageCompany: 'Manage company data',
+    users: 'User Settings',
+    usersDescription: 'Manage system users, profiles and permissions',
+    manageUsers: 'Manage users'
   },
+  users: {
+    searchPlaceholder: 'Search by name or email...',
+    allProfiles: 'All Profiles',
+    admin: 'Admin',
+    manager: 'Manager',
+    user: 'User',
+    name: 'Name',
+    email: 'Email',
+    profile: 'Profile',
+    actions: 'Actions',
+    noUsersFound: 'No users found',
+    loadError: 'Error loading users',
+    updateSuccess: 'User profile updated successfully',
+    updateError: 'Error updating user profile',
+    editUser: 'Edit User',
+    showing: 'Showing',
+    of: 'of',
+    items: 'items'
+  },
+
   financial: {
     title: 'Financial Settings',
     currencyCode: 'Currency Code',

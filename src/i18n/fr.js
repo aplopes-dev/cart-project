@@ -127,7 +127,10 @@ export default {
     delete: 'Supprimer',
     edit: 'Modifier',
     close: 'Fermer',
-    back: 'Retour'
+    back: 'Retour',
+    saving: 'Enregistrement...',
+    retry: 'Réessayer',
+    myAccount: 'Mon Compte'
   },
   checkout: {
     calculating: "Calcul en cours",
@@ -349,7 +352,29 @@ export default {
     manageContent: 'Gérer le contenu',
     company: 'Informations de l\'Entreprise',
     companyDescription: 'Mettez à jour l\'email, l\'adresse et le téléphone de l\'entreprise',
-    manageCompany: 'Gérer les données de l\'entreprise'
+    manageCompany: 'Gérer les données de l\'entreprise',
+    users: 'Paramètres Utilisateurs',
+    usersDescription: 'Gérez les utilisateurs du système, les profils et les permissions',
+    manageUsers: 'Gérer les utilisateurs'
+  },
+  users: {
+    searchPlaceholder: 'Rechercher par nom ou email...',
+    allProfiles: 'Tous les Profils',
+    admin: 'Administrateur',
+    manager: 'Gestionnaire',
+    user: 'Utilisateur',
+    name: 'Nom',
+    email: 'Email',
+    profile: 'Profil',
+    actions: 'Actions',
+    noUsersFound: 'Aucun utilisateur trouvé',
+    loadError: 'Erreur lors du chargement des utilisateurs',
+    updateSuccess: 'Profil utilisateur mis à jour avec succès',
+    updateError: 'Erreur lors de la mise à jour du profil utilisateur',
+    editUser: 'Modifier l\'Utilisateur',
+    showing: 'Affichage',
+    of: 'sur',
+    items: 'éléments'
   },
   profile: {
     title: 'Modifier le Profil',

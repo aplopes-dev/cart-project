@@ -127,7 +127,11 @@ export default {
     save: 'Salvar',
     delete: 'Excluir',
     edit: 'Editar',
-    close: 'Fechar'
+    close: 'Fechar',
+    back: 'Voltar',
+    saving: 'Salvando...',
+    retry: 'Tentar novamente',
+    myAccount: 'Minha Conta'
   },
   checkout: {
     title: 'CHECKOUT',
@@ -351,8 +355,31 @@ export default {
     manageContent: 'Gerenciar conteúdo',
     company: 'Informações da Empresa',
     companyDescription: 'Atualize email, endereço e telefone da empresa',
-    manageCompany: 'Gerenciar dados da empresa'
+    manageCompany: 'Gerenciar dados da empresa',
+    users: 'Configurações de Usuários',
+    usersDescription: 'Gerencie usuários do sistema, perfis e permissões',
+    manageUsers: 'Gerenciar usuários'
   },
+  users: {
+    searchPlaceholder: 'Buscar por nome ou email...',
+    allProfiles: 'Todos os Perfis',
+    admin: 'Administrador',
+    manager: 'Gerente',
+    user: 'Usuário',
+    name: 'Nome',
+    email: 'Email',
+    profile: 'Perfil',
+    actions: 'Ações',
+    noUsersFound: 'Nenhum usuário encontrado',
+    loadError: 'Erro ao carregar usuários',
+    updateSuccess: 'Perfil do usuário atualizado com sucesso',
+    updateError: 'Erro ao atualizar perfil do usuário',
+    editUser: 'Editar Usuário',
+    showing: 'Mostrando',
+    of: 'de',
+    items: 'itens'
+  },
+
   financial: {
     title: 'Configurações Financeiras',
     currencyCode: 'Código da Moeda',

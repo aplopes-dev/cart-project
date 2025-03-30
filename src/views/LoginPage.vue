@@ -13,9 +13,9 @@
             <!-- Sign Up Text -->
             <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
               {{ $t('auth.dontHaveAccount') }}
-              <a 
-                @click.prevent="goToSignup" 
-                href="#" 
+              <a
+                @click.prevent="goToSignup"
+                href="#"
                 class="text-empire-yellow hover:underline cursor-pointer"
               >
                 {{ $t('auth.signUpFree') }}
@@ -23,13 +23,14 @@
             </p>
 
             <!-- Form -->
-            <div class="w-full flex flex-col gap-4">
+            <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-4">
               <!-- Email Input -->
               <input
                 v-model="email"
                 type="email"
                 :placeholder="$t('auth.email')"
                 class="w-full p-4 border border-gray-300"
+
               />
 
               <!-- Password Input -->
@@ -39,6 +40,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$t('auth.password')"
                   class="w-full p-4 border border-gray-300"
+
                 />
                 <button
                   type="button"
@@ -71,7 +73,7 @@
               <p v-if="error" class="text-red-500 text-center">{{ error }}</p>
 
               <!-- Forgot Password -->
-              <router-link 
+              <router-link
                 to="/forgot-password"
                 class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
               >
@@ -80,8 +82,8 @@
 
               <!-- Sign In Button -->
               <div class="w-full mt-4">
-                <button 
-                  @click="handleLogin"
+                <button
+                  type="submit"
                   :disabled="isLoading"
                   class="w-full bg-empire-yellow py-4 flex justify-center items-center"
                 >
@@ -90,7 +92,7 @@
                   </span>
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -126,21 +128,21 @@ export default {
       try {
         isLoading.value = true
         error.value = ''
-        
+
         // Login
         // eslint-disable-next-line no-unused-vars
         const loginResponse = await store.dispatch('login', {
           email: email.value,
           password: password.value
         })
-        
+
         await store.dispatch('updateUser')
         await nextTick()
 
         // Carrega o carrinho após login bem-sucedido
         const userId = store.state.currentUser?.id
         console.log('Login successful, userId:', userId)
-        
+
         if (userId) {
           console.log('Loading cart for user:', userId)
           try {
@@ -161,10 +163,10 @@ export default {
         }
       } catch (err) {
         console.error('Login error:', err)
-        const errorMessage = err.response?.data?.message === 'Invalid credentials' 
+        const errorMessage = err.response?.data?.message === 'Invalid credentials'
           ? t('auth.invalidCredentials')
           : t('auth.loginError')
-        
+
         error.value = errorMessage
         toast.error(errorMessage)
       } finally {
@@ -174,7 +176,7 @@ export default {
 
     const goToSignup = () => {
       const query = route.query.redirect ? { redirect: route.query.redirect } : {}
-      router.push({ 
+      router.push({
         path: '/signup',
         query
       })

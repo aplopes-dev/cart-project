@@ -172,6 +172,12 @@ const routes = [
     meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
+    path: '/settings/users',
+    name: 'UserSettings',
+    component: () => import('../views/settings/UserSettingsPage.vue'),
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN'] }
+  },
+  {
     path: '/addresses',
     name: 'Addresses',
     component: () => import('../views/AddressesPage.vue'),

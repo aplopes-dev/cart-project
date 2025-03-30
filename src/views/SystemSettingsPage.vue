@@ -68,6 +68,23 @@
               {{ $t('systemSettings.manageCompany') }}
             </router-link>
           </div>
+
+          <!-- Card - Configurações de Usuários (Visível apenas para ADMIN) -->
+          <div v-if="isAdmin" class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('systemSettings.users') }}</h2>
+            </div>
+            <p class="text-black/70 font-archivo text-base">{{ $t('systemSettings.usersDescription') }}</p>
+            <router-link to="/settings/users" class="text-empire-yellow hover:underline mt-auto font-archivo">
+              {{ $t('systemSettings.manageUsers') }}
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -75,7 +92,17 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 useI18n()
+
+// Verifica se o usuário é um administrador
+const isAdmin = ref(false)
+
+onMounted(() => {
+  // Recupera o perfil do usuário do localStorage
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  isAdmin.value = user.profile === 'ADMIN'
+})
 </script>

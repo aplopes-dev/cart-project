@@ -17,9 +17,9 @@
             </p>
 
             <!-- Form -->
-            <div class="w-full flex flex-col gap-4">
+            <form @submit.prevent="handleSignup" class="w-full flex flex-col gap-4">
               <!-- First Name Input -->
-              <input 
+              <input
                 type="text"
                 v-model="firstName"
                 :placeholder="$t('auth.firstName')"
@@ -33,7 +33,7 @@
               </span>
 
               <!-- Last Name Input -->
-              <input 
+              <input
                 type="text"
                 v-model="lastName"
                 :placeholder="$t('auth.lastName')"
@@ -47,7 +47,7 @@
               </span>
 
               <!-- Email Input -->
-              <input 
+              <input
                 type="email"
                 v-model="email"
                 :placeholder="$t('auth.email')"
@@ -62,7 +62,7 @@
 
               <!-- Password Input -->
               <div class="relative">
-                <input 
+                <input
                   :type="showPassword ? 'text' : 'password'"
                   v-model="password"
                   :placeholder="$t('auth.password')"
@@ -103,7 +103,7 @@
 
               <!-- Confirm Password Input -->
               <div class="relative">
-                <input 
+                <input
                   :type="showConfirmPassword ? 'text' : 'password'"
                   v-model="confirmPassword"
                   :placeholder="$t('auth.confirmPassword')"
@@ -147,8 +147,8 @@
 
               <!-- Sign Up Button -->
               <div class="w-full mt-4">
-                <button 
-                  @click="handleSignup"
+                <button
+                  type="submit"
                   :disabled="isLoading"
                   class="w-full bg-empire-yellow py-4 flex justify-center items-center"
                 >
@@ -157,7 +157,7 @@
                   </span>
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -196,7 +196,7 @@ export default {
 
     const validateForm = () => {
       showErrors.value = true
-      
+
       // Verifica campos obrigatórios
       if (!firstName.value || !lastName.value || !email.value || !password.value || !confirmPassword.value) {
         error.value = t('auth.allFieldsRequired')
@@ -239,7 +239,7 @@ export default {
 
         // Atualizar informações do usuário
         await store.dispatch('updateUser')
-        
+
         // Transferir carrinho de visitante para o novo usuário
         const userId = store.state.currentUser?.id
         if (userId) {
@@ -250,7 +250,7 @@ export default {
             await cartStore.loadCartFromStorage(userId)
           }
         }
-        
+
         toast.success(t('auth.signupSuccess'))
 
         // Verificar e realizar o redirecionamento
@@ -273,7 +273,7 @@ export default {
 
     const goToLogin = () => {
       const query = route.query.redirect ? { redirect: route.query.redirect } : {}
-      router.push({ 
+      router.push({
         path: '/login',
         query
       })
