@@ -80,6 +80,8 @@ import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
+// eslint-disable-next-line no-unused-vars
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 
 export default {
   name: 'BestSeller',
@@ -189,10 +191,11 @@ export default {
         this.bestSellers = []
       }
     },
-    async navigateToProduct(productId) {
+    async navigateToProduct(productId, showValidation = false) {
       await this.$router.push({
         name: 'ProductDetails',
-        params: { id: productId }
+        params: { id: productId },
+        query: showValidation ? { showValidation: 'true' } : {}
       })
 
       eventBus.emit('reload-product-details')
@@ -201,6 +204,14 @@ export default {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
     addToCart(product) {
+      // Verifica se o produto tem características que precisam ser selecionadas
+      if (productCharacteristicsService.hasCharacteristics(product)) {
+        // Se tiver características, redireciona para a página de detalhes do produto
+        this.navigateToProduct(product.id, true);
+        return;
+      }
+
+      // Se não tiver características, adiciona diretamente ao carrinho
       const item = {
         id: product.id,
         name: product.name,

@@ -191,7 +191,8 @@ export default {
     useThisAddress: 'Utiliser cette adresse',
     manageAddresses: 'Gérer les adresses',
     neighborhood: 'Quartier',
-    neighborhoodPlaceholder: 'Entrez votre quartier'
+    neighborhoodPlaceholder: 'Entrez votre quartier',
+    minOrderValueMessage: 'La valeur minimale de commande est de {value}. Veuillez ajouter plus d\'articles à votre panier.'
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',
@@ -268,7 +269,9 @@ export default {
     shippingInfo: 'Informations de livraison',
     freeShipping: 'Livraison gratuite pour les commandes de plus de 200,00 $',
     selectOptions: 'Veuillez sélectionner la couleur et la taille',
-    noDescription: 'Aucune description technique disponible pour ce produit.'
+    noDescription: 'Aucune description technique disponible pour ce produit.',
+    requiredField: 'Ce champ est obligatoire',
+    selectRequiredCharacteristics: 'Veuillez sélectionner toutes les caractéristiques requises avant d\'ajouter au panier'
   },
   categoryPage: {
     filters: 'FILTRES',

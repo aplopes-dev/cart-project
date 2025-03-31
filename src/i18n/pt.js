@@ -193,7 +193,8 @@ export default {
     errorCalculating: "Erro ao calcular valores",
     errorProcessingOrder: "Erro ao processar pedido",
     neighborhood: 'Bairro',
-    neighborhoodPlaceholder: 'Digite seu bairro'
+    neighborhoodPlaceholder: 'Digite seu bairro',
+    minOrderValueMessage: 'O valor mínimo do pedido é {value}. Por favor, adicione mais itens ao seu carrinho.'
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',
@@ -270,7 +271,9 @@ export default {
     shippingInfo: 'Informações de Envio',
     freeShipping: 'Frete grátis para pedidos acima de R$ 200,00',
     selectOptions: 'Por favor, selecione cor e tamanho',
-    noDescription: 'Nenhuma descrição técnica disponível para este produto.'
+    noDescription: 'Nenhuma descrição técnica disponível para este produto.',
+    requiredField: 'Este campo é obrigatório',
+    selectRequiredCharacteristics: 'Por favor, selecione todas as características obrigatórias antes de adicionar ao carrinho'
   },
   categoryPage: {
     filters: 'FILTROS',

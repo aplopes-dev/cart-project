@@ -2,15 +2,15 @@
   <div class="flex flex-col bg-white border border-[#FAFAFA] h-[500px]">
     <!-- Imagem do Produto -->
     <div class="relative w-full aspect-square overflow-hidden">
-      <img 
-        :src="product.image" 
+      <img
+        :src="product.image"
         :alt="product.name"
         class="w-full h-full object-cover"
         @error="handleImageError"
       >
       <!-- Badge de Novo, se aplicável -->
-      <div 
-        v-if="product.isNew" 
+      <div
+        v-if="product.isNew"
         class="absolute top-4 left-4 bg-empire-yellow px-3 py-1 rounded-full"
       >
         <span class="text-sm font-medium">{{ $t('products.new') }}</span>
@@ -29,14 +29,14 @@
         <p class="text-2xl font-bold text-black/70">
           {{ formatPrice(product.price) }}
         </p>
-        
+
         <!-- Debug info em desenvolvimento -->
         <small v-if="process.env.NODE_ENV === 'development'" class="text-xs text-gray-500">
           Symbol: {{ currencySymbol }} | Price: {{ product.price }}
         </small>
 
         <!-- Botão Adicionar ao Carrinho -->
-        <button 
+        <button
           @click="addToCart"
           class="mt-4 w-full bg-empire-yellow text-black font-medium py-2 px-4 rounded hover:bg-yellow-400 transition-colors"
         >
@@ -53,6 +53,9 @@ import { useI18n } from 'vue-i18n'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { useCartStore } from '@/stores/cartStore'
 import { settingsService } from '@/services/settingsService'
+// eslint-disable-next-line no-unused-vars
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'ProductCard',
@@ -70,18 +73,19 @@ export default defineComponent({
   setup(props) {
     const cartStore = useCartStore()
     const { t } = useI18n()
+    const router = useRouter()
 
     console.log('ProductCard Setup - Initial props:', {
       product: props.product,
       currencySymbol: props.currencySymbol
     })
 
-    return { cartStore, t }
+    return { cartStore, t, router }
   },
   methods: {
     formatPrice(price) {
       if (!price) return `${this.currencySymbol}0.00`
-      
+
       console.log('🏷️ formatPrice called:', {
         price,
         currencySymbol: this.currencySymbol,
@@ -118,6 +122,17 @@ export default defineComponent({
       e.target.src = PLACEHOLDER_IMAGE_BASE64
     },
     addToCart() {
+      // Verifica se o produto tem características que precisam ser selecionadas
+      if (productCharacteristicsService.hasCharacteristics(this.product)) {
+        // Se tiver características, redireciona para a página de detalhes do produto
+        this.router.push({
+          path: `/product/${this.product.id}`,
+          query: { showValidation: 'true' } // Passa um parâmetro para mostrar a validação
+        });
+        return;
+      }
+
+      // Se não tiver características, adiciona diretamente ao carrinho
       const item = {
         id: this.product.id,
         name: this.product.name,

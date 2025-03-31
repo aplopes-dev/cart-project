@@ -36,9 +36,15 @@
             <!-- Produto Info -->
             <div class="col-span-1 md:col-span-6">
               <div class="flex gap-4 md:gap-8">
-                <img :src="item.image" :alt="item.name" class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"/>
+                <router-link :to="`/product/${item.id}`">
+                  <img :src="item.image" :alt="item.name" class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"/>
+                </router-link>
                 <div class="flex flex-col">
-                  <h3 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] md:leading-[40px]">{{ item.name }}</h3>
+                  <h3 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] md:leading-[40px]">
+                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                      {{ item.name }}
+                    </router-link>
+                  </h3>
                   <p v-if="productDetails[item.id]?.description" class="font-archivo text-base md:text-xl text-black/70">
                     {{ productDetails[item.id].description }}
                   </p>
@@ -46,6 +52,22 @@
                   <!-- Options -->
                   <div class="mt-2 md:mt-4">
                     <p class="font-archivo text-base text-black/70">{{ item.description }}</p>
+
+                    <!-- Características do produto -->
+                    <div v-if="item.color || item.size || item.weight" class="mt-2 space-y-1">
+                      <p v-if="item.color" class="font-archivo text-base text-black/70 flex items-center gap-2">
+                        <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
+                        <span class="flex items-center gap-2">
+                          <ColorCircle :color="item.color" :size="16" />
+                        </span>
+                      </p>
+                      <p v-if="item.size" class="font-archivo text-base text-black/70">
+                        <span class="font-semibold">{{ $t('productDetails.selectSize') }}:</span> {{ item.size }}
+                      </p>
+                      <p v-if="item.weight" class="font-archivo text-base text-black/70">
+                        <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -152,9 +174,16 @@ import { useI18n } from 'vue-i18n'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
+// eslint-disable-next-line no-unused-vars
+import ColorCircle from '@/components/common/ColorCircle.vue'
+// eslint-disable-next-line no-unused-vars
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
+  components: {
+    ColorCircle
+  },
   setup() {
     const cartStore = useCartStore()
     const store = useStore()
@@ -286,8 +315,39 @@ export default defineComponent({
     toggleNotes() {
       this.showNotes = !this.showNotes
     },
-    increaseQuantity(index) {
+    async increaseQuantity(index) {
       const item = this.cartItems[index]
+
+      // Verifica se o produto tem características
+      if (item.id) {
+        try {
+          // Busca os detalhes completos do produto para verificar as características
+          const productDetails = await productService.getProductDetails(item.id)
+
+          // Verifica se o produto tem características e se todas foram selecionadas
+          if (productCharacteristicsService.hasCharacteristics(productDetails)) {
+            // Verifica se todas as características necessárias já foram selecionadas
+            const selectedCharacteristics = {
+              color: item.color,
+              size: item.size,
+              weight: item.weight
+            }
+
+            // Se não tiver todas as características selecionadas, redireciona para a página de detalhes
+            if (!productCharacteristicsService.allCharacteristicsSelected(productDetails, selectedCharacteristics)) {
+              this.$router.push({
+                path: `/product/${item.id}`,
+                query: { showValidation: 'true' }
+              })
+              return
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao buscar detalhes do produto:', error)
+        }
+      }
+
+      // Se não tiver características ou todas já estiverem selecionadas, aumenta a quantidade normalmente
       this.cartStore.updateQuantity(index, item.quantity + 1)
     },
     decreaseQuantity(index) {

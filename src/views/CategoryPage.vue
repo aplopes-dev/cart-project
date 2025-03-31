@@ -441,19 +441,39 @@
 
         <!-- Conteúdo dos Filtros Mobile -->
         <div class="space-y-8">
-          <!-- Filtro de Preço -->
-          <div>
+          <!-- Filtro de Preço (visível apenas quando showPrices é true) -->
+          <div v-if="showPrices">
             <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.priceRange') }}</h3>
             <div class="space-y-2">
-              <label v-for="range in priceRanges" :key="range.id" class="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  :value="range.id"
-                  v-model="selectedPriceRanges"
-                  class="w-5 h-5"
-                >
-                <span class="font-archivo text-lg">{{ range.label }}</span>
-              </label>
+              <!-- Slider de preço usando input range nativo -->
+              <div class="px-2 py-4">
+                <div class="mb-4 flex justify-between">
+                  <span class="font-archivo text-sm">{{ showPrices ? `${currencySymbol}${priceRange[0]}` : '' }}</span>
+                  <span class="font-archivo text-sm">{{ showPrices ? `${currencySymbol}${priceRange[1]}` : '' }}</span>
+                </div>
+                <div class="relative h-8 mt-4 mb-6">
+                  <input
+                    type="range"
+                    :min="0"
+                    :max="maxPrice"
+                    :value="priceRange[1]"
+                    @input="updateMaxPriceSlider"
+                    @change="handlePriceRangeChange"
+                    class="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    style="z-index: 1;"
+                  />
+                  <input
+                    type="range"
+                    :min="0"
+                    :max="maxPrice"
+                    :value="priceRange[0]"
+                    @input="updateMinPrice"
+                    @change="handlePriceRangeChange"
+                    class="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    style="z-index: 2;"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -490,6 +510,7 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/productService'
@@ -501,10 +522,14 @@ import { debounce } from 'lodash'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+// Removendo importação do VueSlider que não está instalado
 
 const route = useRoute()
 const router = useRouter()
 const { locale } = useI18n() // Adicionando aqui no topo com os outros composables
+
+// Removendo registro do componente VueSlider
 const currentPage = ref(1)
 const totalPages = ref(1)
 const products = ref([])
@@ -516,8 +541,8 @@ const selectedBrands = ref([])
 const brands = ref([])
 const showMobileFilters = ref(false)
 const isMobileFiltersExpanded = ref(false)
-const priceRange = ref([0, 1000])
-const maxPrice = ref(1000)
+const priceRange = ref([0, 3000])
+const maxPrice = ref(3000)
 const totalItems = ref(0)
 const itemsPerPage = ref(9)
 const sortBy = ref('featured')
@@ -618,6 +643,41 @@ const handleSort = () => {
   fetchFilteredProducts()
 }
 
+const handlePriceRangeChange = () => {
+  currentPage.value = 1 // Reset para primeira página ao mudar o intervalo de preço
+  fetchFilteredProducts()
+}
+
+// Atualiza o valor mínimo do intervalo de preço
+const updateMinPrice = (event) => {
+  const minValue = parseInt(event.target.value)
+  const maxValue = priceRange.value[1]
+
+  // Garante que o valor mínimo não ultrapasse o valor máximo
+  if (minValue < maxValue) {
+    priceRange.value = [minValue, maxValue]
+  } else {
+    // Se o valor mínimo for maior que o máximo, define o valor mínimo como o máximo - 1
+    priceRange.value = [maxValue - 1, maxValue]
+    event.target.value = maxValue - 1
+  }
+}
+
+// Atualiza o valor máximo do intervalo de preço
+const updateMaxPriceSlider = (event) => {
+  const maxValue = parseInt(event.target.value)
+  const minValue = priceRange.value[0]
+
+  // Garante que o valor máximo não seja menor que o valor mínimo
+  if (maxValue > minValue) {
+    priceRange.value = [minValue, maxValue]
+  } else {
+    // Se o valor máximo for menor que o mínimo, define o valor máximo como o mínimo + 1
+    priceRange.value = [minValue, minValue + 1]
+    event.target.value = minValue + 1
+  }
+}
+
 // Computed property para filteredProducts
 const filteredProducts = computed(() => products.value)
 
@@ -667,6 +727,12 @@ const itemRange = computed(() => {
 // Watched para reagir às mudanças nos filtros
 watch([selectedBrands, selectedCategory], async () => {
   currentPage.value = 1;
+
+  // Se houver uma categoria selecionada, atualiza o preço máximo
+  if (selectedCategory.value) {
+    await updateMaxPrice();
+  }
+
   await fetchFilteredProducts();
 }, { deep: true })
 
@@ -699,6 +765,34 @@ const fetchBrands = async (categoryId = null) => {
   }
 }
 
+// Função para atualizar o preço máximo com base na categoria selecionada
+const updateMaxPrice = async () => {
+  try {
+    // Busca o preço máximo dos produtos da categoria selecionada
+    const categoryMaxPrice = await productService.getMaxPrice(selectedCategory.value, selectedBrands.value);
+
+    console.log('Preço máximo obtido da API:', categoryMaxPrice);
+
+    // Arredonda para o milheiro superior
+    // Por exemplo, se o preço máximo for 2345, arredonda para 3000
+    const roundedMaxPrice = Math.ceil(categoryMaxPrice / 1000) * 1000;
+
+    // Define o valor máximo do filtro de preço
+    // Garantindo que o valor mínimo seja 3000 para cobrir produtos com preços maiores que 1000
+    maxPrice.value = Math.max(roundedMaxPrice, 3000);
+
+    // Atualiza o intervalo de preço para usar o novo valor máximo
+    priceRange.value = [0, maxPrice.value];
+
+    console.log(`Preço máximo atualizado para: ${maxPrice.value}`);
+  } catch (err) {
+    console.error('Erro ao buscar preço máximo:', err);
+    // Em caso de erro, define um valor padrão mais alto
+    maxPrice.value = 3000;
+    priceRange.value = [0, 3000];
+  }
+}
+
 const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE_BASE64
   e.target.onerror = null // Previne loop infinito
@@ -713,15 +807,34 @@ const selectCategory = async (categoryId) => {
   if (selectedCategory.value) {
     await fetchBrands(selectedCategory.value);
     selectedBrands.value = brands.value.map(brand => brand.id);
+
+    // Atualiza o preço máximo com base na categoria selecionada
+    await updateMaxPrice();
   } else {
     await fetchBrands();
     selectedBrands.value = [];
+
+    // Reseta o preço máximo para o valor inicial quando nenhuma categoria está selecionada
+    // Usando um valor mais alto para garantir que produtos com preços maiores sejam exibidos
+    maxPrice.value = 3000;
+    priceRange.value = [0, 3000];
   }
 
   // fetchFilteredProducts será chamado automaticamente pelo watcher
 }
 
 const handleAddToCart = (product, quantity) => {
+  // Verifica se o produto tem características que precisam ser selecionadas
+  if (productCharacteristicsService.hasCharacteristics(product)) {
+    // Se tiver características, redireciona para a página de detalhes do produto
+    router.push({
+      path: `/product/${product.id}`,
+      query: { showValidation: 'true' } // Passa um parâmetro para mostrar a validação
+    });
+    return;
+  }
+
+  // Se não tiver características, adiciona diretamente ao carrinho
   const cartItem = {
     id: product.id,
     name: product.name,
@@ -1006,6 +1119,97 @@ select:focus {
   transition: transform 0.2s ease-in-out;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
+
+/* Estilos para os sliders de preço */
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 5px;
+  background: #E0E0E0; /* Voltando para o cinza claro original */
+  border-radius: 5px;
+  background-image: linear-gradient(#F9C349, #F9C349);
+  background-repeat: no-repeat;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: #F9C349; /* Alterado de white para #F9C349 */
+  border: 2px solid #F9C349;
+  cursor: pointer;
+  box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10; /* Garantindo que o círculo fique visível */
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: #F9C349; /* Alterado de white para #F9C349 */
+  border: 2px solid #F9C349;
+  cursor: pointer;
+  box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10; /* Garantindo que o círculo fique visível */
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.4);
+}
+
+input[type="range"]::-ms-thumb {
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: #F9C349; /* Alterado de white para #F9C349 */
+  border: 2px solid #F9C349;
+  cursor: pointer;
+  box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10; /* Garantindo que o círculo fique visível */
+}
+
+input[type="range"]::-ms-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.4);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  box-shadow: none;
+  border: none;
+  background: #E0E0E0; /* Voltando para o cinza claro original */
+}
+
+input[type="range"]::-moz-range-track {
+  box-shadow: none;
+  border: none;
+  background: #E0E0E0; /* Voltando para o cinza claro original */
+}
+
+input[type="range"]::-ms-track {
+  box-shadow: none;
+  border: none;
+  background: #E0E0E0; /* Voltando para o cinza claro original */
+}
+
+/* Estilo para o segundo slider (valor máximo) */
+input[type="range"]:nth-child(2) {
+  background: none;
+}
+
+/* Removendo os estilos da linha cinza escuro */
 </style>
 
 

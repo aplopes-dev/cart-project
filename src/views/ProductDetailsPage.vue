@@ -76,12 +76,15 @@
               <div class="space-y-6">
                 <!-- Cores -->
                 <div v-if="product.characteristics?.COLOR?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectColor') }}</label>
-                  <div class="flex flex-wrap gap-4">
+                  <label class="font-archivo font-medium text-lg flex items-center">
+                    {{ $t('productDetails.selectColor') }}
+                    <span v-if="showValidationErrors && !selectedColor" class="text-red-500 ml-2">*</span>
+                  </label>
+                  <div class="flex flex-wrap gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedColor}">
                     <button
                       v-for="color in product.characteristics.COLOR"
                       :key="color"
-                      @click="selectedColor = color"
+                      @click="handleColorSelect(color)"
                       class="w-12 h-12 rounded-full border-2 transition-all duration-200"
                       :style="{
                         backgroundColor: color,
@@ -95,16 +98,20 @@
                       ]"
                     />
                   </div>
+                  <p v-if="showValidationErrors && !selectedColor" class="text-red-500 text-sm">{{ $t('productDetails.requiredField') }}</p>
                 </div>
 
                 <!-- Tamanhos -->
                 <div v-if="product.characteristics?.SIZE?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectSize') }}</label>
-                  <div class="grid grid-cols-4 gap-4">
+                  <label class="font-archivo font-medium text-lg flex items-center">
+                    {{ $t('productDetails.selectSize') }}
+                    <span v-if="showValidationErrors && !selectedSize" class="text-red-500 ml-2">*</span>
+                  </label>
+                  <div class="grid grid-cols-4 gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedSize}">
                     <button
                       v-for="size in product.characteristics.SIZE"
                       :key="size"
-                      @click="selectedSize = size"
+                      @click="handleSizeSelect(size)"
                       class="h-12 border-2 font-archivo transition-all duration-200"
                       :class="[
                         selectedSize === size
@@ -116,16 +123,20 @@
                       {{ size }}
                     </button>
                   </div>
+                  <p v-if="showValidationErrors && !selectedSize" class="text-red-500 text-sm">{{ $t('productDetails.requiredField') }}</p>
                 </div>
 
                 <!-- Pesos -->
                 <div v-if="product.characteristics?.WEIGHT?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg">{{ $t('productDetails.selectWeight') }}</label>
-                  <div class="grid grid-cols-4 gap-4">
+                  <label class="font-archivo font-medium text-lg flex items-center">
+                    {{ $t('productDetails.selectWeight') }}
+                    <span v-if="showValidationErrors && !selectedWeight" class="text-red-500 ml-2">*</span>
+                  </label>
+                  <div class="grid grid-cols-4 gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedWeight}">
                     <button
                       v-for="weight in product.characteristics.WEIGHT"
                       :key="weight"
-                      @click="selectedWeight = weight"
+                      @click="handleWeightSelect(weight)"
                       class="h-12 border-2 font-archivo transition-all duration-200"
                       :class="[
                         selectedWeight === weight
@@ -137,7 +148,13 @@
                       {{ weight }}
                     </button>
                   </div>
+                  <p v-if="showValidationErrors && !selectedWeight" class="text-red-500 text-sm">{{ $t('productDetails.requiredField') }}</p>
                 </div>
+              </div>
+
+              <!-- Mensagem de erro para características não selecionadas -->
+              <div v-if="showValidationErrors" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <span class="block sm:inline">{{ $t('productDetails.selectRequiredCharacteristics') }}</span>
               </div>
 
               <!-- Buttons Container -->
@@ -235,8 +252,10 @@ export default {
     const error = ref(null)
     const selectedColor = ref(null)
     const selectedSize = ref(null)
+    const selectedWeight = ref(null)
     const selectedImage = ref(null)
     const showToast = ref(false)
+    const showValidationErrors = ref(false)
 
     // Observar mudanças no locale
     watch(locale, (newLocale) => {
@@ -298,10 +317,27 @@ export default {
           technical_description: productData[`technical_description_${locale.value}`] || productData.technical_description_en || ''
         }
 
+        // Resetar seleções e validações ao trocar de produto
         selectedColor.value = null
         selectedSize.value = null
+        selectedWeight.value = null
         selectedImage.value = productData.image // Corrigido de mainImage para image
+
+        // Verifica se deve mostrar a validação (parâmetro da URL)
+        const showValidation = route.query.showValidation === 'true'
+        showValidationErrors.value = showValidation
+
         window.scrollTo(0, 0)
+
+        // Se deve mostrar a validação, rola para a primeira característica
+        if (showValidation) {
+          setTimeout(() => {
+            const firstCharacteristic = document.querySelector('.space-y-6')
+            if (firstCharacteristic) {
+              firstCharacteristic.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+          }, 500) // Pequeno delay para garantir que o DOM foi atualizado
+        }
       } catch (err) {
         console.error('Error loading product:', err)
         error.value = 'Failed to load product details'
@@ -331,8 +367,10 @@ export default {
       error,
       selectedColor,
       selectedSize,
+      selectedWeight,
       selectedImage,
       showToast,
+      showValidationErrors,
       cartStore,
       currencySymbol,
       discountPercentage,
@@ -342,25 +380,47 @@ export default {
   },
   methods: {
     isWhiteOrLight(color) {
-      if (color.toLowerCase() === '#ffffff' || color.toLowerCase() === '#fff' || color.toLowerCase() === 'white') {
-        return true
+      if (!color || color === 'transparent') return false;
+
+      // Cores claras conhecidas
+      const lightColors = ['#ffffff', '#fff', 'white', 'branco', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
+      if (lightColors.includes(color.toLowerCase())) {
+        return true;
       }
 
-      let r, g, b
+      // Tenta extrair os componentes RGB
+      let r, g, b;
+
       if (color.startsWith('#')) {
-        const hex = color.replace('#', '')
-        r = parseInt(hex.substr(0, 2), 16)
-        g = parseInt(hex.substr(2, 2), 16)
-        b = parseInt(hex.substr(4, 2), 16)
+        const hex = color.replace('#', '');
+        if (hex.length === 3) {
+          // Formato abreviado #RGB
+          r = parseInt(hex[0] + hex[0], 16);
+          g = parseInt(hex[1] + hex[1], 16);
+          b = parseInt(hex[2] + hex[2], 16);
+        } else if (hex.length === 6) {
+          // Formato completo #RRGGBB
+          r = parseInt(hex.substr(0, 2), 16);
+          g = parseInt(hex.substr(2, 2), 16);
+          b = parseInt(hex.substr(4, 2), 16);
+        }
       } else if (color.startsWith('rgb')) {
-        const rgbValues = color.match(/\d+/g)
-        if (rgbValues) {
-          [r, g, b] = rgbValues.map(Number)
+        // Formato rgb(r,g,b) ou rgba(r,g,b,a)
+        const rgbValues = color.match(/\d+/g);
+        if (rgbValues && rgbValues.length >= 3) {
+          [r, g, b] = rgbValues.map(Number);
         }
       }
 
-      const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
-      return yiq >= 128
+      // Se conseguiu extrair os componentes RGB, calcula a luminosidade
+      if (r !== undefined && g !== undefined && b !== undefined) {
+        // Fórmula YIQ para determinar a luminosidade
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return yiq >= 128; // Valor de corte para cores claras
+      }
+
+      // Se não conseguiu determinar, assume que não é clara
+      return false;
     },
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
@@ -372,22 +432,103 @@ export default {
       return price / (1 - (this.discountPercentage / 100))
     },
     handleAddToCart(quantity) {
+      // Verificar se as características obrigatórias foram selecionadas
+      if (!this.validateCharacteristics()) {
+        return;
+      }
+
       const item = {
         id: this.product.id,
         name: this.product.name,
         price: this.product.price,
         color: this.selectedColor,
         size: this.selectedSize,
+        weight: this.selectedWeight,
         quantity: quantity,
-        image: this.selectedImage || this.product.image // Corrigido de mainImage para image
+        image: this.selectedImage || this.product.image
       }
 
       this.cartStore.addItem(item)
       this.showSuccessToast()
     },
+
+    validateCharacteristics() {
+      this.showValidationErrors = false;
+      let isValid = true;
+
+      // Verificar se há características disponíveis e se foram selecionadas
+      if (this.product.characteristics?.COLOR?.length && !this.selectedColor) {
+        isValid = false;
+      }
+
+      if (this.product.characteristics?.SIZE?.length && !this.selectedSize) {
+        isValid = false;
+      }
+
+      if (this.product.characteristics?.WEIGHT?.length && !this.selectedWeight) {
+        isValid = false;
+      }
+
+      if (!isValid) {
+        this.showValidationErrors = true;
+        // Rolar para a primeira característica não selecionada
+        this.$nextTick(() => {
+          const firstError = document.querySelector('.border-red-500');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      }
+
+      return isValid;
+    },
+
+    // Métodos para lidar com a seleção de características
+    handleColorSelect(color) {
+      this.selectedColor = color;
+      // Limpa a mensagem de erro quando o usuário seleciona uma característica
+      if (this.showValidationErrors) {
+        this.showValidationErrors = false;
+      }
+    },
+
+    handleSizeSelect(size) {
+      this.selectedSize = size;
+      // Limpa a mensagem de erro quando o usuário seleciona uma característica
+      if (this.showValidationErrors) {
+        this.showValidationErrors = false;
+      }
+    },
+
+    handleWeightSelect(weight) {
+      this.selectedWeight = weight;
+      // Limpa a mensagem de erro quando o usuário seleciona uma característica
+      if (this.showValidationErrors) {
+        this.showValidationErrors = false;
+      }
+    },
     handleShopNow() {
-      // Implementar lógica de compra imediata
-      console.log('Shop now clicked')
+      // Verificar se as características obrigatórias foram selecionadas
+      if (!this.validateCharacteristics()) {
+        return;
+      }
+
+      // Adicionar ao carrinho primeiro
+      const quantity = 1; // Quantidade padrão para compra imediata
+      const item = {
+        id: this.product.id,
+        name: this.product.name,
+        price: this.product.price,
+        color: this.selectedColor,
+        size: this.selectedSize,
+        weight: this.selectedWeight,
+        quantity: quantity,
+        image: this.selectedImage || this.product.image
+      }
+
+      this.cartStore.addItem(item)
+
+      // Redirecionar para o checkout
       this.$router.push('/checkout')
     },
     handleImageError(e) {

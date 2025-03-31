@@ -29,12 +29,39 @@
       <template v-else>
         <div class="cart-items">
           <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
-            <img :src="item.image" :alt="item.name" class="item-image" />
+            <router-link :to="`/product/${item.id}`">
+              <img :src="item.image" :alt="item.name" class="item-image" />
+            </router-link>
 
             <div class="item-details">
               <div class="item-info">
-                <h2>{{ item.name }}</h2>
+                <h2>
+                  <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                    {{ item.name }}
+                  </router-link>
+                </h2>
                 <p v-if="showPrices" class="price">{{ formatPrice(item.price) }}</p>
+                <div v-if="item.color || item.size || item.weight" class="item-characteristics">
+                  <span v-if="item.color" class="characteristic">
+                    {{ $t('productDetails.selectColor') }}: 
+                    <span class="value flex items-center gap-2">
+                      <span 
+                        class="inline-block rounded-full border-2 transition-all duration-200" 
+                        :style="{
+                          backgroundColor: item.color,
+                          borderColor: isWhiteOrLight(item.color) ? '#CCCCCC' : 'transparent',
+                          width: '16px',
+                          height: '16px'
+                        }"
+                        :class="[
+                          isWhiteOrLight(item.color) ? 'ring-1 ring-gray-200' : ''
+                        ]"
+                      ></span>
+                    </span>
+                  </span>
+                  <span v-if="item.size" class="characteristic">{{ $t('productDetails.selectSize') }}: <span class="value">{{ item.size }}</span></span>
+                  <span v-if="item.weight" class="characteristic">{{ $t('productDetails.selectWeight') }}: <span class="value">{{ item.weight }}</span></span>
+                </div>
               </div>
 
               <div class="quantity-selector">
@@ -44,7 +71,7 @@
                   </svg>
                 </button>
                 <span class="quantity-value">{{ item.quantity }}</span>
-                <button class="quantity-btn plus" @click="cartStore.updateQuantity(index, item.quantity + 1)">
+                <button class="quantity-btn plus" @click="handleIncreaseQuantity(index, item)">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
                     <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
@@ -107,16 +134,21 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { ref, onMounted } from 'vue'
 import { settingsService } from '@/services/settingsService'
+import { productService } from '@/services/productService'
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'CartWidget',
   setup() {
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
+    const router = useRouter()
     const currencySymbol = ref('$')
     const showPrices = ref(true) // Controla a visibilidade dos preços
 
@@ -150,7 +182,7 @@ export default {
       loadCurrencySymbol()
     })
 
-    return { cartStore, currencySymbol, showPrices }
+    return { cartStore, currencySymbol, showPrices, router }
   },
   methods: {
     formatPrice(price) {
@@ -168,6 +200,83 @@ export default {
     goToCategories() {
       this.cartStore.closeCart()
       this.$router.push('/categories')
+    },
+    isWhiteOrLight(color) {
+      if (!color || color === 'transparent') return false;
+      
+      // Cores claras conhecidas
+      const lightColors = ['#ffffff', '#fff', 'white', 'branco', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
+      if (lightColors.includes(color.toLowerCase())) {
+        return true;
+      }
+      
+      // Tenta extrair os componentes RGB
+      let r, g, b;
+      
+      if (color.startsWith('#')) {
+        const hex = color.replace('#', '');
+        if (hex.length === 3) {
+          // Formato abreviado #RGB
+          r = parseInt(hex[0] + hex[0], 16);
+          g = parseInt(hex[1] + hex[1], 16);
+          b = parseInt(hex[2] + hex[2], 16);
+        } else if (hex.length === 6) {
+          // Formato completo #RRGGBB
+          r = parseInt(hex.substr(0, 2), 16);
+          g = parseInt(hex.substr(2, 2), 16);
+          b = parseInt(hex.substr(4, 2), 16);
+        }
+      } else if (color.startsWith('rgb')) {
+        // Formato rgb(r,g,b) ou rgba(r,g,b,a)
+        const rgbValues = color.match(/\d+/g);
+        if (rgbValues && rgbValues.length >= 3) {
+          [r, g, b] = rgbValues.map(Number);
+        }
+      }
+      
+      // Se conseguiu extrair os componentes RGB, calcula a luminosidade
+      if (r !== undefined && g !== undefined && b !== undefined) {
+        // Fórmula YIQ para determinar a luminosidade
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return yiq >= 128; // Valor de corte para cores claras
+      }
+      
+      // Se não conseguiu determinar, assume que não é clara
+      return false;
+    },
+    async handleIncreaseQuantity(index, item) {
+      // Verifica se o produto tem características
+      if (item.id) {
+        try {
+          // Busca os detalhes completos do produto para verificar as características
+          const productDetails = await productService.getProductDetails(item.id)
+          
+          // Verifica se o produto tem características e se todas foram selecionadas
+          if (productCharacteristicsService.hasCharacteristics(productDetails)) {
+            // Verifica se todas as características necessárias já foram selecionadas
+            const selectedCharacteristics = {
+              color: item.color,
+              size: item.size,
+              weight: item.weight
+            }
+            
+            // Se não tiver todas as características selecionadas, redireciona para a página de detalhes
+            if (!productCharacteristicsService.allCharacteristicsSelected(productDetails, selectedCharacteristics)) {
+              this.cartStore.closeCart() // Fecha o carrinho antes de redirecionar
+              this.$router.push({
+                path: `/product/${item.id}`,
+                query: { showValidation: 'true' }
+              })
+              return
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao buscar detalhes do produto:', error)
+        }
+      }
+      
+      // Se não tiver características ou todas já estiverem selecionadas, aumenta a quantidade normalmente
+      this.cartStore.updateQuantity(index, item.quantity + 1)
     }
   },
   computed: {
@@ -267,6 +376,27 @@ export default {
   font-family: 'Archivo';
   font-size: 18px;
   line-height: 24px;
+}
+
+.item-characteristics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  font-family: 'Archivo';
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.characteristic {
+  display: flex;
+  gap: 4px;
+}
+
+.value {
+  font-weight: 600;
+  color: #000;
 }
 
 .quantity-selector {
@@ -381,21 +511,3 @@ export default {
   }
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

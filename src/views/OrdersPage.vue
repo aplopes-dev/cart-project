@@ -106,7 +106,7 @@
                     <!-- Container do nome e quantidade -->
                     <div class="flex flex-col sm:flex-row items-start gap-2 min-w-0 flex-1">
                       <!-- Nome do produto - centralizado verticalmente com a imagem -->
-                      <div class="min-w-0 sm:w-[250px] flex items-center h-16">  <!-- h-16 para igualar a altura da imagem -->
+                      <div class="min-w-0 sm:w-[250px] flex flex-col justify-center h-16">  <!-- h-16 para igualar a altura da imagem -->
                         <router-link
                           v-if="item.product_id"
                           :to="`/product/${item.product_id}`"
@@ -115,6 +115,22 @@
                           {{ item.product_name }}
                         </router-link>
                         <span v-else class="text-base sm:text-lg block truncate">{{ item.product_name }}</span>
+
+                        <!-- Características do produto -->
+                        <div v-if="item.color || item.size || item.weight" class="flex flex-wrap gap-x-3 mt-1">
+                          <span v-if="item.color" class="text-xs text-gray-600 flex items-center gap-1">
+                            <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
+                            <span class="flex items-center gap-1">
+                              <ColorCircle :color="item.color" :size="12" />
+                            </span>
+                          </span>
+                          <span v-if="item.size" class="text-xs text-gray-600">
+                            <span class="font-semibold">{{ $t('productDetails.selectSize') }}:</span> {{ item.size }}
+                          </span>
+                          <span v-if="item.weight" class="text-xs text-gray-600">
+                            <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                          </span>
+                        </div>
                       </div>
 
                       <!-- Quantidade e preço unitário -->
@@ -298,6 +314,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import api from '@/services/api'
+import ColorCircle from '@/components/common/ColorCircle.vue'
 
 // Definindo a constante diretamente como é feito em outros componentes
 const PLACEHOLDER_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='

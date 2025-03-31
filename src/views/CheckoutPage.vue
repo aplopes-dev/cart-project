@@ -335,11 +335,13 @@
                     <div v-for="(item, index) in cartItems" :key="index"
                       class="flex items-start py-8 border-b border-black/25">
                       <!-- Imagem do Produto -->
-                      <img
-                        :src="item.image"
-                        :alt="item.name"
-                        class="w-[120px] h-[110px] object-cover"
-                      />
+                      <router-link :to="`/product/${item.id}`">
+                        <img
+                          :src="item.image"
+                          :alt="item.name"
+                          class="w-[120px] h-[110px] object-cover"
+                        />
+                      </router-link>
 
                       <!-- Container para nome e preço -->
                       <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
@@ -349,7 +351,34 @@
                             <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
                               <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
                             </div>
-                            <span class="font-archivo text-[22px] leading-[40px] truncate">{{ item.name }}</span>
+                            <router-link :to="`/product/${item.id}`" class="font-archivo text-[22px] leading-[40px] truncate hover:text-empire-yellow transition-colors">{{ item.name }}</router-link>
+                          </div>
+
+                          <!-- Características do produto -->
+                          <div v-if="item.color || item.size || item.weight" class="flex flex-col gap-1 mt-1">
+                            <span v-if="item.color" class="font-archivo text-sm text-black/70 flex items-center gap-2">
+                              <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
+                              <span class="flex items-center gap-2">
+                                <span
+                                  class="inline-block rounded-full border-2 transition-all duration-200"
+                                  :style="{
+                                    backgroundColor: item.color,
+                                    borderColor: isWhiteOrLight(item.color) ? '#CCCCCC' : 'transparent',
+                                    width: '14px',
+                                    height: '14px'
+                                  }"
+                                  :class="[
+                                    isWhiteOrLight(item.color) ? 'ring-1 ring-gray-200' : ''
+                                  ]"
+                                ></span>
+                              </span>
+                            </span>
+                            <span v-if="item.size" class="font-archivo text-sm text-black/70">
+                              <span class="font-semibold">{{ $t('productDetails.selectSize') }}:</span> {{ item.size }}
+                            </span>
+                            <span v-if="item.weight" class="font-archivo text-sm text-black/70">
+                              <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                            </span>
                           </div>
 
                           <!-- Preço (exibido apenas se o toggle master estiver habilitado) -->
@@ -400,10 +429,20 @@
                     </div>
                   </div>
 
+                  <!-- Mensagem de valor mínimo de compra -->
+                  <div v-if="minOrderValueEnabled && !isCheckoutButtonEnabled" class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
+                    {{ minOrderValueMessage }}
+                  </div>
+
                   <!-- Complete Purchase Button -->
                   <button
-                    class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
+                    class="w-full py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
+                    :class="{
+                      'bg-empire-yellow': isCheckoutButtonEnabled,
+                      'bg-gray-300 cursor-not-allowed': !isCheckoutButtonEnabled
+                    }"
                     @click="completePurchase"
+                    :disabled="!isCheckoutButtonEnabled"
                   >
                     {{ $t('checkout.completePurchase') }}
                   </button>
@@ -464,6 +503,8 @@ export default {
     const taxRate = ref(0)
     const shippingCost = ref(0)
     const freeShippingThreshold = ref(0)
+    const minOrderValue = ref(0) // Valor mínimo de compra
+    const minOrderValueEnabled = ref(false) // Status do toggle de valor mínimo
     const togglesStore = useFinancialTogglesStore()
     const showPrices = ref(true) // Controla a visibilidade dos preços
 
@@ -471,9 +512,11 @@ export default {
       try {
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
-        taxRate.value = settings.tax_rate
-        shippingCost.value = settings.shipping_cost
-        freeShippingThreshold.value = settings.free_shipping_threshold
+        taxRate.value = parseFloat(settings.tax_rate || 0)
+        shippingCost.value = parseFloat(settings.shipping_cost || 0)
+        freeShippingThreshold.value = parseFloat(settings.free_shipping_threshold || 0)
+        minOrderValue.value = parseFloat(settings.min_order_value || 0) // Valor mínimo de compra como número
+        minOrderValueEnabled.value = settings.min_order_value_enabled || false // Status do toggle
 
         // Carrega o estado dos toggles
         togglesStore.loadTogglesFromBackend({
@@ -489,8 +532,14 @@ export default {
 
         // Atualiza a visibilidade dos preços com base no toggle master
         showPrices.value = togglesStore.masterToggle
+        // Atualiza o status do toggle de valor mínimo
+        minOrderValueEnabled.value = settings.min_order_value_enabled
         console.log('Master toggle state:', togglesStore.masterToggle)
         console.log('Show prices:', showPrices.value)
+        console.log('Min order value (raw):', settings.min_order_value)
+        console.log('Min order value (ref):', minOrderValue.value)
+        console.log('Min order value type:', typeof minOrderValue.value)
+        console.log('Min order value enabled:', minOrderValueEnabled.value)
       } catch (error) {
         console.error('Error loading financial settings:', error)
       }
@@ -547,7 +596,9 @@ export default {
       calculateTaxes,
       calculateShipping,
       checkoutStore,
-      showPrices
+      showPrices,
+      minOrderValue,
+      minOrderValueEnabled
     }
   },
   data() {
@@ -622,6 +673,35 @@ export default {
       const shippingValue = parseFloat(this.calculateShipping)
 
       return (subtotalValue + taxesValue + shippingValue).toFixed(2)
+    },
+    // Verifica se o botão de finalizar pedido deve estar habilitado
+    isCheckoutButtonEnabled() {
+      // Se o toggle de valor mínimo estiver desabilitado, o botão deve estar habilitado
+      if (!this.minOrderValueEnabled) {
+        console.log('Min order value toggle disabled, button enabled');
+        return true;
+      }
+
+      // Se o toggle estiver habilitado, verifica se o valor total é maior que o valor mínimo
+      const totalValue = parseFloat(this.calculateTotal);
+      const minValue = parseFloat(this.minOrderValue);
+
+      console.log('Checkout validation:', {
+        totalValue,
+        minValue,
+        isEnabled: totalValue >= minValue
+      });
+
+      return totalValue >= minValue;
+    },
+    // Mensagem de valor mínimo para exibir ao usuário
+    minOrderValueMessage() {
+      if (this.minOrderValueEnabled && this.minOrderValue > 0) {
+        // Converter para número antes de chamar toFixed
+        const minValue = parseFloat(this.minOrderValue);
+        return this.$t('checkout.minOrderValueMessage', { value: `${this.currencySymbol}${minValue.toFixed(2)}` });
+      }
+      return '';
     }
   },
   mounted() {
@@ -631,6 +711,49 @@ export default {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
+    isWhiteOrLight(color) {
+      if (!color || color === 'transparent') return false;
+
+      // Cores claras conhecidas
+      const lightColors = ['#ffffff', '#fff', 'white', 'branco', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
+      if (lightColors.includes(color.toLowerCase())) {
+        return true;
+      }
+
+      // Tenta extrair os componentes RGB
+      let r, g, b;
+
+      if (color.startsWith('#')) {
+        const hex = color.replace('#', '');
+        if (hex.length === 3) {
+          // Formato abreviado #RGB
+          r = parseInt(hex[0] + hex[0], 16);
+          g = parseInt(hex[1] + hex[1], 16);
+          b = parseInt(hex[2] + hex[2], 16);
+        } else if (hex.length === 6) {
+          // Formato completo #RRGGBB
+          r = parseInt(hex.substr(0, 2), 16);
+          g = parseInt(hex.substr(2, 2), 16);
+          b = parseInt(hex.substr(4, 2), 16);
+        }
+      } else if (color.startsWith('rgb')) {
+        // Formato rgb(r,g,b) ou rgba(r,g,b,a)
+        const rgbValues = color.match(/\d+/g);
+        if (rgbValues && rgbValues.length >= 3) {
+          [r, g, b] = rgbValues.map(Number);
+        }
+      }
+
+      // Se conseguiu extrair os componentes RGB, calcula a luminosidade
+      if (r !== undefined && g !== undefined && b !== undefined) {
+        // Fórmula YIQ para determinar a luminosidade
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return yiq >= 128; // Valor de corte para cores claras
+      }
+
+      // Se não conseguiu determinar, assume que não é clara
+      return false;
+    },
     openAddressModal() {
       // Primeiro, calculamos a posição desejada
       const windowHeight = window.innerHeight;
@@ -661,6 +784,11 @@ export default {
       return !this.hasErrors
     },
     async completePurchase() {
+      // Verifica se o botão está habilitado
+      if (!this.isCheckoutButtonEnabled) {
+        return;
+      }
+
       if (!this.validateForm()) {
         return;
       }

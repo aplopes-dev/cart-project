@@ -153,12 +153,15 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { useI18n } from 'vue-i18n'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { ref, onMounted, watch } from 'vue'
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'NewProducts',
@@ -166,6 +169,7 @@ export default {
     const i18n = useI18n()
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
+    const router = useRouter()
     const currencySymbol = ref('$')
     const products = ref([])  // Adicionando ref para products
     const showPrices = ref(true)  // Controla a visibilidade dos preços
@@ -216,7 +220,8 @@ export default {
       cartStore,
       currencySymbol,
       products,  // Expondo products
-      showPrices  // Expondo showPrices
+      showPrices,  // Expondo showPrices
+      router
     }
   },
   data() {
@@ -320,6 +325,17 @@ export default {
       const product = this.products[index]
       const quantity = this.quantities[index]
 
+      // Verifica se o produto tem características que precisam ser selecionadas
+      if (productCharacteristicsService.hasCharacteristics(product)) {
+        // Se tiver características, redireciona para a página de detalhes do produto
+        this.router.push({
+          path: `/product/${product.id}`,
+          query: { showValidation: 'true' } // Passa um parâmetro para mostrar a validação
+        });
+        return;
+      }
+
+      // Se não tiver características, adiciona diretamente ao carrinho
       const item = {
         id: product.id,
         name: product.name,

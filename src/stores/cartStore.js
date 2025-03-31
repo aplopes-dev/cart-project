@@ -6,7 +6,7 @@ export const useCartStore = defineStore('cart', {
     items: [],
     isOpen: false
   }),
-  
+
   getters: {
     totalItems: (state) => state.items.length,
     subtotal: (state) => state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
@@ -18,20 +18,20 @@ export const useCartStore = defineStore('cart', {
       return (subtotalValue + shippingValue + taxesValue).toFixed(2)
     }
   },
-  
+
   actions: {
     async loadCartFromStorage(userId) {
       try {
         // Verifica se existe carrinho de visitante
         const guestCart = localStorage.getItem('cart_guest')
         const guestCartItems = guestCart ? JSON.parse(guestCart) : []
-        
+
         // Primeiro tenta carregar do localStorage do usuário
         const localCart = localStorage.getItem(`cart_${userId}`)
         if (localCart) {
           const cartItems = JSON.parse(localCart)
           this.items = cartItems
-          
+
           // Remove o carrinho de visitante se existir
           localStorage.removeItem('cart_guest')
           return cartItems
@@ -47,7 +47,10 @@ export const useCartStore = defineStore('cart', {
               quantity: item.quantity,
               price: item.price,
               name: item.name,
-              image: item.image
+              image: item.image,
+              color: item.color,
+              size: item.size,
+              weight: item.weight
             }))
           }
         } catch (error) {
@@ -58,7 +61,7 @@ export const useCartStore = defineStore('cart', {
         if (guestCartItems.length > 0 || dbCartItems.length > 0) {
           // Cria um Map com os itens do banco usando o id como chave
           const mergedItems = new Map()
-          
+
           // Adiciona primeiro os itens do banco
           dbCartItems.forEach(item => {
             mergedItems.set(item.id, item)
@@ -78,7 +81,7 @@ export const useCartStore = defineStore('cart', {
 
           // Converte o Map de volta para array
           const finalCartItems = Array.from(mergedItems.values())
-          
+
           // Atualiza o estado e localStorage
           this.items = finalCartItems
           localStorage.setItem(`cart_${userId}`, JSON.stringify(finalCartItems))
@@ -86,7 +89,7 @@ export const useCartStore = defineStore('cart', {
 
           // Sincroniza o carrinho mesclado com o backend
           await this.syncCartWithBackend()
-          
+
           return finalCartItems
         }
 
@@ -120,11 +123,19 @@ export const useCartStore = defineStore('cart', {
     },
 
     addItem(item) {
-      const existingItemIndex = this.items.findIndex(i => i.id === item.id)
-      
+      // Verifica se existe um item com o mesmo ID e as mesmas características
+      const existingItemIndex = this.items.findIndex(i =>
+        i.id === item.id &&
+        i.color === item.color &&
+        i.size === item.size &&
+        i.weight === item.weight
+      )
+
       if (existingItemIndex > -1) {
+        // Se encontrou um item com as mesmas características, apenas incrementa a quantidade
         this.items[existingItemIndex].quantity += item.quantity
       } else {
+        // Se não encontrou, adiciona como um novo item
         this.items.push(item)
       }
 
@@ -152,7 +163,7 @@ export const useCartStore = defineStore('cart', {
     async clearCart() {
       this.items = []
       this.isOpen = false
-      
+
       const userId = JSON.parse(localStorage.getItem('user'))?.id
       if (userId) {
         localStorage.removeItem(`cart_${userId}`)
@@ -174,7 +185,10 @@ export const useCartStore = defineStore('cart', {
           const response = await api.post('/cart/sync', {
             items: this.items.map(item => ({
               productId: item.id,
-              quantity: item.quantity
+              quantity: item.quantity,
+              color: item.color,
+              size: item.size,
+              weight: item.weight
             }))
           });
 
@@ -185,7 +199,10 @@ export const useCartStore = defineStore('cart', {
               quantity: item.quantity,
               price: item.price,
               name: item.name,
-              image: item.image
+              image: item.image,
+              color: item.color,
+              size: item.size,
+              weight: item.weight
             }));
 
             this.items = cartItems;

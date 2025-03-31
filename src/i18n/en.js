@@ -193,7 +193,8 @@ export default {
     useThisAddress: 'Use this address',
     manageAddresses: 'Manage addresses',
     neighborhood: 'Neighborhood',
-    neighborhoodPlaceholder: 'Enter your neighborhood'
+    neighborhoodPlaceholder: 'Enter your neighborhood',
+    minOrderValueMessage: 'Minimum order value is {value}. Please add more items to your cart.'
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',
@@ -318,7 +319,9 @@ export default {
     shippingInfo: 'Shipping Information',
     freeShipping: 'Free shipping on orders over $200.00',
     selectOptions: 'Please select color and size',
-    noDescription: 'No technical description available for this product.'
+    noDescription: 'No technical description available for this product.',
+    requiredField: 'This field is required',
+    selectRequiredCharacteristics: 'Please select all required characteristics before adding to cart'
   },
   categoryPage: {
     filters: 'FILTERS',
