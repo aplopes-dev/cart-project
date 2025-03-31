@@ -3,10 +3,10 @@
     <!-- Container com scroll horizontal no mobile -->
     <div class="w-full max-w-[1146px] overflow-x-auto scrollbar-hide">
       <div class="flex justify-start md:justify-center items-start gap-9 min-w-max md:min-w-0">
-        <img 
-          v-for="i in 5" 
+        <img
+          v-for="i in 5"
           :key="i"
-          :src="`/img/brand-logo-${i}.png`" 
+          :src="`/images/brands/brand-logo-${i}.png`"
           :alt="`Brand Logo ${i}`"
           class="w-[167px] h-24 object-contain flex-shrink-0"
         />

@@ -22,9 +22,10 @@
               @click="navigateToProduct(product.id)"
             >
               <img
-                :src="product.image"
+                :src="getProductImage(product.image, product)"
                 :alt="product.name"
                 class="w-[80%] max-w-[280px] h-[200px] md:h-[280px] object-contain object-center mx-auto"
+                @error="handleImageError"
               />
 
               <div class="flex flex-col items-center gap-4 w-full p-6">
@@ -82,6 +83,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, watch } from 'vue'
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { imageService } from '@/services/imageService'
 
 export default {
   name: 'BestSeller',
@@ -191,6 +193,16 @@ export default {
         this.bestSellers = []
       }
     },
+    getProductImage(imagePath, product) {
+      console.log(`[BestSeller] Obtendo imagem com caminho: ${imagePath}`);
+      console.log(`[BestSeller] FoxPro code do produto: ${product?.foxpro_code}`);
+      const imageUrl = imageService.getProductImageUrl(imagePath, product);
+      console.log(`[BestSeller] Caminho da imagem processado: ${imageUrl}`);
+      return imageUrl;
+    },
+    handleImageError(e) {
+      e.target.src = '/images/placeholder.png'
+    },
     async navigateToProduct(productId, showValidation = false) {
       await this.$router.push({
         name: 'ProductDetails',
@@ -217,7 +229,8 @@ export default {
         name: product.name,
         price: product.price,
         quantity: 1,
-        image: product.image
+        image: product.image,
+        foxpro_code: product.foxpro_code
       }
       this.cartStore.addItem(item)
       this.showSuccessToast()

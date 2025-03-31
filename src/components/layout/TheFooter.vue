@@ -6,9 +6,9 @@
           <!-- Logo -->
           <div class="w-[200px] mb-4 md:mb-0">
             <router-link to="/">
-              <img 
+              <img
                 :src="logoUrl"
-                alt="Empire Logo" 
+                alt="Empire Logo"
                 class="w-[200px] h-[87.06px] object-contain"
                 @error="handleImageError"
               >
@@ -71,8 +71,8 @@
                 {{ $t('footer.titles.products') }}
               </h3>
               <div class="flex flex-col gap-2">
-                <div 
-                  v-for="category in categories" 
+                <div
+                  v-for="category in categories"
                   :key="category.id"
                   class="flex"
                   @click="navigateToCategory(category.id)"
@@ -152,7 +152,7 @@ import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
 
 const router = useRouter()
-const logoUrl = ref('/images/logo.png')
+const logoUrl = ref('/images/logo/logo.png')
 const categories = ref([])
 const companyData = ref({
   name: '',

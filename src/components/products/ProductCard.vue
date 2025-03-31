@@ -3,7 +3,7 @@
     <!-- Imagem do Produto -->
     <div class="relative w-full aspect-square overflow-hidden">
       <img
-        :src="product.image"
+        :src="getProductImage(product)"
         :alt="product.name"
         class="w-full h-full object-cover"
         @error="handleImageError"
@@ -55,6 +55,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { settingsService } from '@/services/settingsService'
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { imageService } from '@/services/imageService'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -118,6 +119,14 @@ export default defineComponent({
         return `${this.currencySymbol}${numericPrice.toFixed(2)}`
       }
     },
+    getProductImage(product) {
+      console.log(`[ProductCard] Obtendo imagem para produto: ${product.id} - ${product.name}`);
+      console.log(`[ProductCard] Caminho da imagem original: ${product.image}`);
+      console.log(`[ProductCard] FoxPro code: ${product.foxpro_code}`);
+      const imageUrl = imageService.getProductImageUrl(product.image, product);
+      console.log(`[ProductCard] Caminho da imagem processado: ${imageUrl}`);
+      return imageUrl;
+    },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
     },
@@ -138,7 +147,8 @@ export default defineComponent({
         name: this.product.name,
         price: this.product.price,
         quantity: 1,
-        image: this.product.image
+        image: this.getProductImage(this.product),
+        foxpro_code: this.product.foxpro_code
       }
       this.cartStore.addItem(item)
     }

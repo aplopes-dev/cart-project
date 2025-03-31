@@ -329,7 +329,7 @@
                   @click="navigateToProduct(product.id)"
                 >
                   <img
-                    :src="product.image"
+                    :src="getProductImage(product)"
                     :alt="product.name"
                     class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
                     @error="handleImageError"
@@ -516,6 +516,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/productService'
 import { categoryService } from '@/services/categoryService'
 import { settingsService } from '@/services/settingsService'
+import { imageService } from '@/services/imageService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { debounce } from 'lodash'
@@ -793,32 +794,39 @@ const updateMaxPrice = async () => {
   }
 }
 
+const getProductImage = (product) => {
+  console.log(`[CategoryPage] Obtendo imagem para produto: ${product.id} - ${product.name}`);
+  console.log(`[CategoryPage] Caminho da imagem original: ${product.image}`);
+  console.log(`[CategoryPage] FoxPro code: ${product.foxpro_code}`);
+  const imageUrl = imageService.getProductImageUrl(product.image, product);
+  console.log(`[CategoryPage] Caminho da imagem processado: ${imageUrl}`);
+  return imageUrl;
+}
+
 const handleImageError = (e) => {
+  console.log('[CategoryPage] Erro ao carregar imagem, usando placeholder');
   e.target.src = PLACEHOLDER_IMAGE_BASE64
   e.target.onerror = null // Previne loop infinito
 }
 
 const selectCategory = async (categoryId) => {
+  // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
+  if (selectedCategory.value === categoryId) {
+    return; // Não permite desmarcar a categoria
+  }
+
   // Reset da página atual ao mudar de categoria
   currentPage.value = 1;
 
-  selectedCategory.value = selectedCategory.value === categoryId ? null : categoryId;
+  // Define a nova categoria selecionada
+  selectedCategory.value = categoryId;
 
-  if (selectedCategory.value) {
-    await fetchBrands(selectedCategory.value);
-    selectedBrands.value = brands.value.map(brand => brand.id);
+  // Busca as marcas relacionadas à categoria selecionada
+  await fetchBrands(selectedCategory.value);
+  selectedBrands.value = brands.value.map(brand => brand.id);
 
-    // Atualiza o preço máximo com base na categoria selecionada
-    await updateMaxPrice();
-  } else {
-    await fetchBrands();
-    selectedBrands.value = [];
-
-    // Reseta o preço máximo para o valor inicial quando nenhuma categoria está selecionada
-    // Usando um valor mais alto para garantir que produtos com preços maiores sejam exibidos
-    maxPrice.value = 3000;
-    priceRange.value = [0, 3000];
-  }
+  // Atualiza o preço máximo com base na categoria selecionada
+  await updateMaxPrice();
 
   // fetchFilteredProducts será chamado automaticamente pelo watcher
 }
@@ -840,7 +848,8 @@ const handleAddToCart = (product, quantity) => {
     name: product.name,
     price: product.price,
     quantity: quantity,
-    image: product.image
+    image: getProductImage(product),
+    foxpro_code: product.foxpro_code
   }
 
   cartStore.addItem(cartItem)
@@ -994,7 +1003,13 @@ export default {
       console.log('Adding to cart:', product, 'quantity:', quantity)
     },
     selectCategory(categoryId) {
-      this.selectedCategory = this.selectedCategory === categoryId ? null : categoryId;
+      // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
+      if (this.selectedCategory === categoryId) {
+        return; // Não permite desmarcar a categoria
+      }
+
+      // Define a nova categoria selecionada
+      this.selectedCategory = categoryId;
     }
   }
 }

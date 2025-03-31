@@ -63,17 +63,56 @@ export const productService = {
   async getProductById(id) {
     try {
       const response = await axios.get(`${API_URL}/products/${id}`)
-      return response.data
+      const product = response.data
+
+      // Se o produto tiver um código FoxPro, busca as imagens
+      if (product.foxpro_code) {
+        try {
+          const imagesResponse = await this.getProductImages(product.foxpro_code);
+          if (imagesResponse && imagesResponse.length > 0) {
+            // Define a primeira imagem como a imagem principal se não houver uma definida
+            if (!product.image) {
+              product.image = imagesResponse[0];
+            }
+            // Adiciona todas as imagens ao array de imagens
+            product.images = imagesResponse;
+          }
+        } catch (error) {
+          console.error('Erro ao buscar imagens do produto:', error);
+        }
+      }
+
+      return product
     } catch (error) {
       console.error('Error fetching product:', error)
       throw error
     }
   },
 
+  /**
+   * Busca todas as imagens de um produto pelo foxpro_code
+   * @param {string} foxproCode - Código FoxPro do produto
+   * @returns {Promise<string[]>} - Array com os caminhos das imagens
+   */
+  async getProductImages(foxproCode) {
+    if (!foxproCode) {
+      return [];
+    }
+
+    try {
+      const response = await axios.get(`${API_URL}/products/images/${foxproCode}`);
+      return response.data.images || [];
+    } catch (error) {
+      console.error(`Erro ao buscar imagens para o produto com código ${foxproCode}:`, error);
+      return [];
+    }
+  },
+
   async getProductDetails(id) {
     try {
-      const response = await axios.get(`${API_URL}/products/${id}`)
-      return response.data
+      // Reutiliza o método getProductById para obter os detalhes do produto
+      // Isso garante que as imagens também sejam carregadas
+      return await this.getProductById(id);
     } catch (error) {
       console.error('Error fetching product details:', error)
       throw error

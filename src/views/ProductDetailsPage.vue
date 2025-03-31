@@ -26,9 +26,10 @@
             <!-- Main Image -->
             <div class="aspect-[4/3] bg-[#FAFAFA] flex items-center justify-center">
               <img
-                :src="selectedImage || product.image"
+                :src="getProductImage(selectedImage || product.image)"
                 :alt="product.name"
                 class="max-w-full max-h-full object-contain"
+                @error="handleImageError"
               >
             </div>
             <!-- Thumbnail Images -->
@@ -41,9 +42,10 @@
                 :class="{'border-2 border-black': selectedImage === image}"
               >
                 <img
-                  :src="image"
+                  :src="getProductImage(image)"
                   :alt="`${product.name} view ${index + 1}`"
                   class="w-full h-full object-contain"
+                  @error="handleImageError"
                 >
               </button>
             </div>
@@ -219,6 +221,7 @@ import BestSeller from '@/components/product/BestSeller.vue'
 import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
+import { imageService } from '@/services/imageService'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { ref, onMounted, watch } from 'vue'
@@ -301,14 +304,20 @@ export default {
         loading.value = true
         error.value = null
         const productId = route.params.id
+        console.log(`[ProductDetailsPage] Carregando produto com ID: ${productId}`);
         await loadFinancialSettings() // Carrega as configurações financeiras
         const productData = await productService.getProductById(productId)
 
+        console.log('[ProductDetailsPage] Dados do produto recebidos do backend:', productData);
+        console.log(`[ProductDetailsPage] FoxPro Code: ${productData.foxpro_code}`);
+        console.log(`[ProductDetailsPage] Imagem principal: ${productData.image}`);
+        console.log(`[ProductDetailsPage] Imagens adicionais:`, productData.images);
+
         // Garantir que images seja um array e incluir a imagem principal (image)
-        const allImages = [
-          productData.image, // Corrigido de mainImage para image
-          ...(productData.images || [])
-        ].filter(Boolean) // Remove valores null/undefined
+        // Obter todas as imagens do produto usando o serviço de imagens
+        console.log('[ProductDetailsPage] Processando imagens do produto...');
+        const allImages = imageService.getProductImages(productData)
+        console.log('[ProductDetailsPage] Imagens processadas:', allImages);
 
         product.value = {
           ...productData,
@@ -322,10 +331,14 @@ export default {
         selectedSize.value = null
         selectedWeight.value = null
         selectedImage.value = productData.image // Corrigido de mainImage para image
+        console.log(`[ProductDetailsPage] Imagem selecionada inicializada: ${selectedImage.value}`);
 
         // Verifica se deve mostrar a validação (parâmetro da URL)
         const showValidation = route.query.showValidation === 'true'
         showValidationErrors.value = showValidation
+        if (showValidation) {
+          console.log('[ProductDetailsPage] Mostrando validação de características');
+        }
 
         window.scrollTo(0, 0)
 
@@ -523,13 +536,22 @@ export default {
         size: this.selectedSize,
         weight: this.selectedWeight,
         quantity: quantity,
-        image: this.selectedImage || this.product.image
+        image: this.getProductImage(this.selectedImage || this.product.image),
+        foxpro_code: this.product.foxpro_code
       }
 
       this.cartStore.addItem(item)
 
       // Redirecionar para o checkout
       this.$router.push('/checkout')
+    },
+    // eslint-disable-next-line
+    getProductImage(imagePath) {
+      console.log(`[ProductDetailsPage] Obtendo imagem com caminho: ${imagePath}`);
+      console.log(`[ProductDetailsPage] FoxPro code do produto: ${this.product?.foxpro_code}`);
+      const imageUrl = imageService.getProductImageUrl(imagePath, this.product);
+      console.log(`[ProductDetailsPage] Caminho da imagem processado: ${imageUrl}`);
+      return imageUrl;
     },
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_BASE64
