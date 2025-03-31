@@ -1,29 +1,16 @@
 # Estágio de build
 FROM node:18-alpine AS builder
 
-# Receber argumentos de build
-ARG NODE_ENV=production
-ARG VUE_APP_API_URL
-ARG VUE_APP_TITLE
-
 WORKDIR /app
-
-# Definir variáveis de ambiente para o build
-ENV NODE_ENV=${NODE_ENV}
-ENV VUE_APP_API_URL=${VUE_APP_API_URL}
-ENV VUE_APP_TITLE=${VUE_APP_TITLE}
 
 # Copiar arquivos de dependências
 COPY package*.json ./
 
 # Instalar dependências
-RUN npm ci
+RUN npm install
 
 # Copiar código fonte
 COPY . .
-
-# Copiar arquivo de ambiente de produção
-COPY .env.production ./
 
 # Compilar o projeto para produção
 RUN npm run build
@@ -31,22 +18,13 @@ RUN npm run build
 # Estágio de produção com servidor Node.js
 FROM node:18-alpine
 
-# Receber argumentos de build
-ARG NODE_ENV=production
-ARG PORT=8080
-
 WORKDIR /app
 
-# Definir variáveis de ambiente para a produção
-ENV NODE_ENV=${NODE_ENV}
-ENV PORT=${PORT}
-
-# Instalar servidor estático global
-RUN npm install -g serve
+# Instalar servidor estático
+RUN npm init -y && npm install serve
 
 # Copiar arquivos de build do estágio anterior
 COPY --from=builder /app/dist ./public
-COPY --from=builder /app/.env.production ./
 
 # Criar diretórios para imagens
 RUN mkdir -p /app/public/images/products
@@ -56,8 +34,8 @@ RUN mkdir -p /app/public/images/categories
 RUN mkdir -p /app/public/images/banner
 RUN mkdir -p /app/public/images/flags
 
-# Expor porta (dinâmica baseada no argumento)
-EXPOSE ${PORT}
+# Expor porta
+EXPOSE 8088
 
 # Comando para iniciar o servidor
-CMD ["serve", "-s", "public", "-l", "${PORT}"]
+CMD ["npx", "serve", "-s", "public", "-l", "8088"]
