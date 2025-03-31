@@ -33,24 +33,35 @@
         <!-- Form -->
         <div class="bg-[#FAFAFA] p-8 mb-8">
           <form @submit.prevent="handleSubmit" class="space-y-6">
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.history.form.title') }}</label>
-              <input 
-                type="text"
-                v-model="formData.title"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
-                :placeholder="$t('content.history.form.titlePlaceholder')"
-              />
-            </div>
+            <!-- Campos para cada idioma -->
+            <div v-for="lang in availableLanguages" :key="lang" class="space-y-4">
+              <h3 class="font-archivo-narrow font-semibold text-lg">
+                {{ lang.toUpperCase() }}
+              </h3>
+              
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.history.form.title') }} ({{ lang.toUpperCase() }})
+                </label>
+                <input 
+                  type="text"
+                  v-model="formData[`title_${lang}`]"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  :placeholder="$t('content.history.form.titlePlaceholder')"
+                />
+              </div>
 
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.history.form.content') }}</label>
-              <textarea 
-                v-model="formData.content"
-                rows="4"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
-                :placeholder="$t('content.history.form.contentPlaceholder')"
-              ></textarea>
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.history.form.content') }} ({{ lang.toUpperCase() }})
+                </label>
+                <textarea 
+                  v-model="formData[`content_${lang}`]"
+                  rows="4"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
+                  :placeholder="$t('content.history.form.contentPlaceholder')"
+                ></textarea>
+              </div>
             </div>
 
             <div class="flex justify-end gap-4">
@@ -58,15 +69,15 @@
                 v-if="editingId"
                 type="button"
                 @click="cancelEdit"
-                class="bg-gray-200 text-black px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+                class="px-6 py-2 border-2 border-black/25 rounded font-archivo"
               >
                 {{ $t('content.history.form.cancel') }}
               </button>
               <button 
                 type="submit"
-                class="bg-black text-empire-yellow px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+                class="px-6 py-2 bg-empire-yellow text-black rounded font-archivo hover:opacity-90"
               >
-                {{ $t(editingId ? 'content.history.form.edit' : 'content.history.form.add') }}
+                {{ editingId ? $t('content.history.form.edit') : $t('content.history.form.add') }}
               </button>
             </div>
           </form>
@@ -75,7 +86,7 @@
         <!-- Lista de Cards -->
         <div class="space-y-6">
           <div 
-            v-for="(item, index) in historyItems" 
+            v-for="(item, index) in localizedHistoryItems" 
             :key="index"
             class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
             :class="{ 'opacity-50': !item.is_active }"
@@ -179,18 +190,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 /* eslint-disable */
 import { useRouter } from 'vue-router'
 /* eslint-enable */
 import api from '@/services/api'
 
-const { t } = useI18n()
-// eslint-disable-next-line no-unused-vars
-const router = useRouter()
+const { t, locale } = useI18n()
 const app = getCurrentInstance()
 const toast = app.appContext.config.globalProperties.$toast
+
+// Adicione a lista de idiomas disponíveis
+const availableLanguages = ['fr', 'en', 'pt']
 
 const loading = ref(false)
 const error = ref(null)
@@ -199,18 +211,26 @@ const editingId = ref(null) // Adicionando a definição do editingId
 const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 
+// Atualize o formData para incluir campos multilíngues
 const formData = ref({
-  title: '',
-  content: '',
+  title_fr: '',
+  content_fr: '',
+  title_en: '',
+  content_en: '',
+  title_pt: '',
+  content_pt: '',
   is_active: true,
   type: 'history'
 })
 
-// Função para resetar o formulário
 const resetForm = () => {
   formData.value = {
-    title: '',
-    content: '',
+    title_fr: '',
+    content_fr: '',
+    title_en: '',
+    content_en: '',
+    title_pt: '',
+    content_pt: '',
     is_active: true,
     type: 'history'
   }
@@ -265,8 +285,12 @@ const editItem = (index) => {
   const item = historyItems.value[index]
   editingId.value = item.id
   formData.value = {
-    title: item.title,
-    content: item.content,
+    title_fr: item.title_fr || '',
+    content_fr: item.content_fr || '',
+    title_en: item.title_en || '',
+    content_en: item.content_en || '',
+    title_pt: item.title_pt || '',
+    content_pt: item.content_pt || '',
     is_active: item.is_active,
     type: 'history'
   }
@@ -316,6 +340,15 @@ const confirmDelete = async () => {
     itemToDelete.value = null
   }
 }
+
+// Computed property para items localizados
+const localizedHistoryItems = computed(() => {
+  return historyItems.value.map(item => ({
+    ...item,
+    title: item[`title_${locale.value}`] || item.title_en || item.title,
+    content: item[`content_${locale.value}`] || item.content_en || item.content
+  }))
+})
 
 onMounted(() => {
   loadHistoryItems()

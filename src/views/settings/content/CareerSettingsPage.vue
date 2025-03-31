@@ -33,24 +33,35 @@
         <!-- Form -->
         <div class="bg-[#FAFAFA] p-8 mb-8">
           <form @submit.prevent="handleSubmit" class="space-y-6">
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.title') }}</label>
-              <input 
-                type="text"
-                v-model="formData.title"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
-                :placeholder="$t('content.career.form.titlePlaceholder')"
-              />
-            </div>
+            <!-- Campos para cada idioma -->
+            <div v-for="lang in availableLanguages" :key="lang" class="space-y-4">
+              <h3 class="font-archivo-narrow font-semibold text-lg">
+                {{ lang.toUpperCase() }}
+              </h3>
+              
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.career.form.title') }} ({{ lang.toUpperCase() }})
+                </label>
+                <input 
+                  type="text"
+                  v-model="formData[`title_${lang}`]"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  :placeholder="$t('content.career.form.titlePlaceholder')"
+                />
+              </div>
 
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.content') }}</label>
-              <textarea 
-                v-model="formData.content"
-                rows="4"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
-                :placeholder="$t('content.career.form.contentPlaceholder')"
-              ></textarea>
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.career.form.content') }} ({{ lang.toUpperCase() }})
+                </label>
+                <textarea 
+                  v-model="formData[`content_${lang}`]"
+                  rows="4"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
+                  :placeholder="$t('content.career.form.contentPlaceholder')"
+                ></textarea>
+              </div>
             </div>
 
             <div class="flex justify-end gap-4">
@@ -75,7 +86,7 @@
         <!-- Lista de Cards -->
         <div class="space-y-6">
           <div 
-            v-for="(item, index) in careerItems" 
+            v-for="(item, index) in localizedCareerItems" 
             :key="index"
             class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
             :class="{ 'opacity-50': !item.is_active }"
@@ -140,8 +151,12 @@
               </button>
             </div>
 
-            <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
-            <p class="text-black whitespace-pre-wrap">{{ item.content }}</p>
+            <h3 class="font-archivo-narrow font-semibold text-xl mb-4">
+              {{ item.title }}
+            </h3>
+            <p class="font-archivo text-base text-black/70">
+              {{ item.content }}
+            </p>
           </div>
         </div>
       </div>
@@ -175,11 +190,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const app = getCurrentInstance()
 const toast = app.appContext.config.globalProperties.$toast
 
@@ -190,17 +205,29 @@ const editingId = ref(null)
 const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 
+// Adicione a lista de idiomas disponíveis
+const availableLanguages = ['fr', 'en', 'pt']
+
+// Atualize o formData para incluir campos multilíngues
 const formData = ref({
-  title: '',
-  content: '',
+  title_fr: '',
+  content_fr: '',
+  title_en: '',
+  content_en: '',
+  title_pt: '',
+  content_pt: '',
   is_active: true,
   type: 'career'
 })
 
 const resetForm = () => {
   formData.value = {
-    title: '',
-    content: '',
+    title_fr: '',
+    content_fr: '',
+    title_en: '',
+    content_en: '',
+    title_pt: '',
+    content_pt: '',
     is_active: true,
     type: 'career'
   }
@@ -250,8 +277,12 @@ const editItem = (index) => {
   const item = careerItems.value[index]
   editingId.value = item.id
   formData.value = {
-    title: item.title,
-    content: item.content,
+    title_fr: item.title_fr || '',
+    content_fr: item.content_fr || '',
+    title_en: item.title_en || '',
+    content_en: item.content_en || '',
+    title_pt: item.title_pt || '',
+    content_pt: item.content_pt || '',
     is_active: item.is_active,
     type: 'career'
   }
@@ -300,6 +331,15 @@ const confirmDelete = async () => {
 
 onMounted(() => {
   loadCareerItems()
+})
+
+// Computed property para items localizados
+const localizedCareerItems = computed(() => {
+  return careerItems.value.map(item => ({
+    ...item,
+    title: item[`title_${locale.value}`] || item.title_en || item.title,
+    content: item[`content_${locale.value}`] || item.content_en || item.content
+  }))
 })
 </script>
 
