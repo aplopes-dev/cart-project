@@ -1,19 +1,40 @@
 # Estágio de build
-FROM node:18-alpine AS builder
+FROM node:18 AS builder
+
+# Definir argumentos para receber variáveis do docker-compose
+ARG VUE_APP_API_URL=https://empire.aplopes.com/api
+ARG VUE_APP_TITLE="Empire E-commerce"
+ARG VUE_APP_DEFAULT_LOCALE=pt
+ARG NODE_ENV=production
+ARG VUE_APP_CACHE_TIME=3600000
+ARG VUE_APP_DEFAULT_PAGE_SIZE=10
+ARG VUE_APP_REQUEST_TIMEOUT=30000
+
+# Definir variáveis de ambiente para o estágio de build usando os argumentos
+ENV VUE_APP_API_URL=${VUE_APP_API_URL}
+ENV VUE_APP_TITLE=${VUE_APP_TITLE}
+ENV VUE_APP_DEFAULT_LOCALE=${VUE_APP_DEFAULT_LOCALE}
+ENV NODE_ENV=${NODE_ENV}
+ENV VUE_APP_CACHE_TIME=${VUE_APP_CACHE_TIME}
+ENV VUE_APP_DEFAULT_PAGE_SIZE=${VUE_APP_DEFAULT_PAGE_SIZE}
+ENV VUE_APP_REQUEST_TIMEOUT=${VUE_APP_REQUEST_TIMEOUT}
 
 WORKDIR /app
 
 # Copiar arquivos de dependências
 COPY package*.json ./
 
-# Instalar dependências
-RUN npm install
+# Instalar todas as dependências, incluindo devDependencies
+RUN npm install --production=false
+
+# Instalar o Vue CLI e seus plugins globalmente
+RUN npm install -g @vue/cli
 
 # Copiar código fonte
 COPY . .
 
 # Compilar o projeto para produção
-RUN npm run build
+RUN node_modules/.bin/vue-cli-service build
 
 # Estágio de produção com servidor Node.js
 FROM node:18-alpine
@@ -26,16 +47,24 @@ RUN npm init -y && npm install serve
 # Copiar arquivos de build do estágio anterior
 COPY --from=builder /app/dist ./public
 
-# Criar diretórios para imagens
-RUN mkdir -p /app/public/images/products
-RUN mkdir -p /app/public/images/logo
-RUN mkdir -p /app/public/images/brands
-RUN mkdir -p /app/public/images/categories
-RUN mkdir -p /app/public/images/banner
-RUN mkdir -p /app/public/images/flags
+# Copiar arquivo de configuração do serve
+COPY serve.json ./public/
+
+# Criar diretórios para imagens com permissões adequadas
+RUN mkdir -p /app/public/images/products && chmod 777 /app/public/images/products
+RUN mkdir -p /app/public/images/logo && chmod 777 /app/public/images/logo
+RUN mkdir -p /app/public/images/brands && chmod 777 /app/public/images/brands
+RUN mkdir -p /app/public/images/categories && chmod 777 /app/public/images/categories
+RUN mkdir -p /app/public/images/banner && chmod 777 /app/public/images/banner
+RUN mkdir -p /app/public/images/flags && chmod 777 /app/public/images/flags
+
+# Criar um link simbólico para garantir acesso às imagens
+RUN ln -s /app/public/images /app/images
 
 # Expor porta
 EXPOSE 8088
 
 # Comando para iniciar o servidor
-CMD ["npx", "serve", "-s", "public", "-l", "8088"]
+# A opção -s configura o serve para lidar com o modo history do Vue Router
+# A opção -l configura a porta de escuta
+CMD ["npx", "serve", "-s", "public", "-l", "8088", "--single"]
