@@ -21,17 +21,23 @@ module.exports = {
       fontSize: {
         'heading': '34px',
         'nav': '20px',
+        'nav-mobile': '14px',
+        'xs': '12px',
       },
       lineHeight: {
         'heading': '40px',
         'nav': '30px',
+        'nav-mobile': '20px',
       },
       width: {
         'container': '1440px',
         'content': '1145px',
       },
       height: {
-        'footer': '360px',
+        'footer': {
+          'DEFAULT': '360px',
+          'mobile': '280px',
+        },
       },
     },
   },
