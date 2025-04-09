@@ -349,6 +349,7 @@
                       <div @click.stop>
                         <ProductQuantitySelector
                           @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
+                          class="text-responsive-add-cart"
                         />
                       </div>
                     </div>
@@ -1225,6 +1226,27 @@ input[type="range"]:nth-child(2) {
 }
 
 /* Removendo os estilos da linha cinza escuro */
+/* Estilos responsivos para o botão de adicionar ao carrinho */
+.text-responsive-add-cart :deep(.font-archivo-narrow) {
+  font-size: 18px; /* Tamanho base para mobile */
+  line-height: 24px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .text-responsive-add-cart :deep(.font-archivo-narrow) {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .text-responsive-add-cart :deep(.font-archivo-narrow) {
+    font-size: 34px;
+    line-height: 72px;
+  }
+}
 </style>
 
 
