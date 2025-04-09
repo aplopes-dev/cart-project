@@ -85,9 +85,9 @@
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="w-full bg-empire-yellow py-4 flex justify-center items-center"
+                  class="w-full bg-empire-yellow py-2 md:py-4 flex justify-center items-center"
                 >
-                  <span class="font-archivo-narrow font-semibold text-[28px] leading-[72px] text-black">
+                  <span class="font-archivo-narrow font-semibold text-lg md:text-[28px] leading-normal md:leading-[72px] text-black">
                     {{ isLoading ? $t('auth.loading') : $t('auth.signIn') }}
                   </span>
                 </button>
