@@ -188,7 +188,14 @@ const routes = [
     name: 'AccessDenied',
     component: AccessDeniedPage
   },
-
+  {
+    path: '/settings/content/home-images',
+    name: 'HomeImagesSettings',
+    component: () => import('@/views/settings/content/HomeImagesSettingsPage.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  }
 ]
 
 const router = createRouter({
