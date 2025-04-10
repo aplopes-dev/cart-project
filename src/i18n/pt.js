@@ -641,8 +641,8 @@ export default {
         descriptionPlaceholder: 'Digite a descrição da imagem...',
         image: 'Imagem',
         imageHint: 'Formatos aceitos: JPG, PNG (máx. 2MB)',
-        add: 'ADICIONAR IMAGEM',
-        update: 'ATUALIZAR IMAGEM',
+        add: 'Adicionar Imagem',
+        update: 'Atualizar Imagem',
         cancel: 'Cancelar',
         chooseFileButton: 'Escolher Arquivo',
         noFileSelected: 'Nenhum arquivo escolhido'
@@ -657,6 +657,18 @@ export default {
         updateError: 'Erro ao atualizar imagem',
         deleteError: 'Erro ao excluir imagem',
         visibilityError: 'Erro ao atualizar visibilidade da imagem'
+      },
+      errors: {
+        titleRequired: "O título é obrigatório",
+        descriptionRequired: "A descrição é obrigatória",
+        imageRequired: "A imagem é obrigatória",
+        fileTooLarge: "A imagem deve ter no máximo 5MB",
+        invalidFileType: "O arquivo deve ser uma imagem (jpg, png, gif)",
+        validationError: "Por favor, verifique os dados informados",
+        uploadFailed: "Erro ao enviar a imagem. Tente novamente."
+      },
+      success: {
+        imageUploaded: "Imagem enviada com sucesso!"
       }
     }
   },
