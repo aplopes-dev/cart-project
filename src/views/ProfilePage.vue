@@ -80,21 +80,26 @@
 
           <!-- Botões -->
           <div class="flex gap-4 pt-4">
+            <!-- Botão Salvar -->
             <button
               type="submit"
               :disabled="loading"
               class="flex-1 bg-empire-yellow py-4 flex justify-center items-center"
             >
-              <span class="font-archivo-narrow font-semibold text-[20px] leading-[24px] text-black">
+              <span class="font-archivo-narrow font-semibold text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px] text-black">
                 {{ loading ? $t('profile.saving') : $t('profile.save') }}
               </span>
             </button>
+
+            <!-- Botão Cancelar -->
             <button
               type="button"
               @click="goBack"
-              class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 px-8 hover:bg-gray-300 transition-colors"
+              class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 flex justify-center items-center hover:bg-gray-300 transition-colors"
             >
-              {{ $t('profile.cancel') }}
+              <span class="text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px]">
+                {{ $t('profile.cancel') }}
+              </span>
             </button>
           </div>
 

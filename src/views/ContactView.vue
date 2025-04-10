@@ -1,22 +1,22 @@
 <template>
   <div class="min-h-screen bg-white">
-    <div class="container mx-auto px-4 py-12">
+    <div class="container mx-auto px-4 py-6 sm:py-12">
       <div class="max-w-[1408px] mx-auto">
         <!-- Loading state -->
-        <div v-if="loading" class="flex justify-center items-center py-12">
+        <div v-if="loading" class="flex justify-center items-center py-8 sm:py-12">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
 
-        <div v-else class="grid md:grid-cols-2 gap-12">
+        <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <!-- Informações de Contato -->
-          <div class="space-y-6">
+          <div class="space-y-4 sm:space-y-6">
             <!-- Título da Página -->
-            <h1 class="font-archivo-narrow text-4xl font-bold mb-8">{{ $t('contact.title') }}</h1>
+            <h1 class="font-archivo-narrow text-3xl sm:text-4xl font-bold mb-6 sm:mb-8">{{ $t('contact.title') }}</h1>
 
             <!-- Card do Contato Principal -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
               <!-- Barra superior decorativa -->
-              <div class="h-2 bg-empire-yellow rounded-t-xl"></div>
+              <div class="h-1.5 sm:h-2 bg-empire-yellow rounded-t-xl"></div>
               
               <div class="p-6">
                 <!-- Nome da Empresa -->
@@ -31,64 +31,64 @@
 
                 <div class="space-y-4">
                   <!-- Telefone Principal -->
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                  <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
                         <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
                       </svg>
                     </div>
-                    <a :href="`tel:${companyData.phone}`" class="font-archivo text-lg hover:text-empire-yellow transition-colors">
+                    <a :href="`tel:${companyData.phone}`" class="font-archivo text-base sm:text-lg hover:text-empire-yellow transition-colors">
                       {{ companyData.phone }}
                     </a>
                   </div>
 
                   <!-- Email Principal -->
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                  <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                       </svg>
                     </div>
-                    <a :href="`mailto:${companyData.email}`" class="font-archivo text-lg hover:text-empire-yellow transition-colors">
+                    <a :href="`mailto:${companyData.email}`" class="font-archivo text-base sm:text-lg hover:text-empire-yellow transition-colors">
                       {{ companyData.email }}
                     </a>
                   </div>
 
                   <!-- Endereço Principal -->
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                  <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-empire-yellow/20 rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
                         <circle cx="12" cy="10" r="3"/>
                       </svg>
                     </div>
-                    <span class="font-archivo text-lg">{{ companyData.address }}</span>
+                    <span class="font-archivo text-base sm:text-lg">{{ companyData.address }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Cards dos Contatos Adicionais -->
-            <div v-if="contacts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div v-if="contacts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div 
                 v-for="contact in contacts" 
                 :key="contact.id"
                 class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <!-- Barra superior decorativa -->
-                <div class="h-2 bg-empire-yellow rounded-t-xl"></div>
+                <div class="h-1.5 sm:h-2 bg-empire-yellow rounded-t-xl"></div>
                 
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                   <!-- Nome e Departamento -->
-                  <div class="flex items-center gap-4 mb-6">
-                    <div class="w-10 h-10 bg-empire-yellow rounded-full flex items-center justify-center">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
+                  <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-empire-yellow rounded-full flex items-center justify-center">
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2">
                         <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                       </svg>
                     </div>
                     <div>
-                      <span class="font-archivo text-xl font-semibold block">{{ contact.name }}</span>
-                      <span class="text-gray-600 text-sm">{{ contact.department }}</span>
+                      <span class="font-archivo text-lg sm:text-xl font-semibold block">{{ contact.name }}</span>
+                      <span class="text-gray-600 text-xs sm:text-sm">{{ contact.department }}</span>
                     </div>
                   </div>
 
@@ -134,10 +134,10 @@
           </div>
 
           <!-- Formulário de Contato -->
-          <div class="bg-[#FAFAFA] p-8 rounded-lg">
-            <h2 class="font-archivo-narrow text-2xl text-black mb-6">{{ $t('contact.form.title') }}</h2>
+          <div class="bg-[#FAFAFA] p-4 sm:p-8 rounded-lg">
+            <h2 class="font-archivo-narrow text-xl sm:text-2xl text-black mb-4 sm:mb-6">{{ $t('contact.form.title') }}</h2>
           
-            <form @submit.prevent="handleSubmit" class="space-y-6" enctype="multipart/form-data">
+            <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6" enctype="multipart/form-data">
               <!-- Nome -->
               <div>
                 <label class="block font-archivo text-sm mb-2" for="name">
@@ -147,7 +147,7 @@
                   type="text" 
                   id="name"
                   v-model="formData.name"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
                   required
                 >
               </div>
@@ -161,7 +161,7 @@
                   type="email" 
                   id="email"
                   v-model="formData.email"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
                   required
                 >
               </div>
@@ -175,7 +175,7 @@
                   type="tel" 
                   id="phone"
                   v-model="formData.phone"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
                 >
               </div>
 
@@ -187,7 +187,7 @@
                 <select 
                   id="subject"
                   v-model="formData.subject"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
                   required
                 >
                   <option value="">{{ $t('contact.form.selectSubject') }}</option>
@@ -208,7 +208,7 @@
                   id="message"
                   v-model="formData.message"
                   rows="4"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
                   required
                 ></textarea>
               </div>
@@ -249,7 +249,7 @@
               <!-- Botão de Envio -->
               <button 
                 type="submit"
-                class="w-full bg-empire-yellow text-black font-archivo-narrow font-semibold text-xl py-4 rounded hover:bg-empire-yellow/90 transition-colors"
+                class="w-full bg-empire-yellow text-black font-archivo-narrow font-semibold text-lg sm:text-xl py-3 sm:py-4 rounded hover:bg-empire-yellow/90 transition-colors"
               >
                 {{ $t('contact.form.submit') }}
               </button>
