@@ -6,7 +6,7 @@
     <!-- Shopping Cart Section -->
     <section class="shopping-cart flex-grow overflow-y-auto">
       <div class="cart-header">
-        <h1 class="text-2xl md:text-[34px]">{{ $t('shoppingCart.title') }}</h1>
+        <h1 class="text-xl md:text-[34px]">{{ $t('shoppingCart.title') }}</h1>
         <button class="close-button" @click="cartStore.closeCart()" :aria-label="$t('cart.close')">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6l12 12" stroke="black" stroke-width="2" stroke-linecap="round"/>
@@ -16,9 +16,9 @@
 
       <template v-if="!cartStore.items.length">
         <div class="flex flex-col items-center justify-center h-full">
-          <p class="font-archivo-narrow text-xl text-black/70 mb-6">{{ $t('cart.emptyCart') }}</p>
+          <p class="font-archivo-narrow text-base md:text-xl text-black/70 mb-6">{{ $t('cart.emptyCart') }}</p>
           <button
-            class="w-full h-[50px] md:h-[60px] bg-empire-yellow font-archivo-narrow font-semibold text-xl md:text-2xl text-black"
+            class="w-full h-[45px] md:h-[60px] bg-empire-yellow font-archivo-narrow font-semibold text-lg md:text-2xl text-black"
             @click="goToCategories"
           >
             {{ $t('shoppingCart.continueShopping') }}
@@ -112,19 +112,19 @@
       <!-- Buttons Section -->
       <div v-if="cartStore.items.length" class="flex flex-col items-start w-full gap-2">
         <button
-          class="flex justify-center items-center w-full h-[50px] md:h-[60px] border-3 border-black"
+          class="flex justify-center items-center w-full h-[45px] md:h-[60px] border-2 border-black"
           @click="viewCart"
         >
-          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
+          <span class="font-archivo-narrow font-semibold text-lg md:text-2xl text-black">
             {{ $t('cart.viewCart') }}
           </span>
         </button>
 
         <button
-          class="flex justify-center items-center w-full h-[50px] md:h-[60px] bg-empire-yellow"
+          class="flex justify-center items-center w-full h-[45px] md:h-[60px] bg-empire-yellow"
           @click="checkout"
         >
-          <span class="font-archivo-narrow font-semibold text-xl md:text-2xl text-black">
+          <span class="font-archivo-narrow font-semibold text-lg md:text-2xl text-black">
             {{ $t('cart.checkout') }}
           </span>
         </button>
@@ -299,7 +299,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: calc(100vh - 160px);
+  height: calc(100vh - 140px);
   padding: 12px;
   background-color: white;
 }
@@ -308,7 +308,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
@@ -485,8 +485,12 @@ export default {
 
 @media (max-width: 768px) {
   .shopping-cart {
-    height: calc(100vh - 140px);
+    height: calc(100vh - 120px);
     padding: 8px;
+  }
+
+  .cart-header {
+    padding: 8px 0;
   }
 
   .cart-item {

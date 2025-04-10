@@ -78,16 +78,18 @@
                 :disabled="isLoading"
                 class="flex-1 bg-empire-yellow py-4 flex justify-center items-center"
               >
-                <span class="font-archivo-narrow font-semibold text-[20px] leading-[24px] text-black">
+                <span class="font-archivo-narrow font-semibold text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px] text-black">
                   {{ isLoading ? $t('common.loading') : $t('security.updatePassword') }}
                 </span>
               </button>
               <button
                 type="button"
                 @click="goBack"
-                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 px-8 hover:bg-gray-300 transition-colors"
+                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 flex justify-center items-center hover:bg-gray-300 transition-colors"
               >
-                {{ $t('common.cancel') }}
+                <span class="text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px]">
+                  {{ $t('common.cancel') }}
+                </span>
               </button>
             </div>
           </div>
