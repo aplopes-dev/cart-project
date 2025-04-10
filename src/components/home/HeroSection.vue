@@ -67,38 +67,7 @@ export default {
   data() {
     return {
       currentSlide: 0,
-      images: [
-        {
-          src: '/images/banner/hero-image-1.png',
-          alt: 'Hero Image 1',
-          title: 'Your Best Online Shop',
-          description: 'Discover our amazing collection of products with the best prices in the market.'
-        },
-        {
-          src: '/images/banner/hero-image-2.png',
-          alt: 'Hero Image 2',
-          title: 'Special Offers',
-          description: 'Get up to 50% off on selected items this week only!'
-        },
-        {
-          src: '/images/banner/hero-image-3.png',
-          alt: 'Hero Image 3',
-          title: 'New Collection',
-          description: 'Check out our latest arrivals and stay ahead of the trends.'
-        },
-        {
-          src: '/images/banner/hero-image-4.png',
-          alt: 'Hero Image 4',
-          title: 'Premium Quality',
-          description: 'Experience the difference with our premium quality products.'
-        },
-        {
-          src: '/images/banner/hero-image-5.png',
-          alt: 'Hero Image 5',
-          title: 'Free Shipping',
-          description: 'Enjoy free shipping on all orders over $50!'
-        }
-      ]
+      images: []
     }
   },
   methods: {
@@ -110,10 +79,26 @@ export default {
     },
     startAutoSlide() {
       setInterval(this.nextSlide, 5000)
+    },
+    async loadImages() {
+      try {
+        const response = await this.$api.get('/settings/home-images')
+        this.images = response.data.filter(image => image.is_active).map(image => ({
+          src: image.image_url,
+          alt: image.title,
+          title: image.title,
+          description: image.description
+        }))
+      } catch (error) {
+        console.error('Error loading hero images:', error)
+      }
     }
   },
-  mounted() {
-    this.startAutoSlide()
+  async mounted() {
+    await this.loadImages()
+    if (this.images.length > 0) {
+      this.startAutoSlide()
+    }
   }
 }
 </script>
