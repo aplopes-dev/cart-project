@@ -628,6 +628,36 @@ export default {
         deleteError: 'Erro ao excluir seção',
         visibilityError: 'Erro ao atualizar visibilidade da seção'
       }
+    },
+    homeImages: {
+      breadcrumb: 'Imagens da Página Inicial',
+      title: 'Imagens da Página Inicial',
+      description: 'Gerencie as imagens do carrossel da página inicial',
+      manage: 'Gerenciar imagens',
+      form: {
+        title: 'Título',
+        titlePlaceholder: 'Digite o título da imagem...',
+        description: 'Descrição',
+        descriptionPlaceholder: 'Digite a descrição da imagem...',
+        image: 'Imagem',
+        imageHint: 'Formatos aceitos: JPG, PNG (máx. 2MB)',
+        add: 'ADICIONAR IMAGEM',
+        update: 'ATUALIZAR IMAGEM',
+        cancel: 'Cancelar',
+        chooseFileButton: 'Escolher Arquivo',
+        noFileSelected: 'Nenhum arquivo escolhido'
+      },
+      messages: {
+        addSuccess: 'Imagem adicionada com sucesso',
+        updateSuccess: 'Imagem atualizada com sucesso',
+        deleteSuccess: 'Imagem excluída com sucesso',
+        visibilitySuccess: 'Visibilidade da imagem atualizada com sucesso',
+        loadError: 'Erro ao carregar imagens',
+        addError: 'Erro ao adicionar imagem',
+        updateError: 'Erro ao atualizar imagem',
+        deleteError: 'Erro ao excluir imagem',
+        visibilityError: 'Erro ao atualizar visibilidade da imagem'
+      }
     }
   },
   addresses: {
