@@ -71,6 +71,22 @@
               {{ $t('content.career.manage') }}
             </router-link>
           </div>
+
+          <!-- Card - Imagens da Home -->
+          <div class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 16l4-4 4 4 8-8"/>
+                <path d="M21 3v7h-7"/>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              </svg>
+              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('content.homeImages.title') }}</h2>
+            </div>
+            <p class="text-black/70 font-archivo text-base">{{ $t('content.homeImages.description') }}</p>
+            <router-link to="/settings/content/home-images" class="text-empire-yellow hover:underline mt-auto font-archivo">
+              {{ $t('content.homeImages.manage') }}
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
