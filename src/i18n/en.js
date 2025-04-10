@@ -646,8 +646,8 @@ export default {
         descriptionPlaceholder: 'Enter image description...',
         image: 'Image',
         imageHint: 'Accepted formats: JPG, PNG (max 2MB)',
-        add: 'ADD IMAGE',
-        update: 'UPDATE IMAGE',
+        add: 'Add Image',
+        update: 'Update Image',
         cancel: 'Cancel',
         chooseFileButton: 'Choose File',
         noFileSelected: 'No file chosen'
@@ -662,6 +662,18 @@ export default {
         updateError: 'Error updating image',
         deleteError: 'Error deleting image',
         visibilityError: 'Error updating image visibility'
+      },
+      errors: {
+        titleRequired: "Title is required",
+        descriptionRequired: "Description is required",
+        imageRequired: "Image is required",
+        fileTooLarge: "Image must be less than 5MB",
+        invalidFileType: "File must be an image (jpg, png, gif)",
+        validationError: "Please check the provided data",
+        uploadFailed: "Error uploading image. Please try again."
+      },
+      success: {
+        imageUploaded: "Image uploaded successfully!"
       }
     }
   },
