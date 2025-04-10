@@ -15,7 +15,7 @@
             </router-link>
           </div>
 
-          <div class="flex flex-col md:flex-row gap-8 md:gap-20 w-full md:w-auto">
+          <div class="flex flex-col md:flex-row gap-8 md:gap-28 w-full md:w-auto">
             <!-- Navigation Links -->
             <div class="w-full md:w-[120px]">
               <div class="flex flex-col gap-2">
@@ -66,7 +66,7 @@
             </div>
 
             <!-- Products Section -->
-            <div class="w-full md:w-[157px]">
+            <div class="w-full md:w-[240px]">
               <h3 class="font-archivo-narrow font-semibold text-heading leading-heading text-empire-yellow h-[40px] flex items-center">
                 {{ $t('footer.titles.products') }}
               </h3>
@@ -83,9 +83,12 @@
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">
-                      {{ category.name }}
+                  <div class="w-[200px] overflow-hidden">
+                    <span
+                      class="font-archivo font-normal text-nav leading-nav text-empire-white-70 whitespace-nowrap overflow-hidden truncate block"
+                      :title="category.name"
+                    >
+                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
                     </span>
                   </div>
                 </div>
@@ -173,9 +176,51 @@ const navigateToCategory = (categoryId) => {
 
 const loadCategories = async () => {
   try {
-    categories.value = await categoryService.getCategories()
+    console.log('[Footer] Iniciando carregamento de categorias')
+
+    // Buscar todas as categorias
+    const allCategories = await categoryService.getCategories()
+    console.log(`[Footer] Recebidas ${allCategories.length} categorias da API`)
+
+    // Buscar contagem de produtos por categoria
+    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
+    console.log(`[Footer] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+
+    // Criar um mapa de contagem de produtos por categoria
+    const productCountMap = {}
+    topCategories.forEach(category => {
+      productCountMap[category.id] = category.productCount
+    })
+
+    // Construir a árvore de categorias
+    const categoryTree = categoryService.buildCategoryTree(allCategories)
+
+    // Filtrar categorias sem produtos
+    const filteredCategoryTree = categoryService.filterCategoryTree(categoryTree, productCountMap)
+
+    // Extrair todas as categorias da árvore filtrada (incluindo subcategorias)
+    const extractAllCategories = (tree, result = []) => {
+      tree.forEach(category => {
+        result.push(category)
+        if (category.children && category.children.length > 0) {
+          extractAllCategories(category.children, result)
+        }
+      })
+      return result
+    }
+
+    const allFilteredCategories = extractAllCategories(filteredCategoryTree)
+    console.log(`[Footer] Total de categorias filtradas: ${allFilteredCategories.length}`)
+
+    // Ordenar por quantidade de produtos (decrescente) e pegar as 10 primeiras
+    categories.value = allFilteredCategories
+      .sort((a, b) => (productCountMap[b.id] || 0) - (productCountMap[a.id] || 0))
+      .slice(0, 10)
+
+    console.log(`[Footer] Exibindo as 10 categorias com mais produtos: ${categories.value.map(c => c.name).join(', ')}`)
   } catch (error) {
     console.error('Error loading categories:', error)
+    categories.value = []
   }
 }
 

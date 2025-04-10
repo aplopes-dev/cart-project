@@ -254,10 +254,10 @@
             <!-- Categories Dropdown -->
             <div
               v-if="showCategoryDropdown"
-              class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+              class="absolute top-full left-0 mt-2 w-64 bg-black rounded-md shadow-lg py-1 z-50 max-h-[500px] overflow-y-auto"
             >
               <!-- Loading State -->
-              <div v-if="loading" class="px-4 py-2 text-gray-500">
+              <div v-if="loading" class="px-4 py-2 text-empire-yellow">
                 {{ $t('common.loading') }}...
               </div>
 
@@ -267,20 +267,114 @@
               </div>
 
               <!-- Empty State -->
-              <div v-else-if="categories.length === 0" class="px-4 py-2 text-gray-500">
+              <div v-else-if="categories.length === 0" class="px-4 py-2 text-empire-yellow">
                 {{ $t('common.noCategories') }}
               </div>
 
-              <!-- Categories List -->
-              <div
-                v-else
-                v-for="category in categories"
-                :key="category.id"
-                @click="navigateToCategory(category.id)"
-                class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200"
-              >
-                {{ category.name }}
-              </div>
+              <!-- Categories List (Recursive Component) -->
+              <template v-else>
+                <div
+                  v-for="category in categories"
+                  :key="category.id"
+                  class="category-item"
+                >
+                  <div
+                    :class="[
+                      'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group',
+                      category.expanded ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black'
+                    ]"
+                  >
+                    <!-- Category Name (truncated if needed) -->
+                    <div
+                      class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                      :title="category.name"
+                      @click.stop="navigateToCategory(category.id)"
+                    >
+                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                    </div>
+
+                    <!-- Expand/Collapse Icon (only if has children) -->
+                    <div
+                      v-if="category.children && category.children.length > 0"
+                      @click.stop="toggleCategoryExpansion(category)"
+                      class="flex items-center justify-center w-6 h-6"
+                    >
+                      <svg
+                        class="w-4 h-4 transition-transform duration-200"
+                        :class="{ 'transform rotate-180': category.expanded }"
+                        viewBox="0 0 24 24"
+                        :fill="category.expanded ? '#000000' : '#FBBD1E'"
+                      >
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Subcategories (recursive) -->
+                  <div
+                    v-if="category.children && category.children.length > 0 && category.expanded"
+                    class="pl-4 bg-empire-yellow"
+                  >
+                    <div
+                      v-for="subcategory in category.children"
+                      :key="subcategory.id"
+                      class="category-item"
+                    >
+                      <div
+                        :class="[
+                          'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group',
+                          subcategory.expanded ? 'bg-empire-yellow text-black' : 'text-black hover:bg-yellow-400 hover:text-black'
+                        ]"
+                      >
+                        <!-- Subcategory Name (truncated if needed) -->
+                        <div
+                          class="whitespace-nowrap overflow-hidden truncate w-[160px]"
+                          :title="subcategory.name"
+                          @click.stop="navigateToCategory(subcategory.id)"
+                        >
+                          {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
+                        </div>
+
+                        <!-- Expand/Collapse Icon (only if has children) -->
+                        <div
+                          v-if="subcategory.children && subcategory.children.length > 0"
+                          @click.stop="toggleSubcategoryExpansion(subcategory, category)"
+                          class="flex items-center justify-center w-6 h-6"
+                        >
+                          <svg
+                            class="w-4 h-4 transition-transform duration-200"
+                            :class="{ 'transform rotate-180': subcategory.expanded }"
+                            viewBox="0 0 24 24"
+                            fill="#000000"
+                          >
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Third level categories -->
+                      <div
+                        v-if="subcategory.children && subcategory.children.length > 0 && subcategory.expanded"
+                        class="pl-4 bg-empire-yellow"
+                      >
+                        <div
+                          v-for="thirdLevel in subcategory.children"
+                          :key="thirdLevel.id"
+                          class="px-4 py-2 text-black hover:bg-yellow-400 cursor-pointer transition-colors duration-200"
+                          @click.stop="navigateToCategory(thirdLevel.id)"
+                        >
+                          <div
+                            class="whitespace-nowrap overflow-hidden truncate w-[140px]"
+                            :title="thirdLevel.name"
+                          >
+                            {{ thirdLevel.name.length > 16 ? thirdLevel.name.substring(0, 16) + '...' : thirdLevel.name }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
           <router-link to="/career" class="text-[15px] leading-7 text-white font-archivo font-medium">
@@ -461,14 +555,14 @@
                       :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
-                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_PATH"
                     />
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="font-archivo font-medium truncate transition-colors duration-200">
                       <span v-html="highlightMatch(product.name, searchQuery)"></span>
                     </div>
-                    <div class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
+                    <div v-if="showPrices" class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
                   </div>
                 </div>
               </div>
@@ -534,7 +628,7 @@
                       :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
-                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_PATH"
                     />
                   </div>
                   <div class="flex-1 min-w-0">
@@ -651,7 +745,7 @@
                 />
                 <div>
                   <div class="text-black font-archivo font-medium">{{ product.name }}</div>
-                  <div class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
+                  <div v-if="showPrices" class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
                 </div>
               </div>
             </div>
@@ -676,11 +770,13 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import CartWidget from '../cart/CartWidget.vue'
 import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
+import { settingsService } from '@/services/settingsService'
 import { debounce } from 'lodash'
-import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
 
@@ -688,7 +784,11 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const cartStore = useCartStore()
+const togglesStore = useFinancialTogglesStore()
 const { locale } = useI18n()
+
+// Variável para controlar a exibição de preços
+const showPrices = ref(true)
 
 // Modifique os computeds e adicione um ref para controle de estado
 const authState = ref({
@@ -727,6 +827,8 @@ const loading = ref(false)
 const error = ref(null)
 const isSearching = ref(false)
 const selectedIndex = ref(-1)
+const expandedCategoryId = ref(null) // ID da categoria atualmente expandida
+const expandedSubcategoryId = ref(null) // ID da subcategoria atualmente expandida
 
 // Adicione esta ref para os dados da empresa
 const companyData = ref({
@@ -735,6 +837,32 @@ const companyData = ref({
   phone: '',
   address: ''
 })
+
+// Função para carregar as configurações financeiras
+const loadFinancialSettings = async () => {
+  try {
+    const settings = await settingsService.getFinancialSettings()
+
+    // Carrega o estado dos toggles
+    togglesStore.loadTogglesFromBackend({
+      currency_code_enabled: settings.currency_code_enabled,
+      currency_symbol_enabled: settings.currency_symbol_enabled,
+      tax_rate_enabled: settings.tax_rate_enabled,
+      discount_percentage_enabled: settings.discount_percentage_enabled,
+      min_order_value_enabled: settings.min_order_value_enabled,
+      free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+      shipping_cost_enabled: settings.shipping_cost_enabled,
+      master_toggle_enabled: settings.master_toggle_enabled
+    })
+
+    // Atualiza a visibilidade dos preços com base no toggle master
+    showPrices.value = togglesStore.masterToggle
+    console.log('[Header] Master toggle state:', togglesStore.masterToggle)
+    console.log('[Header] Show prices:', showPrices.value)
+  } catch (error) {
+    console.error('Error loading financial settings:', error)
+  }
+}
 
 // Constantes
 const flagImages = {
@@ -843,9 +971,35 @@ const fetchCategories = async () => {
   try {
     loading.value = true
     error.value = null
-    const response = await categoryService.getCategories()
-    categories.value = response
-    console.log('Categories loaded:', categories.value)
+    console.log('[Header] Iniciando carregamento de categorias')
+
+    // Buscar todas as categorias
+    const allCategories = await categoryService.getCategories()
+    console.log(`[Header] Recebidas ${allCategories.length} categorias da API`)
+
+    // Buscar contagem de produtos por categoria
+    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
+    console.log(`[Header] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+
+    // Criar um mapa de contagem de produtos por categoria
+    const productCountMap = {}
+    topCategories.forEach(category => {
+      productCountMap[category.id] = category.productCount
+    })
+
+    // Construir a árvore de categorias
+    const categoryTree = categoryService.buildCategoryTree(allCategories)
+
+    // Filtrar categorias sem produtos
+    const filteredCategoryTree = categoryService.filterCategoryTree(categoryTree, productCountMap)
+
+    // Usar a árvore filtrada como categorias
+    categories.value = filteredCategoryTree
+
+    // Inicializar o estado de expansão para cada categoria
+    initializeCategoryExpansionState(categories.value)
+
+    console.log(`[Header] Árvore de categorias filtrada com ${categories.value.length} categorias raiz`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
@@ -853,6 +1007,59 @@ const fetchCategories = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Função para inicializar o estado de expansão das categorias
+const initializeCategoryExpansionState = (categories) => {
+  categories.forEach(category => {
+    // Definir o estado de expansão como false para todas as categorias
+    category.expanded = false
+
+    // Recursivamente inicializar subcategorias
+    if (category.children && category.children.length > 0) {
+      initializeCategoryExpansionState(category.children)
+    }
+  })
+}
+
+// Função para expandir uma categoria e contrair as outras
+const toggleCategoryExpansion = (category) => {
+  // Se a categoria já está expandida, apenas contrai
+  if (category.expanded) {
+    category.expanded = false
+    expandedCategoryId.value = null
+    return
+  }
+
+  // Contrai todas as categorias de primeiro nível
+  categories.value.forEach(cat => {
+    cat.expanded = false
+  })
+
+  // Expande apenas a categoria clicada
+  category.expanded = true
+  expandedCategoryId.value = category.id
+}
+
+// Função para expandir uma subcategoria e contrair as outras
+const toggleSubcategoryExpansion = (subcategory, parentCategory) => {
+  // Se a subcategoria já está expandida, apenas contrai
+  if (subcategory.expanded) {
+    subcategory.expanded = false
+    expandedSubcategoryId.value = null
+    return
+  }
+
+  // Contrai todas as subcategorias do mesmo pai
+  if (parentCategory.children) {
+    parentCategory.children.forEach(subcat => {
+      subcat.expanded = false
+    })
+  }
+
+  // Expande apenas a subcategoria clicada
+  subcategory.expanded = true
+  expandedSubcategoryId.value = subcategory.id
 }
 
 // Funções para o seletor de idiomas
@@ -921,6 +1128,10 @@ watch(
 
 // Lifecycle Hooks
 onMounted(async () => {
+  // Carregar configurações financeiras
+  await loadFinancialSettings()
+
+  // Carregar categorias
   await fetchCategories()
 
   const handleClickOutside = (event) => {
@@ -1069,6 +1280,12 @@ const handleSearchInput = (event) => {
     showAutocomplete.value = false
   }
 }
+
+// Watch para atualizar a visibilidade dos preços quando o toggle master mudar
+watch(() => togglesStore.masterToggle, (newValue) => {
+  console.log('[Header] Master toggle changed:', newValue)
+  showPrices.value = newValue
+})
 
 // Adicione ao watch existente
 watch(showAutocomplete, (newValue) => {

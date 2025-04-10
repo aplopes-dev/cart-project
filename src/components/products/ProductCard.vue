@@ -50,7 +50,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import { useCartStore } from '@/stores/cartStore'
 import { settingsService } from '@/services/settingsService'
 // eslint-disable-next-line no-unused-vars
@@ -128,7 +128,7 @@ export default defineComponent({
       return imageUrl;
     },
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.src = PLACEHOLDER_IMAGE_PATH
     },
     addToCart() {
       // Verifica se o produto tem características que precisam ser selecionadas

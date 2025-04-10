@@ -340,6 +340,7 @@
                           :src="item.image"
                           :alt="item.name"
                           class="w-[120px] h-[110px] object-cover"
+                          @error="handleImageError"
                         />
                       </router-link>
 
@@ -486,6 +487,7 @@ import { useAddressStore } from '@/stores/addressStore'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 export default {
   name: 'CheckoutPage',
@@ -711,6 +713,11 @@ export default {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
+    handleImageError(e) {
+      console.log('[CheckoutPage] Erro ao carregar imagem, usando placeholder');
+      e.target.src = PLACEHOLDER_IMAGE_PATH
+      e.target.onerror = null // Previne loop infinito
+    },
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
 
