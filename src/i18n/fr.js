@@ -637,11 +637,23 @@ export default {
         descriptionPlaceholder: 'Entrez la description de l\'image...',
         image: 'Image',
         imageHint: 'Formats acceptés : JPG, PNG (max 2Mo)',
-        add: 'AJOUTER UNE IMAGE',
-        update: 'METTRE À JOUR L\'IMAGE',
+        add: 'Ajouter une Image',
+        update: 'Mettre à jour l\'Image',
         cancel: 'Annuler',
         chooseFileButton: 'Choisir un fichier',
         noFileSelected: 'Aucun fichier choisi'
+      },
+      errors: {
+        titleRequired: "Le titre est obligatoire",
+        descriptionRequired: "La description est obligatoire",
+        imageRequired: "L'image est obligatoire",
+        fileTooLarge: "L'image doit faire moins de 5MB",
+        invalidFileType: "Le fichier doit être une image (jpg, png, gif)",
+        validationError: "Veuillez vérifier les données saisies",
+        uploadFailed: "Erreur lors de l'envoi de l'image. Veuillez réessayer."
+      },
+      success: {
+        imageUploaded: "Image téléchargée avec succès!"
       },
       messages: {
         addSuccess: 'Image ajoutée avec succès',
