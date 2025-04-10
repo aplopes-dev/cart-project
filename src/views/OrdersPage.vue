@@ -316,8 +316,7 @@ import { ref, onMounted, computed } from 'vue'
 import api from '@/services/api'
 import ColorCircle from '@/components/common/ColorCircle.vue'
 
-// Definindo a constante diretamente como é feito em outros componentes
-const PLACEHOLDER_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 const orders = ref([])
 const loading = ref(false)
@@ -425,7 +424,9 @@ onMounted(() => {
 })
 
 const handleImageError = (e) => {
-  e.target.src = PLACEHOLDER_IMAGE_BASE64
+  console.log('[OrdersPage] Erro ao carregar imagem, usando placeholder');
+  e.target.src = PLACEHOLDER_IMAGE_PATH
+  e.target.onerror = null // Previne loop infinito
 }
 
 // Verifica se o pedido foi feito sem preços (toggle master desabilitado)

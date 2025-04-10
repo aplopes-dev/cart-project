@@ -30,7 +30,12 @@
         <div class="cart-items">
           <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
             <router-link :to="`/product/${item.id}`">
-              <img :src="item.image" :alt="item.name" class="item-image" />
+              <img
+                :src="item.image"
+                :alt="item.name"
+                class="item-image"
+                @error="handleImageError"
+              />
             </router-link>
 
             <div class="item-details">
@@ -43,10 +48,10 @@
                 <p v-if="showPrices" class="price">{{ formatPrice(item.price) }}</p>
                 <div v-if="item.color || item.size || item.weight" class="item-characteristics">
                   <span v-if="item.color" class="characteristic">
-                    {{ $t('productDetails.selectColor') }}: 
+                    {{ $t('productDetails.selectColor') }}:
                     <span class="value flex items-center gap-2">
-                      <span 
-                        class="inline-block rounded-full border-2 transition-all duration-200" 
+                      <span
+                        class="inline-block rounded-full border-2 transition-all duration-200"
                         :style="{
                           backgroundColor: item.color,
                           borderColor: isWhiteOrLight(item.color) ? '#CCCCCC' : 'transparent',
@@ -142,6 +147,7 @@ import { settingsService } from '@/services/settingsService'
 import { productService } from '@/services/productService'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { useRouter } from 'vue-router'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 export default {
   name: 'CartWidget',
@@ -201,18 +207,23 @@ export default {
       this.cartStore.closeCart()
       this.$router.push('/categories')
     },
+    handleImageError(e) {
+      console.log('[CartWidget] Erro ao carregar imagem, usando placeholder');
+      e.target.src = PLACEHOLDER_IMAGE_PATH
+      e.target.onerror = null // Previne loop infinito
+    },
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
-      
+
       // Cores claras conhecidas
       const lightColors = ['#ffffff', '#fff', 'white', 'branco', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
       if (lightColors.includes(color.toLowerCase())) {
         return true;
       }
-      
+
       // Tenta extrair os componentes RGB
       let r, g, b;
-      
+
       if (color.startsWith('#')) {
         const hex = color.replace('#', '');
         if (hex.length === 3) {
@@ -233,14 +244,14 @@ export default {
           [r, g, b] = rgbValues.map(Number);
         }
       }
-      
+
       // Se conseguiu extrair os componentes RGB, calcula a luminosidade
       if (r !== undefined && g !== undefined && b !== undefined) {
         // Fórmula YIQ para determinar a luminosidade
         const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
         return yiq >= 128; // Valor de corte para cores claras
       }
-      
+
       // Se não conseguiu determinar, assume que não é clara
       return false;
     },
@@ -250,7 +261,7 @@ export default {
         try {
           // Busca os detalhes completos do produto para verificar as características
           const productDetails = await productService.getProductDetails(item.id)
-          
+
           // Verifica se o produto tem características e se todas foram selecionadas
           if (productCharacteristicsService.hasCharacteristics(productDetails)) {
             // Verifica se todas as características necessárias já foram selecionadas
@@ -259,7 +270,7 @@ export default {
               size: item.size,
               weight: item.weight
             }
-            
+
             // Se não tiver todas as características selecionadas, redireciona para a página de detalhes
             if (!productCharacteristicsService.allCharacteristicsSelected(productDetails, selectedCharacteristics)) {
               this.cartStore.closeCart() // Fecha o carrinho antes de redirecionar
@@ -274,7 +285,7 @@ export default {
           console.error('Erro ao buscar detalhes do produto:', error)
         }
       }
-      
+
       // Se não tiver características ou todas já estiverem selecionadas, aumenta a quantidade normalmente
       this.cartStore.updateQuantity(index, item.quantity + 1)
     }

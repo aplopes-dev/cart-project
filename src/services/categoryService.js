@@ -5,13 +5,158 @@ export const PLACEHOLDER_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANS
 export const categoryService = {
   async getCategories() {
     try {
+      // Usando o endpoint que retorna apenas categorias com produtos
       const response = await axios.get(`${API_URL}/categories`)
+      console.log('Categorias recebidas da API:', response.data.length)
       // Retorna diretamente response.data que já é o array de categorias
       return response.data
     } catch (error) {
       console.error('Error fetching categories:', error)
       throw error
     }
+  },
+
+  async getAllCategories() {
+    try {
+      // Endpoint para uso administrativo que retorna todas as categorias
+      const response = await axios.get(`${API_URL}/categories/admin/all`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching all categories:', error)
+      throw error
+    }
+  },
+
+  async getTopCategoriesWithMostProducts(limit = 10) {
+    try {
+      const response = await axios.get(`${API_URL}/categories/top/with-most-products`, {
+        params: { limit }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching top categories:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Verifica se uma categoria tem produtos diretamente ou através de suas subcategorias
+   * @param {Object} category - A categoria a ser verificada
+   * @param {Object} productCountMap - Mapa com a contagem de produtos por categoria
+   * @param {string} parentPath - Caminho hierárquico da categoria (para log)
+   * @returns {boolean} - True se a categoria tem produtos, false caso contrário
+   */
+  hasCategoryProducts(category, productCountMap = {}, parentPath = '') {
+    const currentPath = parentPath ? `${parentPath} > ${category.name}` : category.name
+
+    // Verifica se a categoria tem produtos diretamente
+    if (productCountMap[category.id] && productCountMap[category.id] > 0) {
+      console.log(`[categoryService] ✅ Categoria ${category.name} (ID: ${category.id}) tem ${productCountMap[category.id]} produtos diretamente. Caminho: ${currentPath}`)
+      return true
+    }
+
+    // Verifica se alguma subcategoria tem produtos
+    if (category.children && category.children.length > 0) {
+      console.log(`[categoryService] 🔍 Verificando ${category.children.length} subcategorias de ${category.name} (ID: ${category.id}). Caminho: ${currentPath}`)
+
+      let hasProductsInChildren = false
+      for (const child of category.children) {
+        // Chamada recursiva para verificar subcategorias
+        if (this.hasCategoryProducts(child, productCountMap, currentPath)) {
+          console.log(`[categoryService] ✅ Categoria ${category.name} (ID: ${category.id}) tem produtos através da subcategoria ${child.name} (ID: ${child.id}). Caminho: ${currentPath}`)
+          hasProductsInChildren = true
+          // Não retorna imediatamente para verificar todas as subcategorias (para fins de log)
+        }
+      }
+
+      if (hasProductsInChildren) {
+        return true
+      }
+    }
+
+    console.log(`[categoryService] ❌ Categoria ${category.name} (ID: ${category.id}) não tem produtos nem subcategorias com produtos. Caminho: ${currentPath}`)
+    return false
+  },
+
+  /**
+   * Organiza as categorias em uma estrutura hierárquica
+   * @param {Array} categories - Lista plana de categorias
+   * @returns {Array} - Lista hierárquica de categorias
+   */
+  buildCategoryTree(categories) {
+    if (!categories || !categories.length) return []
+
+    console.log(`[categoryService] Construindo árvore de categorias com ${categories.length} categorias`)
+
+    // Primeiro, criamos um mapa de todas as categorias por ID para fácil acesso
+    const categoryMap = {}
+    categories.forEach(category => {
+      // Inicializa a propriedade children como um array vazio
+      categoryMap[category.id] = { ...category, children: [], expanded: false }
+    })
+
+    // Depois, construímos a árvore
+    const rootCategories = []
+
+    categories.forEach(category => {
+      // Se a categoria tem um parent_id e esse parent existe no mapa
+      if (category.parent_id && categoryMap[category.parent_id]) {
+        // Adiciona esta categoria como filho do parent
+        categoryMap[category.parent_id].children.push(categoryMap[category.id])
+        console.log(`[categoryService] Categoria ${category.name} (ID: ${category.id}) adicionada como filha de ${categoryMap[category.parent_id].name} (ID: ${category.parent_id})`)
+      } else {
+        // Se não tem parent_id ou o parent não existe, é uma categoria raiz
+        rootCategories.push(categoryMap[category.id])
+        console.log(`[categoryService] Categoria ${category.name} (ID: ${category.id}) adicionada como categoria raiz`)
+      }
+    })
+
+    console.log(`[categoryService] Árvore construída com ${rootCategories.length} categorias raiz`)
+    return rootCategories
+  },
+
+  /**
+   * Filtra a árvore de categorias para manter apenas categorias com produtos
+   * @param {Array} categoryTree - Árvore de categorias
+   * @param {Object} productCountMap - Mapa com a contagem de produtos por categoria
+   * @returns {Array} - Árvore de categorias filtrada
+   */
+  filterCategoryTree(categoryTree, productCountMap = {}) {
+    if (!categoryTree || !categoryTree.length) return []
+
+    console.log(`[categoryService] Filtrando árvore de categorias com ${categoryTree.length} categorias raiz`)
+
+    // Função recursiva para filtrar a árvore
+    const filterTree = (tree) => {
+      return tree.filter(category => {
+        // Primeiro, filtra os filhos recursivamente
+        if (category.children && category.children.length > 0) {
+          category.children = filterTree(category.children)
+        }
+
+        // Verifica se a categoria tem produtos diretamente
+        const hasDirectProducts = productCountMap[category.id] && productCountMap[category.id] > 0
+
+        // Verifica se a categoria tem filhos com produtos
+        const hasChildrenWithProducts = category.children && category.children.length > 0
+
+        // Mantém a categoria se ela tem produtos diretamente OU se tem filhos (que já foram filtrados)
+        const shouldKeep = hasDirectProducts || hasChildrenWithProducts
+
+        if (shouldKeep) {
+          console.log(`[categoryService] ✅ Mantendo categoria ${category.name} (ID: ${category.id}) - Produtos diretos: ${hasDirectProducts ? 'Sim' : 'Não'}, Filhos com produtos: ${hasChildrenWithProducts ? 'Sim' : 'Não'}`)
+        } else {
+          console.log(`[categoryService] ❌ Removendo categoria ${category.name} (ID: ${category.id}) - Sem produtos e sem filhos com produtos`)
+        }
+
+        return shouldKeep
+      })
+    }
+
+    const filteredTree = filterTree(categoryTree)
+    console.log(`[categoryService] Árvore filtrada com ${filteredTree.length} categorias raiz`)
+
+    return filteredTree
   }
 }
 

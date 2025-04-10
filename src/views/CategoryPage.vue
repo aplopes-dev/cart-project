@@ -18,27 +18,13 @@
                   </div>
                 </div>
 
-                <!-- Lista de Categorias -->
-                <div class="border border-[#FAFAFA] transform rotate-[0.21deg] mb-12">
-                  <div class="flex flex-col gap-3">
-                    <div
-                      v-for="category in categories"
-                      :key="category.id"
-                      class="flex items-center px-6 py-1 gap-3 h-[24.09px] cursor-pointer hover:bg-gray-50"
-                      :class="{ 'selected-category': selectedCategory === category.id }"
-                      @click="selectCategory(category.id)"
-                    >
-                      <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                      </svg>
-                      <span
-                        class="font-archivo text-[20px] leading-[22px]"
-                        :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
-                      >
-                        {{ category.name }}
-                      </span>
-                    </div>
-                  </div>
+                <!-- Lista de Categorias Hierárquica -->
+                <div class="mb-12 category-filter-container">
+                  <CategoryTree
+                    :categories="categoryTree"
+                    :selected-category="selectedCategory"
+                    @select="selectCategory"
+                  />
                 </div>
               </div>
 
@@ -120,7 +106,7 @@
                           v-model="selectedBrands"
                           class="w-6 h-6 accent-[#FBBD1E]"
                         >
-                        <span class="font-archivo text-[20px] leading-[22px] text-black/70">
+                        <span class="font-archivo text-[16px] leading-[18px] text-black/70">
                           {{ brand.name }}
                         </span>
                       </label>
@@ -207,27 +193,13 @@
                   {{ $t('categoryPage.categories') }}
                 </h3>
               </div>
-              <div class="border border-[#FAFAFA] p-4">
-                <!-- Conteúdo do filtro de categorias -->
-                <div class="flex flex-col gap-3">
-                  <div
-                    v-for="category in categories"
-                    :key="category.id"
-                    class="flex items-center gap-3 cursor-pointer"
-                    :class="{ 'selected-category': selectedCategory === category.id }"
-                    @click="selectCategory(category.id)"
-                  >
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" :fill="selectedCategory === category.id ? '#FBBD1E' : '#000000'">
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                    </svg>
-                    <span
-                      class="font-archivo text-[20px] leading-[22px]"
-                      :class="selectedCategory === category.id ? 'text-[#FBBD1E]' : 'text-black/70'"
-                    >
-                      {{ category.name }}
-                    </span>
-                  </div>
-                </div>
+              <div class="category-filter-container-mobile">
+                <!-- Conteúdo do filtro de categorias hierárquico -->
+                <CategoryTree
+                  :categories="categoryTree"
+                  :selected-category="selectedCategory"
+                  @select="selectCategory"
+                />
               </div>
             </div>
 
@@ -518,7 +490,8 @@ import { categoryService } from '@/services/categoryService'
 import { settingsService } from '@/services/settingsService'
 import { imageService } from '@/services/imageService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
-import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import CategoryTree from '@/components/category/CategoryTree.vue'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import { debounce } from 'lodash'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
@@ -537,6 +510,7 @@ const products = ref([])
 const loading = ref(true)
 const error = ref(null)
 const categories = ref([])
+const categoryTree = ref([])
 const selectedCategory = ref(null)
 const selectedBrands = ref([])
 const brands = ref([])
@@ -608,18 +582,29 @@ const fetchFilteredProducts = async () => {
   try {
     loading.value = true
 
+    // Prepara os parâmetros de filtro
+    const filterParams = {
+      categoryId: selectedCategory.value,
+      brands: selectedBrands.value,
+      page: currentPage.value,
+      limit: itemsPerPage.value,
+      sortBy: sortBy.value
+    }
+
+    // Adiciona os parâmetros de preço apenas se o toggle master estiver habilitado
+    if (showPrices.value) {
+      filterParams.minPrice = priceRange.value[0]
+      filterParams.maxPrice = priceRange.value[1]
+    }
+
+    console.log('Buscando produtos com os seguintes filtros:', filterParams)
+
     const [productsResponse, settings] = await Promise.all([
-      productService.getProducts({
-        categoryId: selectedCategory.value,
-        brands: selectedBrands.value,
-        minPrice: priceRange.value[0],
-        maxPrice: priceRange.value[1],
-        page: currentPage.value,
-        limit: itemsPerPage.value,
-        sortBy: sortBy.value
-      }),
+      productService.getProducts(filterParams),
       settingsService.getFinancialSettings()
     ])
+
+    console.log('Resposta da API de produtos:', productsResponse)
 
     products.value = productsResponse.items.map(product => ({
       ...product,
@@ -727,25 +712,72 @@ const itemRange = computed(() => {
 
 // Watched para reagir às mudanças nos filtros
 watch([selectedBrands, selectedCategory], async () => {
+  console.log('Filtros alterados:', {
+    selectedBrands: selectedBrands.value,
+    selectedCategory: selectedCategory.value
+  });
+
   currentPage.value = 1;
 
   // Se houver uma categoria selecionada, atualiza o preço máximo
   if (selectedCategory.value) {
+    console.log('Atualizando preço máximo para a categoria:', selectedCategory.value);
     await updateMaxPrice();
   }
 
+  console.log('Buscando produtos após mudança nos filtros');
   await fetchFilteredProducts();
 }, { deep: true })
 
 const fetchCategories = async () => {
   try {
+    console.log('[CategoryPage] Iniciando busca de categorias')
+
+    // Buscar categorias da API
     const response = await categoryService.getCategories()
     categories.value = response || []
-    console.log('Categories loaded:', categories.value)
+    console.log(`[CategoryPage] Recebidas ${categories.value.length} categorias da API`)
+
+    // Buscar contagem de produtos por categoria
+    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
+    console.log(`[CategoryPage] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+
+    // Criar um mapa de contagem de produtos por categoria
+    const productCountMap = {}
+    topCategories.forEach(category => {
+      productCountMap[category.id] = category.productCount
+      console.log(`[CategoryPage] Categoria ${category.name} (ID: ${category.id}) tem ${category.productCount} produtos`)
+    })
+
+    // Construir a árvore de categorias completa
+    const fullCategoryTree = categoryService.buildCategoryTree(categories.value)
+    console.log(`[CategoryPage] Árvore de categorias completa construída com ${fullCategoryTree.length} categorias raiz`)
+
+    // Usar o novo método para filtrar a árvore de categorias
+    categoryTree.value = categoryService.filterCategoryTree(fullCategoryTree, productCountMap)
+    console.log(`[CategoryPage] Árvore de categorias filtrada com ${categoryTree.value.length} categorias raiz`)
+
+    // Listar categorias filtradas para debug
+    const listCategoriesWithPath = (tree, path = '') => {
+      tree.forEach(category => {
+        const currentPath = path ? `${path} > ${category.name}` : category.name
+        console.log(`[CategoryPage] Categoria mantida: ${currentPath} (ID: ${category.id})`)
+
+        if (category.children && category.children.length > 0) {
+          listCategoriesWithPath(category.children, currentPath)
+        }
+      })
+    }
+
+    listCategoriesWithPath(categoryTree.value)
+
+    console.log(`[CategoryPage] Total de categorias carregadas: ${categories.value.length}`)
+    console.log(`[CategoryPage] Total de categorias raiz após filtragem: ${categoryTree.value.length}`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
     categories.value = []
+    categoryTree.value = []
   }
 }
 
@@ -768,6 +800,12 @@ const fetchBrands = async (categoryId = null) => {
 
 // Função para atualizar o preço máximo com base na categoria selecionada
 const updateMaxPrice = async () => {
+  // Se o toggle master estiver desabilitado, não atualiza o preço máximo
+  if (!showPrices.value) {
+    console.log('Preços desabilitados, não atualizando o preço máximo');
+    return;
+  }
+
   try {
     // Busca o preço máximo dos produtos da categoria selecionada
     const categoryMaxPrice = await productService.getMaxPrice(selectedCategory.value, selectedBrands.value);
@@ -805,7 +843,7 @@ const getProductImage = (product) => {
 
 const handleImageError = (e) => {
   console.log('[CategoryPage] Erro ao carregar imagem, usando placeholder');
-  e.target.src = PLACEHOLDER_IMAGE_BASE64
+  e.target.src = PLACEHOLDER_IMAGE_PATH
   e.target.onerror = null // Previne loop infinito
 }
 
@@ -828,7 +866,11 @@ const selectCategory = async (categoryId) => {
   // Atualiza o preço máximo com base na categoria selecionada
   await updateMaxPrice();
 
-  // fetchFilteredProducts será chamado automaticamente pelo watcher
+  // Busca produtos filtrados explicitamente (além do watcher)
+  await fetchFilteredProducts();
+
+  console.log('Categoria selecionada:', categoryId);
+  console.log('Buscando produtos para a categoria:', selectedCategory.value);
 }
 
 const handleAddToCart = (product, quantity) => {
@@ -872,32 +914,106 @@ const handlePageChange = async (page) => {
 
 // Função para selecionar a primeira categoria
 const selectFirstCategory = () => {
-  if (categories.value && categories.value.length > 0) {
+  console.log('[CategoryPage] Tentando selecionar a primeira categoria')
+
+  // Verifica se há categorias filtradas disponíveis
+  if (categoryTree.value && categoryTree.value.length > 0) {
+    console.log(`[CategoryPage] Selecionando primeira categoria da árvore filtrada: ${categoryTree.value[0].name} (ID: ${categoryTree.value[0].id})`)
+    selectCategory(categoryTree.value[0].id)
+  } else if (categories.value && categories.value.length > 0) {
+    // Fallback para o comportamento anterior
+    console.log(`[CategoryPage] Nenhuma categoria filtrada disponível, usando primeira categoria não filtrada: ${categories.value[0].name} (ID: ${categories.value[0].id})`)
     selectCategory(categories.value[0].id)
+  } else {
+    console.log('[CategoryPage] Nenhuma categoria disponível para seleção')
   }
 }
 
 // Função para selecionar categoria por slug
 const selectCategoryBySlug = async (slug) => {
-  if (categories.value && categories.value.length > 0) {
-    const category = categories.value.find(cat => cat.id === slug)
-    if (category) {
-      await selectCategory(category.id)
+  console.log(`[CategoryPage] Tentando selecionar categoria por slug: ${slug}`)
+
+  // Primeiro, tenta encontrar a categoria na árvore filtrada
+  if (categoryTree.value && categoryTree.value.length > 0) {
+    console.log(`[CategoryPage] Buscando categoria com ID ${slug} na árvore filtrada`)
+
+    // Função auxiliar para buscar categoria na árvore
+    const findCategoryInTree = (tree, id) => {
+      for (const node of tree) {
+        if (node.id === id) {
+          return node
+        }
+        if (node.children && node.children.length > 0) {
+          const found = findCategoryInTree(node.children, id)
+          if (found) return found
+        }
+      }
+      return null
+    }
+
+    const categoryInTree = findCategoryInTree(categoryTree.value, slug)
+
+    if (categoryInTree) {
+      console.log(`[CategoryPage] Categoria encontrada na árvore filtrada: ${categoryInTree.name} (ID: ${categoryInTree.id})`)
+      await selectCategory(categoryInTree.id)
+      return
+    } else {
+      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada na árvore filtrada`)
     }
   }
+
+  // Se não encontrou na árvore filtrada, tenta nas categorias originais
+  if (categories.value && categories.value.length > 0) {
+    console.log(`[CategoryPage] Buscando categoria com ID ${slug} nas categorias originais`)
+    const category = categories.value.find(cat => cat.id === slug)
+
+    if (category) {
+      console.log(`[CategoryPage] Categoria encontrada nas categorias originais: ${category.name} (ID: ${category.id})`)
+      console.log(`[CategoryPage] Verificando se esta categoria tem produtos...`)
+
+      // Buscar contagem de produtos para esta categoria
+      const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
+      const productCountMap = {}
+      topCategories.forEach(cat => {
+        productCountMap[cat.id] = cat.productCount
+      })
+
+      // Construir a árvore para esta categoria
+      const singleCategoryTree = categoryService.buildCategoryTree([category])
+
+      if (singleCategoryTree.length > 0 && categoryService.hasCategoryProducts(singleCategoryTree[0], productCountMap)) {
+        console.log(`[CategoryPage] Categoria ${category.name} tem produtos, selecionando-a`)
+        await selectCategory(category.id)
+        return
+      } else {
+        console.log(`[CategoryPage] Categoria ${category.name} não tem produtos, selecionando a primeira categoria filtrada`)
+      }
+    } else {
+      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada nas categorias originais`)
+    }
+  }
+
+  // Se chegou até aqui, seleciona a primeira categoria filtrada
+  console.log(`[CategoryPage] Selecionando a primeira categoria filtrada como fallback`)
+  selectFirstCategory()
 }
 
 onMounted(async () => {
   try {
-    await loadFinancialSettings() // Adicionar esta linha
+    console.log('Inicializando a página de categorias')
+    await loadFinancialSettings()
     await fetchCategories()
+    console.log('Categorias carregadas:', categories.value)
 
     if (route.params.slug) {
+      console.log('Slug encontrado na rota:', route.params.slug)
       await selectCategoryBySlug(route.params.slug)
     } else {
+      console.log('Nenhum slug na rota, selecionando a primeira categoria')
       selectFirstCategory()
     }
 
+    console.log('Categoria selecionada após inicialização:', selectedCategory.value)
     await fetchFilteredProducts()
   } catch (err) {
     console.error('Error in initialization:', err)
@@ -909,11 +1025,15 @@ onMounted(async () => {
 watch(
   () => route.params.slug,
   async (newSlug) => {
+    console.log('Slug da rota alterado para:', newSlug)
     if (newSlug) {
       await selectCategoryBySlug(newSlug)
     } else {
+      console.log('Slug removido da rota, selecionando a primeira categoria')
       selectFirstCategory()
     }
+    // Força a busca de produtos após a mudança de categoria
+    await fetchFilteredProducts()
   }
 )
 
@@ -996,7 +1116,7 @@ export default {
   },
   methods: {
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null
     },
     addToCart(product, quantity) {
@@ -1225,6 +1345,52 @@ input[type="range"]:nth-child(2) {
 }
 
 /* Removendo os estilos da linha cinza escuro */
+
+/* Estilos para o contêiner de filtro de categorias */
+.category-filter-container {
+  background: linear-gradient(145deg, #ffffff, #f8f8f8);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(251, 189, 30, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-filter-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #FBBD1E, rgba(251, 189, 30, 0.3));
+  border-radius: 4px 0 0 4px;
+}
+
+.category-filter-container-mobile {
+  background: linear-gradient(145deg, #ffffff, #f8f8f8);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(251, 189, 30, 0.1);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.category-filter-container-mobile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #FBBD1E, rgba(251, 189, 30, 0.3));
+  border-radius: 4px 0 0 4px;
+}
 </style>
 
 

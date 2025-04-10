@@ -218,7 +218,7 @@
 <script>
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import BestSeller from '@/components/product/BestSeller.vue'
-import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { imageService } from '@/services/imageService'
@@ -554,7 +554,7 @@ export default {
       return imageUrl;
     },
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_BASE64
+      e.target.src = PLACEHOLDER_IMAGE_PATH
     },
     showSuccessToast() {
       this.showToast = true

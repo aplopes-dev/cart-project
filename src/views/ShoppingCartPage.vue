@@ -37,7 +37,12 @@
             <div class="col-span-1 md:col-span-6">
               <div class="flex gap-4 md:gap-8">
                 <router-link :to="`/product/${item.id}`">
-                  <img :src="item.image" :alt="item.name" class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"/>
+                  <img
+                    :src="item.image"
+                    :alt="item.name"
+                    class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"
+                    @error="handleImageError"
+                  />
                 </router-link>
                 <div class="flex flex-col">
                   <h3 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] md:leading-[40px]">
@@ -178,6 +183,7 @@ import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import ColorCircle from '@/components/common/ColorCircle.vue'
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
@@ -312,6 +318,11 @@ export default defineComponent({
     }
   },
   methods: {
+    handleImageError(e) {
+      console.log('[ShoppingCartPage] Erro ao carregar imagem, usando placeholder');
+      e.target.src = PLACEHOLDER_IMAGE_PATH
+      e.target.onerror = null // Previne loop infinito
+    },
     toggleNotes() {
       this.showNotes = !this.showNotes
     },
