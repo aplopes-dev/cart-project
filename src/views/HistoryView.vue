@@ -4,7 +4,7 @@
       <h1 class="font-archivo-narrow text-4xl md:text-5xl text-black text-center mb-12">
         {{ $t('history.title') }}
       </h1>
-      
+
       <div v-if="loading" class="text-center">
         {{ $t('history.loading') }}
       </div>
@@ -14,8 +14,8 @@
       </div>
 
       <div v-else class="space-y-8">
-        <div 
-          v-for="item in localizedHistoryItems" 
+        <div
+          v-for="item in localizedHistoryItems"
           :key="item.id"
           class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg"
         >
@@ -28,12 +28,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
-import { Toast } from '@/plugins/toast'
 
 const { t, locale } = useI18n()
+const app = getCurrentInstance()
+const toast = app.appContext.config.globalProperties.$toast
 
 const loading = ref(false)
 const error = ref(null)
@@ -51,14 +52,14 @@ const localizedHistoryItems = computed(() => {
 const fetchHistory = async () => {
   loading.value = true
   error.value = null
-  
+
   try {
     const response = await api.get('/settings/history')
     historyItems.value = response.data
   } catch (err) {
     console.error('Error fetching history:', err)
     error.value = t('history.fetchError')
-    Toast.error(error.value)
+    toast.error(error.value)
   } finally {
     loading.value = false
   }

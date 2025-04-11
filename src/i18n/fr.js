@@ -252,7 +252,8 @@ export default {
       invalidFileType: 'Type de fichier invalide. Veuillez télécharger un document PDF ou Word.',
       fileTooLarge: 'Le fichier est trop volumineux. La taille maximale est de 5MB.',
       submitSuccess: 'Votre message a été envoyé avec succès!',
-      submitError: 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer.'
+      submitError: 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer.',
+      jobApplicationMessage: 'Je souhaite postuler pour le poste'
     }
   },
   productDetails: {
@@ -559,7 +560,7 @@ export default {
         titlePlaceholder: "Entrez le titre",
         content: "Contenu",
         contentPlaceholder: "Entrez le contenu",
-        add: "Ajouter",
+        add: "AJOUTER UNE SECTION",
         edit: "Sauvegarder",
         cancel: "Annuler"
       },

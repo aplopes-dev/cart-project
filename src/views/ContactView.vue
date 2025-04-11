@@ -17,7 +17,7 @@
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
               <!-- Barra superior decorativa -->
               <div class="h-1.5 sm:h-2 bg-empire-yellow rounded-t-xl"></div>
-              
+
               <div class="p-6">
                 <!-- Nome da Empresa -->
                 <div class="flex items-center gap-4 mb-6">
@@ -70,14 +70,14 @@
 
             <!-- Cards dos Contatos Adicionais -->
             <div v-if="contacts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div 
-                v-for="contact in contacts" 
+              <div
+                v-for="contact in contacts"
                 :key="contact.id"
                 class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <!-- Barra superior decorativa -->
                 <div class="h-1.5 sm:h-2 bg-empire-yellow rounded-t-xl"></div>
-                
+
                 <div class="p-4 sm:p-6">
                   <!-- Nome e Departamento -->
                   <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -136,15 +136,15 @@
           <!-- Formulário de Contato -->
           <div class="bg-[#FAFAFA] p-4 sm:p-8 rounded-lg">
             <h2 class="font-archivo-narrow text-xl sm:text-2xl text-black mb-4 sm:mb-6">{{ $t('contact.form.title') }}</h2>
-          
+
             <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6" enctype="multipart/form-data">
               <!-- Nome -->
               <div>
                 <label class="block font-archivo text-sm mb-2" for="name">
                   {{ $t('contact.form.name') }}
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   id="name"
                   v-model="formData.name"
                   class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
@@ -157,8 +157,8 @@
                 <label class="block font-archivo text-sm mb-2" for="email">
                   {{ $t('contact.form.email') }}
                 </label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   id="email"
                   v-model="formData.email"
                   class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
@@ -171,8 +171,8 @@
                 <label class="block font-archivo text-sm mb-2" for="phone">
                   {{ $t('contact.form.phone') }}
                 </label>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
                   id="phone"
                   v-model="formData.phone"
                   class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
@@ -184,7 +184,7 @@
                 <label class="block font-archivo text-sm mb-2" for="subject">
                   {{ $t('contact.form.subject') }}
                 </label>
-                <select 
+                <select
                   id="subject"
                   v-model="formData.subject"
                   class="w-full p-3 sm:p-4 border-2 border-black/25 rounded font-archivo text-sm sm:text-base bg-white focus:border-empire-yellow focus:outline-none"
@@ -204,7 +204,7 @@
                 <label class="block font-archivo text-sm mb-2" for="message">
                   {{ $t('contact.form.message') }}
                 </label>
-                <textarea 
+                <textarea
                   id="message"
                   v-model="formData.message"
                   rows="4"
@@ -219,7 +219,7 @@
                   {{ $t('contact.form.resume') }} *
                 </label>
                 <div class="flex items-center gap-2">
-                  <input 
+                  <input
                     type="file"
                     id="resume"
                     ref="resumeInput"
@@ -227,7 +227,7 @@
                     accept=".pdf,.doc,.docx"
                     class="hidden"
                   >
-                  <button 
+                  <button
                     type="button"
                     @click="$refs.resumeInput.click()"
                     class="px-4 py-2 border-2 border-black/25 rounded font-archivo text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
@@ -247,7 +247,7 @@
               </div>
 
               <!-- Botão de Envio -->
-              <button 
+              <button
                 type="submit"
                 class="w-full bg-empire-yellow text-black font-archivo-narrow font-semibold text-lg sm:text-xl py-3 sm:py-4 rounded hover:bg-empire-yellow/90 transition-colors"
               >
@@ -265,11 +265,13 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getCurrentInstance } from 'vue'
+import { useRoute } from 'vue-router'
 import api from '@/services/api'
 
 const { t } = useI18n()
 const app = getCurrentInstance()
 const toast = app.appContext.config.globalProperties.$toast
+const route = useRoute()
 
 const loading = ref(false)
 const companyData = ref({
@@ -310,6 +312,14 @@ const loadCompanyData = async () => {
 
 onMounted(() => {
   loadCompanyData()
+
+  // Verificar se há parâmetros de URL para preencher o formulário
+  if (route.query.subject === 'job_application') {
+    formData.value.subject = 'job_application'
+    if (route.query.position) {
+      formData.value.message = `${t('contact.form.jobApplicationMessage')}: ${route.query.position}\n\n`
+    }
+  }
 })
 
 const formData = ref({
@@ -369,7 +379,7 @@ const handleSubmit = async () => {
   formDataToSend.append('phone', formData.value.phone)
   formDataToSend.append('subject', formData.value.subject)
   formDataToSend.append('message', formData.value.message)
-  
+
   if (resumeFile.value) {
     formDataToSend.append('resume', resumeFile.value)
   }

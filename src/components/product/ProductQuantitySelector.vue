@@ -3,8 +3,8 @@
     <!-- Contador de Quantidade -->
     <div class="w-full sm:w-[150px] h-[45px] sm:h-[73.31px]">
       <div class="flex flex-row justify-between items-center h-full border-2 border-black bg-white">
-        <button 
-          @click="decrementQuantity" 
+        <button
+          @click="decrementQuantity"
           class="flex items-center justify-center w-[30px] sm:w-[40px] h-full hover:bg-black/5"
           :aria-label="$t('cart.decrease')"
         >
@@ -12,14 +12,14 @@
             <path d="M3.33337 8H12.6667" stroke="#1E1E1E" stroke-width="1.6"/>
           </svg>
         </button>
-        
+
         <div class="font-archivo font-bold text-base sm:text-[22px] text-[#010101] flex items-center justify-center"
              :aria-label="$t('cart.quantity')">
           {{ quantity }}
         </div>
-        
-        <button 
-          @click="incrementQuantity" 
+
+        <button
+          @click="incrementQuantity"
           class="flex items-center justify-center w-[30px] sm:w-[40px] h-full hover:bg-black/5"
           :aria-label="$t('cart.increase')"
         >
@@ -31,11 +31,11 @@
     </div>
 
     <!-- Botão Add Cart -->
-    <button 
+    <button
       class="w-full sm:flex-1 h-[45px] sm:h-[73.31px] bg-black flex justify-center items-center"
       @click="addToCart"
     >
-      <span class="font-archivo-narrow font-semibold text-[#FFDD00]">
+      <span class="font-archivo-narrow font-semibold text-[34px] leading-[70px] text-[#FFDD00]">
         {{ $t('cart.addToCart') }}
       </span>
     </button>
