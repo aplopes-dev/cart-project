@@ -235,7 +235,7 @@
           <router-link to="/suppliers" class="text-[15px] leading-7 text-white font-archivo font-medium">
             {{ $t('header.suppliers') }}
           </router-link>
-          <div class="relative category-dropdown">
+          <div class="relative category-dropdown" style="position: relative; z-index: 100;">
             <button
               @click="toggleCategoryDropdown"
               class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
@@ -245,136 +245,141 @@
                 class="w-4 h-4"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
                 viewBox="0 0 24 24"
-                fill="#FFFFFF"
+                fill="#FFDD00"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
             </button>
 
-            <!-- Categories Dropdown -->
-            <div
-              v-if="showCategoryDropdown"
-              class="absolute top-full left-0 mt-2 w-64 bg-black rounded-md shadow-lg py-1 z-50 max-h-[500px] overflow-y-auto"
-            >
-              <!-- Loading State -->
-              <div v-if="loading" class="px-4 py-2 text-empire-yellow">
-                {{ $t('common.loading') }}...
+            <!-- Menu System - Three Parallel Menus -->
+            <div class="shop-menu-container" v-if="showCategoryDropdown">
+              <!-- First Level Menu (Categories) -->
+              <div class="menu-level bg-black py-1 z-50 max-h-[500px] overflow-y-auto border-0 border-none" style="width: 250px; background-color: #000000;">
+                <!-- Loading State -->
+                <div v-if="loading" class="px-4 py-2 text-empire-yellow">
+                  {{ $t('common.loading') }}...
+                </div>
+
+                <!-- Error State -->
+                <div v-else-if="error" class="px-4 py-2 text-red-500">
+                  {{ $t('common.error') }}
+                </div>
+
+                <!-- Empty State -->
+                <div v-else-if="categories.length === 0" class="px-4 py-2 text-empire-yellow">
+                  {{ $t('common.noCategories') }}
+                </div>
+
+                <!-- Categories List -->
+                <template v-else>
+                  <div
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="category-item"
+                    @click.stop="setActiveCategory(category)"
+                  >
+                    <div
+                      :class="[
+                        'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide',
+                        activeCategory && activeCategory.id === category.id ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black category-hover'
+                      ]"
+                    >
+                      <!-- Category Name -->
+                      <div
+                        class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                        :title="category.name"
+                        @click.stop="navigateToCategory(category.id)"
+                      >
+                        {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                      </div>
+
+                      <!-- Arrow Icon (only if has children) -->
+                      <div
+                        v-if="category.children && category.children.length > 0"
+                        class="flex items-center justify-center w-6 h-6"
+                      >
+                        <svg
+                          class="w-4 h-4 category-arrow"
+                          viewBox="0 0 24 24"
+                          :fill="activeCategory && activeCategory.id === category.id ? '#000000' : '#FBBD1E'"
+                          style="transform: rotate(-90deg);"
+                        >
+                          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
 
-              <!-- Error State -->
-              <div v-else-if="error" class="px-4 py-2 text-red-500">
-                {{ $t('common.error') }}
-              </div>
-
-              <!-- Empty State -->
-              <div v-else-if="categories.length === 0" class="px-4 py-2 text-empire-yellow">
-                {{ $t('common.noCategories') }}
-              </div>
-
-              <!-- Categories List (Recursive Component) -->
-              <template v-else>
+              <!-- Second Level Menu (Subcategories) -->
+              <div
+                v-if="activeCategory && activeCategory.children && activeCategory.children.length > 0"
+                class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
+                style="width: 250px; background-color: #FFDD00;"
+              >
                 <div
-                  v-for="category in categories"
-                  :key="category.id"
-                  class="category-item"
+                  v-for="subcategory in activeCategory.children"
+                  :key="subcategory.id"
+                  class="subcategory-item"
+                  @click.stop="setActiveSubcategory(subcategory)"
                 >
                   <div
                     :class="[
-                      'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide',
-                      category.expanded ? 'bg-amber-600 text-white' : 'text-white hover:bg-empire-yellow hover:text-black'
+                      'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium border-0 border-none outline-none',
+                      activeSubcategory && activeSubcategory.id === subcategory.id ? 'bg-black text-empire-yellow hover-style' : 'bg-empire-yellow text-black hover:bg-black hover:text-empire-yellow'
                     ]"
+
                   >
-                    <!-- Category Name (truncated if needed) -->
+                    <!-- Subcategory Name -->
                     <div
                       class="whitespace-nowrap overflow-hidden truncate w-[180px]"
-                      :title="category.name"
-                      @click.stop="navigateToCategory(category.id)"
+                      :title="subcategory.name"
+                      @click.stop="navigateToCategory(subcategory.id)"
+
                     >
-                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                      {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
                     </div>
 
-                    <!-- Expand/Collapse Icon (only if has children) -->
+                    <!-- Arrow Icon (only if has children) -->
                     <div
-                      v-if="category.children && category.children.length > 0"
-                      @click.stop="toggleCategoryExpansion(category)"
+                      v-if="subcategory.children && subcategory.children.length > 0"
                       class="flex items-center justify-center w-6 h-6"
+
                     >
                       <svg
-                        class="w-4 h-4 transition-transform duration-200"
-                        :class="{ 'transform rotate-180': category.expanded }"
+                        class="w-4 h-4 subcategory-arrow"
                         viewBox="0 0 24 24"
-                        :fill="category.expanded ? '#FFFFFF' : '#FBBD1E'"
+                        :fill="activeSubcategory && activeSubcategory.id === subcategory.id ? '#FFDD00' : '#000000'"
+                        style="transform: rotate(-90deg);"
                       >
                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                       </svg>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <!-- Subcategories (recursive) -->
+              <!-- Third Level Menu -->
+              <div
+                v-if="activeSubcategory && activeSubcategory.children && activeSubcategory.children.length > 0"
+                class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
+                style="width: 250px; background-color: #FFDD00;"
+              >
+                <div
+                  v-for="thirdLevel in activeSubcategory.children"
+                  :key="thirdLevel.id"
+                  class="px-4 py-2 text-black hover:bg-black hover:text-empire-yellow cursor-pointer transition-colors duration-200 font-medium third-level-item"
+                  @click.stop="navigateToCategory(thirdLevel.id)"
+                >
                   <div
-                    v-if="category.children && category.children.length > 0 && category.expanded"
-                    class="pl-4 bg-amber-600"
+                    class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                    :title="thirdLevel.name"
                   >
-                    <div
-                      v-for="subcategory in category.children"
-                      :key="subcategory.id"
-                      class="category-item"
-                    >
-                      <div
-                        :class="[
-                          'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium',
-                          subcategory.expanded ? 'bg-amber-600 text-white' : 'text-black hover:bg-empire-yellow hover:text-black'
-                        ]"
-                      >
-                        <!-- Subcategory Name (truncated if needed) -->
-                        <div
-                          class="whitespace-nowrap overflow-hidden truncate w-[160px]"
-                          :title="subcategory.name"
-                          @click.stop="navigateToCategory(subcategory.id)"
-                        >
-                          {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
-                        </div>
-
-                        <!-- Expand/Collapse Icon (only if has children) -->
-                        <div
-                          v-if="subcategory.children && subcategory.children.length > 0"
-                          @click.stop="toggleSubcategoryExpansion(subcategory, category)"
-                          class="flex items-center justify-center w-6 h-6"
-                        >
-                          <svg
-                            class="w-4 h-4 transition-transform duration-200"
-                            :class="{ 'transform rotate-180': subcategory.expanded }"
-                            viewBox="0 0 24 24"
-                            :fill="subcategory.expanded ? '#FFFFFF' : '#FBBD1E'"
-                          >
-                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                          </svg>
-                        </div>
-                      </div>
-
-                      <!-- Third level categories -->
-                      <div
-                        v-if="subcategory.children && subcategory.children.length > 0 && subcategory.expanded"
-                        class="pl-4 bg-amber-600"
-                      >
-                        <div
-                          v-for="thirdLevel in subcategory.children"
-                          :key="thirdLevel.id"
-                          class="px-4 py-2 text-white hover:bg-empire-yellow hover:text-black cursor-pointer transition-colors duration-200 font-medium"
-                          @click.stop="navigateToCategory(thirdLevel.id)"
-                        >
-                          <div
-                            class="whitespace-nowrap overflow-hidden truncate w-[140px]"
-                            :title="thirdLevel.name"
-                          >
-                            {{ thirdLevel.name.length > 16 ? thirdLevel.name.substring(0, 16) + '...' : thirdLevel.name }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    {{ thirdLevel.name.length > 18 ? thirdLevel.name.substring(0, 18) + '...' : thirdLevel.name }}
                   </div>
                 </div>
-              </template>
+              </div>
             </div>
           </div>
           <router-link to="/career" class="text-[15px] leading-7 text-white font-archivo font-medium">
@@ -873,8 +878,8 @@ const loading = ref(false)
 const error = ref(null)
 const isSearching = ref(false)
 const selectedIndex = ref(-1)
-const expandedCategoryId = ref(null) // ID da categoria atualmente expandida
-const expandedSubcategoryId = ref(null) // ID da subcategoria atualmente expandida
+const activeCategory = ref(null) // Categoria ativa no menu
+const activeSubcategory = ref(null) // Subcategoria ativa no menu
 
 // Adicione esta ref para os dados da empresa
 const companyData = ref({
@@ -966,6 +971,10 @@ const toggleCategoryDropdown = (event) => {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
     showProjectsDropdown.value = false
+  } else {
+    // Limpa as categorias ativas quando fecha o menu
+    activeCategory.value = null
+    activeSubcategory.value = null
   }
 }
 
@@ -1093,44 +1102,55 @@ const initializeCategoryExpansionState = (categories) => {
   })
 }
 
-// Função para expandir uma categoria e contrair as outras
-const toggleCategoryExpansion = (category) => {
-  // Se a categoria já está expandida, apenas contrai
-  if (category.expanded) {
-    category.expanded = false
-    expandedCategoryId.value = null
-    return
+// Função para definir a categoria ativa
+const setActiveCategory = (category) => {
+  // Se clicar na mesma categoria, alterna o estado
+  if (activeCategory.value && activeCategory.value.id === category.id) {
+    activeCategory.value = null
+    activeSubcategory.value = null
+
+    // Remove a classe expanded de todas as categorias
+    categories.value.forEach(cat => {
+      cat.expanded = false
+      if (cat.children) {
+        cat.children.forEach(subcat => {
+          subcat.expanded = false
+        })
+      }
+    })
+  } else {
+    activeCategory.value = category
+    activeSubcategory.value = null
+
+    // Adiciona a classe expanded à categoria ativa
+    if (category && category.children && category.children.length > 0) {
+      // Marca a categoria como expandida
+      category.expanded = true
+
+      // Remove a classe expanded de todas as outras categorias
+      categories.value.forEach(cat => {
+        if (cat.id !== category.id) {
+          cat.expanded = false
+        }
+      })
+    }
   }
-
-  // Contrai todas as categorias de primeiro nível
-  categories.value.forEach(cat => {
-    cat.expanded = false
-  })
-
-  // Expande apenas a categoria clicada
-  category.expanded = true
-  expandedCategoryId.value = category.id
 }
 
-// Função para expandir uma subcategoria e contrair as outras
-const toggleSubcategoryExpansion = (subcategory, parentCategory) => {
-  // Se a subcategoria já está expandida, apenas contrai
-  if (subcategory.expanded) {
-    subcategory.expanded = false
-    expandedSubcategoryId.value = null
-    return
-  }
+// Função para definir a subcategoria ativa
+const setActiveSubcategory = (subcategory) => {
+  // Se clicar na mesma subcategoria, alterna o estado
+  if (activeSubcategory.value && activeSubcategory.value.id === subcategory.id) {
+    activeSubcategory.value = null
+  } else {
+    activeSubcategory.value = subcategory
 
-  // Contrai todas as subcategorias do mesmo pai
-  if (parentCategory.children) {
-    parentCategory.children.forEach(subcat => {
-      subcat.expanded = false
-    })
+    // Adiciona a classe 'expanded-item' a todos os itens expandidos
+    if (subcategory && subcategory.children && subcategory.children.length > 0) {
+      // Marca o item como expandido
+      subcategory.expanded = true
+    }
   }
-
-  // Expande apenas a subcategoria clicada
-  subcategory.expanded = true
-  expandedSubcategoryId.value = subcategory.id
 }
 
 // Funções para o seletor de idiomas
@@ -1404,6 +1424,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Estilo específico para o elemento expandido */
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style,
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style * {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
 .font-archivo-narrow {
   font-family: 'Archivo Narrow', sans-serif;
 }
@@ -1602,15 +1628,265 @@ nav a:hover, nav a:focus, nav a:active,
   position: relative;
 }
 
+/* Estilo para os menus laterais */
+.category-item {
+  position: relative;
+}
+
+/* Ajuste para posicionamento dos menus laterais */
+.category-dropdown > div {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+}
+
+/* Ajuste para posicionamento dos submenus */
+.category-item {
+  position: relative;
+}
+
+.category-item > div {
+  position: relative;
+}
+
+/* Ajustes para hover nos menus laterais */
+.category-dropdown .category-item:hover > div:first-child {
+  background-color: #FFDD00;
+  color: black;
+}
+
+.category-dropdown .category-item:hover > div:first-child svg {
+  fill: black;
+}
+
+/* Ajustes para as setas de expansão */
+.category-dropdown button svg.transform.rotate-180 {
+  transform: rotate(90deg) !important;
+}
+
+.category-item > div svg.transform.rotate-180 {
+  transform: rotate(90deg) !important;
+}
+
+/* Estilos para o menu de loja com três níveis paralelos */
+.shop-menu-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  display: flex;
+  gap: 2px;
+  z-index: 100;
+}
+
+.menu-level {
+  position: relative;
+  height: fit-content;
+}
+
+/* Exibir submenus ao passar o mouse */
+.category-item:hover > div.absolute {
+  display: block !important;
+}
+
 /* Estilo do dropdown principal */
 .category-dropdown > div {
   border-radius: 8px;
   overflow-y: auto;
   max-height: 500px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  border: 1px solid rgba(255, 221, 0, 0.3);
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Estilo para hover em todo o item do submenu */
+.subcategory-item {
+  cursor: pointer;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.subcategory-item > div {
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.subcategory-item:hover > div {
+  background-color: black;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+}
+
+.subcategory-item:hover > div * {
+  color: white !important;
+}
+
+/* Remover completamente todas as bordas dos menus */
+.menu-level,
+.shop-menu-container,
+.shop-menu-container > div,
+.shop-menu-container * {
+  border-radius: 0 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Remover sombra dos menus */
+.menu-level {
+  box-shadow: none !important;
+}
+
+/* Estilos para os menus */
+.shop-menu-container {
+  display: flex;
+  gap: 0;
+  background-color: #FFDD00 !important;
+  box-shadow: none !important;
+}
+
+/* Garantir largura fixa para todos os menus */
+.shop-menu-container > div {
+  width: 250px !important;
+  flex-shrink: 0;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Estilo para o menu principal (preto) */
+.shop-menu-container > div:first-child {
+  background-color: #000000 !important;
+}
+
+/* Estilo para os submenus (amarelo) */
+.shop-menu-container > div:not(:first-child) {
+  background-color: #FFDD00 !important;
+}
+
+/* Garantir que todos os elementos dentro dos submenus tenham fundo amarelo */
+.shop-menu-container > div:not(:first-child) > div,
+.shop-menu-container > div:not(:first-child) div:not(:hover) {
+  background-color: #FFDD00 !important;
+}
+
+/* Estilo para hover nos itens dos submenus */
+.subcategory-item:hover > div,
+.subcategory-item:hover > div *,
+.subcategory-item:hover .whitespace-nowrap,
+.subcategory-item:hover .truncate {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para itens ativos nos submenus - mesmo estilo do hover */
+.subcategory-item.active > div,
+.subcategory-item.active > div *,
+.bg-black.text-empire-yellow,
+.bg-black.text-empire-yellow *,
+.hover-style,
+.hover-style *,
+div.bg-black.text-empire-yellow.hover-style,
+div.bg-black.text-empire-yellow.hover-style * {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para itens de terceiro nível e superiores */
+.third-level-item:hover,
+.shop-menu-container > div:nth-child(n+3) div:hover,
+div[class*="bg-black text-empire-yellow hover-style"] {
+  background-color: black !important;
+  color: #FFDD00 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.third-level-item:hover *,
+.shop-menu-container > div:nth-child(n+3) div:hover *,
+.third-level-item:hover .whitespace-nowrap,
+.third-level-item:hover .truncate,
+div[class*="bg-black text-empire-yellow hover-style"] *,
+div[class*="bg-black text-empire-yellow hover-style"] .whitespace-nowrap,
+div[class*="bg-black text-empire-yellow hover-style"] .truncate,
+div[class*="bg-black text-empire-yellow hover-style"] .flex {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para as setas */
+.subcategory-item:hover .subcategory-arrow,
+.bg-black.text-empire-yellow svg,
+.hover-style svg,
+.hover-style .subcategory-arrow {
+  fill: #FFDD00 !important;
+}
+
+/* Estilo para a seta no hover do menu principal */
+.category-hover:hover .category-arrow {
+  fill: black !important;
+}
+
+/* Estilo específico para a div com texto truncado */
+.subcategory-item:hover .whitespace-nowrap.overflow-hidden.truncate,
+.third-level-item:hover .whitespace-nowrap.overflow-hidden.truncate,
+div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
+.subcategory-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"],
+.third-level-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"] {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para a div que contém a seta */
+.subcategory-item:hover .flex.items-center.justify-center.w-6.h-6,
+.subcategory-item:hover div[class*="flex items-center justify-center w-6 h-6"] {
+  background-color: black !important;
+}
+
+/* Estilo para hover no menu principal */
+.category-hover:hover,
+.category-hover:hover *,
+.category-hover:hover .whitespace-nowrap,
+.category-hover:hover .truncate,
+.category-hover:hover .flex.items-center.justify-center.w-6.h-6,
+.category-hover:hover div[class*="flex items-center justify-center w-6 h-6"] {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Garantir que não haja bordas na parte transparente */
+.shop-menu-container::before,
+.shop-menu-container::after,
+.menu-level::before,
+.menu-level::after {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Garantir que a seta do header gire corretamente */
+.category-dropdown button svg.transform.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+/* Garantir que a seta aponte para cima quando expandido */
+.category-dropdown button svg.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+/* Garantir que o primeiro e último item preencham completamente */
+.subcategory-item:first-child > div {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.subcategory-item:last-child > div {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
 /* Estilo para os textos do menu */
