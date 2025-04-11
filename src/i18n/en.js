@@ -302,7 +302,8 @@ export default {
       invalidFileType: 'Invalid file type. Please upload a PDF or Word document.',
       fileTooLarge: 'File is too large. Maximum size is 5MB.',
       submitSuccess: 'Your message has been sent successfully!',
-      submitError: 'There was an error sending your message. Please try again.'
+      submitError: 'There was an error sending your message. Please try again.',
+      jobApplicationMessage: 'I would like to apply for the position'
     }
   },
   productDetails: {
@@ -568,7 +569,7 @@ export default {
         titlePlaceholder: "Enter title",
         content: "Content",
         contentPlaceholder: "Enter content",
-        add: "Add",
+        add: "ADD SECTION",
         edit: "Save changes",
         cancel: "Cancel"
       },
