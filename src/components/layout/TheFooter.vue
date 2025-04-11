@@ -74,77 +74,80 @@
               </div>
             </div>
 
-            <!-- Products Section -->
-            <div class="w-full md:w-[240px]">
-              <h3 class="font-archivo-narrow font-semibold text-heading leading-heading text-empire-yellow h-[40px] flex items-center">
-                {{ $t('footer.titles.products') }}
-              </h3>
-              <div class="flex flex-col gap-2">
-                <div
-                  v-for="category in categories"
-                  :key="category.id"
-                  class="flex"
-                  @click="navigateToCategory(category.id)"
-                  style="cursor: pointer;"
-                >
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                    </svg>
-                  </div>
-                  <div class="w-[200px] overflow-hidden">
-                    <span
-                      class="font-archivo font-normal text-nav leading-nav text-empire-white-70 whitespace-nowrap overflow-hidden truncate block"
-                      :title="category.name"
-                    >
-                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
-                    </span>
+            <!-- Products and Contact Sections Container -->
+            <div class="flex flex-row gap-4 md:gap-20 w-full">
+              <!-- Products Section -->
+              <div class="w-1/2 md:w-[200px]">
+                <h3 class="font-archivo-narrow font-semibold text-sm md:text-[30px] leading-5 md:leading-[36px] text-empire-yellow h-[24px] md:h-[36px] flex items-center">
+                  {{ $t('footer.titles.products') }}
+                </h3>
+                <div class="flex flex-col gap-2 mt-2 md:mt-4">
+                  <div
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="flex"
+                    @click="navigateToCategory(category.id)"
+                    style="cursor: pointer;"
+                  >
+                    <div class="w-[20px] md:w-[40px]">
+                      <svg class="w-3 h-3 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                    <div class="w-[calc(100%-20px)] md:w-[160px] overflow-hidden">
+                      <span
+                        class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70 whitespace-nowrap overflow-hidden truncate block"
+                        :title="category.name"
+                      >
+                        {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- Contact Section -->
-              <div class="w-full md:w-[437px]">
-                <h3 class="font-archivo-narrow font-semibold text-sm md:text-heading leading-5 md:leading-heading text-empire-yellow h-[24px] md:h-[40px] flex items-center">
+              <div class="w-1/2 md:w-[200px]">
+                <h3 class="font-archivo-narrow font-semibold text-sm md:text-[30px] leading-5 md:leading-[36px] text-empire-yellow h-[24px] md:h-[36px] flex items-center">
                   {{ $t('footer.titles.contactUs') }}
                 </h3>
-                <div class="flex flex-col gap-0.5 md:gap-2">
+                <div class="flex flex-col gap-0.5 md:gap-2 mt-2 md:mt-4">
                   <!-- Telefone -->
                   <div class="flex md:block items-center md:items-start">
-                    <div class="w-[24px] md:w-[40px] flex items-center md:block">
+                    <div class="w-[20px] md:w-[40px] flex items-center md:block">
                       <svg class="w-3 h-3 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none">
                         <path d="M20 4v16H4V4h16m0-2H4C2.9 2 2 2.9 2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" stroke="#FFDD00" stroke-width="2"/>
                       </svg>
                     </div>
-                    <div class="w-[100px] md:w-[160px]">
+                    <div class="w-[calc(100%-20px)] md:w-[160px]">
                       <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
                         {{ companyData.phone }}
                       </span>
                     </div>
                   </div>
-                  
+
                   <!-- Email -->
                   <div class="flex md:block items-center md:items-start">
-                    <div class="w-[24px] md:w-[40px] flex items-center md:block">
+                    <div class="w-[20px] md:w-[40px] flex items-center md:block">
                       <svg class="w-3 h-3 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFDD00">
                         <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                       </svg>
                     </div>
-                    <div class="w-[100px] md:w-[160px]">
+                    <div class="w-[calc(100%-20px)] md:w-[160px]">
                       <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
                         {{ companyData.email }}
                       </span>
                     </div>
                   </div>
-                  
+
                   <!-- Endereço -->
                   <div class="flex md:block items-center md:items-start">
-                    <div class="w-[24px] md:w-[40px] flex items-center md:block">
+                    <div class="w-[20px] md:w-[40px] flex items-center md:block">
                       <svg class="w-3 h-3 md:w-6 md:h-6" viewBox="0 0 24 24" fill="#FFDD00">
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                       </svg>
                     </div>
-                    <div class="w-[100px] md:w-[160px]">
+                    <div class="w-[calc(100%-20px)] md:w-[160px]">
                       <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
                         {{ companyData.address }}
                       </span>

@@ -1391,6 +1391,8 @@ input[type="range"]:nth-child(2) {
   height: 100%;
   background: linear-gradient(to bottom, #FBBD1E, rgba(251, 189, 30, 0.3));
   border-radius: 4px 0 0 4px;
+}
+
 /* Estilos responsivos para o botão de adicionar ao carrinho */
 .text-responsive-add-cart :deep(.font-archivo-narrow) {
   font-size: 18px; /* Tamanho base para mobile */
