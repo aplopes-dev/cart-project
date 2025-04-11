@@ -78,8 +78,8 @@
               <h2 class="font-archivo-narrow font-semibold text-xl sm:text-2xl">{{ $t('myAccount.logout') }}</h2>
             </div>
             <p class="text-black/70 font-archivo text-sm sm:text-base">{{ $t('myAccount.logoutDescription') }}</p>
-            <button 
-              @click="handleLogout" 
+            <button
+              @click="handleLogout"
               class="text-empire-yellow hover:underline mt-auto font-archivo text-sm sm:text-base text-left"
             >
               {{ $t('myAccount.signOut') }}
@@ -87,7 +87,7 @@
           </div>
 
           <!-- Card - Configurações -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <div class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>

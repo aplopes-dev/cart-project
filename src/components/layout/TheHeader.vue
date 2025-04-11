@@ -1489,4 +1489,173 @@ input {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* Estilos modernos para todos os menus de navegação */
+nav a, .category-dropdown button {
+  position: relative;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+nav a::before, .category-dropdown button::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #FFDD00;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateX(-50%);
+}
+
+nav a:hover::before, nav a:focus::before, nav a:active::before,
+.category-dropdown button:hover::before, .category-dropdown button:focus::before, .category-dropdown button:active::before {
+  width: 80%;
+}
+
+nav a:hover, nav a:focus, nav a:active,
+.category-dropdown button:hover, .category-dropdown button:focus, .category-dropdown button:active {
+  text-shadow: 0 0 10px rgba(255, 221, 0, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Estilo específico para o menu de Loja */
+.category-dropdown {
+  position: relative;
+}
+
+/* Estilo do dropdown principal */
+.category-dropdown > div {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 221, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transform-origin: top center;
+  opacity: 0;
+  transform: scaleY(0.8) translateY(-20px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-dropdown > div:hover {
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+/* Animação para mostrar o dropdown */
+.category-dropdown > div[style*="display: block"],
+.category-dropdown > div:not([style*="display: none"]) {
+  opacity: 1;
+  transform: scaleY(1) translateY(0);
+}
+
+/* Estilo dos itens do menu */
+.category-item > div {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.category-item > div::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(255, 221, 0, 0.1);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: -1;
+}
+
+.category-item > div:hover::before {
+  width: 100%;
+}
+
+.category-item > div:hover {
+  transform: translateX(8px);
+  padding-left: 1.5rem;
+}
+
+/* Efeito de destaque para o item selecionado */
+.category-item > div.bg-empire-yellow {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.category-item > div.bg-empire-yellow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 221, 0, 0.2), rgba(255, 221, 0, 0.4));
+  z-index: -1;
+}
+
+/* Estilo para os ícones de expansão */
+.category-item svg {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-item:hover svg {
+  transform: scale(1.3) rotate(-90deg);
+}
+
+/* Animação para os submenus */
+.category-item > div + div {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-item > div.bg-empire-yellow + div {
+  max-height: 1000px;
+}
+
+/* Efeito de cascata para os itens do submenu */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.category-item > div.bg-empire-yellow + div > div {
+  animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.category-item > div.bg-empire-yellow + div > div:nth-child(1) { animation-delay: 0.05s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(2) { animation-delay: 0.1s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(3) { animation-delay: 0.15s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(4) { animation-delay: 0.2s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(5) { animation-delay: 0.25s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(6) { animation-delay: 0.3s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(7) { animation-delay: 0.35s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(8) { animation-delay: 0.4s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(9) { animation-delay: 0.45s; }
+.category-item > div.bg-empire-yellow + div > div:nth-child(10) { animation-delay: 0.5s; }
+
+/* Estilo para o menu mobile */
+.md\:hidden.category-dropdown button {
+  background: transparent;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.md\:hidden.category-dropdown button:hover,
+.md\:hidden.category-dropdown button:focus,
+.md\:hidden.category-dropdown button:active {
+  background: rgba(255, 221, 0, 0.1);
+}
+
+/* Animação para o dropdown mobile */
+.md\:hidden.category-dropdown > div {
+  transform-origin: top center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
 </style>
