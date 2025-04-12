@@ -56,7 +56,11 @@ export default {
     fieldRequired: 'Ce champ est obligatoire',
     signup: 'INSCRIPTION',
     invalidCredentials: 'Identifiants invalides',
-    passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères'
+    passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+    selectProject: 'Sélectionnez un Projet',
+    project: 'Projet',
+    selectProjectPlaceholder: 'Sélectionnez un projet',
+    confirm: 'CONFIRMER'
   },
   cart: {
     shoppingCart: 'PANIER',
@@ -192,7 +196,14 @@ export default {
     manageAddresses: 'Gérer les adresses',
     neighborhood: 'Quartier',
     neighborhoodPlaceholder: 'Entrez votre quartier',
-    minOrderValueMessage: 'La valeur minimale de commande est de {value}. Veuillez ajouter plus d\'articles à votre panier.'
+    minOrderValueMessage: 'La valeur minimale de commande est de {value}. Veuillez ajouter plus d\'articles à votre panier.',
+    confirmProject: {
+      title: 'Confirmation de Projet',
+      message: 'Vous finalisez la commande pour le projet:',
+      confirm: 'Confirmer et Continuer',
+      changeProject: 'Sélectionner un Autre Projet',
+      applyChange: 'Appliquer le Changement'
+    }
   },
   thankYou: {
     title: 'MERCI POUR VOTRE COMMANDE!',

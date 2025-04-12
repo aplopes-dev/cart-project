@@ -24,15 +24,16 @@
         {{ product.name }}
       </h3>
 
-      <!-- Preço -->
+      <!-- Preço (exibido apenas se o toggle master estiver habilitado) -->
       <div class="mt-auto">
-        <p class="text-2xl font-bold text-black/70">
+        <p v-if="showPrices" class="text-2xl font-bold text-black/70 mb-4">
           {{ formatPrice(product.price) }}
         </p>
+        <!-- Não adiciona espaço quando o preço não é exibido -->
 
         <!-- Debug info em desenvolvimento -->
         <small v-if="process.env.NODE_ENV === 'development'" class="text-xs text-gray-500">
-          Symbol: {{ currencySymbol }} | Price: {{ product.price }}
+          Symbol: {{ currencySymbol }} | Price: {{ product.price }} | Show Prices: {{ showPrices }}
         </small>
 
         <!-- Botão Adicionar ao Carrinho -->
@@ -57,6 +58,7 @@ import { settingsService } from '@/services/settingsService'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { imageService } from '@/services/imageService'
 import { useRouter } from 'vue-router'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 
 export default defineComponent({
   name: 'ProductCard',
@@ -73,15 +75,18 @@ export default defineComponent({
   },
   setup(props) {
     const cartStore = useCartStore()
+    const togglesStore = useFinancialTogglesStore()
     const { t } = useI18n()
     const router = useRouter()
+    const showPrices = ref(togglesStore.masterToggle)
 
     console.log('ProductCard Setup - Initial props:', {
       product: props.product,
-      currencySymbol: props.currencySymbol
+      currencySymbol: props.currencySymbol,
+      showPrices: showPrices.value
     })
 
-    return { cartStore, t, router }
+    return { cartStore, t, router, showPrices, togglesStore }
   },
   methods: {
     formatPrice(price) {
@@ -161,6 +166,16 @@ export default defineComponent({
           new: newValue,
           productId: this.product.id
         })
+      }
+    },
+    'togglesStore.masterToggle': {
+      immediate: true,
+      handler(newValue) {
+        console.log('👀 Master toggle changed:', {
+          new: newValue,
+          productId: this.product.id
+        })
+        this.showPrices = newValue
       }
     }
   },

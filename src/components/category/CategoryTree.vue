@@ -9,6 +9,7 @@
         :category="category"
         :selected-category="selectedCategory"
         @select="$emit('select', $event)"
+        @ensure-visible="handleEnsureVisible"
       />
     </div>
   </div>
@@ -32,7 +33,13 @@ export default {
       default: null
     }
   },
-  emits: ['select']
+  emits: ['select'],
+  methods: {
+    handleEnsureVisible(categoryId) {
+      // Propaga o evento para o componente pai
+      this.$emit('ensure-visible', categoryId);
+    }
+  }
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col sm:flex-row gap-4">
+  <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
     <!-- Contador de Quantidade -->
     <div class="w-full sm:w-[150px] h-[45px] sm:h-[73.31px]">
       <div class="flex flex-row justify-between items-center h-full border-2 border-black bg-white">
@@ -13,7 +13,7 @@
           </svg>
         </button>
 
-        <div class="font-archivo font-bold text-base sm:text-[22px] text-[#010101] flex items-center justify-center"
+        <div class="font-archivo font-bold text-sm sm:text-[22px] text-[#010101] flex items-center justify-center"
              :aria-label="$t('cart.quantity')">
           {{ quantity }}
         </div>

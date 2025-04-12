@@ -56,7 +56,11 @@ export default {
     fieldRequired: 'This field is required',
     signup: 'SIGN UP',
     invalidCredentials: 'Invalid credentials',
-    passwordTooShort: 'Password must be at least 6 characters long'
+    passwordTooShort: 'Password must be at least 6 characters long',
+    selectProject: 'Select a Project',
+    project: 'Project',
+    selectProjectPlaceholder: 'Select a project',
+    confirm: 'CONFIRM'
   },
   cart: {
     checkout: 'CHECKOUT',
@@ -194,7 +198,14 @@ export default {
     manageAddresses: 'Manage addresses',
     neighborhood: 'Neighborhood',
     neighborhoodPlaceholder: 'Enter your neighborhood',
-    minOrderValueMessage: 'Minimum order value is {value}. Please add more items to your cart.'
+    minOrderValueMessage: 'Minimum order value is {value}. Please add more items to your cart.',
+    confirmProject: {
+      title: 'Project Confirmation',
+      message: 'You are completing the order for project:',
+      confirm: 'Confirm and Continue',
+      changeProject: 'Select Another Project',
+      applyChange: 'Apply Change'
+    }
   },
   thankYou: {
     title: 'THANK YOU FOR YOUR ORDER!',

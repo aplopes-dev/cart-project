@@ -38,11 +38,13 @@
                   </p>
                 </div>
 
+                <!-- Área de preço - só exibida quando os preços estão habilitados -->
                 <div v-if="showPrices" class="w-full text-center mb-4">
                   <p class="font-archivo-narrow font-semibold text-[28px] md:text-[30px] leading-[32px] md:leading-[36px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
+                <!-- Não adiciona espaço quando o preço não é exibido -->
               </div>
             </div>
 

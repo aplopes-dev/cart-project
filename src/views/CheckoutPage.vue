@@ -473,6 +473,14 @@
     @close="showAddressModal = false"
     @select="updateShippingAddress"
   />
+
+  <!-- Modal de Confirmação de Projeto -->
+  <ProjectConfirmationModal
+    :show="showProjectModal"
+    @close="closeProjectModal"
+    @confirm="confirmProjectAndProceed"
+    @change-project="handleProjectChange"
+  />
 </template>
 
 <script>
@@ -483,6 +491,7 @@ import { computed, ref, onMounted } from 'vue'
 import api from '@/services/api'
 import { useI18n } from 'vue-i18n'
 import AddressSelectionModal from '@/components/address/AddressSelectionModal.vue'
+import ProjectConfirmationModal from '@/components/checkout/ProjectConfirmationModal.vue'
 import { useAddressStore } from '@/stores/addressStore'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
@@ -492,7 +501,8 @@ import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 export default {
   name: 'CheckoutPage',
   components: {
-    AddressSelectionModal
+    AddressSelectionModal,
+    ProjectConfirmationModal
   },
   setup() {
     const cartStore = useCartStore()
@@ -637,7 +647,8 @@ export default {
       showErrorAlert: false,
       loading: false,
       showAddressModal: false,
-      currentAddressId: null
+      currentAddressId: null,
+      showProjectModal: false
     }
   },
   computed: {
@@ -790,7 +801,7 @@ export default {
       this.showErrors = true
       return !this.hasErrors
     },
-    async completePurchase() {
+    completePurchase() {
       // Verifica se o botão está habilitado
       if (!this.isCheckoutButtonEnabled) {
         return;
@@ -800,6 +811,21 @@ export default {
         return;
       }
 
+      // Mostra o modal de confirmação de projeto
+      this.showProjectModal = true;
+    },
+
+    closeProjectModal() {
+      this.showProjectModal = false;
+    },
+
+    handleProjectChange(project) {
+      console.log('Projeto alterado:', project);
+      // O projeto já foi salvo no localStorage pelo componente do modal
+    },
+
+    async confirmProjectAndProceed(project) {
+      this.showProjectModal = false;
       this.loading = true;
       this.error = null;
 
@@ -841,7 +867,9 @@ export default {
           // Se o toggle master estiver desabilitado, envia valores null
           // Agora o backend foi modificado para aceitar null para esses campos
           shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
-          taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null
+          taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null,
+          // Adiciona o ID do projeto selecionado
+          projectId: project.id
         };
 
         console.log('Order data being sent:', orderData);
