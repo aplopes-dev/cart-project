@@ -40,7 +40,7 @@
 
             <div class="item-details">
               <div class="item-info">
-                <h2>
+                <h2 class="whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
                   <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
                     {{ item.name }}
                   </router-link>
@@ -69,31 +69,34 @@
                 </div>
               </div>
 
-              <div class="quantity-selector">
-                <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
-                  </svg>
-                </button>
-                <span class="quantity-value">{{ item.quantity }}</span>
-                <button class="quantity-btn plus" @click="handleIncreaseQuantity(index, item)">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
-                    <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
+              <!-- Container para o seletor de quantidade e botão de excluir -->
+              <div class="flex items-center gap-4 mt-2">
+                <div class="quantity-selector">
+                  <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
+                    </svg>
+                  </button>
+                  <span class="quantity-value">{{ item.quantity }}</span>
+                  <button class="quantity-btn plus" @click="handleIncreaseQuantity(index, item)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
+                      <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <button class="delete-btn" @click="cartStore.removeItem(index)">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </button>
               </div>
             </div>
-
-            <button class="delete-btn" @click="cartStore.removeItem(index)">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
           </div>
         </div>
       </template>
@@ -351,7 +354,7 @@ export default {
 
 .cart-item {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 16px;
   padding: 32px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
@@ -368,12 +371,14 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
 }
 
 .item-info {
   display: flex;
   flex-direction: column;
   gap: 8px; /* Adiciona espaçamento entre nome e preço */
+  width: 100%;
 }
 
 .item-info h2 {
@@ -477,7 +482,6 @@ export default {
   border-radius: 2px;
   transition: background-color 0.2s ease;
   border: none;
-  order: 1; /* Isso move o botão para o final */
 }
 
 .delete-btn:hover {
@@ -505,7 +509,7 @@ export default {
   }
 
   .cart-item {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr;
     gap: 8px;
     padding: 16px 0;
   }
@@ -521,8 +525,6 @@ export default {
     padding: 8px;
   }
 
-  .delete-btn {
-    order: 0; /* Reset da ordem para mobile se necessário */
-  }
+  /* Removido o reset da ordem do botão de excluir para mobile */
 }
 </style>

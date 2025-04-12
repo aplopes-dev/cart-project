@@ -56,6 +56,7 @@
                         {{ formatPrice(product.price) }}
                       </p>
                     </div>
+                    <!-- Não adiciona espaço quando o preço não é exibido na versão mobile -->
                   </div>
                 </div>
 
@@ -378,6 +379,7 @@ export default {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

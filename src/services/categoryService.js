@@ -157,6 +157,53 @@ export const categoryService = {
     console.log(`[categoryService] Árvore filtrada com ${filteredTree.length} categorias raiz`)
 
     return filteredTree
+  },
+
+  /**
+   * Marca as categorias como expandidas quando uma categoria específica é selecionada
+   * @param {Array} categoryTree - Árvore de categorias
+   * @param {String} selectedCategoryId - ID da categoria selecionada
+   * @returns {Array} - Árvore de categorias com as categorias expandidas
+   */
+  expandCategoriesForSelected(categoryTree, selectedCategoryId) {
+    if (!categoryTree || !categoryTree.length || !selectedCategoryId) return categoryTree;
+
+    console.log(`[categoryService] Expandindo categorias para a categoria selecionada: ${selectedCategoryId}`);
+
+    // Cria uma cópia profunda da árvore para não modificar a original
+    const treeCopy = JSON.parse(JSON.stringify(categoryTree));
+
+    // Função recursiva para marcar as categorias como expandidas
+    const markExpandedCategories = (tree, targetId, path = []) => {
+      for (const category of tree) {
+        // Adiciona a categoria atual ao caminho
+        const currentPath = [...path, category];
+
+        // Verifica se a categoria atual é a categoria selecionada
+        if (category.id === targetId) {
+          // Marca todas as categorias no caminho como expandidas
+          for (const pathCategory of currentPath) {
+            pathCategory.expanded = true;
+          }
+          return true;
+        }
+
+        // Se a categoria tem filhos, verifica recursivamente
+        if (category.children && category.children.length > 0) {
+          const found = markExpandedCategories(category.children, targetId, currentPath);
+          if (found) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    // Marca as categorias como expandidas
+    markExpandedCategories(treeCopy, selectedCategoryId);
+
+    return treeCopy;
   }
 }
 

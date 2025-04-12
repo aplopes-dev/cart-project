@@ -56,7 +56,11 @@ export default {
     fieldRequired: 'Este campo é obrigatório',
     signup: 'CADASTRAR',
     invalidCredentials: 'Credenciais inválidas',
-    passwordTooShort: 'A senha deve ter pelo menos 6 caracteres'
+    passwordTooShort: 'A senha deve ter pelo menos 6 caracteres',
+    selectProject: 'Selecione um Projeto',
+    project: 'Projeto',
+    selectProjectPlaceholder: 'Selecione um projeto',
+    confirm: 'CONFIRMAR'
   },
   cart: {
     shoppingCart: 'CARRINHO DE COMPRAS',
@@ -194,7 +198,14 @@ export default {
     errorProcessingOrder: "Erro ao processar pedido",
     neighborhood: 'Bairro',
     neighborhoodPlaceholder: 'Digite seu bairro',
-    minOrderValueMessage: 'O valor mínimo do pedido é {value}. Por favor, adicione mais itens ao seu carrinho.'
+    minOrderValueMessage: 'O valor mínimo do pedido é {value}. Por favor, adicione mais itens ao seu carrinho.',
+    confirmProject: {
+      title: 'Confirmação de Projeto',
+      message: 'Você está finalizando o pedido para o projeto:',
+      confirm: 'Confirmar e Continuar',
+      changeProject: 'Selecionar Outro Projeto',
+      applyChange: 'Aplicar Alteração'
+    }
   },
   thankYou: {
     title: 'OBRIGADO PELO SEU PEDIDO!',

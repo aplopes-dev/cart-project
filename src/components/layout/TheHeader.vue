@@ -237,8 +237,8 @@
           </router-link>
           <div class="relative category-dropdown" style="position: relative; z-index: 100;">
             <button
-              @click="toggleCategoryDropdown"
               class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
+              @click="toggleCategoryDropdown"
             >
               {{ $t('header.shop') }}
               <svg
@@ -246,6 +246,7 @@
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
                 viewBox="0 0 24 24"
                 fill="#FFDD00"
+                @click.stop="toggleCategoryDropdown"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
@@ -276,22 +277,18 @@
                     v-for="category in categories"
                     :key="category.id"
                     class="category-item"
-                    @click.stop="setActiveCategory(category)"
+                    @mouseenter="setActiveCategory(category)"
                   >
                     <div
                       :class="[
-                        'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide',
-                        activeCategory && activeCategory.id === category.id ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black category-hover'
+                        'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide whitespace-nowrap overflow-hidden truncate',
+                        activeCategory && activeCategory.id === category.id ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black'
                       ]"
+                      :title="category.name"
+                      @click.stop="navigateToCategory(category.id)"
                     >
                       <!-- Category Name -->
-                      <div
-                        class="whitespace-nowrap overflow-hidden truncate w-[180px]"
-                        :title="category.name"
-                        @click.stop="navigateToCategory(category.id)"
-                      >
-                        {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
-                      </div>
+                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
 
                       <!-- Arrow Icon (only if has children) -->
                       <div
@@ -317,45 +314,35 @@
                 v-if="activeCategory && activeCategory.children && activeCategory.children.length > 0"
                 class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
                 style="width: 250px; background-color: #FFDD00;"
+
               >
                 <div
                   v-for="subcategory in activeCategory.children"
                   :key="subcategory.id"
                   class="subcategory-item"
-                  @click.stop="setActiveSubcategory(subcategory)"
+                  @mouseenter="setActiveSubcategory(subcategory)"
                 >
                   <div
                     :class="[
-                      'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium border-0 border-none outline-none',
+                      'flex items-center justify-between px-4 py-2 cursor-pointer group font-medium border-0 border-none outline-none whitespace-nowrap overflow-hidden truncate no-transition',
                       activeSubcategory && activeSubcategory.id === subcategory.id ? 'bg-black text-empire-yellow hover-style' : 'bg-empire-yellow text-black hover:bg-black hover:text-empire-yellow'
                     ]"
-
+                    :title="subcategory.name"
+                    @click.stop="navigateToCategory(subcategory.id)"
                   >
                     <!-- Subcategory Name -->
-                    <div
-                      class="whitespace-nowrap overflow-hidden truncate w-[180px]"
-                      :title="subcategory.name"
-                      @click.stop="navigateToCategory(subcategory.id)"
-
-                    >
-                      {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
-                    </div>
+                    {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
 
                     <!-- Arrow Icon (only if has children) -->
-                    <div
+                    <svg
                       v-if="subcategory.children && subcategory.children.length > 0"
-                      class="flex items-center justify-center w-6 h-6"
-
+                      class="w-4 h-4 subcategory-arrow"
+                      viewBox="0 0 24 24"
+                      :fill="activeSubcategory && activeSubcategory.id === subcategory.id ? '#FFDD00' : '#000000'"
+                      style="transform: rotate(-90deg);"
                     >
-                      <svg
-                        class="w-4 h-4 subcategory-arrow"
-                        viewBox="0 0 24 24"
-                        :fill="activeSubcategory && activeSubcategory.id === subcategory.id ? '#FFDD00' : '#000000'"
-                        style="transform: rotate(-90deg);"
-                      >
-                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                      </svg>
-                    </div>
+                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -365,19 +352,16 @@
                 v-if="activeSubcategory && activeSubcategory.children && activeSubcategory.children.length > 0"
                 class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
                 style="width: 250px; background-color: #FFDD00;"
+
               >
                 <div
                   v-for="thirdLevel in activeSubcategory.children"
                   :key="thirdLevel.id"
-                  class="px-4 py-2 text-black hover:bg-black hover:text-empire-yellow cursor-pointer transition-colors duration-200 font-medium third-level-item"
+                  class="third-level-item"
                   @click.stop="navigateToCategory(thirdLevel.id)"
+                  :title="thirdLevel.name"
                 >
-                  <div
-                    class="whitespace-nowrap overflow-hidden truncate w-[180px]"
-                    :title="thirdLevel.name"
-                  >
-                    {{ thirdLevel.name.length > 18 ? thirdLevel.name.substring(0, 18) + '...' : thirdLevel.name }}
-                  </div>
+                  {{ thirdLevel.name.length > 18 ? thirdLevel.name.substring(0, 18) + '...' : thirdLevel.name }}
                 </div>
               </div>
             </div>
@@ -514,48 +498,7 @@
             </router-link>
           </div>
 
-          <!-- Projetos Dropdown (apenas para usuários logados) -->
-          <div v-if="isAuthenticated" class="relative projects-dropdown hidden md:block">
-            <button
-              @click="toggleProjectsDropdown"
-              class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
-            >
-              Projetos
-              <svg
-                class="w-4 h-4"
-                :class="{ 'transform rotate-180': showProjectsDropdown }"
-                viewBox="0 0 24 24"
-                fill="#FFFFFF"
-              >
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-              </svg>
-            </button>
 
-            <!-- Projetos Dropdown -->
-            <div
-              v-if="showProjectsDropdown"
-              class="absolute top-full left-0 mt-2 w-64 bg-black rounded-md shadow-lg py-1 z-50 max-h-[500px] overflow-y-auto"
-            >
-              <!-- Lista de Projetos -->
-              <div
-                v-for="project in projects"
-                :key="project.id"
-                class="category-item"
-              >
-                <div
-                  class="flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide text-white hover:bg-empire-yellow hover:text-black"
-                >
-                  <!-- Nome do Projeto -->
-                  <div
-                    class="whitespace-nowrap overflow-hidden truncate w-[180px]"
-                    :title="project.name"
-                  >
-                    {{ project.name }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Search - Desktop -->
           <div class="relative hidden md:block">
@@ -721,10 +664,10 @@
             >
               {{ $t('header.shop') }}
               <svg
-                class="w-4 h-4"
+                class="w-4 h-4 transition-transform duration-200"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
                 viewBox="0 0 24 24"
-                fill="#FFFFFF"
+                fill="#FFDD00"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
@@ -733,17 +676,118 @@
             <!-- Dropdown do menu Loja -->
             <div
               v-if="showCategoryDropdown"
-              class="absolute bg-white shadow-lg z-50 rounded-lg mt-12 left-1/2 transform -translate-x-1/2"
+              class="absolute bg-black shadow-lg z-50 rounded-lg mt-12 left-1/2 transform -translate-x-1/2 mobile-shop-menu"
               style="width: 250px;"
             >
               <div class="max-h-[50vh] overflow-y-auto py-1">
+                <!-- Primeiro nível de categorias -->
                 <div
                   v-for="category in categories"
                   :key="category.id"
-                  @click="navigateToCategory(category.id)"
-                  class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200 text-center"
+                  class="relative category-item"
                 >
-                  {{ category.name }}
+                  <div
+                    :class="['flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-category-item', category.expanded ? 'expanded' : '']"
+                    :style="{
+                      'background-color': category.expanded ? '#FFDD00 !important' : 'black !important',
+                      'color': category.expanded ? 'black !important' : 'white !important',
+                      'display': 'flex',
+                      'align-items': 'center',
+                      'justify-content': 'space-between',
+                      'gap': '8px'
+                    }"
+                    @click="setActiveCategory(category)"
+                  >
+                    <!-- Nome da categoria -->
+                    <span
+                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                      :style="{'color': category.expanded ? 'black !important' : 'white !important'}"
+                      :title="category.name"
+                    >{{ category.name }}</span>
+
+                    <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
+                    <svg
+                      v-if="category.children && category.children.length > 0"
+                      class="transition-transform duration-200 mobile-arrow"
+                      :class="{'transform rotate-180': category.expanded}"
+                      viewBox="0 0 24 24"
+                      :fill="category.expanded ? '#000000' : '#FFDD00'"
+                      :style="{'fill': category.expanded ? '#000000 !important' : '#FFDD00 !important'}"
+                    >
+                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                  </div>
+
+                  <!-- Segundo nível de categorias (expandido verticalmente) -->
+                  <div v-if="category.expanded && category.children && category.children.length > 0" class="py-0" style="background-color: #FFDD00 !important;">
+                    <div
+                      v-for="subcategory in category.children"
+                      :key="subcategory.id"
+                      :class="['relative subcategory-item', subcategory.expanded ? 'expanded' : '']"
+                    >
+                      <div
+                        :class="['flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-subcategory-item', subcategory.expanded ? 'expanded' : '']"
+                        :style="{
+                          'background-color': subcategory.expanded ? 'black !important' : '#FFDD00 !important',
+                          'color': subcategory.expanded ? '#FFDD00 !important' : 'black !important',
+                          'display': 'flex',
+                          'align-items': 'center',
+                          'justify-content': 'space-between',
+                          'gap': '8px'
+                        }"
+                        @click="setActiveSubcategory(subcategory)"
+                      >
+                        <!-- Nome da subcategoria -->
+                        <span
+                          style="color: black !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                          :style="{'color': subcategory.expanded ? '#FFDD00 !important' : 'black !important'}"
+                          :title="subcategory.name"
+                        >{{ subcategory.name }}</span>
+
+                        <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
+                        <svg
+                          v-if="subcategory.children && subcategory.children.length > 0"
+                          class="transition-transform duration-200 mobile-arrow"
+                          :class="{'transform rotate-180': subcategory.expanded}"
+                          viewBox="0 0 24 24"
+                          :fill="subcategory.expanded ? '#FFDD00' : '#000000'"
+                        >
+                          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                      </div>
+
+                      <!-- Terceiro nível de categorias (expandido verticalmente) -->
+                      <div v-if="subcategory.expanded && subcategory.children && subcategory.children.length > 0" class="py-0 third-level-container" style="background-color: black !important;">
+                        <div
+                          v-for="childCategory in subcategory.children"
+                          :key="childCategory.id"
+                          class="px-6 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-childcategory-item"
+                          style="background-color: black !important; color: #FFDD00 !important; display: flex; align-items: center;"
+                          @click="navigateToCategory(childCategory.id)"
+                        >
+                          <span
+                            style="color: #FFDD00 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                            :title="childCategory.name"
+                          >{{ childCategory.name }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Link para a subcategoria se não tiver filhos ou se não estiver expandida -->
+                      <div
+                        v-if="!subcategory.children || subcategory.children.length === 0"
+                        class="absolute inset-0 z-10 subcategory-link"
+                        style="background-color: transparent !important;"
+                        @click.stop="navigateToCategory(subcategory.id)"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Link para a categoria se não tiver filhos ou se não estiver expandida -->
+                  <div
+                    v-if="!category.children || category.children.length === 0"
+                    class="absolute inset-0 z-10"
+                    @click.stop="navigateToCategory(category.id)"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -871,7 +915,6 @@ const searchQuery = ref('')
 const filteredProducts = ref([])
 const showAutocomplete = ref(false)
 const showCategoryDropdown = ref(false)
-const showProjectsDropdown = ref(false)
 const logoUrl = ref('/images/logo/logo.png')
 const categories = ref([])
 const loading = ref(false)
@@ -889,14 +932,7 @@ const companyData = ref({
   address: ''
 })
 
-// Dados mockados de projetos
-const projects = ref([
-  { id: 1, name: 'Projeto 1', description: 'Descrição do Projeto 1' },
-  { id: 2, name: 'Projeto 2', description: 'Descrição do Projeto 2' },
-  { id: 3, name: 'Projeto 3', description: 'Descrição do Projeto 3' },
-  { id: 4, name: 'Projeto 4', description: 'Descrição do Projeto 4' },
-  { id: 5, name: 'Projeto 5', description: 'Descrição do Projeto 5' }
-])
+
 
 // Função para carregar as configurações financeiras
 const loadFinancialSettings = async () => {
@@ -970,25 +1006,12 @@ const toggleCategoryDropdown = (event) => {
   if (showCategoryDropdown.value) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
-    showProjectsDropdown.value = false
-  } else {
-    // Limpa as categorias ativas quando fecha o menu
-    activeCategory.value = null
-    activeSubcategory.value = null
+
   }
+  // Não limpa mais as categorias ativas quando fecha o menu
 }
 
-// Método para toggle do dropdown de projetos
-const toggleProjectsDropdown = (event) => {
-  event.stopPropagation()
-  showProjectsDropdown.value = !showProjectsDropdown.value
-  // Fecha os outros dropdowns quando abrir este
-  if (showProjectsDropdown.value) {
-    isLanguageDropdownOpen.value = false
-    isUserMenuOpen.value = false
-    showCategoryDropdown.value = false
-  }
-}
+
 
 // Método para navegação de categoria
 const navigateToCategory = (categoryId) => {
@@ -1022,7 +1045,6 @@ const handleLogout = async () => {
 
   await store.dispatch('logout');
   isUserMenuOpen.value = false;
-  showProjectsDropdown.value = false;
 
   // Remove os dados do carrinho do localStorage
   localStorage.removeItem(`cart_${userId}`);
@@ -1042,7 +1064,6 @@ const toggleUserMenu = (event) => {
   if (isUserMenuOpen.value) {
     isLanguageDropdownOpen.value = false
     showCategoryDropdown.value = false
-    showProjectsDropdown.value = false
   }
 }
 
@@ -1104,51 +1125,71 @@ const initializeCategoryExpansionState = (categories) => {
 
 // Função para definir a categoria ativa
 const setActiveCategory = (category) => {
-  // Se clicar na mesma categoria, alterna o estado
-  if (activeCategory.value && activeCategory.value.id === category.id) {
-    activeCategory.value = null
-    activeSubcategory.value = null
+  // Verifica se a categoria já está ativa
+  const isAlreadyActive = activeCategory.value && activeCategory.value.id === category.id
 
-    // Remove a classe expanded de todas as categorias
+  // Se a categoria já está ativa, alterna o estado de expansão
+  if (isAlreadyActive && category.children && category.children.length > 0) {
+    category.expanded = !category.expanded
+
+    // Se estiver retraindo, garante que a categoria ativa continue sendo esta
+    if (!category.expanded) {
+      activeCategory.value = category
+    }
+
+    return
+  }
+
+  // Define a categoria ativa
+  activeCategory.value = category
+  activeSubcategory.value = null
+
+  // Adiciona a classe expanded à categoria ativa
+  if (category && category.children && category.children.length > 0) {
+    // Marca a categoria como expandida
+    category.expanded = true
+
+    // Remove a classe expanded de todas as outras categorias
     categories.value.forEach(cat => {
-      cat.expanded = false
-      if (cat.children) {
-        cat.children.forEach(subcat => {
-          subcat.expanded = false
-        })
+      if (cat.id !== category.id) {
+        cat.expanded = false
       }
     })
-  } else {
-    activeCategory.value = category
-    activeSubcategory.value = null
-
-    // Adiciona a classe expanded à categoria ativa
-    if (category && category.children && category.children.length > 0) {
-      // Marca a categoria como expandida
-      category.expanded = true
-
-      // Remove a classe expanded de todas as outras categorias
-      categories.value.forEach(cat => {
-        if (cat.id !== category.id) {
-          cat.expanded = false
-        }
-      })
-    }
   }
 }
 
 // Função para definir a subcategoria ativa
 const setActiveSubcategory = (subcategory) => {
-  // Se clicar na mesma subcategoria, alterna o estado
-  if (activeSubcategory.value && activeSubcategory.value.id === subcategory.id) {
-    activeSubcategory.value = null
-  } else {
-    activeSubcategory.value = subcategory
+  // Verifica se a subcategoria já está ativa
+  const isAlreadyActive = activeSubcategory.value && activeSubcategory.value.id === subcategory.id
 
-    // Adiciona a classe 'expanded-item' a todos os itens expandidos
-    if (subcategory && subcategory.children && subcategory.children.length > 0) {
-      // Marca o item como expandido
-      subcategory.expanded = true
+  // Se a subcategoria já está ativa, alterna o estado de expansão
+  if (isAlreadyActive && subcategory.children && subcategory.children.length > 0) {
+    subcategory.expanded = !subcategory.expanded
+
+    // Se estiver retraindo, garante que a subcategoria ativa continue sendo esta
+    if (!subcategory.expanded) {
+      activeSubcategory.value = subcategory
+    }
+
+    return
+  }
+
+  // Define a subcategoria ativa
+  activeSubcategory.value = subcategory
+
+  // Adiciona a classe 'expanded-item' a todos os itens expandidos
+  if (subcategory && subcategory.children && subcategory.children.length > 0) {
+    // Marca o item como expandido
+    subcategory.expanded = true
+
+    // Certifica-se de que outras subcategorias do mesmo nível estão retraídas
+    if (activeCategory.value && activeCategory.value.children) {
+      activeCategory.value.children.forEach(sibling => {
+        if (sibling.id !== subcategory.id) {
+          sibling.expanded = false
+        }
+      })
     }
   }
 }
@@ -1161,7 +1202,6 @@ const toggleLanguageDropdown = (event) => {
   if (isLanguageDropdownOpen.value) {
     isUserMenuOpen.value = false
     showCategoryDropdown.value = false
-    showProjectsDropdown.value = false
   }
 }
 
@@ -1176,13 +1216,15 @@ const handleClickOutside = (event) => {
   const languageSelector = event.target.closest('.language-selector')
   const userMenu = event.target.closest('.user-menu')
   const categoryDropdown = event.target.closest('.category-dropdown')
-  const projectsDropdown = event.target.closest('.projects-dropdown')
 
-  if (!languageSelector && !userMenu && !categoryDropdown && !projectsDropdown) {
+  if (!languageSelector && !userMenu) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
+  }
+
+  // Fecha o menu de categorias apenas quando clicar fora dele
+  if (!categoryDropdown) {
     showCategoryDropdown.value = false
-    showProjectsDropdown.value = false
   }
 }
 
@@ -1235,9 +1277,13 @@ onMounted(async () => {
     const userButton = event.target.closest('.user-menu')
     const categoryButton = event.target.closest('.category-dropdown')
 
-    if (!languageButton && !userButton && !categoryButton) {
+    if (!languageButton && !userButton) {
       isLanguageDropdownOpen.value = false
       isUserMenuOpen.value = false
+    }
+
+    // Fecha o menu de categorias apenas quando clicar fora dele
+    if (!categoryButton) {
       showCategoryDropdown.value = false
     }
   }
@@ -1255,6 +1301,7 @@ onUnmounted(() => {
     if (!target.closest('.language-selector')) {
       isLanguageDropdownOpen.value = false
     }
+    // Fecha o menu de categorias apenas quando clicar fora dele
     if (!target.closest('.category-dropdown')) {
       showCategoryDropdown.value = false
     }
@@ -1425,8 +1472,8 @@ onUnmounted(() => {
 
 <style scoped>
 /* Estilo específico para o elemento expandido */
-.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style,
-.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style * {
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.group.font-medium.border-0.border-none.outline-none.whitespace-nowrap.overflow-hidden.truncate.no-transition.bg-black.text-empire-yellow.hover-style,
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.group.font-medium.border-0.border-none.outline-none.whitespace-nowrap.overflow-hidden.truncate.no-transition.bg-black.text-empire-yellow.hover-style * {
   background-color: black !important;
   color: #FFDD00 !important;
 }
@@ -1566,6 +1613,186 @@ input {
 .overflow-y-auto {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+/* Estilos específicos para o menu mobile */
+.mobile-shop-menu .subcategory-item:hover > div,
+.mobile-shop-menu .subcategory-item:hover > div * {
+  background-color: initial !important;
+  color: initial !important;
+}
+
+.mobile-shop-menu .subcategory-item div {
+  transition: all 0.3s ease;
+}
+
+/* Cores para o segundo nível não expandido */
+.mobile-shop-menu .subcategory-item div:not(.bg-black) {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Cores para o segundo nível expandido */
+.mobile-shop-menu .subcategory-item div.bg-black {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Garantir que as cores sejam aplicadas corretamente */
+.mobile-shop-menu .bg-empire-yellow {
+  background-color: #FFDD00 !important;
+}
+
+.mobile-shop-menu .text-black {
+  color: black !important;
+}
+
+.mobile-shop-menu .bg-black {
+  background-color: black !important;
+}
+
+.mobile-shop-menu .text-empire-yellow {
+  color: #FFDD00 !important;
+}
+
+/* Sobrescrever estilos de hover */
+.mobile-shop-menu .subcategory-item div:hover {
+  background-color: initial !important;
+  color: initial !important;
+}
+
+/* Desativar estilos de hover que estão causando problemas */
+.mobile-shop-menu .category-item:hover,
+.mobile-shop-menu .subcategory-item:hover,
+.mobile-shop-menu .category-item:hover > div,
+.mobile-shop-menu .subcategory-item:hover > div {
+  background-color: initial !important;
+  color: initial !important;
+}
+
+/* Garantir que as cores sejam aplicadas corretamente quando o item não está expandido */
+.mobile-shop-menu .subcategory-item div.bg-empire-yellow.text-black,
+.mobile-shop-menu .subcategory-item div.bg-empire-yellow,
+.mobile-shop-menu .subcategory-item div:not(.bg-black) {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Aplicar cores diretamente aos elementos */
+.mobile-shop-menu .subcategory-item {
+  background-color: #FFDD00 !important;
+}
+
+/* Garantir que todos os itens de segundo nível tenham fundo amarelo e texto preto */
+.mobile-shop-menu .subcategory-item div {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Garantir que todos os textos dentro dos itens de segundo nível sejam pretos */
+.mobile-shop-menu .subcategory-item div * {
+  color: black !important;
+}
+
+/* Apenas itens expandidos ou com classe bg-black têm fundo preto e texto amarelo */
+.mobile-shop-menu .subcategory-item.expanded div,
+.mobile-shop-menu .subcategory-item div.bg-black {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Garantir que todos os textos dentro de itens expandidos sejam amarelos */
+.mobile-shop-menu .subcategory-item.expanded div *,
+.mobile-shop-menu .subcategory-item div.bg-black * {
+  color: #FFDD00 !important;
+}
+
+/* Estilo específico para o terceiro nível */
+.mobile-shop-menu .bg-black div {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Garantir que todos os textos no terceiro nível sejam amarelos quando expandido */
+.mobile-shop-menu .bg-black div * {
+  color: #FFDD00 !important;
+}
+
+/* Garantir que todos os textos no terceiro nível sejam pretos quando não expandido */
+.mobile-shop-menu div:not(.bg-black) div:not(.bg-black) {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+.mobile-shop-menu div:not(.bg-black) div:not(.bg-black) * {
+  color: black !important;
+}
+
+/* Garantir que as setas tenham a cor correta */
+.mobile-shop-menu .subcategory-item:not(.expanded) > div svg {
+  fill: black !important;
+}
+
+.mobile-shop-menu .subcategory-item.expanded > div svg {
+  fill: #FFDD00 !important;
+}
+
+/* Estilos específicos para o menu mobile - Primeiro nível */
+.mobile-shop-menu .category-item > div {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Primeiro nível expandido */
+.mobile-shop-menu .category-item > div.bg-empire-yellow {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Estilos específicos para o menu mobile - Segundo nível */
+.mobile-shop-menu .subcategory-item > div {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Segundo nível expandido */
+.mobile-shop-menu .subcategory-item.expanded > div,
+.mobile-shop-menu .subcategory-item > div.bg-black {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo específico para o contêiner do terceiro nível */
+.mobile-shop-menu .third-level-container {
+  background-color: black !important;
+}
+
+.mobile-shop-menu .third-level-container div {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+.mobile-shop-menu .third-level-container div * {
+  color: #FFDD00 !important;
+}
+
+/* Estilo específico para a classe expanded */
+.mobile-shop-menu .expanded > div {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+.mobile-shop-menu .expanded > div * {
+  color: #FFDD00 !important;
+}
+
+.mobile-shop-menu .subcategory-item:not(.expanded) > div {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+.mobile-shop-menu .subcategory-item:not(.expanded) > div * {
+  color: black !important;
 }
 
 .overflow-y-auto::-webkit-scrollbar {
@@ -1742,6 +1969,24 @@ nav a:hover, nav a:focus, nav a:active,
   box-shadow: none !important;
 }
 
+/* Garantir que os menus expandam no hover */
+.category-item:hover,
+.subcategory-item:hover {
+  background-color: black !important;
+}
+
+.category-item:hover > div,
+.subcategory-item:hover > div {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para o menu principal */
+.category-item:hover > div {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
 /* Estilos para os menus */
 .shop-menu-container {
   display: flex;
@@ -1791,7 +2036,9 @@ nav a:hover, nav a:focus, nav a:active,
 .hover-style,
 .hover-style *,
 div.bg-black.text-empire-yellow.hover-style,
-div.bg-black.text-empire-yellow.hover-style * {
+div.bg-black.text-empire-yellow.hover-style *,
+.no-transition.bg-black.text-empire-yellow,
+.no-transition.bg-black.text-empire-yellow * {
   background-color: black !important;
   color: #FFDD00 !important;
 }
@@ -1804,6 +2051,36 @@ div[class*="bg-black text-empire-yellow hover-style"] {
   color: #FFDD00 !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* Estilo específico para o terceiro nível */
+.third-level-item {
+  border: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  padding: 10px 16px !important; /* Aumentamos um pouco o padding vertical */
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  background-color: #FFDD00 !important;
+  color: black !important;
+  transition: all 0.2s ease-in-out !important;
+  height: 100% !important;
+  min-height: 40px !important; /* Aumentamos um pouco a altura mínima */
+}
+
+.third-level-item:hover {
+  background-color: black !important;
+  color: #FFDD00 !important;
+  padding: 10px 16px !important;
+  margin: 0 !important;
+  height: 100% !important;
+  min-height: 40px !important; /* Aumentamos um pouco a altura mínima */
 }
 
 .third-level-item:hover *,
@@ -1828,35 +2105,62 @@ div[class*="bg-black text-empire-yellow hover-style"] .flex {
 
 /* Estilo para a seta no hover do menu principal */
 .category-hover:hover .category-arrow {
-  fill: black !important;
+  fill: #FBBD1E !important; /* Mantemos a seta amarela no hover */
 }
 
 /* Estilo específico para a div com texto truncado */
 .subcategory-item:hover .whitespace-nowrap.overflow-hidden.truncate,
 .third-level-item:hover .whitespace-nowrap.overflow-hidden.truncate,
-div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
+/* Estilo para o hover dos subitens (segundo e terceiro nível) */
 .subcategory-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"],
 .third-level-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"] {
   background-color: black !important;
   color: #FFDD00 !important;
 }
 
-/* Estilo para a div que contém a seta */
-.subcategory-item:hover .flex.items-center.justify-center.w-6.h-6,
-.subcategory-item:hover div[class*="flex items-center justify-center w-6 h-6"] {
-  background-color: black !important;
-}
-
-/* Estilo para hover no menu principal */
-.category-hover:hover,
-.category-hover:hover *,
-.category-hover:hover .whitespace-nowrap,
-.category-hover:hover .truncate,
-.category-hover:hover .flex.items-center.justify-center.w-6.h-6,
-.category-hover:hover div[class*="flex items-center justify-center w-6 h-6"] {
+/* Estilo específico para o hover do primeiro nível */
+.category-item > div:hover {
   background-color: #FFDD00 !important;
   color: black !important;
 }
+
+/* Classe para remover todas as transições */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Estilo específico para o item selecionado do segundo nível */
+div.flex.items-center.justify-between.px-4.py-2.cursor-pointer.group.font-medium.border-0.border-none.outline-none.whitespace-nowrap.overflow-hidden.truncate.no-transition.bg-black.text-empire-yellow.hover-style {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para a seta nos níveis 2 em diante */
+.subcategory-item:hover .subcategory-arrow {
+  fill: #FFDD00 !important;
+}
+
+.subcategory-item:hover .subcategory-arrow path {
+  fill: #FFDD00 !important;
+}
+
+/* Estilo para a seta no hover do primeiro nível */
+.category-item > div:hover svg.category-arrow {
+  fill: black !important;
+}
+
+.category-item > div:hover svg.category-arrow path {
+  fill: black !important;
+}
+
+/* Removidos estilos personalizados para o hover do menu principal */
+
+/* Removidos estilos personalizados para a seta */
+
+/* Removidos estilos personalizados para a seta e o contêiner */
+
+
 
 /* Garantir que não haja bordas na parte transparente */
 .shop-menu-container::before,
@@ -1878,6 +2182,27 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
   transform: rotate(180deg) !important;
 }
 
+/* Garantir que a seta do menu mobile aponte para cima quando expandido */
+.mobile-shop-menu .mobile-category-item svg.transform.rotate-180,
+.mobile-shop-menu .mobile-subcategory-item svg.transform.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+/* Garantir que todas as setas tenham o mesmo tamanho */
+.mobile-arrow,
+.mobile-shop-menu svg,
+.mobile-category-item svg,
+.mobile-subcategory-item svg {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  flex: 0 0 20px !important;
+  box-sizing: content-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* Garantir que o primeiro e último item preencham completamente */
 .subcategory-item:first-child > div {
   border-top-left-radius: 0 !important;
@@ -1887,6 +2212,19 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
 .subcategory-item:last-child > div {
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+}
+
+/* Garantir que os itens do terceiro nível preencham completamente */
+.third-level-item {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 12px 16px !important;
+}
+
+/* Garantir que o contêiner do terceiro nível não tenha padding ou margin */
+.menu-level.bg-empire-yellow {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Estilo para os textos do menu */
@@ -1917,7 +2255,7 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
 
 /* Estilo dos itens do menu */
 .category-item > div {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0s !important; /* Remover delay na transição */
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -1945,21 +2283,7 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
-.category-item > div::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background-color: rgba(255, 221, 0, 0.1);
-  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: -1;
-}
-
-.category-item > div:hover::before {
-  width: 100%;
-}
+/* Removido o efeito de transparência */
 
 /* Mantendo apenas o efeito de hover sem alterar o posicionamento */
 
@@ -1986,8 +2310,18 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.category-item:hover svg {
-  transform: scale(1.3);
+/* Remover o efeito de escala no hover para manter o tamanho consistente */
+.mobile-shop-menu .category-item:hover svg {
+  transform: none !important;
+}
+
+/* Manter apenas a rotação quando expandido */
+.mobile-shop-menu .category-item svg.transform.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+.mobile-shop-menu .subcategory-item svg.transform.rotate-180 {
+  transform: rotate(180deg) !important;
 }
 
 /* Animação para os submenus - mantendo a visibilidade original */
@@ -2015,5 +2349,125 @@ div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
   transform-origin: top center;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Garantir que o contêiner do menu mobile tenha bordas pretas */
+.mobile-shop-menu {
+  border: 1px solid black !important;
+  border-top: none !important;
+}
+
+/* Remover bordas entre os itens do menu mobile */
+.mobile-shop-menu .mobile-category-item {
+  border-bottom: 1px solid black !important;
+  margin-bottom: -1px !important; /* Para evitar linhas duplas */
+}
+
+/* Estilos para o menu mobile */
+.mobile-category-item span {
+  color: inherit !important;
+}
+
+.mobile-subcategory-item span {
+  color: inherit !important;
+}
+
+.mobile-childcategory-item span {
+  color: inherit !important;
+}
+
+/* Sobrescrever estilos do Tailwind */
+.mobile-shop-menu .mobile-category-item {
+  background-color: black !important;
+  color: white !important;
+  border-bottom: 1px solid black !important;
+}
+
+.mobile-shop-menu .mobile-category-item.expanded {
+  background-color: #FFDD00 !important;
+  color: black !important;
+  border-bottom: 1px solid black !important;
+}
+
+/* Garantir que a cor da letra seja aplicada corretamente */
+.mobile-shop-menu .mobile-category-item span {
+  color: white !important;
+}
+
+/* Garantir que a cor da seta seja amarela quando o item não está expandido */
+.mobile-shop-menu .mobile-category-item:not(.expanded) svg {
+  fill: #FFDD00 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-shop-menu .mobile-category-item.expanded span {
+  color: black !important;
+}
+
+/* Garantir que a cor da seta seja preta quando o item está expandido */
+.mobile-shop-menu .mobile-category-item.expanded svg {
+  fill: #000000 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-shop-menu .mobile-subcategory-item {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+.mobile-shop-menu .mobile-subcategory-item.expanded {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Garantir que a cor da letra seja aplicada corretamente */
+.mobile-shop-menu .mobile-subcategory-item span {
+  color: black !important;
+}
+
+/* Garantir que as setas do segundo nível tenham o mesmo tamanho */
+.mobile-shop-menu .mobile-subcategory-item svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.mobile-shop-menu .mobile-subcategory-item.expanded span {
+  color: #FFDD00 !important;
+}
+
+/* Garantir que os itens de segundo nível sem filhos tenham a letra preta */
+.mobile-shop-menu .subcategory-item:not(.expanded) div span {
+  color: black !important;
+}
+
+/* Garantir que os itens de segundo nível sem filhos tenham o fundo amarelo e a letra preta */
+.mobile-shop-menu .subcategory-item:not(.expanded) div {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Garantir que os links para subcategorias sem filhos tenham a letra preta */
+.mobile-shop-menu .subcategory-item div:not(.bg-black) span,
+.mobile-shop-menu .subcategory-item div span,
+.mobile-shop-menu .py-0[style*="background-color: #FFDD00"] .subcategory-item div span {
+  color: black !important;
+}
+
+/* Forçar a cor preta para todos os spans dentro de subcategorias */
+.mobile-shop-menu .subcategory-item span {
+  color: black !important;
+}
+
+/* Apenas quando expandido, a cor deve ser amarela */
+.mobile-shop-menu .subcategory-item.expanded span,
+.mobile-shop-menu .subcategory-item.expanded div span {
+  color: #FFDD00 !important;
+}
+
+.mobile-shop-menu .mobile-childcategory-item {
+  background-color: black !important;
+  color: #FFDD00 !important;
 }
 </style>

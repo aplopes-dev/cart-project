@@ -293,7 +293,11 @@
               <div
                 v-for="product in filteredProducts"
                 :key="product.id"
-                class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
+                class="flex flex-col bg-white border border-[#FAFAFA]"
+                :class="{
+                  'min-h-[500px] md:h-[700px]': showPrices,
+                  'min-h-[450px] md:h-[650px]': !showPrices
+                }"
               >
                 <!-- Wrap the clickable area in a div -->
                 <div
@@ -306,22 +310,29 @@
                     class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
                     @error="handleImageError"
                   >
-                  <div class="p-4 flex flex-col flex-grow">
+                  <div class="p-4 pb-0 md:pb-4 flex flex-col flex-grow">
                     <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo text-base md:text-lg text-black/70 mb-4 line-clamp-3 md:line-clamp-2 overflow-hidden">
+                    <p class="font-archivo text-base md:text-lg text-black/70 mb-2 md:mb-4 overflow-hidden"
+                       :class="{
+                         'line-clamp-5 md:line-clamp-2': showPrices,
+                         'line-clamp-6 md:line-clamp-3': !showPrices
+                       }">
                       {{ product.description }}
                     </p>
-                    <div class="mt-auto w-full">
-                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
+                    <div class="mt-0 w-full">
+                      <!-- Área de preço - só exibida quando os preços estão habilitados -->
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-2 md:mb-4">
                         {{ formatPrice(product.price) }}
                       </p>
                       <!-- Wrap the button in a div that stops event propagation -->
-                      <div @click.stop>
+                      <div @click.stop class="-mb-8 md:mb-0">
+                        <!-- Não adiciona margem superior quando não há preço na versão mobile -->
                         <ProductQuantitySelector
                           @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
                           class="text-responsive-add-cart"
+                          :class="{ 'md:mt-4': !showPrices }"
                         />
                       </div>
                     </div>
@@ -755,8 +766,16 @@ const fetchCategories = async () => {
     console.log(`[CategoryPage] Árvore de categorias completa construída com ${fullCategoryTree.length} categorias raiz`)
 
     // Usar o novo método para filtrar a árvore de categorias
-    categoryTree.value = categoryService.filterCategoryTree(fullCategoryTree, productCountMap)
-    console.log(`[CategoryPage] Árvore de categorias filtrada com ${categoryTree.value.length} categorias raiz`)
+    let filteredTree = categoryService.filterCategoryTree(fullCategoryTree, productCountMap)
+    console.log(`[CategoryPage] Árvore de categorias filtrada com ${filteredTree.length} categorias raiz`)
+
+    // Se temos um ID de categoria na rota, expandimos a árvore para mostrar essa categoria
+    if (route.params.slug) {
+      console.log(`[CategoryPage] Expandindo categorias para a categoria selecionada: ${route.params.slug}`)
+      filteredTree = categoryService.expandCategoriesForSelected(filteredTree, route.params.slug)
+    }
+
+    categoryTree.value = filteredTree
 
     // Listar categorias filtradas para debug
     const listCategoriesWithPath = (tree, path = '') => {
@@ -956,6 +975,10 @@ const selectCategoryBySlug = async (slug) => {
 
     if (categoryInTree) {
       console.log(`[CategoryPage] Categoria encontrada na árvore filtrada: ${categoryInTree.name} (ID: ${categoryInTree.id})`)
+
+      // Expandir a árvore para mostrar a categoria selecionada
+      categoryTree.value = categoryService.expandCategoriesForSelected(categoryTree.value, slug)
+
       await selectCategory(categoryInTree.id)
       return
     } else {
@@ -1137,7 +1160,7 @@ export default {
 </script>
 <style scoped>
 input[type="range"]::-webkit-slider-thumb {
-  @apply pointer-events-auto;
+  pointer-events: auto;
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
@@ -1147,7 +1170,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
-  @apply pointer-events-auto;
+  pointer-events: auto;
   width: 16px;
   height: 16px;
   background: #2C2C2C;
@@ -1160,6 +1183,7 @@ input[type="range"]::-moz-range-thumb {
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   width: 24px;
   height: 24px;
   border: 2px solid rgba(0, 0, 0, 0.7);
@@ -1259,6 +1283,7 @@ select:focus {
 /* Estilos para os sliders de preço */
 input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   height: 5px;
   background: #E0E0E0; /* Voltando para o cinza claro original */
   border-radius: 5px;
@@ -1268,6 +1293,7 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   height: 22px;
   width: 22px;
   border-radius: 50%;
@@ -1323,6 +1349,7 @@ input[type="range"]::-ms-thumb:hover {
 
 input[type="range"]::-webkit-slider-runnable-track {
   -webkit-appearance: none;
+  appearance: none;
   box-shadow: none;
   border: none;
   background: #E0E0E0; /* Voltando para o cinza claro original */

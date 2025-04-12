@@ -97,6 +97,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Seleção de Projeto -->
+    <ProjectSelectionModal
+      :show="showProjectModal"
+      :redirect-path="redirectPath"
+      @close="closeProjectModal"
+      @project-selected="handleProjectSelected"
+    />
   </div>
 </template>
 
@@ -106,9 +114,13 @@ import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref, getCurrentInstance, nextTick } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import ProjectSelectionModal from '@/components/auth/ProjectSelectionModal.vue'
 
 export default {
   name: 'LoginPage',
+  components: {
+    ProjectSelectionModal
+  },
   setup() {
     const { t } = useI18n()
     const router = useRouter()
@@ -123,6 +135,8 @@ export default {
     const error = ref('')
     const isLoading = ref(false)
     const showPassword = ref(false)
+    const showProjectModal = ref(false)
+    const redirectPath = ref('')
 
     const handleLogin = async () => {
       try {
@@ -154,13 +168,10 @@ export default {
           }
         }
 
-        // Redirecionamento
-        const redirectPath = route.query.redirect
-        if (redirectPath) {
-          router.push({ path: redirectPath })
-        } else {
-          router.push({ path: '/', replace: true })
-        }
+        // Salva o caminho de redirecionamento e mostra o modal de seleção de projeto
+        redirectPath.value = route.query.redirect || '/'
+        showProjectModal.value = true
+
       } catch (err) {
         console.error('Login error:', err)
         const errorMessage = err.response?.data?.message === 'Invalid credentials'
@@ -172,6 +183,26 @@ export default {
       } finally {
         isLoading.value = false
       }
+    }
+
+    const closeProjectModal = () => {
+      showProjectModal.value = false
+      // Se o usuário fechar o modal sem selecionar um projeto, redireciona para a página inicial
+      router.push({ path: redirectPath.value, replace: true })
+    }
+
+    const handleProjectSelected = (data) => {
+      showProjectModal.value = false
+      console.log('Projeto selecionado:', data.projectId, data.projectName)
+
+      // Salva o projeto selecionado no localStorage
+      localStorage.setItem('selectedProject', JSON.stringify({
+        id: data.projectId,
+        name: data.projectName
+      }))
+
+      // Redireciona para o caminho original
+      router.push({ path: data.redirectPath, replace: true })
     }
 
     const goToSignup = () => {
@@ -188,7 +219,11 @@ export default {
       error,
       isLoading,
       showPassword,
+      showProjectModal,
+      redirectPath,
       handleLogin,
+      closeProjectModal,
+      handleProjectSelected,
       goToSignup,
       t
     }

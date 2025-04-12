@@ -46,6 +46,7 @@
           :category="child"
           :selected-category="selectedCategory"
           @select="$emit('select', $event)"
+          @ensure-visible="$emit('ensure-visible', $event)"
         />
       </div>
     </div>
@@ -65,10 +66,37 @@ export default {
       default: null
     }
   },
-  emits: ['select'],
+  emits: ['select', 'ensure-visible'],
   data() {
     return {
       isExpanded: this.category?.expanded || false
+    }
+  },
+
+  watch: {
+    // Observa mudanças na propriedade expanded da categoria
+    'category.expanded': {
+      immediate: true,
+      handler(newValue) {
+        if (newValue === true) {
+          this.isExpanded = true;
+        }
+      }
+    },
+    // Observa mudanças na categoria selecionada
+    selectedCategory: {
+      immediate: true,
+      handler(newValue) {
+        // Verifica se a categoria atual ou algum de seus descendentes está selecionado
+        if (newValue) {
+          this.expandIfSelected(newValue);
+
+          // Se a categoria atual é a selecionada, emite um evento para garantir que ela esteja visível
+          if (newValue === this.category.id) {
+            this.$emit('ensure-visible', this.category.id);
+          }
+        }
+      }
     }
   },
   computed: {
@@ -88,6 +116,58 @@ export default {
 
       // Emitir evento de seleção com o ID da categoria
       this.$emit('select', categoryId)
+    },
+    // Verifica se a categoria atual ou algum de seus descendentes está selecionado
+    expandIfSelected(selectedId) {
+      // Se a categoria atual está selecionada, não precisa fazer nada
+      if (this.category.id === selectedId) {
+        return true;
+      }
+
+      // Se a categoria tem filhos, verifica se algum deles está selecionado
+      if (this.hasChildren) {
+        for (const child of this.category.children) {
+          // Verifica se o filho está selecionado
+          if (child.id === selectedId) {
+            this.isExpanded = true;
+            return true;
+          }
+
+          // Verifica recursivamente se algum descendente está selecionado
+          const hasSelectedDescendant = this.checkDescendants(child, selectedId);
+          if (hasSelectedDescendant) {
+            this.isExpanded = true;
+            return true;
+          }
+        }
+      }
+
+      return false;
+    },
+    // Verifica recursivamente se algum descendente está selecionado
+    checkDescendants(category, selectedId) {
+      // Se a categoria está selecionada, retorna true
+      if (category.id === selectedId) {
+        return true;
+      }
+
+      // Se a categoria tem filhos, verifica se algum deles está selecionado
+      if (category.children && category.children.length > 0) {
+        for (const child of category.children) {
+          // Verifica se o filho está selecionado
+          if (child.id === selectedId) {
+            return true;
+          }
+
+          // Verifica recursivamente se algum descendente está selecionado
+          const hasSelectedDescendant = this.checkDescendants(child, selectedId);
+          if (hasSelectedDescendant) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
   }
 }
