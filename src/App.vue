@@ -5,18 +5,21 @@
       <router-view/>
     </main>
     <TheFooter />
+    <ToastNotification />
   </div>
 </template>
 
 <script>
 import TheHeader from '@/components/layout/TheHeader.vue'
 import TheFooter from '@/components/layout/TheFooter.vue'
+import ToastNotification from '@/components/ui/ToastNotification.vue'
 
 export default {
   name: 'App',
   components: {
     TheHeader,
-    TheFooter
+    TheFooter,
+    ToastNotification
   },
   computed: {
     isHomePage() {

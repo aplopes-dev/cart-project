@@ -120,6 +120,12 @@ export default {
     price: 'Prix',
     description: 'Description'
   },
+  productSearch: {
+    title: 'Ajouter des Produits au Panier',
+    searchPlaceholder: 'Rechercher des produits à ajouter au panier...',
+    noResults: 'Aucun produit trouvé. Essayez une autre recherche.',
+    addToCart: 'Ajouter'
+  },
   common: {
     previous: 'Précédent',
     next: 'Suivant',
@@ -305,7 +311,10 @@ export default {
     next: 'Suivant',
     addToCart: 'AJOUTER AU PANIER',
     outOfStock: 'Rupture de Stock',
-    noResults: 'Aucun produit trouvé'
+    noResults: 'Aucun produit trouvé',
+    searchCategories: 'Rechercher des catégories...',
+    showOnlyCategoriesWithProducts: 'Afficher uniquement les catégories avec produits',
+    noCategories: 'Aucune catégorie trouvée'
   },
   career: {
     title: 'Opportunités de Carrière',
@@ -370,7 +379,35 @@ export default {
     manageCompany: 'Gérer les données de l\'entreprise',
     users: 'Paramètres Utilisateurs',
     usersDescription: 'Gérez les utilisateurs du système, les profils et les permissions',
-    manageUsers: 'Gérer les utilisateurs'
+    manageUsers: 'Gérer les utilisateurs',
+
+    // Paramètres de Catégories/Produits
+    categoryProduct: 'Catégories et Produits',
+    categoryProductDescription: 'Gérez la visibilité des catégories et des produits sur le site.',
+    manageCategoryProduct: 'Gérer les Catégories et Produits',
+    searchCategories: 'Rechercher des catégories...',
+    searchProducts: 'Rechercher des produits...',
+    showDisabled: 'Afficher les désactivés',
+    showOnlyWithProducts: 'Afficher uniquement les catégories avec produits',
+    noCategories: 'Aucune catégorie trouvée',
+    noProducts: 'Aucun produit trouvé dans cette catégorie',
+    noDescription: 'Pas de description',
+    enabled: 'Activé',
+    disabled: 'Désactivé',
+    showProducts: 'Voir les produits',
+    hideProducts: 'Masquer les produits',
+    product: 'Produit',
+    sku: 'SKU',
+    price: 'Prix',
+    status: 'Statut',
+    categoryEnabled: 'Catégorie activée avec succès',
+    categoryDisabled: 'Catégorie désactivée avec succès',
+    productEnabled: 'Produit activé avec succès',
+    productDisabled: 'Produit désactivé avec succès',
+    errorLoadingCategories: 'Erreur lors du chargement des catégories',
+    errorUpdatingCategory: 'Erreur lors de la mise à jour de la catégorie',
+    errorUpdatingProduct: 'Erreur lors de la mise à jour du produit',
+    noProductsInCategory: 'Sans produits'
   },
   users: {
     searchPlaceholder: 'Rechercher par nom ou email...',
@@ -692,6 +729,13 @@ export default {
     message: 'Vous n\'avez pas la permission d\'accéder à cette page. Cette zone est réservée aux administrateurs et aux gestionnaires uniquement.',
     goHome: 'Aller à la Page d\'Accueil',
     goToAccount: 'Aller à Mon Compte'
+  },
+  pagination: {
+    showing: 'Affichage',
+    of: 'sur',
+    prev: 'Précédent',
+    next: 'Suivant',
+    itemsPerPage: 'Éléments par page'
   }
 }
 

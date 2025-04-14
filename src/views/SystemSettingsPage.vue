@@ -69,6 +69,20 @@
             </router-link>
           </div>
 
+          <!-- Card - Configurações de Categorias/Produtos -->
+          <div class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+              </svg>
+              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('systemSettings.categoryProduct') }}</h2>
+            </div>
+            <p class="text-black/70 font-archivo text-base">{{ $t('systemSettings.categoryProductDescription') }}</p>
+            <router-link to="/settings/category-product" class="text-empire-yellow hover:underline mt-auto font-archivo">
+              {{ $t('systemSettings.manageCategoryProduct') }}
+            </router-link>
+          </div>
+
           <!-- Card - Configurações de Usuários (Visível apenas para ADMIN) -->
           <div v-if="isAdmin" class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
             <div class="flex items-center gap-3">

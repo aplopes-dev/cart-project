@@ -9,11 +9,19 @@
       <span class="block sm:inline">{{ errorMessage }}</span>
     </div>
 
+
+
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
-        <div class="pt-0 pb-2 md:pb-3 text-center">
+        <div class="pt-0 pb-4 md:pb-6 text-center">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('shoppingCart.title') }}</h1>
+        </div>
+
+        <!-- Área de Pesquisa de Produtos -->
+        <div class="mb-6 sm:mb-8">
+          <h2 class="font-archivo-narrow font-semibold text-lg sm:text-xl mb-4 sm:mb-5 text-left">{{ $t('productSearch.title') }}</h2>
+          <ProductSearchCombobox />
         </div>
 
         <!-- Header com títulos das colunas -->
@@ -79,8 +87,9 @@
             </div>
 
             <!-- Quantity -->
-            <div class="col-span-1 md:col-span-3 flex items-start justify-center gap-4">
-              <div class="flex items-center border border-black/25">
+            <div class="col-span-1 md:col-span-3 flex items-center md:justify-center">
+              <!-- Seletor de quantidade - Desktop -->
+              <div class="hidden md:flex items-center border border-black/25 mr-4">
                 <button @click="decreaseQuantity(index)"
                         class="px-4 py-2 text-xl hover:bg-black/5">-</button>
                 <span class="px-4 py-2 text-xl">{{ item.quantity }}</span>
@@ -88,10 +97,36 @@
                         class="px-4 py-2 text-xl hover:bg-black/5">+</button>
               </div>
 
-              <!-- Ícone de Lixeira -->
+              <!-- Versão Mobile: Flex container para alinhar à direita -->
+              <div class="flex md:hidden items-center ml-auto">
+                <!-- Seletor de quantidade - Mobile (mais largo e menos alto) -->
+                <div class="flex items-center border border-black/25 h-8 w-[140px]">
+                  <button @click="decreaseQuantity(index)"
+                          class="px-3 h-full flex items-center justify-center text-lg hover:bg-black/5 w-12">-</button>
+                  <span class="flex-1 flex items-center justify-center text-lg">{{ item.quantity }}</span>
+                  <button @click="increaseQuantity(index)"
+                          class="px-3 h-full flex items-center justify-center text-lg hover:bg-black/5 w-12">+</button>
+                </div>
+
+                <!-- Ícone de Lixeira - Mobile (mesma altura do seletor de quantidade) -->
+                <button
+                  @click="removeItem(index)"
+                  class="w-8 h-8 ml-2 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                >
+                  <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M13.3333 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.6667 14.6667V21.3333" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Ícone de Lixeira - Desktop -->
               <button
                 @click="removeItem(index)"
-                class="w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                class="hidden md:flex w-8 h-8 items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
               >
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -184,11 +219,13 @@ import ColorCircle from '@/components/common/ColorCircle.vue'
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import ProductSearchCombobox from '@/components/product/ProductSearchCombobox.vue'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
   components: {
-    ColorCircle
+    ColorCircle,
+    ProductSearchCombobox
   },
   setup() {
     const cartStore = useCartStore()
@@ -414,6 +451,8 @@ export default defineComponent({
 textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
+
+
 </style>
 
 

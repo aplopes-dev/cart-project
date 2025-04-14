@@ -61,45 +61,23 @@
                 </div>
               </div>
 
-              <!-- Email com tooltip -->
+              <!-- Email - redireciona para página de contato -->
               <div class="relative">
-                <button
-                  class="flex items-center"
-                  @mouseenter="showEmailTooltip = true"
-                  @mouseleave="showEmailTooltip = false"
-                  @click="showEmailTooltip = !showEmailTooltip"
-                >
+                <router-link to="/contact" class="flex items-center">
                   <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                     <path d="M22 6l-10 7L2 6"/>
                   </svg>
-                </button>
-                <div
-                  v-show="showEmailTooltip"
-                  class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
-                >
-                  {{ companyData.email }}
-                </div>
+                </router-link>
               </div>
 
-              <!-- Phone com tooltip -->
+              <!-- Phone - redireciona para página de contato -->
               <div class="relative">
-                <button
-                  class="flex items-center"
-                  @mouseenter="showPhoneTooltip = true"
-                  @mouseleave="showPhoneTooltip = false"
-                  @click="showPhoneTooltip = !showPhoneTooltip"
-                >
+                <router-link to="/contact" class="flex items-center">
                   <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
                   </svg>
-                </button>
-                <div
-                  v-show="showPhoneTooltip"
-                  class="absolute right-0 top-8 bg-black/90 text-white px-4 py-2 rounded-lg whitespace-nowrap z-50"
-                >
-                  {{ companyData.phone }}
-                </div>
+                </router-link>
               </div>
 
               <!-- Menu Button -->
@@ -1074,33 +1052,15 @@ const fetchCategories = async () => {
     error.value = null
     console.log('[Header] Iniciando carregamento de categorias')
 
-    // Buscar todas as categorias
-    const allCategories = await categoryService.getCategories()
-    console.log(`[Header] Recebidas ${allCategories.length} categorias da API`)
+    // Buscar categorias diretamente do backend com estrutura hierárquica
+    // e apenas categorias ativas com produtos
+    const hierarchicalCategories = await categoryService.searchCategories('', true)
+    console.log(`[Header] Recebidas ${hierarchicalCategories.length} categorias raiz do backend com estrutura hierárquica`)
 
-    // Buscar contagem de produtos por categoria
-    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
-    console.log(`[Header] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+    // Usar as categorias hierárquicas diretamente
+    categories.value = hierarchicalCategories
 
-    // Criar um mapa de contagem de produtos por categoria
-    const productCountMap = {}
-    topCategories.forEach(category => {
-      productCountMap[category.id] = category.productCount
-    })
-
-    // Construir a árvore de categorias
-    const categoryTree = categoryService.buildCategoryTree(allCategories)
-
-    // Filtrar categorias sem produtos
-    const filteredCategoryTree = categoryService.filterCategoryTree(categoryTree, productCountMap)
-
-    // Usar a árvore filtrada como categorias
-    categories.value = filteredCategoryTree
-
-    // Inicializar o estado de expansão para cada categoria
-    initializeCategoryExpansionState(categories.value)
-
-    console.log(`[Header] Árvore de categorias filtrada com ${categories.value.length} categorias raiz`)
+    console.log(`[Header] Árvore de categorias com ${categories.value.length} categorias raiz`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
@@ -1110,18 +1070,7 @@ const fetchCategories = async () => {
   }
 }
 
-// Função para inicializar o estado de expansão das categorias
-const initializeCategoryExpansionState = (categories) => {
-  categories.forEach(category => {
-    // Definir o estado de expansão como false para todas as categorias
-    category.expanded = false
-
-    // Recursivamente inicializar subcategorias
-    if (category.children && category.children.length > 0) {
-      initializeCategoryExpansionState(category.children)
-    }
-  })
-}
+// Nota: A inicialização do estado de expansão das categorias agora é feita pelo backend
 
 // Função para definir a categoria ativa
 const setActiveCategory = (category) => {
@@ -1339,6 +1288,34 @@ watch(() => authState.value.isAuthenticated, (newValue) => {
   }
 })
 
+// Função para buscar categorias com base em um termo de busca
+const searchCategories = async (searchTerm) => {
+  if (!searchTerm || searchTerm.length < 2) {
+    return
+  }
+
+  try {
+    console.log(`[Header] Buscando categorias com termo: "${searchTerm}"`)
+    loading.value = true
+
+    // Buscar categorias que correspondem ao termo de busca
+    const matchingCategories = await categoryService.searchCategories(searchTerm, true)
+    console.log(`[Header] Encontradas ${matchingCategories.length} categorias raiz que correspondem ao termo "${searchTerm}"`)
+
+    // Atualizar as categorias exibidas
+    categories.value = matchingCategories
+
+    // Se houver categorias correspondentes, mostrar o dropdown
+    if (matchingCategories.length > 0) {
+      showCategoryDropdown.value = true
+    }
+  } catch (error) {
+    console.error('Error searching categories:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
 // Adicione esta função para buscar produtos
 const searchProducts = async (query) => {
   if (!query || query.length < 2) {
@@ -1363,12 +1340,23 @@ const searchProducts = async (query) => {
   }
 }
 
-// Adicione o debounce para a busca
-const debouncedSearch = debounce(searchProducts, 300)
+// Adicione o debounce para a busca de produtos
+const debouncedProductSearch = debounce(searchProducts, 300)
 
-// Adicione este watch
+// Adicione o debounce para a busca de categorias
+const debouncedCategorySearch = debounce(searchCategories, 300)
+
+// Adicione este watch para buscar produtos quando o termo de busca mudar
 watch(searchQuery, (newValue) => {
-  debouncedSearch(newValue)
+  debouncedProductSearch(newValue)
+
+  // Também buscar categorias quando o termo de busca tiver pelo menos 2 caracteres
+  if (newValue && newValue.length >= 2) {
+    debouncedCategorySearch(newValue)
+  } else if (newValue.length === 0) {
+    // Se o termo de busca for limpo, recarregar todas as categorias
+    fetchCategories()
+  }
 })
 
 // Adicione esta função para formatar o preço
@@ -1417,10 +1405,19 @@ const handleSearchInput = (event) => {
   selectedIndex.value = -1 // Reset selection on new input
 
   if (value.length >= 2) {
-    debouncedSearch(value)
+    // Buscar produtos
+    debouncedProductSearch(value)
+
+    // Buscar categorias
+    debouncedCategorySearch(value)
   } else {
     filteredProducts.value = []
     showAutocomplete.value = false
+
+    // Se o campo de busca for limpo, recarregar todas as categorias
+    if (value.length === 0) {
+      fetchCategories()
+    }
   }
 }
 

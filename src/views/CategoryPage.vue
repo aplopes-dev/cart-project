@@ -8,7 +8,7 @@
           <div class="sticky top-8">
             <div> <!-- Removido border border-[#FAFAFA] -->
               <!-- Filtro de Categorias -->
-              <div class="flex flex-col gap-12 w-[328px]">
+              <div class="flex flex-col gap-6 w-[328px]">
                 <!-- Título do Filtro -->
                 <div class="flex flex-col w-full">
                   <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
@@ -18,9 +18,18 @@
                   </div>
                 </div>
 
+
+
                 <!-- Lista de Categorias Hierárquica -->
-                <div class="mb-12 category-filter-container">
+                <div class="mb-6 category-filter-container">
+                  <div v-if="loading" class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>
+                  </div>
+                  <div v-else-if="categoryTree.length === 0" class="p-4 text-center text-gray-500">
+                    {{ $t('categoryPage.noCategories') }}
+                  </div>
                   <CategoryTree
+                    v-else
                     :categories="categoryTree"
                     :selected-category="selectedCategory"
                     @select="selectCategory"
@@ -187,13 +196,13 @@
             class="w-full mb-6 transition-all duration-300"
           >
             <!-- Filtro de Categorias -->
-            <div class="mb-6">
+            <div class="mb-3">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
                   {{ $t('categoryPage.categories') }}
                 </h3>
               </div>
-              <div class="category-filter-container-mobile">
+              <div class="category-filter-container-mobile mt-[-0.25rem]">
                 <!-- Conteúdo do filtro de categorias hierárquico -->
                 <CategoryTree
                   :categories="categoryTree"
@@ -282,8 +291,8 @@
 
           <!-- Grid de Produtos -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-if="loading" class="col-span-full flex justify-center items-center">
-              <div class="loader">Loading...</div>
+            <div v-if="loading" class="col-span-full flex justify-center items-center py-12">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>
             </div>
             <div v-else-if="error" class="col-span-full text-red-500">
               {{ error }}
@@ -513,7 +522,7 @@ import { productCharacteristicsService } from '@/services/productCharacteristics
 
 const route = useRoute()
 const router = useRouter()
-const { locale } = useI18n() // Adicionando aqui no topo com os outros composables
+const { locale, t } = useI18n() // Adicionando aqui no topo com os outros composables
 
 // Removendo registro do componente VueSlider
 const currentPage = ref(1)
@@ -540,6 +549,7 @@ const togglesStore = useFinancialTogglesStore()
 const showToast = ref(false)
 const currencySymbol = ref('$')
 const showPrices = ref(true) // Controla a visibilidade dos preços
+// Removidas variáveis e funções relacionadas à busca de categorias
 
 // Watch para atualizar descrições quando mudar o idioma
 watch(locale, (newLocale) => {
@@ -591,8 +601,36 @@ const loadFinancialSettings = async () => {
 }
 
 const fetchFilteredProducts = async () => {
+  console.log(`[CategoryPage] Iniciando fetchFilteredProducts`);
+  console.log(`[CategoryPage] Categoria selecionada: ${selectedCategory.value}`);
+
   try {
-    loading.value = true
+    // Mostrar indicador de carregamento apenas para a lista de produtos
+    const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+    if (productsGrid) {
+      // Adiciona um overlay de carregamento apenas na lista de produtos
+      const loadingOverlay = document.createElement('div');
+      loadingOverlay.className = 'absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10';
+      loadingOverlay.id = 'products-loading-overlay';
+      loadingOverlay.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>';
+
+      // Adiciona posicionamento relativo ao grid de produtos se ainda não tiver
+      if (window.getComputedStyle(productsGrid).position === 'static') {
+        productsGrid.style.position = 'relative';
+      }
+
+      // Remove qualquer overlay existente antes de adicionar um novo
+      const existingOverlay = document.getElementById('products-loading-overlay');
+      if (existingOverlay) {
+        existingOverlay.remove();
+      }
+
+      productsGrid.appendChild(loadingOverlay);
+    } else {
+      // Fallback para o indicador de carregamento global se não encontrar o grid de produtos
+      loading.value = true;
+    }
+    console.log(`[CategoryPage] Indicador de carregamento ativado em fetchFilteredProducts`);
 
     // Prepara os parâmetros de filtro
     const filterParams = {
@@ -602,6 +640,8 @@ const fetchFilteredProducts = async () => {
       limit: itemsPerPage.value,
       sortBy: sortBy.value
     }
+
+    console.log(`[CategoryPage] Parâmetros de filtro:`, filterParams);
 
     // Adiciona os parâmetros de preço apenas se o toggle master estiver habilitado
     if (showPrices.value) {
@@ -616,16 +656,26 @@ const fetchFilteredProducts = async () => {
       settingsService.getFinancialSettings()
     ])
 
-    console.log('Resposta da API de produtos:', productsResponse)
+    console.log('[CategoryPage] Resposta da API de produtos:', productsResponse)
+    console.log(`[CategoryPage] Total de produtos retornados: ${productsResponse.items?.length || 0}`)
+    console.log(`[CategoryPage] Total de produtos na resposta: ${productsResponse.total}`)
 
-    products.value = productsResponse.items.map(product => ({
-      ...product,
-      description: product[`description_${locale.value}`] || product.description_en || ''
-    }))
+    if (!productsResponse.items || productsResponse.items.length === 0) {
+      console.log('[CategoryPage] Nenhum produto retornado pela API')
+      products.value = []
+    } else {
+      products.value = productsResponse.items.map(product => ({
+        ...product,
+        description: product[`description_${locale.value}`] || product.description_en || ''
+      }))
+      console.log(`[CategoryPage] ${products.value.length} produtos processados e armazenados`)
+    }
 
     totalItems.value = productsResponse.total
     totalPages.value = Math.ceil(productsResponse.total / itemsPerPage.value)
     currencySymbol.value = settings.currency_symbol
+
+    console.log(`[CategoryPage] Atualizado totalItems: ${totalItems.value}, totalPages: ${totalPages.value}`)
 
   } catch (err) {
     console.error('Error fetching data:', err)
@@ -633,6 +683,13 @@ const fetchFilteredProducts = async () => {
     products.value = []
   } finally {
     loading.value = false
+
+    // Remover o overlay de carregamento da lista de produtos
+    const loadingOverlay = document.getElementById('products-loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.remove();
+      console.log('[CategoryPage] Overlay de carregamento removido em fetchFilteredProducts');
+    }
   }
 }
 
@@ -743,45 +800,46 @@ watch([selectedBrands, selectedCategory], async () => {
 
 const fetchCategories = async () => {
   try {
-    console.log('[CategoryPage] Iniciando busca de categorias')
+    loading.value = true
+    console.log(`[CategoryPage] Iniciando busca de categorias`)
 
-    // Buscar categorias da API
-    const response = await categoryService.getCategories()
-    categories.value = response || []
-    console.log(`[CategoryPage] Recebidas ${categories.value.length} categorias da API`)
+    // Buscar apenas categorias com produtos, como no menu loja do header
+    const hierarchicalCategories = await categoryService.searchCategories('', true)
+    console.log(`[CategoryPage] Recebidas ${hierarchicalCategories.length} categorias raiz do backend com estrutura hierárquica`)
 
-    // Buscar contagem de produtos por categoria
-    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
-    console.log(`[CategoryPage] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+    // Armazenar todas as categorias para uso posterior
+    categories.value = hierarchicalCategories
 
-    // Criar um mapa de contagem de produtos por categoria
-    const productCountMap = {}
-    topCategories.forEach(category => {
-      productCountMap[category.id] = category.productCount
-      console.log(`[CategoryPage] Categoria ${category.name} (ID: ${category.id}) tem ${category.productCount} produtos`)
-    })
+    // Garantir que todas as categorias estejam retraídas inicialmente
+    const collapseAllCategories = (cats) => {
+      if (!cats || !Array.isArray(cats)) return
 
-    // Construir a árvore de categorias completa
-    const fullCategoryTree = categoryService.buildCategoryTree(categories.value)
-    console.log(`[CategoryPage] Árvore de categorias completa construída com ${fullCategoryTree.length} categorias raiz`)
+      cats.forEach(category => {
+        category.expanded = false
 
-    // Usar o novo método para filtrar a árvore de categorias
-    let filteredTree = categoryService.filterCategoryTree(fullCategoryTree, productCountMap)
-    console.log(`[CategoryPage] Árvore de categorias filtrada com ${filteredTree.length} categorias raiz`)
-
-    // Se temos um ID de categoria na rota, expandimos a árvore para mostrar essa categoria
-    if (route.params.slug) {
-      console.log(`[CategoryPage] Expandindo categorias para a categoria selecionada: ${route.params.slug}`)
-      filteredTree = categoryService.expandCategoriesForSelected(filteredTree, route.params.slug)
+        if (category.children && category.children.length > 0) {
+          collapseAllCategories(category.children)
+        }
+      })
     }
 
-    categoryTree.value = filteredTree
+    // Colapsar todas as categorias primeiro
+    collapseAllCategories(hierarchicalCategories)
 
-    // Listar categorias filtradas para debug
+    // Se temos um ID de categoria na rota, expandimos apenas essa categoria e seus pais
+    if (route.params.slug) {
+      console.log(`[CategoryPage] Expandindo categorias para a categoria selecionada: ${route.params.slug}`)
+      categoryTree.value = categoryService.expandCategoriesForSelected(hierarchicalCategories, route.params.slug)
+    } else {
+      // Caso contrário, usar as categorias hierárquicas diretamente (todas retraídas)
+      categoryTree.value = hierarchicalCategories
+    }
+
+    // Listar categorias para debug
     const listCategoriesWithPath = (tree, path = '') => {
       tree.forEach(category => {
         const currentPath = path ? `${path} > ${category.name}` : category.name
-        console.log(`[CategoryPage] Categoria mantida: ${currentPath} (ID: ${category.id})`)
+        console.log(`[CategoryPage] Categoria: ${currentPath} (ID: ${category.id})`)
 
         if (category.children && category.children.length > 0) {
           listCategoriesWithPath(category.children, currentPath)
@@ -791,13 +849,14 @@ const fetchCategories = async () => {
 
     listCategoriesWithPath(categoryTree.value)
 
-    console.log(`[CategoryPage] Total de categorias carregadas: ${categories.value.length}`)
-    console.log(`[CategoryPage] Total de categorias raiz após filtragem: ${categoryTree.value.length}`)
+    console.log(`[CategoryPage] Total de categorias raiz: ${categoryTree.value.length}`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
     categories.value = []
     categoryTree.value = []
+  } finally {
+    loading.value = false
   }
 }
 
@@ -868,29 +927,120 @@ const handleImageError = (e) => {
 }
 
 const selectCategory = async (categoryId) => {
+  console.log(`[CategoryPage] Iniciando selectCategory com categoryId: ${categoryId}`);
+
   // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
   if (selectedCategory.value === categoryId) {
+    console.log(`[CategoryPage] Categoria ${categoryId} já está selecionada, ignorando`);
     return; // Não permite desmarcar a categoria
   }
 
+  // Mostrar indicador de carregamento apenas para a lista de produtos
+  // Isso evita que o filtro de categorias seja recarregado
+  const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+  if (productsGrid) {
+    // Adiciona um overlay de carregamento apenas na lista de produtos
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10';
+    loadingOverlay.id = 'products-loading-overlay';
+    loadingOverlay.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>';
+
+    // Adiciona posicionamento relativo ao grid de produtos se ainda não tiver
+    if (window.getComputedStyle(productsGrid).position === 'static') {
+      productsGrid.style.position = 'relative';
+    }
+
+    // Remove qualquer overlay existente antes de adicionar um novo
+    const existingOverlay = document.getElementById('products-loading-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+
+    productsGrid.appendChild(loadingOverlay);
+  } else {
+    // Fallback para o indicador de carregamento global se não encontrar o grid de produtos
+    loading.value = true;
+  }
+
+  console.log(`[CategoryPage] Indicador de carregamento ativado apenas para produtos`);
+
   // Reset da página atual ao mudar de categoria
   currentPage.value = 1;
+  console.log(`[CategoryPage] Página resetada para 1`);
 
   // Define a nova categoria selecionada
+  console.log(`[CategoryPage] Alterando categoria selecionada de ${selectedCategory.value} para ${categoryId}`);
   selectedCategory.value = categoryId;
 
-  // Busca as marcas relacionadas à categoria selecionada
-  await fetchBrands(selectedCategory.value);
-  selectedBrands.value = brands.value.map(brand => brand.id);
+  try {
+    // Busca as marcas relacionadas à categoria selecionada
+    await fetchBrands(selectedCategory.value);
+    selectedBrands.value = brands.value.map(brand => brand.id);
 
-  // Atualiza o preço máximo com base na categoria selecionada
-  await updateMaxPrice();
+    // Atualiza o preço máximo com base na categoria selecionada
+    await updateMaxPrice();
 
-  // Busca produtos filtrados explicitamente (além do watcher)
-  await fetchFilteredProducts();
+    // Busca produtos filtrados explicitamente (além do watcher)
+    await fetchFilteredProducts();
 
-  console.log('Categoria selecionada:', categoryId);
-  console.log('Buscando produtos para a categoria:', selectedCategory.value);
+    console.log('Categoria selecionada:', categoryId);
+    console.log('Buscando produtos para a categoria:', selectedCategory.value);
+
+    // Atualizar a URL sem recarregar a página
+    try {
+      console.log(`[CategoryPage] Atualizando URL para /categories/${categoryId}`);
+
+      // Usar replace em vez de push para evitar problemas com o histórico
+      // Usar replaceState diretamente para evitar qualquer recarregamento
+      const newUrl = `/categories/${categoryId}${window.location.search}`;
+      window.history.replaceState(null, '', newUrl);
+      console.log(`[CategoryPage] URL atualizada para: ${newUrl}`);
+    } catch (error) {
+      console.error('[CategoryPage] Erro ao atualizar URL:', error);
+    }
+
+    // Rolar para o elemento de ordenação após um pequeno atraso para garantir que o DOM foi atualizado
+    setTimeout(() => {
+      console.log('[CategoryPage] Tentando rolar para o elemento de ordenação');
+
+      // Encontrar o elemento que contém o combobox de ordenação
+      const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black');
+
+      if (sortingElement) {
+        console.log('[CategoryPage] Elemento de ordenação encontrado, rolando para ele');
+        // Rolar suavemente para o elemento de ordenação
+        sortingElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        console.log('[CategoryPage] Elemento de ordenação NÃO encontrado, tentando alternativas');
+        // Tentar encontrar o elemento da lista de produtos
+        const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+
+        if (productsGrid) {
+          console.log('[CategoryPage] Elemento da lista de produtos encontrado, rolando para ele');
+          // Rolar suavemente para o topo da lista de produtos
+          productsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.log('[CategoryPage] Nenhum elemento encontrado, rolando para o topo da página');
+          // Último fallback: rolar para o topo da página
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }, 300); // Aumentando o atraso para garantir que o DOM foi atualizado
+  } catch (error) {
+    console.error('Erro ao carregar produtos para a categoria:', error);
+    // Exibir mensagem de erro para o usuário
+    error.value = 'Erro ao carregar produtos para esta categoria';
+  } finally {
+    // Esconder indicador de carregamento
+    loading.value = false;
+
+    // Remover o overlay de carregamento da lista de produtos
+    const loadingOverlay = document.getElementById('products-loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.remove();
+      console.log('[CategoryPage] Overlay de carregamento removido');
+    }
+  }
 }
 
 const handleAddToCart = (product, quantity) => {
@@ -926,10 +1076,77 @@ const showSuccessToast = () => {
 }
 
 const handlePageChange = async (page) => {
-  currentPage.value = page
-  await fetchFilteredProducts()
-  // Opcional: Rolar para o topo da lista de produtos
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Mostrar indicador de carregamento apenas para a lista de produtos
+  const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+  if (productsGrid) {
+    // Adiciona um overlay de carregamento apenas na lista de produtos
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10';
+    loadingOverlay.id = 'products-loading-overlay';
+    loadingOverlay.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>';
+
+    // Adiciona posicionamento relativo ao grid de produtos se ainda não tiver
+    if (window.getComputedStyle(productsGrid).position === 'static') {
+      productsGrid.style.position = 'relative';
+    }
+
+    // Remove qualquer overlay existente antes de adicionar um novo
+    const existingOverlay = document.getElementById('products-loading-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+
+    productsGrid.appendChild(loadingOverlay);
+  } else {
+    // Fallback para o indicador de carregamento global se não encontrar o grid de produtos
+    loading.value = true;
+  }
+
+  currentPage.value = page;
+
+  try {
+    await fetchFilteredProducts();
+
+    // Rolar para o elemento de ordenação após um pequeno atraso para garantir que o DOM foi atualizado
+    setTimeout(() => {
+      console.log('[CategoryPage] Tentando rolar para o elemento de ordenação');
+
+      // Encontrar o elemento que contém o combobox de ordenação
+      const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black');
+
+      if (sortingElement) {
+        console.log('[CategoryPage] Elemento de ordenação encontrado, rolando para ele');
+        // Rolar suavemente para o elemento de ordenação
+        sortingElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        console.log('[CategoryPage] Elemento de ordenação NÃO encontrado, tentando alternativas');
+        // Tentar encontrar o elemento da lista de produtos
+        const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+
+        if (productsGrid) {
+          console.log('[CategoryPage] Elemento da lista de produtos encontrado, rolando para ele');
+          // Rolar suavemente para o topo da lista de produtos
+          productsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.log('[CategoryPage] Nenhum elemento encontrado, rolando para o topo da página');
+          // Último fallback: rolar para o topo da página
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }, 300); // Aumentando o atraso para garantir que o DOM foi atualizado
+  } catch (error) {
+    console.error('Erro ao mudar de página:', error);
+  } finally {
+    // Esconder indicador de carregamento
+    loading.value = false;
+
+    // Remover o overlay de carregamento da lista de produtos
+    const loadingOverlay = document.getElementById('products-loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.remove();
+      console.log('[CategoryPage] Overlay de carregamento removido');
+    }
+  }
 }
 
 // Função para selecionar a primeira categoria
@@ -939,15 +1156,19 @@ const selectFirstCategory = () => {
   // Verifica se há categorias filtradas disponíveis
   if (categoryTree.value && categoryTree.value.length > 0) {
     console.log(`[CategoryPage] Selecionando primeira categoria da árvore filtrada: ${categoryTree.value[0].name} (ID: ${categoryTree.value[0].id})`)
+    // Seleciona a categoria diretamente sem atualizar a árvore
     selectCategory(categoryTree.value[0].id)
   } else if (categories.value && categories.value.length > 0) {
     // Fallback para o comportamento anterior
     console.log(`[CategoryPage] Nenhuma categoria filtrada disponível, usando primeira categoria não filtrada: ${categories.value[0].name} (ID: ${categories.value[0].id})`)
+    // Seleciona a categoria diretamente sem atualizar a árvore
     selectCategory(categories.value[0].id)
   } else {
     console.log('[CategoryPage] Nenhuma categoria disponível para seleção')
   }
 }
+
+
 
 // Função para selecionar categoria por slug
 const selectCategoryBySlug = async (slug) => {
@@ -976,9 +1197,8 @@ const selectCategoryBySlug = async (slug) => {
     if (categoryInTree) {
       console.log(`[CategoryPage] Categoria encontrada na árvore filtrada: ${categoryInTree.name} (ID: ${categoryInTree.id})`)
 
-      // Expandir a árvore para mostrar a categoria selecionada
-      categoryTree.value = categoryService.expandCategoriesForSelected(categoryTree.value, slug)
-
+      // Em vez de atualizar a árvore inteira, apenas marca a categoria como selecionada
+      // e deixa o componente CategoryTreeItem lidar com a expansão
       await selectCategory(categoryInTree.id)
       return
     } else {
@@ -986,40 +1206,59 @@ const selectCategoryBySlug = async (slug) => {
     }
   }
 
-  // Se não encontrou na árvore filtrada, tenta nas categorias originais
-  if (categories.value && categories.value.length > 0) {
-    console.log(`[CategoryPage] Buscando categoria com ID ${slug} nas categorias originais`)
-    const category = categories.value.find(cat => cat.id === slug)
+  // Se não encontrou na árvore filtrada, buscar diretamente do backend
+  // mas sem recarregar toda a árvore de categorias
+  try {
+    console.log(`[CategoryPage] Buscando categoria com ID ${slug} diretamente do backend`)
 
-    if (category) {
-      console.log(`[CategoryPage] Categoria encontrada nas categorias originais: ${category.name} (ID: ${category.id})`)
-      console.log(`[CategoryPage] Verificando se esta categoria tem produtos...`)
-
-      // Buscar contagem de produtos para esta categoria
-      const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
-      const productCountMap = {}
-      topCategories.forEach(cat => {
-        productCountMap[cat.id] = cat.productCount
-      })
-
-      // Construir a árvore para esta categoria
-      const singleCategoryTree = categoryService.buildCategoryTree([category])
-
-      if (singleCategoryTree.length > 0 && categoryService.hasCategoryProducts(singleCategoryTree[0], productCountMap)) {
-        console.log(`[CategoryPage] Categoria ${category.name} tem produtos, selecionando-a`)
-        await selectCategory(category.id)
-        return
-      } else {
-        console.log(`[CategoryPage] Categoria ${category.name} não tem produtos, selecionando a primeira categoria filtrada`)
+    // Em vez de buscar todas as categorias novamente, apenas busca a categoria específica
+    if (categories.value && categories.value.length > 0) {
+      // Função auxiliar para buscar categoria na árvore
+      const findCategoryInTree = (tree, id) => {
+        for (const node of tree) {
+          if (node.id === id) {
+            return node
+          }
+          if (node.children && node.children.length > 0) {
+            const found = findCategoryInTree(node.children, id)
+            if (found) return found
+          }
+        }
+        return null
       }
-    } else {
-      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada nas categorias originais`)
+
+      const categoryInTree = findCategoryInTree(categories.value, slug)
+
+      if (categoryInTree) {
+        console.log(`[CategoryPage] Categoria encontrada nas categorias existentes: ${categoryInTree.name} (ID: ${categoryInTree.id})`)
+
+        // Apenas seleciona a categoria sem atualizar a árvore
+        await selectCategory(categoryInTree.id)
+        return
+      }
     }
+
+    // Se ainda não encontrou, tenta buscar do backend como último recurso
+    // mas apenas para obter o ID da categoria, não para atualizar a árvore
+    console.log(`[CategoryPage] Categoria não encontrada localmente, buscando do backend como último recurso`)
+
+    try {
+      // Em vez de buscar todas as categorias, tenta buscar apenas a categoria específica
+      // Isso é uma simulação, já que não temos um endpoint para buscar uma categoria específica
+      await selectCategory(slug)
+      return
+    } catch (innerError) {
+      console.error('Error selecting category by ID:', innerError)
+    }
+  } catch (error) {
+    console.error('Error fetching category by slug:', error)
   }
 
   // Se chegou até aqui, seleciona a primeira categoria filtrada
   console.log(`[CategoryPage] Selecionando a primeira categoria filtrada como fallback`)
-  selectFirstCategory()
+  if (categoryTree.value && categoryTree.value.length > 0) {
+    await selectCategory(categoryTree.value[0].id)
+  }
 }
 
 onMounted(async () => {
@@ -1051,13 +1290,19 @@ watch(
   async (newSlug) => {
     console.log('Slug da rota alterado para:', newSlug)
     if (newSlug) {
-      await selectCategoryBySlug(newSlug)
+      // Verifica se a categoria já está selecionada para evitar recarregar
+      if (selectedCategory.value !== newSlug) {
+        console.log(`[CategoryPage] Categoria diferente da atual, atualizando seleção de ${selectedCategory.value} para ${newSlug}`)
+        await selectCategoryBySlug(newSlug)
+      } else {
+        console.log(`[CategoryPage] Categoria ${newSlug} já está selecionada, apenas atualizando produtos`)
+        // Apenas atualiza os produtos sem recarregar as categorias
+        await fetchFilteredProducts()
+      }
     } else {
       console.log('Slug removido da rota, selecionando a primeira categoria')
       selectFirstCategory()
     }
-    // Força a busca de produtos após a mudança de categoria
-    await fetchFilteredProducts()
   }
 )
 
@@ -1116,6 +1361,8 @@ const navigateToProduct = (productId) => {
   router.push(`/product/${productId}`)
 }
 
+// Removidas funções não utilizadas relacionadas à busca de categorias e toggle de categorias com produtos
+
 const formatPrice = (price) => {
   return `${currencySymbol.value}${Number(price).toFixed(2)}`
 }
@@ -1145,15 +1392,6 @@ export default {
     },
     addToCart(product, quantity) {
       console.log('Adding to cart:', product, 'quantity:', quantity)
-    },
-    selectCategory(categoryId) {
-      // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
-      if (this.selectedCategory === categoryId) {
-        return; // Não permite desmarcar a categoria
-      }
-
-      // Define a nova categoria selecionada
-      this.selectedCategory = categoryId;
     }
   }
 }
