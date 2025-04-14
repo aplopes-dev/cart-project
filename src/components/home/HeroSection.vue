@@ -76,7 +76,6 @@
 
 <script>
 import api from '@/services/api'
-import { API_URL } from '@/config/constants'
 
 export default {
   name: 'HeroSection',
@@ -97,12 +96,16 @@ export default {
       setInterval(this.nextSlide, 5000)
     },
     getFullImageUrl(imagePath) {
+      // Se já for uma URL completa (http ou https), retorna como está
       if (imagePath.startsWith('http')) {
         return imagePath
       }
-      // Remove a parte '/api' da URL se necessário
-      const baseUrl = API_URL.replace('/api', '')
-      return `${baseUrl}${imagePath}`
+
+      // Remove qualquer '/images/home/' ou '/images/banner/' do início do caminho
+      const cleanPath = imagePath.replace(/^\/?(images\/(home|banner)\/)+/, '')
+      
+      // Retorna o caminho correto
+      return `/images/banner/${cleanPath}`
     },
     async loadImages() {
       try {
