@@ -673,6 +673,48 @@ export default {
         deleteError: 'Erreur lors de la suppression de la section',
         visibilityError: 'Erreur lors de la mise à jour de la visibilité'
       }
+    },
+    homeImages: {
+      breadcrumb: 'Images d\'Accueil',
+      title: 'Images de la Page d\'Accueil',
+      description: 'Gérer les images du carrousel de la page d\'accueil',
+      manage: 'Gérer les images',
+      form: {
+        title: 'Titre',
+        titlePlaceholder: 'Entrez le titre de l\'image...',
+        description: 'Description',
+        descriptionPlaceholder: 'Entrez la description de l\'image...',
+        image: 'Image',
+        imageHint: 'Formats acceptés : JPG, PNG (max 2Mo)',
+        add: 'Ajouter une Image',
+        update: 'Mettre à jour l\'Image',
+        cancel: 'Annuler',
+        chooseFileButton: 'Choisir un fichier',
+        noFileSelected: 'Aucun fichier choisi'
+      },
+      errors: {
+        titleRequired: "Le titre est obligatoire",
+        descriptionRequired: "La description est obligatoire",
+        imageRequired: "L'image est obligatoire",
+        fileTooLarge: "L'image doit faire moins de 5MB",
+        invalidFileType: "Le fichier doit être une image (jpg, png, gif)",
+        validationError: "Veuillez vérifier les données saisies",
+        uploadFailed: "Erreur lors de l'envoi de l'image. Veuillez réessayer."
+      },
+      success: {
+        imageUploaded: "Image téléchargée avec succès!"
+      },
+      messages: {
+        addSuccess: 'Image ajoutée avec succès',
+        updateSuccess: 'Image mise à jour avec succès',
+        deleteSuccess: 'Image supprimée avec succès',
+        visibilitySuccess: 'Visibilité de l\'image mise à jour avec succès',
+        loadError: 'Erreur lors du chargement des images',
+        addError: 'Erreur lors de l\'ajout de l\'image',
+        updateError: 'Erreur lors de la mise à jour de l\'image',
+        deleteError: 'Erreur lors de la suppression de l\'image',
+        visibilityError: 'Erreur lors de la mise à jour de la visibilité'
+      }
     }
   },
   addresses: {

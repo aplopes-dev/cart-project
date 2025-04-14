@@ -682,6 +682,48 @@ export default {
         deleteError: 'Error deleting section',
         visibilityError: 'Error updating section visibility'
       }
+    },
+    homeImages: {
+      title: 'Home Page Images',
+      description: 'Manage homepage carousel images',
+      manage: 'Manage images',
+      breadcrumb: 'Home Images',
+      form: {
+        title: 'Title',
+        titlePlaceholder: 'Enter image title...',
+        description: 'Description',
+        descriptionPlaceholder: 'Enter image description...',
+        image: 'Image',
+        imageHint: 'Accepted formats: JPG, PNG (max 2MB)',
+        add: 'Add Image',
+        update: 'Update Image',
+        cancel: 'Cancel',
+        chooseFileButton: 'Choose File',
+        noFileSelected: 'No file chosen'
+      },
+      messages: {
+        addSuccess: 'Image added successfully',
+        updateSuccess: 'Image updated successfully',
+        deleteSuccess: 'Image deleted successfully',
+        visibilitySuccess: 'Image visibility updated successfully',
+        loadError: 'Error loading images',
+        addError: 'Error adding image',
+        updateError: 'Error updating image',
+        deleteError: 'Error deleting image',
+        visibilityError: 'Error updating image visibility'
+      },
+      errors: {
+        titleRequired: "Title is required",
+        descriptionRequired: "Description is required",
+        imageRequired: "Image is required",
+        fileTooLarge: "Image must be less than 5MB",
+        invalidFileType: "File must be an image (jpg, png, gif)",
+        validationError: "Please check the provided data",
+        uploadFailed: "Error uploading image. Please try again."
+      },
+      success: {
+        imageUploaded: "Image uploaded successfully!"
+      }
     }
   },
   addresses: {
