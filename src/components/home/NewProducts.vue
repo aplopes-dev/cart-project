@@ -162,6 +162,7 @@ import { settingsService } from '@/services/settingsService'
 import { ref, onMounted, watch } from 'vue'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { useRouter } from 'vue-router'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 export default {
   name: 'NewProducts',
@@ -352,6 +353,11 @@ export default {
       setTimeout(() => {
         this.showToast = false
       }, 3000) // Toast desaparece após 3 segundos
+    },
+    handleImageError(e) {
+      console.log('[NewProducts] Erro ao carregar imagem, usando placeholder');
+      e.target.src = PLACEHOLDER_IMAGE_PATH
+      e.target.onerror = null // Previne loop infinito
     }
   },
   mounted() {

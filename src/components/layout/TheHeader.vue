@@ -235,7 +235,7 @@
           <router-link to="/suppliers" class="text-[15px] leading-7 text-white font-archivo font-medium">
             {{ $t('header.suppliers') }}
           </router-link>
-          <div class="relative category-dropdown">
+          <div class="relative category-dropdown" style="position: relative; z-index: 100;">
             <button
               @click="toggleCategoryDropdown"
               class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
@@ -245,41 +245,140 @@
                 class="w-4 h-4"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
                 viewBox="0 0 24 24"
-                fill="#FFFFFF"
+                fill="#FFDD00"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
             </button>
 
-            <!-- Categories Dropdown -->
-            <div
-              v-if="showCategoryDropdown"
-              class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-            >
-              <!-- Loading State -->
-              <div v-if="loading" class="px-4 py-2 text-gray-500">
-                {{ $t('common.loading') }}...
+            <!-- Menu System - Three Parallel Menus -->
+            <div class="shop-menu-container" v-if="showCategoryDropdown">
+              <!-- First Level Menu (Categories) -->
+              <div class="menu-level bg-black py-1 z-50 max-h-[500px] overflow-y-auto border-0 border-none" style="width: 250px; background-color: #000000;">
+                <!-- Loading State -->
+                <div v-if="loading" class="px-4 py-2 text-empire-yellow">
+                  {{ $t('common.loading') }}...
+                </div>
+
+                <!-- Error State -->
+                <div v-else-if="error" class="px-4 py-2 text-red-500">
+                  {{ $t('common.error') }}
+                </div>
+
+                <!-- Empty State -->
+                <div v-else-if="categories.length === 0" class="px-4 py-2 text-empire-yellow">
+                  {{ $t('common.noCategories') }}
+                </div>
+
+                <!-- Categories List -->
+                <template v-else>
+                  <div
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="category-item"
+                    @click.stop="setActiveCategory(category)"
+                  >
+                    <div
+                      :class="[
+                        'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide',
+                        activeCategory && activeCategory.id === category.id ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black category-hover'
+                      ]"
+                    >
+                      <!-- Category Name -->
+                      <div
+                        class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                        :title="category.name"
+                        @click.stop="navigateToCategory(category.id)"
+                      >
+                        {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                      </div>
+
+                      <!-- Arrow Icon (only if has children) -->
+                      <div
+                        v-if="category.children && category.children.length > 0"
+                        class="flex items-center justify-center w-6 h-6"
+                      >
+                        <svg
+                          class="w-4 h-4 category-arrow"
+                          viewBox="0 0 24 24"
+                          :fill="activeCategory && activeCategory.id === category.id ? '#000000' : '#FBBD1E'"
+                          style="transform: rotate(-90deg);"
+                        >
+                          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
 
-              <!-- Error State -->
-              <div v-else-if="error" class="px-4 py-2 text-red-500">
-                {{ $t('common.error') }}
-              </div>
-
-              <!-- Empty State -->
-              <div v-else-if="categories.length === 0" class="px-4 py-2 text-gray-500">
-                {{ $t('common.noCategories') }}
-              </div>
-
-              <!-- Categories List -->
+              <!-- Second Level Menu (Subcategories) -->
               <div
-                v-else
-                v-for="category in categories"
-                :key="category.id"
-                @click="navigateToCategory(category.id)"
-                class="px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-empire-yellow cursor-pointer transition-colors duration-200"
+                v-if="activeCategory && activeCategory.children && activeCategory.children.length > 0"
+                class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
+                style="width: 250px; background-color: #FFDD00;"
               >
-                {{ category.name }}
+                <div
+                  v-for="subcategory in activeCategory.children"
+                  :key="subcategory.id"
+                  class="subcategory-item"
+                  @click.stop="setActiveSubcategory(subcategory)"
+                >
+                  <div
+                    :class="[
+                      'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium border-0 border-none outline-none',
+                      activeSubcategory && activeSubcategory.id === subcategory.id ? 'bg-black text-empire-yellow hover-style' : 'bg-empire-yellow text-black hover:bg-black hover:text-empire-yellow'
+                    ]"
+
+                  >
+                    <!-- Subcategory Name -->
+                    <div
+                      class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                      :title="subcategory.name"
+                      @click.stop="navigateToCategory(subcategory.id)"
+
+                    >
+                      {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
+                    </div>
+
+                    <!-- Arrow Icon (only if has children) -->
+                    <div
+                      v-if="subcategory.children && subcategory.children.length > 0"
+                      class="flex items-center justify-center w-6 h-6"
+
+                    >
+                      <svg
+                        class="w-4 h-4 subcategory-arrow"
+                        viewBox="0 0 24 24"
+                        :fill="activeSubcategory && activeSubcategory.id === subcategory.id ? '#FFDD00' : '#000000'"
+                        style="transform: rotate(-90deg);"
+                      >
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Third Level Menu -->
+              <div
+                v-if="activeSubcategory && activeSubcategory.children && activeSubcategory.children.length > 0"
+                class="menu-level bg-empire-yellow py-0 z-50 max-h-[500px] overflow-y-auto border-0 border-none outline-none rounded-none w-full"
+                style="width: 250px; background-color: #FFDD00;"
+              >
+                <div
+                  v-for="thirdLevel in activeSubcategory.children"
+                  :key="thirdLevel.id"
+                  class="px-4 py-2 text-black hover:bg-black hover:text-empire-yellow cursor-pointer transition-colors duration-200 font-medium third-level-item"
+                  @click.stop="navigateToCategory(thirdLevel.id)"
+                >
+                  <div
+                    class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                    :title="thirdLevel.name"
+                  >
+                    {{ thirdLevel.name.length > 18 ? thirdLevel.name.substring(0, 18) + '...' : thirdLevel.name }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -350,7 +449,7 @@
               <div class="relative">
                 <button
                   @click="toggleUserMenu"
-                  class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-2"
+                  class="user-menu text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
                 >
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg
@@ -365,38 +464,33 @@
                 <!-- User Dropdown Menu -->
                 <div
                   v-show="isUserMenuOpen"
-                  class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                  class="absolute left-0 mt-2 w-48 bg-black rounded-md shadow-lg py-1 z-50 max-h-[500px] overflow-y-auto"
                 >
                   <router-link
                     to="/my-account"
-                    class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    class="flex items-center gap-2 w-full px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide text-white hover:bg-empire-yellow hover:text-black"
                   >
                     <svg
-                      class="w-5 h-5"
+                      class="w-5 h-5 transition-colors duration-200"
                       viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
+                      fill="#FFDD00"
+                      :class="{'group-hover:fill-black': true}"
                     >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
                     {{ $t('header.myAccount') }}
                   </router-link>
                   <button
                     @click="handleLogout"
-                    class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    class="flex items-center gap-2 w-full px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide text-white hover:bg-empire-yellow hover:text-black"
                   >
                     <svg
-                      class="w-5 h-5"
+                      class="w-5 h-5 transition-colors duration-200"
                       viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
+                      fill="#FFDD00"
+                      :class="{'group-hover:fill-black': true}"
                     >
-                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                      <path d="M16 17l5-5-5-5" />
-                      <path d="M21 12H9" />
+                      <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
                     {{ $t('header.logout') }}
                   </button>
@@ -407,10 +501,60 @@
             <router-link
               v-else
               to="/login"
-              class="text-[15px] leading-7 text-white font-archivo font-medium"
+              class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
             >
               {{ $t('header.signIn') }}
+              <svg
+                class="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="#FFFFFF"
+              >
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
             </router-link>
+          </div>
+
+          <!-- Projetos Dropdown (apenas para usuários logados) -->
+          <div v-if="isAuthenticated" class="relative projects-dropdown hidden md:block">
+            <button
+              @click="toggleProjectsDropdown"
+              class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
+            >
+              Projetos
+              <svg
+                class="w-4 h-4"
+                :class="{ 'transform rotate-180': showProjectsDropdown }"
+                viewBox="0 0 24 24"
+                fill="#FFFFFF"
+              >
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </button>
+
+            <!-- Projetos Dropdown -->
+            <div
+              v-if="showProjectsDropdown"
+              class="absolute top-full left-0 mt-2 w-64 bg-black rounded-md shadow-lg py-1 z-50 max-h-[500px] overflow-y-auto"
+            >
+              <!-- Lista de Projetos -->
+              <div
+                v-for="project in projects"
+                :key="project.id"
+                class="category-item"
+              >
+                <div
+                  class="flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide text-white hover:bg-empire-yellow hover:text-black"
+                >
+                  <!-- Nome do Projeto -->
+                  <div
+                    class="whitespace-nowrap overflow-hidden truncate w-[180px]"
+                    :title="project.name"
+                  >
+                    {{ project.name }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Search - Desktop -->
@@ -461,14 +605,14 @@
                       :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
-                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_PATH"
                     />
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="font-archivo font-medium truncate transition-colors duration-200">
                       <span v-html="highlightMatch(product.name, searchQuery)"></span>
                     </div>
-                    <div class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
+                    <div v-if="showPrices" class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
                   </div>
                 </div>
               </div>
@@ -534,7 +678,7 @@
                       :src="product.image"
                       :alt="product.name"
                       class="w-full h-full object-cover rounded"
-                      @error="e => e.target.src = PLACEHOLDER_IMAGE_BASE64"
+                      @error="e => e.target.src = PLACEHOLDER_IMAGE_PATH"
                     />
                   </div>
                   <div class="flex-1 min-w-0">
@@ -651,7 +795,7 @@
                 />
                 <div>
                   <div class="text-black font-archivo font-medium">{{ product.name }}</div>
-                  <div class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
+                  <div v-if="showPrices" class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
                 </div>
               </div>
             </div>
@@ -676,11 +820,13 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore'
+import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import CartWidget from '../cart/CartWidget.vue'
 import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
+import { settingsService } from '@/services/settingsService'
 import { debounce } from 'lodash'
-import { PLACEHOLDER_IMAGE_BASE64 } from '@/services/categoryService'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
 
@@ -688,7 +834,11 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const cartStore = useCartStore()
+const togglesStore = useFinancialTogglesStore()
 const { locale } = useI18n()
+
+// Variável para controlar a exibição de preços
+const showPrices = ref(true)
 
 // Modifique os computeds e adicione um ref para controle de estado
 const authState = ref({
@@ -716,17 +866,20 @@ const currentUser = computed(() => authState.value.user)
 const isMobileMenuOpen = ref(false)
 const isLanguageDropdownOpen = ref(false)
 const isUserMenuOpen = ref(false)
-const selectedLanguage = ref('FR')
+const selectedLanguage = ref(localStorage.getItem('selectedLanguage') || 'FR')
 const searchQuery = ref('')
 const filteredProducts = ref([])
 const showAutocomplete = ref(false)
 const showCategoryDropdown = ref(false)
+const showProjectsDropdown = ref(false)
 const logoUrl = ref('/images/logo/logo.png')
 const categories = ref([])
 const loading = ref(false)
 const error = ref(null)
 const isSearching = ref(false)
 const selectedIndex = ref(-1)
+const activeCategory = ref(null) // Categoria ativa no menu
+const activeSubcategory = ref(null) // Subcategoria ativa no menu
 
 // Adicione esta ref para os dados da empresa
 const companyData = ref({
@@ -735,6 +888,41 @@ const companyData = ref({
   phone: '',
   address: ''
 })
+
+// Dados mockados de projetos
+const projects = ref([
+  { id: 1, name: 'Projeto 1', description: 'Descrição do Projeto 1' },
+  { id: 2, name: 'Projeto 2', description: 'Descrição do Projeto 2' },
+  { id: 3, name: 'Projeto 3', description: 'Descrição do Projeto 3' },
+  { id: 4, name: 'Projeto 4', description: 'Descrição do Projeto 4' },
+  { id: 5, name: 'Projeto 5', description: 'Descrição do Projeto 5' }
+])
+
+// Função para carregar as configurações financeiras
+const loadFinancialSettings = async () => {
+  try {
+    const settings = await settingsService.getFinancialSettings()
+
+    // Carrega o estado dos toggles
+    togglesStore.loadTogglesFromBackend({
+      currency_code_enabled: settings.currency_code_enabled,
+      currency_symbol_enabled: settings.currency_symbol_enabled,
+      tax_rate_enabled: settings.tax_rate_enabled,
+      discount_percentage_enabled: settings.discount_percentage_enabled,
+      min_order_value_enabled: settings.min_order_value_enabled,
+      free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
+      shipping_cost_enabled: settings.shipping_cost_enabled,
+      master_toggle_enabled: settings.master_toggle_enabled
+    })
+
+    // Atualiza a visibilidade dos preços com base no toggle master
+    showPrices.value = togglesStore.masterToggle
+    console.log('[Header] Master toggle state:', togglesStore.masterToggle)
+    console.log('[Header] Show prices:', showPrices.value)
+  } catch (error) {
+    console.error('Error loading financial settings:', error)
+  }
+}
 
 // Constantes
 const flagImages = {
@@ -782,6 +970,23 @@ const toggleCategoryDropdown = (event) => {
   if (showCategoryDropdown.value) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
+    showProjectsDropdown.value = false
+  } else {
+    // Limpa as categorias ativas quando fecha o menu
+    activeCategory.value = null
+    activeSubcategory.value = null
+  }
+}
+
+// Método para toggle do dropdown de projetos
+const toggleProjectsDropdown = (event) => {
+  event.stopPropagation()
+  showProjectsDropdown.value = !showProjectsDropdown.value
+  // Fecha os outros dropdowns quando abrir este
+  if (showProjectsDropdown.value) {
+    isLanguageDropdownOpen.value = false
+    isUserMenuOpen.value = false
+    showCategoryDropdown.value = false
   }
 }
 
@@ -817,6 +1022,7 @@ const handleLogout = async () => {
 
   await store.dispatch('logout');
   isUserMenuOpen.value = false;
+  showProjectsDropdown.value = false;
 
   // Remove os dados do carrinho do localStorage
   localStorage.removeItem(`cart_${userId}`);
@@ -832,9 +1038,11 @@ const handleLogout = async () => {
 const toggleUserMenu = (event) => {
   event.stopPropagation()
   isUserMenuOpen.value = !isUserMenuOpen.value
-  // Fecha o outro dropdown quando abrir este
+  // Fecha os outros dropdowns quando abrir este
   if (isUserMenuOpen.value) {
     isLanguageDropdownOpen.value = false
+    showCategoryDropdown.value = false
+    showProjectsDropdown.value = false
   }
 }
 
@@ -843,15 +1051,105 @@ const fetchCategories = async () => {
   try {
     loading.value = true
     error.value = null
-    const response = await categoryService.getCategories()
-    categories.value = response
-    console.log('Categories loaded:', categories.value)
+    console.log('[Header] Iniciando carregamento de categorias')
+
+    // Buscar todas as categorias
+    const allCategories = await categoryService.getCategories()
+    console.log(`[Header] Recebidas ${allCategories.length} categorias da API`)
+
+    // Buscar contagem de produtos por categoria
+    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
+    console.log(`[Header] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+
+    // Criar um mapa de contagem de produtos por categoria
+    const productCountMap = {}
+    topCategories.forEach(category => {
+      productCountMap[category.id] = category.productCount
+    })
+
+    // Construir a árvore de categorias
+    const categoryTree = categoryService.buildCategoryTree(allCategories)
+
+    // Filtrar categorias sem produtos
+    const filteredCategoryTree = categoryService.filterCategoryTree(categoryTree, productCountMap)
+
+    // Usar a árvore filtrada como categorias
+    categories.value = filteredCategoryTree
+
+    // Inicializar o estado de expansão para cada categoria
+    initializeCategoryExpansionState(categories.value)
+
+    console.log(`[Header] Árvore de categorias filtrada com ${categories.value.length} categorias raiz`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
     categories.value = []
   } finally {
     loading.value = false
+  }
+}
+
+// Função para inicializar o estado de expansão das categorias
+const initializeCategoryExpansionState = (categories) => {
+  categories.forEach(category => {
+    // Definir o estado de expansão como false para todas as categorias
+    category.expanded = false
+
+    // Recursivamente inicializar subcategorias
+    if (category.children && category.children.length > 0) {
+      initializeCategoryExpansionState(category.children)
+    }
+  })
+}
+
+// Função para definir a categoria ativa
+const setActiveCategory = (category) => {
+  // Se clicar na mesma categoria, alterna o estado
+  if (activeCategory.value && activeCategory.value.id === category.id) {
+    activeCategory.value = null
+    activeSubcategory.value = null
+
+    // Remove a classe expanded de todas as categorias
+    categories.value.forEach(cat => {
+      cat.expanded = false
+      if (cat.children) {
+        cat.children.forEach(subcat => {
+          subcat.expanded = false
+        })
+      }
+    })
+  } else {
+    activeCategory.value = category
+    activeSubcategory.value = null
+
+    // Adiciona a classe expanded à categoria ativa
+    if (category && category.children && category.children.length > 0) {
+      // Marca a categoria como expandida
+      category.expanded = true
+
+      // Remove a classe expanded de todas as outras categorias
+      categories.value.forEach(cat => {
+        if (cat.id !== category.id) {
+          cat.expanded = false
+        }
+      })
+    }
+  }
+}
+
+// Função para definir a subcategoria ativa
+const setActiveSubcategory = (subcategory) => {
+  // Se clicar na mesma subcategoria, alterna o estado
+  if (activeSubcategory.value && activeSubcategory.value.id === subcategory.id) {
+    activeSubcategory.value = null
+  } else {
+    activeSubcategory.value = subcategory
+
+    // Adiciona a classe 'expanded-item' a todos os itens expandidos
+    if (subcategory && subcategory.children && subcategory.children.length > 0) {
+      // Marca o item como expandido
+      subcategory.expanded = true
+    }
   }
 }
 
@@ -863,6 +1161,7 @@ const toggleLanguageDropdown = (event) => {
   if (isLanguageDropdownOpen.value) {
     isUserMenuOpen.value = false
     showCategoryDropdown.value = false
+    showProjectsDropdown.value = false
   }
 }
 
@@ -877,11 +1176,13 @@ const handleClickOutside = (event) => {
   const languageSelector = event.target.closest('.language-selector')
   const userMenu = event.target.closest('.user-menu')
   const categoryDropdown = event.target.closest('.category-dropdown')
+  const projectsDropdown = event.target.closest('.projects-dropdown')
 
-  if (!languageSelector && !userMenu && !categoryDropdown) {
+  if (!languageSelector && !userMenu && !categoryDropdown && !projectsDropdown) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
     showCategoryDropdown.value = false
+    showProjectsDropdown.value = false
   }
 }
 
@@ -897,6 +1198,8 @@ onUnmounted(() => {
 // Watchers
 watch(selectedLanguage, (newValue) => {
   locale.value = newValue.toLowerCase()
+  // Salvar o idioma selecionado no localStorage
+  localStorage.setItem('selectedLanguage', newValue)
 }, { immediate: true })
 
 watch(searchQuery, (newValue) => {
@@ -921,6 +1224,10 @@ watch(
 
 // Lifecycle Hooks
 onMounted(async () => {
+  // Carregar configurações financeiras
+  await loadFinancialSettings()
+
+  // Carregar categorias
   await fetchCategories()
 
   const handleClickOutside = (event) => {
@@ -1070,6 +1377,12 @@ const handleSearchInput = (event) => {
   }
 }
 
+// Watch para atualizar a visibilidade dos preços quando o toggle master mudar
+watch(() => togglesStore.masterToggle, (newValue) => {
+  console.log('[Header] Master toggle changed:', newValue)
+  showPrices.value = newValue
+})
+
 // Adicione ao watch existente
 watch(showAutocomplete, (newValue) => {
   if (!newValue) {
@@ -1111,6 +1424,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Estilo específico para o elemento expandido */
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style,
+.flex.items-center.justify-between.px-4.py-2.cursor-pointer.transition-colors.duration-200.group.font-medium.border-0.border-none.outline-none.bg-black.text-empire-yellow.hover-style * {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
 .font-archivo-narrow {
   font-family: 'Archivo Narrow', sans-serif;
 }
@@ -1271,5 +1590,430 @@ input {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Estilos modernos para todos os menus de navegação */
+nav a, .category-dropdown button {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  font-family: 'Montserrat', 'Archivo', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+nav a::before, .category-dropdown button::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #FFDD00;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateX(-50%);
+}
+
+nav a:hover::before, nav a:focus::before, nav a:active::before,
+.category-dropdown button:hover::before, .category-dropdown button:focus::before, .category-dropdown button:active::before {
+  width: 80%;
+}
+
+nav a:hover, nav a:focus, nav a:active,
+.category-dropdown button:hover, .category-dropdown button:focus, .category-dropdown button:active {
+  text-shadow: 0 0 10px rgba(255, 221, 0, 0.7);
+}
+
+/* Estilo específico para o menu de Loja */
+.category-dropdown {
+  position: relative;
+}
+
+/* Estilo para os menus laterais */
+.category-item {
+  position: relative;
+}
+
+/* Ajuste para posicionamento dos menus laterais */
+.category-dropdown > div {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+}
+
+/* Ajuste para posicionamento dos submenus */
+.category-item {
+  position: relative;
+}
+
+.category-item > div {
+  position: relative;
+}
+
+/* Ajustes para hover nos menus laterais */
+.category-dropdown .category-item:hover > div:first-child {
+  background-color: #FFDD00;
+  color: black;
+}
+
+.category-dropdown .category-item:hover > div:first-child svg {
+  fill: black;
+}
+
+/* Ajustes para as setas de expansão */
+.category-dropdown button svg.transform.rotate-180 {
+  transform: rotate(90deg) !important;
+}
+
+.category-item > div svg.transform.rotate-180 {
+  transform: rotate(90deg) !important;
+}
+
+/* Estilos para o menu de loja com três níveis paralelos */
+.shop-menu-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  display: flex;
+  gap: 2px;
+  z-index: 100;
+}
+
+.menu-level {
+  position: relative;
+  height: fit-content;
+}
+
+/* Exibir submenus ao passar o mouse */
+.category-item:hover > div.absolute {
+  display: block !important;
+}
+
+/* Estilo do dropdown principal */
+.category-dropdown > div {
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 500px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Estilo para hover em todo o item do submenu */
+.subcategory-item {
+  cursor: pointer;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.subcategory-item > div {
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.subcategory-item:hover > div {
+  background-color: black;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+}
+
+.subcategory-item:hover > div * {
+  color: white !important;
+}
+
+/* Remover completamente todas as bordas dos menus */
+.menu-level,
+.shop-menu-container,
+.shop-menu-container > div,
+.shop-menu-container * {
+  border-radius: 0 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Remover sombra dos menus */
+.menu-level {
+  box-shadow: none !important;
+}
+
+/* Estilos para os menus */
+.shop-menu-container {
+  display: flex;
+  gap: 0;
+  background-color: #FFDD00 !important;
+  box-shadow: none !important;
+}
+
+/* Garantir largura fixa para todos os menus */
+.shop-menu-container > div {
+  width: 250px !important;
+  flex-shrink: 0;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Estilo para o menu principal (preto) */
+.shop-menu-container > div:first-child {
+  background-color: #000000 !important;
+}
+
+/* Estilo para os submenus (amarelo) */
+.shop-menu-container > div:not(:first-child) {
+  background-color: #FFDD00 !important;
+}
+
+/* Garantir que todos os elementos dentro dos submenus tenham fundo amarelo */
+.shop-menu-container > div:not(:first-child) > div,
+.shop-menu-container > div:not(:first-child) div:not(:hover) {
+  background-color: #FFDD00 !important;
+}
+
+/* Estilo para hover nos itens dos submenus */
+.subcategory-item:hover > div,
+.subcategory-item:hover > div *,
+.subcategory-item:hover .whitespace-nowrap,
+.subcategory-item:hover .truncate {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para itens ativos nos submenus - mesmo estilo do hover */
+.subcategory-item.active > div,
+.subcategory-item.active > div *,
+.bg-black.text-empire-yellow,
+.bg-black.text-empire-yellow *,
+.hover-style,
+.hover-style *,
+div.bg-black.text-empire-yellow.hover-style,
+div.bg-black.text-empire-yellow.hover-style * {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para itens de terceiro nível e superiores */
+.third-level-item:hover,
+.shop-menu-container > div:nth-child(n+3) div:hover,
+div[class*="bg-black text-empire-yellow hover-style"] {
+  background-color: black !important;
+  color: #FFDD00 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.third-level-item:hover *,
+.shop-menu-container > div:nth-child(n+3) div:hover *,
+.third-level-item:hover .whitespace-nowrap,
+.third-level-item:hover .truncate,
+div[class*="bg-black text-empire-yellow hover-style"] *,
+div[class*="bg-black text-empire-yellow hover-style"] .whitespace-nowrap,
+div[class*="bg-black text-empire-yellow hover-style"] .truncate,
+div[class*="bg-black text-empire-yellow hover-style"] .flex {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para as setas */
+.subcategory-item:hover .subcategory-arrow,
+.bg-black.text-empire-yellow svg,
+.hover-style svg,
+.hover-style .subcategory-arrow {
+  fill: #FFDD00 !important;
+}
+
+/* Estilo para a seta no hover do menu principal */
+.category-hover:hover .category-arrow {
+  fill: black !important;
+}
+
+/* Estilo específico para a div com texto truncado */
+.subcategory-item:hover .whitespace-nowrap.overflow-hidden.truncate,
+.third-level-item:hover .whitespace-nowrap.overflow-hidden.truncate,
+div[class*="whitespace-nowrap overflow-hidden truncate"]:hover,
+.subcategory-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"],
+.third-level-item:hover div[class*="whitespace-nowrap overflow-hidden truncate"] {
+  background-color: black !important;
+  color: #FFDD00 !important;
+}
+
+/* Estilo para a div que contém a seta */
+.subcategory-item:hover .flex.items-center.justify-center.w-6.h-6,
+.subcategory-item:hover div[class*="flex items-center justify-center w-6 h-6"] {
+  background-color: black !important;
+}
+
+/* Estilo para hover no menu principal */
+.category-hover:hover,
+.category-hover:hover *,
+.category-hover:hover .whitespace-nowrap,
+.category-hover:hover .truncate,
+.category-hover:hover .flex.items-center.justify-center.w-6.h-6,
+.category-hover:hover div[class*="flex items-center justify-center w-6 h-6"] {
+  background-color: #FFDD00 !important;
+  color: black !important;
+}
+
+/* Garantir que não haja bordas na parte transparente */
+.shop-menu-container::before,
+.shop-menu-container::after,
+.menu-level::before,
+.menu-level::after {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Garantir que a seta do header gire corretamente */
+.category-dropdown button svg.transform.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+/* Garantir que a seta aponte para cima quando expandido */
+.category-dropdown button svg.rotate-180 {
+  transform: rotate(180deg) !important;
+}
+
+/* Garantir que o primeiro e último item preencham completamente */
+.subcategory-item:first-child > div {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.subcategory-item:last-child > div {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* Estilo para os textos do menu */
+.category-item span,
+.category-item div[class*="truncate"] {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+/* Estilo da barra de rolagem para o menu */
+.category-dropdown > div::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-dropdown > div::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.category-dropdown > div::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 221, 0, 0.5);
+  border-radius: 3px;
+}
+
+.category-dropdown > div:hover {
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+/* Estilo dos itens do menu */
+.category-item > div {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  font-family: 'Montserrat', 'Archivo', sans-serif;
+  letter-spacing: 0.03em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Adiciona um efeito de brilho sutil ao item expandido */
+.category-item > div.bg-amber-600 {
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Estilo para os textos nos itens expandidos */
+.category-item > div.bg-amber-600 span,
+.category-item > div.bg-amber-600 div[class*="truncate"] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Adiciona um efeito de borda ao item com hover */
+.category-item > div:hover:not(.bg-amber-600) {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.category-item > div::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(255, 221, 0, 0.1);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: -1;
+}
+
+.category-item > div:hover::before {
+  width: 100%;
+}
+
+/* Mantendo apenas o efeito de hover sem alterar o posicionamento */
+
+/* Efeito de destaque para o item selecionado */
+.category-item > div.bg-empire-yellow {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.category-item > div.bg-amber-600::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(237, 137, 54, 0.2), rgba(237, 137, 54, 0.4));
+  z-index: -1;
+}
+
+/* Estilo para os ícones de expansão */
+.category-item svg {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-item:hover svg {
+  transform: scale(1.3);
+}
+
+/* Animação para os submenus - mantendo a visibilidade original */
+.category-item > div + div {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Mantendo os efeitos visuais sem afetar o posicionamento */
+
+/* Estilo para o menu mobile */
+.md\:hidden.category-dropdown button {
+  background: transparent;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.md\:hidden.category-dropdown button:hover,
+.md\:hidden.category-dropdown button:focus,
+.md\:hidden.category-dropdown button:active {
+  background: rgba(255, 221, 0, 0.1);
+}
+
+/* Animação para o dropdown mobile */
+.md\:hidden.category-dropdown > div {
+  transform-origin: top center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 </style>

@@ -27,44 +27,55 @@
         <div class="mb-8">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
             {{ $t('content.career.title') }}
-          </h1>         
+          </h1>
         </div>
 
         <!-- Form -->
         <div class="bg-[#FAFAFA] p-8 mb-8">
           <form @submit.prevent="handleSubmit" class="space-y-6">
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.title') }}</label>
-              <input 
-                type="text"
-                v-model="formData.title"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
-                :placeholder="$t('content.career.form.titlePlaceholder')"
-              />
-            </div>
+            <!-- Campos para cada idioma -->
+            <div v-for="lang in availableLanguages" :key="lang" class="space-y-4">
+              <h3 class="font-archivo-narrow font-semibold text-lg">
+                {{ lang.toUpperCase() }}
+              </h3>
 
-            <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('content.career.form.content') }}</label>
-              <textarea 
-                v-model="formData.content"
-                rows="4"
-                class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
-                :placeholder="$t('content.career.form.contentPlaceholder')"
-              ></textarea>
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.career.form.title') }} ({{ lang.toUpperCase() }})
+                </label>
+                <input
+                  type="text"
+                  v-model="formData[`title_${lang}`]"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  :placeholder="$t('content.career.form.titlePlaceholder')"
+                />
+              </div>
+
+              <div>
+                <label class="block font-archivo text-sm mb-2">
+                  {{ $t('content.career.form.content') }} ({{ lang.toUpperCase() }})
+                </label>
+                <textarea
+                  v-model="formData[`content_${lang}`]"
+                  rows="4"
+                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
+                  :placeholder="$t('content.career.form.contentPlaceholder')"
+                ></textarea>
+              </div>
             </div>
 
             <div class="flex justify-end gap-4">
-              <button 
+              <button
                 v-if="editingId"
                 type="button"
                 @click="cancelEdit"
-                class="bg-gray-200 text-black px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+                class="px-6 py-2 border-2 border-black/25 rounded font-archivo"
               >
                 {{ $t('content.career.form.cancel') }}
               </button>
-              <button 
+              <button
                 type="submit"
-                class="bg-black text-empire-yellow px-8 py-3 font-archivo-narrow text-lg hover:opacity-90 transition-opacity"
+                class="px-6 py-2 bg-empire-yellow text-black rounded font-archivo hover:opacity-90"
               >
                 {{ $t(editingId ? 'content.career.form.edit' : 'content.career.form.add') }}
               </button>
@@ -74,49 +85,49 @@
 
         <!-- Lista de Cards -->
         <div class="space-y-6">
-          <div 
-            v-for="(item, index) in careerItems" 
+          <div
+            v-for="(item, index) in localizedCareerItems"
             :key="index"
             class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
             :class="{ 'opacity-50': !item.is_active }"
           >
             <!-- Botões de ação -->
             <div class="absolute top-4 right-4 flex gap-4">
-              <button 
+              <button
                 @click="toggleVisibility(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t(item.is_active ? 'content.career.actions.hide' : 'content.career.actions.show')"
               >
-                <svg 
-                  class="w-6 h-6" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  class="w-6 h-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path 
+                  <path
                     v-if="item.is_active"
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
-                  <path 
+                  <path
                     v-if="item.is_active"
                     d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"
                   />
-                  <path 
+                  <path
                     v-else
                     d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
                   />
-                  <line 
+                  <line
                     v-if="!item.is_active"
-                    x1="1" 
-                    y1="1" 
-                    x2="23" 
+                    x1="1"
+                    y1="1"
+                    x2="23"
                     y2="23"
                   />
                 </svg>
               </button>
 
-              <button 
+              <button
                 @click="editItem(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t('content.career.actions.edit')"
@@ -127,7 +138,7 @@
                 </svg>
               </button>
 
-              <button 
+              <button
                 @click="deleteItem(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t('content.career.actions.delete')"
@@ -140,8 +151,12 @@
               </button>
             </div>
 
-            <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
-            <p class="text-black whitespace-pre-wrap">{{ item.content }}</p>
+            <h3 class="font-archivo-narrow font-semibold text-xl mb-4">
+              {{ item.title }}
+            </h3>
+            <p class="font-archivo text-base text-black/70">
+              {{ item.content }}
+            </p>
           </div>
         </div>
       </div>
@@ -149,21 +164,21 @@
   </div>
 
   <!-- Modal de Confirmação -->
-  <div 
-    v-if="showDeleteModal" 
+  <div
+    v-if="showDeleteModal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
       <h3 class="text-xl font-archivo-narrow mb-4">{{ $t('content.career.modal.deleteTitle') }}</h3>
       <p class="text-black/70 mb-6">{{ $t('content.career.modal.deleteMessage') }}</p>
       <div class="flex justify-end gap-4">
-        <button 
+        <button
           @click="showDeleteModal = false"
           class="px-6 py-2 text-black/70 hover:text-black"
         >
           {{ $t('content.career.modal.cancel') }}
         </button>
-        <button 
+        <button
           @click="confirmDelete"
           class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >
@@ -175,11 +190,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const app = getCurrentInstance()
 const toast = app.appContext.config.globalProperties.$toast
 
@@ -190,17 +205,29 @@ const editingId = ref(null)
 const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 
+// Adicione a lista de idiomas disponíveis
+const availableLanguages = ['fr', 'en', 'pt']
+
+// Atualize o formData para incluir campos multilíngues
 const formData = ref({
-  title: '',
-  content: '',
+  title_fr: '',
+  content_fr: '',
+  title_en: '',
+  content_en: '',
+  title_pt: '',
+  content_pt: '',
   is_active: true,
   type: 'career'
 })
 
 const resetForm = () => {
   formData.value = {
-    title: '',
-    content: '',
+    title_fr: '',
+    content_fr: '',
+    title_en: '',
+    content_en: '',
+    title_pt: '',
+    content_pt: '',
     is_active: true,
     type: 'career'
   }
@@ -250,8 +277,12 @@ const editItem = (index) => {
   const item = careerItems.value[index]
   editingId.value = item.id
   formData.value = {
-    title: item.title,
-    content: item.content,
+    title_fr: item.title_fr || '',
+    content_fr: item.content_fr || '',
+    title_en: item.title_en || '',
+    content_en: item.content_en || '',
+    title_pt: item.title_pt || '',
+    content_pt: item.content_pt || '',
     is_active: item.is_active,
     type: 'career'
   }
@@ -300,6 +331,15 @@ const confirmDelete = async () => {
 
 onMounted(() => {
   loadCareerItems()
+})
+
+// Computed property para items localizados
+const localizedCareerItems = computed(() => {
+  return careerItems.value.map(item => ({
+    ...item,
+    title: item[`title_${locale.value}`] || item.title_en || item.title,
+    content: item[`content_${locale.value}`] || item.content_en || item.content
+  }))
 })
 </script>
 

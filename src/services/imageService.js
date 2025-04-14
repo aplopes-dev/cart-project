@@ -1,6 +1,8 @@
 /**
  * Serviço para manipulação de imagens de produtos
  */
+import { PLACEHOLDER_IMAGE_PATH } from './imageConstants'
+
 export const imageService = {
   /**
    * Obtém o caminho completo da imagem do produto com base no foxpro_code
@@ -11,7 +13,7 @@ export const imageService = {
   getProductImageUrl(imagePath, product = null) {
     if (!imagePath) {
       console.log('[ImageService] Usando imagem padrão para caminho vazio');
-      return '/images/placeholder.png'; // Imagem padrão se não houver caminho
+      return PLACEHOLDER_IMAGE_PATH; // Imagem padrão se não houver caminho
     }
 
     // Se o caminho já for completo (começa com http ou https), retorna o caminho original

@@ -88,7 +88,7 @@
                         class="block"
                       >
                         <img
-                          :src="item.image"
+                          :src="item.image || PLACEHOLDER_IMAGE_PATH"
                           :alt="item.product_name"
                           @error="handleImageError"
                           class="w-16 h-16 object-cover rounded"
@@ -96,7 +96,7 @@
                       </router-link>
                       <img
                         v-else
-                        :src="item.image"
+                        :src="item.image || PLACEHOLDER_IMAGE_PATH"
                         :alt="item.product_name"
                         @error="handleImageError"
                         class="w-16 h-16 object-cover rounded shrink-0"
@@ -316,8 +316,7 @@ import { ref, onMounted, computed } from 'vue'
 import api from '@/services/api'
 import ColorCircle from '@/components/common/ColorCircle.vue'
 
-// Definindo a constante diretamente como é feito em outros componentes
-const PLACEHOLDER_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 
 const orders = ref([])
 const loading = ref(false)
@@ -425,7 +424,15 @@ onMounted(() => {
 })
 
 const handleImageError = (e) => {
-  e.target.src = PLACEHOLDER_IMAGE_BASE64
+  console.log('[OrdersPage] Erro ao carregar imagem, usando placeholder');
+  e.target.src = PLACEHOLDER_IMAGE_PATH
+
+  // Se mesmo a imagem de fallback falhar, use uma imagem base64 mínima
+  e.target.onerror = () => {
+    console.log('[OrdersPage] Fallback também falhou, usando imagem base64');
+    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZWVlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBhbGlnbm1lbnQtYmFzZWxpbmU9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmaWxsPSIjOTk5OTk5Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='
+    e.target.onerror = null
+  }
 }
 
 // Verifica se o pedido foi feito sem preços (toggle master desabilitado)

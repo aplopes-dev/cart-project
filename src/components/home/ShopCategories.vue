@@ -20,7 +20,7 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-xl sm:text-2xl md:text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase()">
                   {{ (firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase() }}
                 </span>
               </div>
@@ -34,12 +34,12 @@
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ product }}</span>
+                  <span class="text-lg text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
-                <img 
-                  :src="plumbingImage" 
+                <img
+                  :src="plumbingImage"
                   alt="Plumbing Category"
                   class="w-full h-full object-cover rounded-lg"
                 >
@@ -60,7 +60,7 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-xl sm:text-2xl md:text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[1]?.name || 'TOOLS').toUpperCase()">
                   {{ (firstThreeCategories[1]?.name || 'TOOLS').toUpperCase() }}
                 </span>
               </div>
@@ -74,12 +74,12 @@
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ product }}</span>
+                  <span class="text-lg text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
-                <img 
-                  :src="toolsImage" 
+                <img
+                  :src="toolsImage"
                   alt="Tools Category"
                   class="w-full h-full object-cover rounded-lg"
                 >
@@ -100,7 +100,7 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-xl sm:text-2xl md:text-[34px] font-archivo-narrow font-semibold text-[#FFDD00]">
+                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[2]?.name || 'HEATING').toUpperCase()">
                   {{ (firstThreeCategories[2]?.name || 'HEATING').toUpperCase() }}
                 </span>
               </div>
@@ -114,12 +114,12 @@
                   <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-xl text-black/70">{{ product }}</span>
+                  <span class="text-lg text-black/70">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
-                <img 
-                  :src="heatingImage" 
+                <img
+                  :src="heatingImage"
                   alt="Heating Category"
                   class="w-full h-full object-cover rounded-lg"
                 >
@@ -169,8 +169,50 @@ const thirdCategoryProducts = computed(() => {
 
 const fetchCategories = async () => {
   try {
-    const response = await categoryService.getCategories();
-    categories.value = response;
+    console.log('[ShopCategories] Iniciando carregamento de categorias');
+
+    // Buscar todas as categorias
+    const allCategories = await categoryService.getCategories();
+    console.log(`[ShopCategories] Recebidas ${allCategories.length} categorias da API`);
+
+    // Buscar contagem de produtos por categoria
+    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100);
+    console.log(`[ShopCategories] Recebidas ${topCategories.length} categorias com contagem de produtos`);
+
+    // Criar um mapa de contagem de produtos por categoria
+    const productCountMap = {};
+    topCategories.forEach(category => {
+      productCountMap[category.id] = category.productCount;
+    });
+
+    // Construir a árvore de categorias
+    const categoryTree = categoryService.buildCategoryTree(allCategories);
+
+    // Filtrar categorias sem produtos
+    const filteredCategoryTree = categoryService.filterCategoryTree(categoryTree, productCountMap);
+
+    // Extrair todas as categorias da árvore filtrada (incluindo subcategorias)
+    const extractAllCategories = (tree, result = []) => {
+      tree.forEach(category => {
+        result.push(category);
+        if (category.children && category.children.length > 0) {
+          extractAllCategories(category.children, result);
+        }
+      });
+      return result;
+    };
+
+    const allFilteredCategories = extractAllCategories(filteredCategoryTree);
+    console.log(`[ShopCategories] Total de categorias filtradas: ${allFilteredCategories.length}`);
+
+    // Ordenar por quantidade de produtos (decrescente) e pegar as 3 primeiras
+    categories.value = allFilteredCategories
+      .sort((a, b) => (productCountMap[b.id] || 0) - (productCountMap[a.id] || 0))
+      .slice(0, 3);
+
+    console.log(`[ShopCategories] Exibindo as 3 categorias com mais produtos: ${categories.value.map(c => c.name).join(', ')}`);
+
+    // Buscar produtos para as categorias selecionadas
     await fetchProductsForCategories();
   } catch (err) {
     console.error('Error fetching categories:', err);
@@ -182,7 +224,7 @@ const fetchProductsForCategories = async () => {
   try {
     for (const category of firstThreeCategories.value) {
       if (category?.id) {
-        const response = await productService.getProducts({ 
+        const response = await productService.getProducts({
           categoryId: category.id,
           limit: 5,
           page: 1

@@ -15,6 +15,17 @@ export const productService = {
       search  // Adicionando o parâmetro search
     } = filters
 
+    console.log('Enviando requisição para API com parâmetros:', {
+      categoryId,
+      brands: brands?.join(','),
+      minPrice,
+      maxPrice,
+      page,
+      limit,
+      sortBy,
+      search
+    })
+
     const response = await axios.get(`${API_URL}/products`, {
       params: {
         categoryId,
@@ -27,6 +38,8 @@ export const productService = {
         search  // Incluindo o parâmetro search na requisição
       }
     })
+
+    console.log('Resposta da API:', response.data)
     return response.data
   },
 

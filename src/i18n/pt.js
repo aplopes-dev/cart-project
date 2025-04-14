@@ -254,7 +254,8 @@ export default {
       invalidFileType: 'Tipo de arquivo inválido. Por favor, envie um documento PDF ou Word.',
       fileTooLarge: 'Arquivo muito grande. Tamanho máximo é 5MB.',
       submitSuccess: 'Sua mensagem foi enviada com sucesso!',
-      submitError: 'Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.'
+      submitError: 'Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.',
+      jobApplicationMessage: 'Gostaria de me candidatar à vaga'
     }
   },
   productDetails: {
@@ -563,7 +564,7 @@ export default {
         titlePlaceholder: "Digite o título",
         content: "Conteúdo",
         contentPlaceholder: "Digite o conteúdo",
-        add: "Adicionar",
+        add: "ADICIONAR SEÇÃO",
         edit: "Salvar alterações",
         cancel: "Cancelar"
       },
