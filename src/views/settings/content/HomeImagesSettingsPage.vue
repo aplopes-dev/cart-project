@@ -189,13 +189,12 @@ const handleSubmit = async () => {
   try {
     const formDataToSend = new FormData()
     
-    // Garantir que os valores sejam strings
     formDataToSend.append('title', formData.value.title.trim())
     formDataToSend.append('description', formData.value.description.trim())
     formDataToSend.append('image', formData.value.image)
     formDataToSend.append('is_active', formData.value.is_active.toString())
+    formDataToSend.append('folder', 'banner') // Adiciona informação da pasta
 
-    // Adicionar headers específicos para multipart/form-data
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data'
