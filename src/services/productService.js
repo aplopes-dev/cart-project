@@ -53,6 +53,17 @@ export const productService = {
     return response.data
   },
 
+  async getPaginatedProducts(params = {}) {
+    try {
+      console.log('Buscando produtos paginados com parâmetros:', params)
+      const response = await axios.get(`${API_URL}/products/paginated`, { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching paginated products:', error)
+      throw error
+    }
+  },
+
   async getMaxPrice(categoryId = null, brands = []) {
     try {
       // Constrói os parâmetros da consulta
@@ -128,6 +139,34 @@ export const productService = {
       return await this.getProductById(id);
     } catch (error) {
       console.error('Error fetching product details:', error)
+      throw error
+    }
+  },
+
+  async updateProduct(id, productData) {
+    try {
+      // Lista de propriedades conhecidas do modelo Product no backend
+      const knownProperties = [
+        'id', 'name', 'price', 'description_en', 'description_pt', 'description_fr',
+        'technical_description_en', 'technical_description_pt', 'technical_description_fr',
+        'image', 'images', 'foxpro_code', 'characteristics', 'isActive', 'categoryId', 'brandId',
+        'createdAt', 'updatedAt'
+      ]
+
+      // Filtrar apenas propriedades conhecidas para evitar erros no backend
+      const filteredProductData = {}
+      for (const key in productData) {
+        if (knownProperties.includes(key)) {
+          filteredProductData[key] = productData[key]
+        }
+      }
+
+      console.log(`Enviando requisição PATCH para ${API_URL}/products/${id} com dados filtrados:`, filteredProductData)
+      const response = await axios.patch(`${API_URL}/products/${id}`, filteredProductData)
+      console.log('Resposta da API após atualização do produto:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating product:', error)
       throw error
     }
   }

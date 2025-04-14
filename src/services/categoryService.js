@@ -27,6 +27,83 @@ export const categoryService = {
     }
   },
 
+  async getPaginatedCategories(params = {}) {
+    try {
+      // Endpoint para obter categorias paginadas
+      const { page = 1, limit = 10, includeInactive = false, onlyWithProducts = true, search = '' } = params
+      console.log('[categoryService] Enviando requisição para obter categorias paginadas com parâmetros:', {
+        page,
+        limit,
+        includeInactive,
+        onlyWithProducts,
+        search
+      })
+      console.log('[categoryService] includeInactive:', includeInactive, 'tipo:', typeof includeInactive)
+
+      // Converter explicitamente para string para garantir que o backend receba o valor correto
+      const includeInactiveStr = includeInactive === true ? 'true' : 'false'
+      console.log('[categoryService] includeInactive convertido para string:', includeInactiveStr)
+
+      const response = await axios.get(`${API_URL}/categories/paginated`, {
+        params: {
+          page,
+          limit,
+          includeInactive: includeInactiveStr, // Passar como string
+          onlyWithProducts,
+          search
+        }
+      })
+      console.log('[categoryService] Categorias paginadas recebidas:', response.data)
+      console.log('[categoryService] Total de categorias:', response.data.total)
+      console.log('[categoryService] Total de páginas:', response.data.totalPages)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching paginated categories:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Busca categorias com base em um termo de busca, diretamente do backend
+   * @param {string} searchTerm - Termo de busca para filtrar categorias
+   * @param {boolean} onlyWithProducts - Se true, retorna apenas categorias com produtos
+   * @returns {Promise<Array>} - Lista hierárquica de categorias que correspondem ao termo de busca
+   */
+  async searchCategories(searchTerm = '', onlyWithProducts = true) {
+    try {
+      console.log(`[categoryService] Buscando categorias com termo "${searchTerm}" e onlyWithProducts=${onlyWithProducts}`)
+
+      // Parâmetros para a busca
+      const params = {
+        search: searchTerm,
+        onlyWithProducts: onlyWithProducts,
+        includeInactive: false, // Sempre busca apenas categorias ativas
+        hierarchical: true // Indica ao backend para retornar a estrutura hierárquica
+      }
+
+      // Faz a requisição para o endpoint de busca de categorias
+      const response = await axios.get(`${API_URL}/categories/search`, { params })
+      console.log(`[categoryService] Recebidas ${response.data.length} categorias raiz do backend`)
+
+      return response.data
+    } catch (error) {
+      console.error('Error searching categories:', error)
+      throw error
+    }
+  },
+
+  async updateCategory(id, categoryData) {
+    try {
+      console.log(`[categoryService] Atualizando categoria ${id} com dados:`, categoryData)
+      const response = await axios.patch(`${API_URL}/categories/${id}`, categoryData)
+      console.log(`[categoryService] Resposta da API ao atualizar categoria ${id}:`, response.data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating category:', error)
+      throw error
+    }
+  },
+
   async getTopCategoriesWithMostProducts(limit = 10) {
     try {
       const response = await axios.get(`${API_URL}/categories/top/with-most-products`, {

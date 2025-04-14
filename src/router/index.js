@@ -178,6 +178,12 @@ const routes = [
     meta: { requiresAuth: true, requiresProfile: ['ADMIN'] }
   },
   {
+    path: '/settings/category-product',
+    name: 'CategoryProductSettings',
+    component: () => import('../views/settings/CategoryProductSettingsPage.vue'),
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
+  },
+  {
     path: '/addresses',
     name: 'Addresses',
     component: () => import('../views/AddressesPage.vue'),

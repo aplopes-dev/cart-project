@@ -120,6 +120,12 @@ export default {
     // eslint-disable-next-line no-dupe-keys
     description: 'Description'
   },
+  productSearch: {
+    title: 'Add Products to Cart',
+    searchPlaceholder: 'Search products to add to cart...',
+    noResults: 'No products found. Try another search.',
+    addToCart: 'Add'
+  },
   common: {
     previous: 'Previous',
     next: 'Next',
@@ -355,7 +361,10 @@ export default {
     addToCart: 'ADD TO CART',
     outOfStock: 'Out of Stock',
     noResults: 'No products found',
-    showingResults: 'Showing {count} results'
+    showingResults: 'Showing {count} results',
+    searchCategories: 'Search categories...',
+    showOnlyCategoriesWithProducts: 'Show only categories with products',
+    noCategories: 'No categories found'
   },
   myAccount: {
     title: 'My Account',
@@ -394,7 +403,35 @@ export default {
     manageCompany: 'Manage company data',
     users: 'User Settings',
     usersDescription: 'Manage system users, profiles and permissions',
-    manageUsers: 'Manage users'
+    manageUsers: 'Manage users',
+
+    // Category/Product Settings
+    categoryProduct: 'Categories and Products',
+    categoryProductDescription: 'Manage the visibility of categories and products on the site.',
+    manageCategoryProduct: 'Manage Categories and Products',
+    searchCategories: 'Search categories...',
+    searchProducts: 'Search products...',
+    showDisabled: 'Show disabled',
+    showOnlyWithProducts: 'Show only categories with products',
+    noCategories: 'No categories found',
+    noProducts: 'No products found in this category',
+    noDescription: 'No description',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    showProducts: 'View products',
+    hideProducts: 'Hide products',
+    product: 'Product',
+    sku: 'SKU',
+    price: 'Price',
+    status: 'Status',
+    categoryEnabled: 'Category enabled successfully',
+    categoryDisabled: 'Category disabled successfully',
+    productEnabled: 'Product enabled successfully',
+    productDisabled: 'Product disabled successfully',
+    errorLoadingCategories: 'Error loading categories',
+    errorUpdatingCategory: 'Error updating category',
+    errorUpdatingProduct: 'Error updating product',
+    noProductsInCategory: 'No products'
   },
   users: {
     searchPlaceholder: 'Search by name or email...',
@@ -693,6 +730,13 @@ export default {
     message: 'You do not have permission to access this page. This area is restricted to administrators and managers only.',
     goHome: 'Go to Homepage',
     goToAccount: 'Go to My Account'
+  },
+  pagination: {
+    showing: 'Showing',
+    of: 'of',
+    prev: 'Previous',
+    next: 'Next',
+    itemsPerPage: 'Items per page'
   }
 }
 

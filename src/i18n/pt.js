@@ -121,6 +121,12 @@ export default {
     // eslint-disable-next-line no-dupe-keys
     description: 'Descrição'
   },
+  productSearch: {
+    title: 'Adicionar Produtos ao Carrinho',
+    searchPlaceholder: 'Buscar produtos para adicionar ao carrinho...',
+    noResults: 'Nenhum produto encontrado. Tente outra busca.',
+    addToCart: 'Adicionar'
+  },
   common: {
     previous: 'Anterior',
     next: 'Próximo',
@@ -307,7 +313,10 @@ export default {
     next: 'Próximo',
     addToCart: 'ADICIONAR AO CARRINHO',
     outOfStock: 'Fora de Estoque',
-    noResults: 'Não encontramos nenhum produto'
+    noResults: 'Não encontramos nenhum produto',
+    searchCategories: 'Buscar categorias...',
+    showOnlyCategoriesWithProducts: 'Mostrar apenas categorias com produtos',
+    noCategories: 'Nenhuma categoria encontrada'
   },
   career: {
     title: 'Oportunidades de Carreira',
@@ -372,7 +381,37 @@ export default {
     manageCompany: 'Gerenciar dados da empresa',
     users: 'Configurações de Usuários',
     usersDescription: 'Gerencie usuários do sistema, perfis e permissões',
-    manageUsers: 'Gerenciar usuários'
+    manageUsers: 'Gerenciar usuários',
+
+    // Configurações de Categorias/Produtos
+    categoryProduct: 'Categorias e Produtos',
+    categoryProductDescription: 'Gerencie a visibilidade de categorias e produtos no site.',
+    manageCategoryProduct: 'Gerenciar Categorias e Produtos',
+    searchCategories: 'Buscar categorias...',
+    searchProducts: 'Buscar produtos...',
+    showDisabled: 'Mostrar desativados',
+    showOnlyWithProducts: 'Mostrar apenas categorias com produtos',
+    noCategories: 'Nenhuma categoria encontrada',
+    noProducts: 'Nenhum produto encontrado nesta categoria',
+    noDescription: 'Sem descrição',
+    enabled: 'Ativado',
+    disabled: 'Desativado',
+    showProducts: 'Ver produtos',
+    hideProducts: 'Ocultar produtos',
+    product: 'Produto',
+    sku: 'SKU',
+    price: 'Preço',
+    status: 'Status',
+    categoryEnabled: 'Categoria ativada com sucesso',
+    categoryDisabled: 'Categoria desativada com sucesso',
+    productEnabled: 'Produto ativado com sucesso',
+    productDisabled: 'Produto desativado com sucesso',
+    productActivated: 'Produto "{name}" ativado com sucesso',
+    productDeactivated: 'Produto "{name}" desativado com sucesso',
+    errorLoadingCategories: 'Erro ao carregar categorias',
+    errorUpdatingCategory: 'Erro ao atualizar categoria',
+    errorUpdatingProduct: 'Erro ao atualizar produto',
+    noProductsInCategory: 'Sem produtos'
   },
   users: {
     searchPlaceholder: 'Buscar por nome ou email...',
@@ -696,6 +735,13 @@ export default {
     message: 'Você não tem permissão para acessar esta página. Esta área é restrita apenas a administradores e gerentes.',
     goHome: 'Ir para a Página Inicial',
     goToAccount: 'Ir para Minha Conta'
+  },
+  pagination: {
+    showing: 'Mostrando',
+    of: 'de',
+    prev: 'Anterior',
+    next: 'Próximo',
+    itemsPerPage: 'Itens por página'
   }
 }
 
