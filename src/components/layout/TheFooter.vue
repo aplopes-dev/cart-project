@@ -96,44 +96,7 @@
                   </div>
                 </div>
               </div>
-            </div>
 
-<<<<<<< HEAD
-            <!-- Contact Section -->
-            <div class="w-full md:w-[437px]">
-              <h3 class="font-archivo-narrow font-semibold text-heading leading-heading text-empire-yellow h-[40px] flex items-center">
-                {{ $t('footer.titles.contactUs') }}
-              </h3>
-              <div class="flex flex-col gap-2">
-                <div class="flex">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="none">
-                      <path d="M20 4v16H4V4h16m0-2H4C2.9 2 2 2.9 2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" stroke="#FFDD00" stroke-width="2"/>
-                    </svg>
-                  </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.phone }}</span>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#FFDD00">
-                      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
-                  </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.email }}</span>
-                  </div>
-                </div>
-                <div class="flex">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#FFDD00">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                    </svg>
-                  </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ companyData.address }}</span>
-=======
               <!-- Contact Section -->
               <div class="w-1/2 md:w-[200px]">
                 <h3 class="font-archivo-narrow font-semibold text-sm md:text-[24px] leading-5 md:leading-[30px] text-empire-yellow h-[24px] md:h-[30px] flex items-center">
@@ -180,7 +143,6 @@
                         {{ companyData.address }}
                       </span>
                     </div>
->>>>>>> 0814a79 (Ajustes footer)
                   </div>
                 </div>
               </div>
