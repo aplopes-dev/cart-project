@@ -23,7 +23,7 @@
                 'w-full md:w-1/3'
               ]"
             >
-              <div class="flex flex-col items-center h-auto md:h-[496.76px] bg-white border border-[#FAFAFA]">
+              <div class="flex flex-col items-center h-auto md:h-[460px] bg-white border border-[#FAFAFA]">
                 <!-- Área clicável para detalhes do produto -->
                 <div
                   class="w-full cursor-pointer"
@@ -33,35 +33,36 @@
                   <img
                     :src="product.image"
                     :alt="product.name"
-                    class="w-full h-[200px] md:h-[281.87px] object-cover object-center"
+                    class="w-full h-[180px] md:h-[230px] object-cover object-center"
                     @error="handleImageError"
                   >
 
                   <!-- Informações do Produto -->
-                  <div class="flex flex-col items-center p-4 md:p-0 gap-2 md:gap-4 w-full md:w-[361.79px]">
+                  <div class="flex flex-col items-center p-2 md:p-0 gap-1 md:gap-2 w-full md:w-[361.79px]">
                     <!-- Container Nome e Descrição -->
-                    <div class="flex flex-col items-center space-y-4 w-full">
+                    <div class="flex flex-col items-center space-y-2 w-full">
                       <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center">
                         {{ product.name }}
                       </h3>
 
-                      <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center line-clamp-2 px-4 md:px-6 w-full">
-                        {{ product.description }}
+                      <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center px-4 md:px-6 w-full description-fixed-height">
+                        {{ product.description || '&nbsp;'.repeat(3) }}
                       </p>
                     </div>
 
                     <!-- Container Preço (exibido apenas se o toggle master estiver habilitado) -->
-                    <div v-if="showPrices" class="flex flex-col items-center mb-2">
+                    <div v-if="showPrices" class="flex flex-col items-center mb-0.5 mt-1">
                       <p class="font-archivo-narrow font-semibold text-xl md:text-[28px] leading-tight md:leading-[34px] text-black text-center">
                         {{ formatPrice(product.price) }}
                       </p>
                     </div>
-                    <!-- Não adiciona espaço quando o preço não é exibido na versão mobile -->
+                    <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
+                    <div v-else class="mt-1"></div>
                   </div>
                 </div>
 
                 <!-- Quantidade e Botão Adicionar ao Carrinho (sempre exibidos, independente do toggle master) -->
-                <div class="flex flex-col sm:flex-row items-start gap-2 w-full px-4 pb-4 mt-auto" @click.stop>
+                <div class="flex flex-col sm:flex-row items-start gap-2 w-full px-4 pb-2 mt-0.5 md:mt-1" @click.stop>
                   <!-- Select Field -->
                   <div class="w-full sm:w-[150px] h-[40px] sm:h-[60px]">
                     <!-- Select -->
@@ -355,7 +356,7 @@ export default {
         this.showToast = false
       }, 3000) // Toast desaparece após 3 segundos
     },
-    handleImageError(e) {      
+    handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     }
@@ -383,6 +384,19 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Estilo para manter a altura fixa da descrição */
+.description-fixed-height {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 4.2em; /* Altura fixa para 3 linhas, ligeiramente reduzida */
+  min-height: 4.2em;
+  line-height: 1.5em;
+  overflow: hidden;
+}
+
 .transition-opacity {
   transition: opacity 0.3s ease-in-out;
 }

@@ -2,7 +2,7 @@
   <section class="flex flex-col items-center py-24 px-6 gap-6 w-full bg-white">
     <div class="flex flex-col items-center gap-6 max-w-[1346px]">
       <!-- Title -->
-      <h2 class="w-full text-[45px] leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
+      <h2 class="w-full text-xl sm:text-2xl md:text-[45px] leading-normal md:leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
         {{ $t('categories.shopByCategories') }}
       </h2>
 

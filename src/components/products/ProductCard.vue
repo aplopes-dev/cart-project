@@ -29,7 +29,8 @@
         <p v-if="showPrices" class="text-2xl font-bold text-black/70 mb-4">
           {{ formatPrice(product.price) }}
         </p>
-        <!-- Não adiciona espaço quando o preço não é exibido -->
+        <!-- Quando showPrices é false, não adiciona espaço -->
+        <div v-else class="mt-2"></div>
 
         <!-- Debug info em desenvolvimento -->
         <small v-if="process.env.NODE_ENV === 'development'" class="text-xs text-gray-500">
@@ -39,7 +40,7 @@
         <!-- Botão Adicionar ao Carrinho -->
         <button
           @click="addToCart"
-          class="mt-4 w-full bg-empire-yellow text-black font-medium py-2 px-4 rounded hover:bg-yellow-400 transition-colors"
+          :class="[showPrices ? 'mt-0' : 'mt-2', 'w-full bg-empire-yellow text-black font-medium py-2 px-4 rounded hover:bg-yellow-400 transition-colors']"
         >
           {{ $t('products.addToCart') }}
         </button>
@@ -53,7 +54,7 @@ import { defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 // import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants' // Não é mais necessário, usando imageService.handleImageError
 import { useCartStore } from '@/stores/cartStore'
-import { settingsService } from '@/services/settingsService'
+// import { settingsService } from '@/services/settingsService' // Não utilizado
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { imageService } from '@/services/imageService'
@@ -201,9 +202,10 @@ export default defineComponent({
 })
 </script>
 
-
-
-
-
-
+<style scoped>
+/* Estilo personalizado para o espaçamento automático */
+.mt-auto {
+  margin-top: 10%;
+}
+</style>
 

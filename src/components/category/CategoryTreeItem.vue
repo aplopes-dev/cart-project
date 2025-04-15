@@ -1,5 +1,5 @@
 <template>
-  <div class="category-tree-item">
+  <div class="category-tree-item" :data-category-id="category.id">
     <div
       class="category-header"
       :class="{
@@ -8,6 +8,7 @@
         'no-products-category': !category.has_products
       }"
       @click="selectCategory(category.id)"
+      :data-category-id="category.id"
     >
       <div class="flex items-center gap-2 w-full">
         <!-- Ícone de expansão (apenas se tiver filhos) -->
@@ -56,6 +57,7 @@
         v-for="child in category.children"
         :key="child.id"
         class="category-item mb-2"
+        :data-category-id="child.id"
       >
         <CategoryTreeItem
           :category="child"

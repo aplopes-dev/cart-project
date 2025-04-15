@@ -18,7 +18,8 @@
           <div class="flex flex-col md:flex-row gap-8 md:gap-28 w-full md:w-auto">
             <!-- Navigation Links -->
             <div class="w-full md:w-[120px]">
-              <div class="flex flex-col gap-2">
+              <!-- Desktop Navigation (Column) -->
+              <div class="hidden md:flex md:flex-col gap-2">
                 <router-link to="/" class="flex items-center">
                   <div class="w-[40px]">
                     <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
@@ -62,6 +63,63 @@
                     <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.career') }}</span>
                   </div>
                 </router-link>
+              </div>
+
+              <!-- Mobile Navigation (2x2 Grid) -->
+              <div class="grid grid-cols-2 gap-x-4 gap-y-2 md:hidden">
+                <!-- Primeira coluna -->
+                <div class="flex flex-col gap-2">
+                  <!-- Início -->
+                  <router-link to="/" class="flex items-center">
+                    <div class="w-[30px]">
+                      <svg class="w-5 h-5 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                    <div class="w-[calc(100%-30px)]">
+                      <span class="font-archivo font-normal text-sm leading-5 text-empire-white-70">{{ $t('footer.navigation.home') }}</span>
+                    </div>
+                  </router-link>
+
+                  <!-- Fornecedores -->
+                  <router-link to="/suppliers" class="flex items-center">
+                    <div class="w-[30px]">
+                      <svg class="w-5 h-5 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                    <div class="w-[calc(100%-30px)]">
+                      <span class="font-archivo font-normal text-sm leading-5 text-empire-white-70">{{ $t('footer.navigation.suppliers') }}</span>
+                    </div>
+                  </router-link>
+                </div>
+
+                <!-- Segunda coluna -->
+                <div class="flex flex-col gap-2">
+                  <!-- História -->
+                  <router-link to="/history" class="flex items-center">
+                    <div class="w-[30px]">
+                      <svg class="w-5 h-5 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                    <div class="w-[calc(100%-30px)]">
+                      <span class="font-archivo font-normal text-sm leading-5 text-empire-white-70">{{ $t('footer.navigation.history') }}</span>
+                    </div>
+                  </router-link>
+
+                  <!-- Carreira -->
+                  <router-link to="/career" class="flex items-center">
+                    <div class="w-[30px]">
+                      <svg class="w-5 h-5 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                      </svg>
+                    </div>
+                    <div class="w-[calc(100%-30px)]">
+                      <span class="font-archivo font-normal text-sm leading-5 text-empire-white-70">{{ $t('footer.navigation.career') }}</span>
+                    </div>
+                  </router-link>
+                </div>
               </div>
             </div>
 

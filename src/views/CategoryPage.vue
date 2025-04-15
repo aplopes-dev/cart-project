@@ -20,7 +20,14 @@
 
                 <!-- Lista de Categorias Hierárquica -->
                 <div class="mb-12 category-filter-container">
+                  <div v-if="loadingCategories" class="flex justify-center items-center py-4">
+                    <div class="loader-container">
+                      <div class="loader-spinner"></div>
+                      <div class="loader-text">{{ $t('common.loading') }}...</div>
+                    </div>
+                  </div>
                   <CategoryTree
+                    v-else
                     :categories="categoryTree"
                     :selected-category="selectedCategory"
                     @select="selectCategory"
@@ -194,8 +201,14 @@
                 </h3>
               </div>
               <div class="category-filter-container-mobile">
-                <!-- Conteúdo do filtro de categorias hierárquico -->
+                <div v-if="loadingCategories" class="flex justify-center items-center py-4">
+                  <div class="loader-container">
+                    <div class="loader-spinner"></div>
+                    <div class="loader-text">{{ $t('common.loading') }}...</div>
+                  </div>
+                </div>
                 <CategoryTree
+                  v-else
                   :categories="categoryTree"
                   :selected-category="selectedCategory"
                   @select="selectCategory"
@@ -282,8 +295,11 @@
 
           <!-- Grid de Produtos -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-if="loading" class="col-span-full flex justify-center items-center">
-              <div class="loader">Loading...</div>
+            <div v-if="loading" class="col-span-full flex justify-center items-center py-12">
+              <div class="loader-container">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">{{ $t('common.loading') }}...</div>
+              </div>
             </div>
             <div v-else-if="error" class="col-span-full text-red-500">
               {{ error }}
@@ -310,13 +326,16 @@
                     <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo text-base md:text-lg text-black/70 mb-4 line-clamp-3 md:line-clamp-2 overflow-hidden">
-                      {{ product.description }}
+                    <p class="font-archivo text-base md:text-lg text-black/70 overflow-hidden description-fixed-height">
+                      {{ product.description || '&nbsp;'.repeat(3) }}
                     </p>
                     <div class="mt-auto w-full">
-                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mb-4">
+                      <!-- Quando showPrices é true, mostra o preço com espaçamento adequado -->
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mt-3 mb-2">
                         {{ formatPrice(product.price) }}
                       </p>
+                      <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
+                      <div v-else class="mt-3"></div>
                       <!-- Wrap the button in a div that stops event propagation -->
                       <div @click.stop>
                         <ProductQuantitySelector
@@ -508,8 +527,9 @@ const currentPage = ref(1)
 const totalPages = ref(1)
 const products = ref([])
 const loading = ref(true)
+const loadingCategories = ref(true)
 const error = ref(null)
-const categories = ref([])
+// Não precisamos mais da variável categories, pois estamos usando diretamente categoryTree
 const categoryTree = ref([])
 const selectedCategory = ref(null)
 const selectedBrands = ref([])
@@ -731,37 +751,38 @@ watch([selectedBrands, selectedCategory], async () => {
 
 const fetchCategories = async () => {
   try {
+    loadingCategories.value = true
     console.log('[CategoryPage] Iniciando busca de categorias')
 
-    // Buscar categorias da API
-    const response = await categoryService.getCategories()
-    categories.value = response || []
-    console.log(`[CategoryPage] Recebidas ${categories.value.length} categorias da API`)
+    // Buscar categorias diretamente do backend com estrutura hierárquica
+    // e apenas categorias ativas com produtos
+    const hierarchicalCategories = await categoryService.searchCategories('', true)
+    console.log(`[CategoryPage] Recebidas ${hierarchicalCategories.length} categorias raiz do backend com estrutura hierárquica`)
 
-    // Buscar contagem de produtos por categoria
-    const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
-    console.log(`[CategoryPage] Recebidas ${topCategories.length} categorias com contagem de produtos`)
+    // Garantir que todas as categorias estejam contraídas por padrão
+    const setAllCollapsed = (tree) => {
+      tree.forEach(category => {
+        // Define a categoria como contraída
+        category.expanded = false
 
-    // Criar um mapa de contagem de produtos por categoria
-    const productCountMap = {}
-    topCategories.forEach(category => {
-      productCountMap[category.id] = category.productCount
-      console.log(`[CategoryPage] Categoria ${category.name} (ID: ${category.id}) tem ${category.productCount} produtos`)
-    })
+        // Processa recursivamente os filhos
+        if (category.children && category.children.length > 0) {
+          setAllCollapsed(category.children)
+        }
+      })
+    }
 
-    // Construir a árvore de categorias completa
-    const fullCategoryTree = categoryService.buildCategoryTree(categories.value)
-    console.log(`[CategoryPage] Árvore de categorias completa construída com ${fullCategoryTree.length} categorias raiz`)
+    // Aplicar a contração a todas as categorias
+    setAllCollapsed(hierarchicalCategories)
 
-    // Usar o novo método para filtrar a árvore de categorias
-    categoryTree.value = categoryService.filterCategoryTree(fullCategoryTree, productCountMap)
-    console.log(`[CategoryPage] Árvore de categorias filtrada com ${categoryTree.value.length} categorias raiz`)
+    // Usar as categorias hierárquicas com todas contraídas
+    categoryTree.value = hierarchicalCategories
 
-    // Listar categorias filtradas para debug
+    // Listar categorias para debug
     const listCategoriesWithPath = (tree, path = '') => {
       tree.forEach(category => {
         const currentPath = path ? `${path} > ${category.name}` : category.name
-        console.log(`[CategoryPage] Categoria mantida: ${currentPath} (ID: ${category.id})`)
+        console.log(`[CategoryPage] Categoria carregada: ${currentPath} (ID: ${category.id}, expanded: ${category.expanded})`)
 
         if (category.children && category.children.length > 0) {
           listCategoriesWithPath(category.children, currentPath)
@@ -771,13 +792,13 @@ const fetchCategories = async () => {
 
     listCategoriesWithPath(categoryTree.value)
 
-    console.log(`[CategoryPage] Total de categorias carregadas: ${categories.value.length}`)
-    console.log(`[CategoryPage] Total de categorias raiz após filtragem: ${categoryTree.value.length}`)
+    console.log(`[CategoryPage] Total de categorias raiz carregadas: ${categoryTree.value.length}`)
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
-    categories.value = []
     categoryTree.value = []
+  } finally {
+    loadingCategories.value = false
   }
 }
 
@@ -841,7 +862,7 @@ const getProductImage = (product) => {
   return imageUrl;
 }
 
-const handleImageError = (e) => {  
+const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE_PATH
   e.target.onerror = null // Previne loop infinito
 }
@@ -852,24 +873,51 @@ const selectCategory = async (categoryId) => {
     return; // Não permite desmarcar a categoria
   }
 
-  // Reset da página atual ao mudar de categoria
-  currentPage.value = 1;
-
-  // Define a nova categoria selecionada
-  selectedCategory.value = categoryId;
-
-  // Busca as marcas relacionadas à categoria selecionada
-  await fetchBrands(selectedCategory.value);
-  selectedBrands.value = brands.value.map(brand => brand.id);
-
-  // Atualiza o preço máximo com base na categoria selecionada
-  await updateMaxPrice();
-
-  // Busca produtos filtrados explicitamente (além do watcher)
-  await fetchFilteredProducts();
-
   console.log('Categoria selecionada:', categoryId);
-  console.log('Buscando produtos para a categoria:', selectedCategory.value);
+
+  // Ativa o loading apenas para a lista de produtos
+  loading.value = true;
+
+  try {
+    // Reset da página atual ao mudar de categoria
+    currentPage.value = 1;
+
+    // Define a nova categoria selecionada
+    selectedCategory.value = categoryId;
+
+    // Busca as marcas relacionadas à categoria selecionada
+    await fetchBrands(selectedCategory.value);
+    selectedBrands.value = brands.value.map(brand => brand.id);
+
+    // Atualiza o preço máximo com base na categoria selecionada
+    await updateMaxPrice();
+
+    // Atualiza a URL sem recarregar a página
+    const newPath = `/categories/${categoryId}`;
+    if (window.history.pushState) {
+      window.history.pushState({ path: newPath }, '', newPath);
+    }
+
+    // Busca produtos filtrados explicitamente
+    await fetchFilteredProducts();
+
+    console.log('Produtos carregados para a categoria:', selectedCategory.value);
+
+    // Rolar para a parte de ordenação para garantir que seja visível
+    setTimeout(() => {
+      const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black')
+      if (sortingElement) {
+        const yOffset = -20 // Ajuste para garantir que a parte de ordenação fique visível
+        const y = sortingElement.getBoundingClientRect().top + window.pageYOffset + yOffset
+        window.scrollTo({ top: y, behavior: 'smooth' })
+      }
+    }, 100); // Pequeno delay para garantir que o DOM foi atualizado
+  } catch (error) {
+    console.error('Erro ao selecionar categoria:', error);
+  } finally {
+    // Desativa o loading
+    loading.value = false;
+  }
 }
 
 const handleAddToCart = (product, quantity) => {
@@ -905,95 +953,196 @@ const showSuccessToast = () => {
 }
 
 const handlePageChange = async (page) => {
-  currentPage.value = page
-  await fetchFilteredProducts()
-  // Opcional: Rolar para o topo da lista de produtos
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Ativa o loading apenas para a lista de produtos
+  loading.value = true
+
+  try {
+    currentPage.value = page
+    await fetchFilteredProducts()
+
+    // Rolar para a parte de ordenação para garantir que seja visível
+    setTimeout(() => {
+      const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black')
+      if (sortingElement) {
+        const yOffset = -20 // Ajuste para garantir que a parte de ordenação fique visível
+        const y = sortingElement.getBoundingClientRect().top + window.pageYOffset + yOffset
+        window.scrollTo({ top: y, behavior: 'smooth' })
+      } else {
+        // Fallback para o comportamento anterior
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }, 100) // Pequeno delay para garantir que o DOM foi atualizado
+  } catch (error) {
+    console.error('Erro ao mudar de página:', error)
+  } finally {
+    // Desativa o loading
+    loading.value = false
+  }
 }
 
 // Função para selecionar a primeira categoria
 const selectFirstCategory = () => {
   console.log('[CategoryPage] Tentando selecionar a primeira categoria')
 
-  // Verifica se há categorias filtradas disponíveis
+  // Verifica se há categorias disponíveis
   if (categoryTree.value && categoryTree.value.length > 0) {
-    console.log(`[CategoryPage] Selecionando primeira categoria da árvore filtrada: ${categoryTree.value[0].name} (ID: ${categoryTree.value[0].id})`)
+    console.log(`[CategoryPage] Selecionando primeira categoria: ${categoryTree.value[0].name} (ID: ${categoryTree.value[0].id})`)
     selectCategory(categoryTree.value[0].id)
-  } else if (categories.value && categories.value.length > 0) {
-    // Fallback para o comportamento anterior
-    console.log(`[CategoryPage] Nenhuma categoria filtrada disponível, usando primeira categoria não filtrada: ${categories.value[0].name} (ID: ${categories.value[0].id})`)
-    selectCategory(categories.value[0].id)
+
+    // Rola até a categoria selecionada
+    scrollToCategoryItem(categoryTree.value[0].id)
   } else {
     console.log('[CategoryPage] Nenhuma categoria disponível para seleção')
+    // Tenta buscar categorias novamente
+    fetchCategories().then(() => {
+      if (categoryTree.value && categoryTree.value.length > 0) {
+        selectCategory(categoryTree.value[0].id)
+
+        // Rola até a categoria selecionada
+        scrollToCategoryItem(categoryTree.value[0].id)
+      }
+    })
   }
 }
 
 // Função para selecionar categoria por slug
+// Função para rolar até o item selecionado no filtro de categorias
+const scrollToCategoryItem = (categoryId) => {
+  console.log(`[CategoryPage] Rolando até a categoria selecionada: ${categoryId}`)
+
+  // Aumentamos o delay para garantir que o DOM foi completamente atualizado
+  setTimeout(() => {
+    try {
+      // Busca todos os elementos que podem conter o ID da categoria
+      const categoryElements = document.querySelectorAll(`[data-category-id="${categoryId}"]`)
+      console.log(`[CategoryPage] Encontrados ${categoryElements.length} elementos com data-category-id=${categoryId}`)
+
+      // Encontra o elemento mais específico (o header da categoria)
+      let selectedElement = null
+      categoryElements.forEach(el => {
+        if (el.classList.contains('category-header') || el.querySelector('.category-header')) {
+          selectedElement = el
+          console.log('[CategoryPage] Encontrado elemento header da categoria')
+        }
+      })
+
+      // Se não encontrou o header, usa o primeiro elemento encontrado
+      if (!selectedElement && categoryElements.length > 0) {
+        selectedElement = categoryElements[0]
+        console.log('[CategoryPage] Usando o primeiro elemento encontrado')
+      }
+
+      if (selectedElement) {
+        console.log(`[CategoryPage] Elemento da categoria encontrado, rolando até ele`)
+
+        // Encontra o container de filtro de categorias (desktop e mobile)
+        const desktopContainer = document.querySelector('.category-filter-container')
+        const mobileContainer = document.querySelector('.category-filter-container-mobile')
+
+        // Determina qual container está visível
+        const container = window.innerWidth >= 1024 ? desktopContainer : mobileContainer
+
+        if (container) {
+          console.log(`[CategoryPage] Container encontrado: ${container.className}`)
+
+          // Força o container a ser rolável
+          container.style.overflowY = 'auto'
+
+          // Usa scrollIntoView para rolar até o elemento
+          selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+          console.log(`[CategoryPage] Rolagem iniciada para o elemento`)
+        } else {
+          console.log(`[CategoryPage] Container de filtro de categorias não encontrado`)
+        }
+      } else {
+        console.log(`[CategoryPage] Elemento da categoria com ID ${categoryId} não encontrado no DOM`)
+      }
+    } catch (error) {
+      console.error(`[CategoryPage] Erro ao tentar rolar até a categoria:`, error)
+    }
+  }, 500) // Aumentamos o delay para 500ms para garantir que o DOM foi completamente atualizado
+}
+
 const selectCategoryBySlug = async (slug) => {
   console.log(`[CategoryPage] Tentando selecionar categoria por slug: ${slug}`)
 
-  // Primeiro, tenta encontrar a categoria na árvore filtrada
-  if (categoryTree.value && categoryTree.value.length > 0) {
-    console.log(`[CategoryPage] Buscando categoria com ID ${slug} na árvore filtrada`)
-
-    // Função auxiliar para buscar categoria na árvore
-    const findCategoryInTree = (tree, id) => {
-      for (const node of tree) {
-        if (node.id === id) {
-          return node
+  // Aguarda o carregamento das categorias se ainda não estiverem carregadas
+  if (loadingCategories.value) {
+    console.log(`[CategoryPage] Aguardando carregamento das categorias...`)
+    await new Promise(resolve => {
+      const checkLoading = setInterval(() => {
+        if (!loadingCategories.value) {
+          clearInterval(checkLoading)
+          resolve()
         }
+      }, 100)
+    })
+  }
+
+  // Verifica se temos categorias carregadas
+  if (categoryTree.value && categoryTree.value.length > 0) {
+    console.log(`[CategoryPage] Buscando categoria com ID ${slug} na árvore de categorias`)
+
+    // Função para encontrar o caminho até a categoria
+    const findPathToCategory = (tree, id, path = []) => {
+      for (const node of tree) {
+        // Tenta com o nó atual
+        const currentPath = [...path, node]
+        if (node.id === id) {
+          return currentPath
+        }
+        // Tenta com os filhos
         if (node.children && node.children.length > 0) {
-          const found = findCategoryInTree(node.children, id)
-          if (found) return found
+          const foundPath = findPathToCategory(node.children, id, currentPath)
+          if (foundPath) return foundPath
         }
       }
       return null
     }
 
-    const categoryInTree = findCategoryInTree(categoryTree.value, slug)
+    // Encontra o caminho até a categoria
+    const categoryPath = findPathToCategory(categoryTree.value, slug)
 
-    if (categoryInTree) {
-      console.log(`[CategoryPage] Categoria encontrada na árvore filtrada: ${categoryInTree.name} (ID: ${categoryInTree.id})`)
-      await selectCategory(categoryInTree.id)
-      return
-    } else {
-      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada na árvore filtrada`)
-    }
-  }
+    if (categoryPath) {
+      console.log(`[CategoryPage] Categoria encontrada na árvore: ${categoryPath[categoryPath.length-1].name} (ID: ${slug})`)
+      console.log(`[CategoryPage] Caminho até a categoria: ${categoryPath.map(c => c.name).join(' > ')}`)
 
-  // Se não encontrou na árvore filtrada, tenta nas categorias originais
-  if (categories.value && categories.value.length > 0) {
-    console.log(`[CategoryPage] Buscando categoria com ID ${slug} nas categorias originais`)
-    const category = categories.value.find(cat => cat.id === slug)
-
-    if (category) {
-      console.log(`[CategoryPage] Categoria encontrada nas categorias originais: ${category.name} (ID: ${category.id})`)
-      console.log(`[CategoryPage] Verificando se esta categoria tem produtos...`)
-
-      // Buscar contagem de produtos para esta categoria
-      const topCategories = await categoryService.getTopCategoriesWithMostProducts(100)
-      const productCountMap = {}
-      topCategories.forEach(cat => {
-        productCountMap[cat.id] = cat.productCount
+      // Expande todas as categorias no caminho
+      categoryPath.forEach(cat => {
+        cat.expanded = true
       })
 
-      // Construir a árvore para esta categoria
-      const singleCategoryTree = categoryService.buildCategoryTree([category])
+      // Atualiza a árvore de categorias para refletir as expansões
+      categoryTree.value = [...categoryTree.value]
 
-      if (singleCategoryTree.length > 0 && categoryService.hasCategoryProducts(singleCategoryTree[0], productCountMap)) {
-        console.log(`[CategoryPage] Categoria ${category.name} tem produtos, selecionando-a`)
-        await selectCategory(category.id)
-        return
-      } else {
-        console.log(`[CategoryPage] Categoria ${category.name} não tem produtos, selecionando a primeira categoria filtrada`)
-      }
+      // Seleciona a categoria
+      await selectCategory(slug)
+
+      // Rola até o item selecionado
+      scrollToCategoryItem(slug)
+
+      return
     } else {
-      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada nas categorias originais`)
+      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada na árvore de categorias`)
     }
   }
 
-  // Se chegou até aqui, seleciona a primeira categoria filtrada
-  console.log(`[CategoryPage] Selecionando a primeira categoria filtrada como fallback`)
+  // Se chegou até aqui, tenta buscar a categoria diretamente do backend
+  try {
+    console.log(`[CategoryPage] Tentando buscar a categoria ${slug} diretamente do backend`)
+
+    // Buscar categorias com a estrutura hierárquica incluindo a categoria especificada
+    await fetchCategories()
+
+    // Tenta novamente encontrar a categoria na árvore atualizada
+    return selectCategoryBySlug(slug)
+  } catch (error) {
+    console.error(`[CategoryPage] Erro ao buscar categoria ${slug} do backend:`, error)
+  }
+
+  // Se chegou até aqui, seleciona a primeira categoria como fallback
+  console.log(`[CategoryPage] Selecionando a primeira categoria como fallback`)
   selectFirstCategory()
 }
 
@@ -1002,13 +1151,16 @@ onMounted(async () => {
     console.log('Inicializando a página de categorias')
     await loadFinancialSettings()
     await fetchCategories()
-    console.log('Categorias carregadas:', categories.value)
+    console.log('Categorias carregadas com árvore hierárquica')
 
+    // Verifica se a rota tem um ID de categoria
     if (route.params.slug) {
-      console.log('Slug encontrado na rota:', route.params.slug)
+      console.log('ID de categoria encontrado na rota:', route.params.slug)
+      // Seleciona a categoria especificada na rota e expande seus pais
       await selectCategoryBySlug(route.params.slug)
     } else {
-      console.log('Nenhum slug na rota, selecionando a primeira categoria')
+      console.log('Nenhum ID de categoria na rota, selecionando a primeira categoria')
+      // Se não houver ID na rota, seleciona a primeira categoria
       selectFirstCategory()
     }
 
@@ -1024,13 +1176,42 @@ onMounted(async () => {
 watch(
   () => route.params.slug,
   async (newSlug) => {
-    console.log('Slug da rota alterado para:', newSlug)
+    console.log('ID de categoria na rota alterado para:', newSlug)
+
+    // Garante que as categorias estejam carregadas
+    if (loadingCategories.value) {
+      await new Promise(resolve => {
+        const checkLoading = setInterval(() => {
+          if (!loadingCategories.value) {
+            clearInterval(checkLoading)
+            resolve()
+          }
+        }, 100)
+      })
+    }
+
+    // Redefine todas as categorias como contraídas
+    const resetAllExpanded = (tree) => {
+      tree.forEach(category => {
+        category.expanded = false
+        if (category.children && category.children.length > 0) {
+          resetAllExpanded(category.children)
+        }
+      })
+    }
+    resetAllExpanded(categoryTree.value)
+
+    // Atualiza a árvore para refletir as mudanças
+    categoryTree.value = [...categoryTree.value]
+
     if (newSlug) {
+      // Se houver um ID na rota, seleciona a categoria e expande seus pais
       await selectCategoryBySlug(newSlug)
     } else {
-      console.log('Slug removido da rota, selecionando a primeira categoria')
+      console.log('ID de categoria removido da rota, selecionando a primeira categoria')
       selectFirstCategory()
     }
+
     // Força a busca de produtos após a mudança de categoria
     await fetchFilteredProducts()
   }
@@ -1135,7 +1316,7 @@ export default {
 </script>
 <style scoped>
 input[type="range"]::-webkit-slider-thumb {
-  @apply pointer-events-auto;
+  pointer-events: auto;
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
@@ -1145,7 +1326,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
-  @apply pointer-events-auto;
+  pointer-events: auto;
   width: 16px;
   height: 16px;
   background: #2C2C2C;
@@ -1190,14 +1371,27 @@ input[type="checkbox"]:checked::after {
   background-color: rgba(251, 189, 30, 0.2); /* Cor amarela um pouco mais escura no hover */
 }
 
-.loader {
-  /* Adicione aqui o estilo do seu loader */
-  border: 4px solid #f3f3f3;
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-spinner {
+  border: 4px solid rgba(251, 189, 30, 0.3);
   border-top: 4px solid #FBBD1E;
   border-radius: 50%;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+.loader-text {
+  font-family: 'Archivo', sans-serif;
+  font-size: 14px;
+  color: #666;
 }
 
 @keyframes spin {
@@ -1257,6 +1451,7 @@ select:focus {
 /* Estilos para os sliders de preço */
 input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   height: 5px;
   background: #E0E0E0; /* Voltando para o cinza claro original */
   border-radius: 5px;
@@ -1343,6 +1538,22 @@ input[type="range"]:nth-child(2) {
   background: none;
 }
 
+/* Estilo personalizado para o espaçamento automático */
+.mt-auto {
+  margin-top: 10%;
+}
+
+/* Estilo para manter a altura fixa da descrição */
+.description-fixed-height {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 4.5em; /* Altura fixa para 3 linhas */
+  min-height: 4.5em;
+  line-height: 1.5em;
+}
+
 /* Removendo os estilos da linha cinza escuro */
 
 /* Estilos para o contêiner de filtro de categorias */
@@ -1354,7 +1565,31 @@ input[type="range"]:nth-child(2) {
   transition: all 0.3s ease;
   border: 1px solid rgba(251, 189, 30, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 70vh; /* Altura máxima para garantir que a barra de rolagem apareça quando necessário */
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: #FBBD1E #f1f1f1; /* Para Firefox */
+  scroll-behavior: smooth; /* Rolagem suave */
+}
+
+/* Estilização da barra de rolagem para WebKit (Chrome, Safari, etc.) */
+.category-filter-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-filter-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.category-filter-container::-webkit-scrollbar-thumb {
+  background: #FBBD1E;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.category-filter-container::-webkit-scrollbar-thumb:hover {
+  background: #e0a800;
 }
 
 .category-filter-container::before {
@@ -1376,8 +1611,32 @@ input[type="range"]:nth-child(2) {
   transition: all 0.3s ease;
   border: 1px solid rgba(251, 189, 30, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 50vh; /* Altura máxima menor para mobile */
   margin-bottom: 1rem;
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: #FBBD1E #f1f1f1; /* Para Firefox */
+  scroll-behavior: smooth; /* Rolagem suave */
+}
+
+/* Estilização da barra de rolagem para WebKit (Chrome, Safari, etc.) */
+.category-filter-container-mobile::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-filter-container-mobile::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.category-filter-container-mobile::-webkit-scrollbar-thumb {
+  background: #FBBD1E;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.category-filter-container-mobile::-webkit-scrollbar-thumb:hover {
+  background: #e0a800;
 }
 
 .category-filter-container-mobile::before {

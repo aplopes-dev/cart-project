@@ -27,7 +27,7 @@
       <!-- Navigation Arrows -->
       <button
         @click="prevSlide"
-        class="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
+        class="absolute left-2 md:left-8 top-[60%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
       >
         <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="md:w-12 md:h-12">
           <path d="M31.5 12L18 24L31.5 36" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -36,7 +36,7 @@
 
       <button
         @click="nextSlide"
-        class="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
+        class="absolute right-2 md:right-8 top-[60%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
       >
         <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-180 md:w-12 md:h-12">
           <path d="M31.5 12L18 24L31.5 36" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>

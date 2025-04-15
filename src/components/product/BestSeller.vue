@@ -28,23 +28,24 @@
                 @error="handleImageError"
               />
 
-              <div class="flex flex-col items-center gap-4 w-full p-6">
+              <div class="flex flex-col items-center gap-4 w-full p-6 product-content">
                 <div class="flex flex-col gap-2 md:gap-4 w-full">
                   <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
                     {{ product.name }}
                   </h3>
-                  <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center w-full line-clamp-2">
-                    {{ product.description }}
+                  <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center w-full description-fixed-height">
+                    {{ product.description || '&nbsp;'.repeat(3) }}
                   </p>
                 </div>
 
                 <!-- Área de preço - só exibida quando os preços estão habilitados -->
-                <div v-if="showPrices" class="w-full text-center mb-4">
+                <div v-if="showPrices" class="w-full text-center mb-4 mt-3">
                   <p class="font-archivo-narrow font-semibold text-[28px] md:text-[30px] leading-[32px] md:leading-[36px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
-                <!-- Não adiciona espaço quando o preço não é exibido -->
+                <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
+                <div v-else class="w-full h-2 mt-3"></div>
               </div>
             </div>
 
@@ -274,6 +275,25 @@ export default {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Estilo para manter a altura fixa da descrição */
+.description-fixed-height {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 4.5em; /* Altura fixa para 3 linhas */
+  min-height: 4.5em;
+  line-height: 1.5em;
+  overflow: hidden;
+}
+
+/* Estilo para o container de conteúdo do produto */
+.product-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px; /* Altura mínima para garantir espaço consistente */
 }
 </style>
 
