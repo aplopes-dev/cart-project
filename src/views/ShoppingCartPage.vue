@@ -12,7 +12,20 @@
 
 
     <div class="container mx-auto px-4 py-8">
-      <div class="max-w-[1408px] mx-auto">
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
+        <LoadingSpinner />
+      </div>
+
+      <!-- Error Message -->
+      <div v-else-if="error" class="py-16 text-center max-w-[1408px] mx-auto">
+        <p class="text-red-500 text-lg mb-4">{{ error }}</p>
+        <button @click="loadCart" class="bg-empire-yellow px-6 py-2 font-archivo-narrow font-semibold">
+          {{ $t('common.retry') }}
+        </button>
+      </div>
+
+      <div v-else class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-4 md:pb-6 text-center">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('shoppingCart.title') }}</h1>
@@ -220,12 +233,14 @@ import ColorCircle from '@/components/common/ColorCircle.vue'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import ProductSearchCombobox from '@/components/product/ProductSearchCombobox.vue'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 
 export default defineComponent({
   name: 'ShoppingCartPage',
   components: {
     ColorCircle,
-    ProductSearchCombobox
+    ProductSearchCombobox,
+    LoadingSpinner
   },
   setup() {
     const cartStore = useCartStore()
@@ -238,6 +253,8 @@ export default defineComponent({
     const togglesStore = useFinancialTogglesStore()
     const showPrices = ref(true) // Controla a visibilidade dos preços
     const productDetails = ref({})
+    const loading = ref(true) // Estado de carregamento
+    const error = ref(null) // Estado de erro
 
     // Watch para atualizar descrições quando mudar o idioma
     watch(locale, (newLocale) => {
@@ -254,6 +271,9 @@ export default defineComponent({
 
     const loadCurrencySymbol = async () => {
       try {
+        loading.value = true
+        error.value = null
+
         const settings = await settingsService.getFinancialSettings()
         currencySymbol.value = settings.currency_symbol
 
@@ -273,8 +293,11 @@ export default defineComponent({
         showPrices.value = togglesStore.masterToggle
         console.log('Master toggle state:', togglesStore.masterToggle)
         console.log('Show prices:', showPrices.value)
-      } catch (error) {
-        console.error('Error loading financial settings:', error)
+      } catch (err) {
+        console.error('Error loading financial settings:', err)
+        error.value = 'Failed to load financial settings'
+      } finally {
+        loading.value = false
       }
     }
 
@@ -299,7 +322,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      loadCurrencySymbol()
+      loadCart()
       if (route.query.error === 'empty_cart') {
         showErrorMessage(t('cart.emptyCart'))
       }
@@ -314,6 +337,28 @@ export default defineComponent({
         }
       } catch (error) {
         console.error(`Error fetching details for product ${productId}:`, error)
+      }
+    }
+
+    const loadCart = async () => {
+      try {
+        loading.value = true
+        error.value = null
+
+        // Carrega as configurações financeiras
+        await loadCurrencySymbol()
+
+        // Carrega os detalhes dos produtos no carrinho
+        if (cartStore.items.length > 0) {
+          for (const item of cartStore.items) {
+            await fetchProductDetails(item.id)
+          }
+        }
+      } catch (err) {
+        console.error('Error loading cart:', err)
+        error.value = 'Failed to load cart details'
+      } finally {
+        loading.value = false
       }
     }
 
@@ -337,7 +382,10 @@ export default defineComponent({
       currencySymbol,
       checkoutStore,
       productDetails,
-      showPrices
+      showPrices,
+      loading,
+      error,
+      loadCart
     }
   },
   data() {
@@ -355,7 +403,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleImageError(e) {      
+    handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     },

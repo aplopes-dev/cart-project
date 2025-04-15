@@ -1,8 +1,21 @@
 <template>
   <div class="bg-white">
     <div class="container mx-auto px-4 py-12">
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
+        <LoadingSpinner />
+      </div>
+
+      <!-- Error Message -->
+      <div v-else-if="error" class="py-16 text-center max-w-[1408px] mx-auto">
+        <p class="text-red-500 text-lg mb-4">{{ error }}</p>
+        <button @click="loadProduct" class="bg-empire-yellow px-6 py-2 font-archivo-narrow font-semibold">
+          {{ $t('common.retry') }}
+        </button>
+      </div>
+
       <!-- Seção principal do produto -->
-      <div class="max-w-[1408px] mx-auto pb-16">
+      <div v-else class="max-w-[1408px] mx-auto pb-16">
         <!-- Breadcrumb -->
         <div class="mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
@@ -218,6 +231,7 @@
 <script>
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import BestSeller from '@/components/product/BestSeller.vue'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 // import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants' // Não é mais necessário, usando imageService.handleImageError
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
@@ -232,7 +246,8 @@ export default {
   name: 'ProductDetailsPage',
   components: {
     ProductQuantitySelector,
-    BestSeller
+    BestSeller,
+    LoadingSpinner
   },
   setup() {
     const { locale } = useI18n()

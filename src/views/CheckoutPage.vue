@@ -1,7 +1,20 @@
 <template>
   <div class="checkout-page">
     <div class="container mx-auto px-4">
-      <div class="max-w-[1408px] mx-auto py-8">
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
+        <LoadingSpinner />
+      </div>
+
+      <!-- Error Message -->
+      <div v-else-if="error" class="py-16 text-center max-w-[1408px] mx-auto">
+        <p class="text-red-500 text-lg mb-4">{{ error }}</p>
+        <button @click="loadCheckoutData" class="bg-empire-yellow px-6 py-2 font-archivo-narrow font-semibold">
+          {{ $t('common.retry') }}
+        </button>
+      </div>
+
+      <div v-else class="max-w-[1408px] mx-auto py-8">
         <!-- Title -->
         <div class="pb-6 text-center">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('checkout.title') }}</h1>
@@ -497,12 +510,14 @@ import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { imageService } from '@/services/imageService' // Para usar o handleImageError
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 
 export default {
   name: 'CheckoutPage',
   components: {
     AddressSelectionModal,
-    ProjectConfirmationModal
+    ProjectConfirmationModal,
+    LoadingSpinner
   },
   setup() {
     const cartStore = useCartStore()
@@ -519,6 +534,8 @@ export default {
     const minOrderValueEnabled = ref(false) // Status do toggle de valor mínimo
     const togglesStore = useFinancialTogglesStore()
     const showPrices = ref(true) // Controla a visibilidade dos preços
+    const loading = ref(true) // Estado de carregamento
+    const error = ref(null) // Estado de erro
 
     const loadFinancialSettings = async () => {
       try {
@@ -557,9 +574,7 @@ export default {
       }
     }
 
-    onMounted(() => {
-      loadFinancialSettings()
-    })
+    // Removido onMounted aqui, pois agora está em loadCheckoutData
 
     const calculateTaxes = computed(() => {
       const subtotalValue = cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
@@ -594,6 +609,29 @@ export default {
       cartStore.removeItem(index)
     }
 
+    const loadCheckoutData = async () => {
+      try {
+        loading.value = true
+        error.value = null
+
+        // Carrega as configurações financeiras
+        await loadFinancialSettings()
+
+        // Carrega os endereços do usuário
+        await addressStore.fetchAddresses()
+      } catch (err) {
+        console.error('Error loading checkout data:', err)
+        error.value = 'Failed to load checkout data'
+      } finally {
+        loading.value = false
+      }
+    }
+
+    // Carrega os dados ao montar o componente
+    onMounted(() => {
+      loadCheckoutData()
+    })
+
     return {
       cartStore,
       store,
@@ -610,7 +648,10 @@ export default {
       checkoutStore,
       showPrices,
       minOrderValue,
-      minOrderValueEnabled
+      minOrderValueEnabled,
+      loading,
+      error,
+      loadCheckoutData
     }
   },
   data() {
@@ -643,9 +684,11 @@ export default {
         cvv: ''
       },
       showErrors: false,
+      /* eslint-disable vue/no-dupe-keys */
       error: null,
       showErrorAlert: false,
       loading: false,
+      /* eslint-enable vue/no-dupe-keys */
       showAddressModal: false,
       currentAddressId: null,
       showProjectModal: false
@@ -816,6 +859,14 @@ export default {
 
     closeProjectModal() {
       this.showProjectModal = false;
+
+      // Se o modal foi fechado, verificar se há projetos disponíveis
+      // Se não houver projetos, finalizar o pedido com project_id: null
+      const storedProject = sessionStorage.getItem('selectedProject');
+      if (!storedProject) {
+        // Finalizar o pedido com project_id: null
+        this.confirmProjectAndProceed({ id: null, name: null });
+      }
     },
 
     handleProjectChange(project) {
@@ -867,8 +918,8 @@ export default {
           // Agora o backend foi modificado para aceitar null para esses campos
           shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
           taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null,
-          // Adiciona o ID do projeto selecionado
-          project_id: project.id
+          // Adiciona o ID do projeto selecionado (pode ser null)
+          project_id: project ? project.id : null
         };
 
         console.log('Order data being sent:', orderData);
@@ -920,7 +971,7 @@ export default {
       immediate: true
     }
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter(_, __, next) {
     const cartStore = useCartStore();
 
     if (!cartStore.items.length) {
