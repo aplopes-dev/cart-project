@@ -474,7 +474,10 @@ export default {
     shippingAddress: 'Adresse de Livraison',
     noShippingAddress: 'Aucune adresse de livraison disponible',
     neighborhood: 'Quartier',
-    noPriceOrder: 'Commande sans prix'
+    noPriceOrder: 'Commande sans prix',
+    project: 'Projet',
+    projectId: 'ID du Projet',
+    noProject: 'Aucun projet associé'
   },
   security: {
     title: 'Sécurité',

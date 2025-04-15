@@ -527,7 +527,10 @@ export default {
     shippingAddress: 'Shipping Address',
     noShippingAddress: 'No shipping address available',
     neighborhood: 'Neighborhood',
-    noPriceOrder: 'Order without prices'
+    noPriceOrder: 'Order without prices',
+    project: 'Project',
+    projectId: 'Project ID',
+    noProject: 'No project associated'
   },
   security: {
     title: 'Security',

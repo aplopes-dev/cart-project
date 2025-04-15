@@ -518,7 +518,9 @@ export default {
     noShippingAddress: 'Nenhum endereço de entrega disponível',
     neighborhood: 'Bairro',
     noPriceOrder: 'Pedido sem preços',
-    project: 'Projeto'
+    project: 'Projeto',
+    projectId: 'ID do Projeto',
+    noProject: 'Nenhum projeto associado'
   },
   security: {
     title: 'Segurança',

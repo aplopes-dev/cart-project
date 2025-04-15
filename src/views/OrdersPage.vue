@@ -165,8 +165,8 @@
               <div class="border-t border-black/10 mt-6 pt-4">
                 <div class="flex flex-wrap justify-between">
                   <!-- Informações do pedido: Notas e Endereço -->
-                  <div class="w-full md:w-2/3 mb-6 md:mb-0 pr-0 md:pr-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="w-full md:w-3/4 mb-6 md:mb-0 pr-0 md:pr-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <!-- Notes Section -->
                       <div>
                         <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.notes') }}</h4>
@@ -201,13 +201,6 @@
                                 </svg>
                                 {{ order.phone }}
                               </span>
-                              <!-- Projeto -->
-                              <span class="block mt-1 flex items-center" v-if="order.project_name">
-                                <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                {{ $t('orders.project') }}: {{ order.project_name }}
-                              </span>
                             </div>
                           </div>
                           <p v-else class="font-archivo text-xs text-black/50 italic">
@@ -215,11 +208,29 @@
                           </p>
                         </div>
                       </div>
+
+                      <!-- Project Section -->
+                      <div>
+                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.project') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                          <div v-if="order.project_name" class="flex items-start gap-2">
+                            <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <div class="font-archivo text-xs">
+                              <span class="font-medium">{{ order.project_name }}</span>
+                            </div>
+                          </div>
+                          <p v-else class="font-archivo text-xs text-black/50 italic">
+                            {{ $t('orders.noProject') }}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <!-- Totals Section (exibido apenas se o pedido tiver preços) -->
-                  <div v-if="!isOrderWithoutPrices(order)" class="w-full md:w-1/3">
+                  <div v-if="!isOrderWithoutPrices(order)" class="w-full md:w-1/4">
                     <div class="flex flex-col gap-2 items-end">
                       <div class="flex justify-end gap-8 w-full">
                         <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
@@ -245,7 +256,7 @@
                   </div>
 
                   <!-- Mensagem para pedidos sem preços -->
-                  <div v-if="isOrderWithoutPrices(order)" class="w-full md:w-1/3">
+                  <div v-if="isOrderWithoutPrices(order)" class="w-full md:w-1/4">
                     <div class="flex flex-col gap-2 items-end">
                       <div class="flex justify-end gap-8 w-full pt-2">
                         <span class="font-archivo-narrow font-semibold text-xl text-gray-500">{{ $t('orders.noPriceOrder') }}</span>
