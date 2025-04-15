@@ -24,13 +24,12 @@
 
             <!-- Form -->
             <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-4">
-              <!-- Email Input -->
+              <!-- Username Input -->
               <input
                 v-model="email"
-                type="email"
-                :placeholder="$t('auth.email')"
+                type="text"
+                :placeholder="$t('auth.usernamePlaceholder')"
                 class="w-full p-4 border border-gray-300"
-
               />
 
               <!-- Password Input -->
@@ -170,7 +169,9 @@ export default {
 
         // Salva o caminho de redirecionamento e mostra o modal de seleção de projeto
         redirectPath.value = route.query.redirect || '/'
+        console.log('Exibindo modal de seleção de projeto, redirectPath:', redirectPath.value)
         showProjectModal.value = true
+        console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
 
       } catch (err) {
         console.error('Login error:', err)
@@ -195,11 +196,15 @@ export default {
       showProjectModal.value = false
       console.log('Projeto selecionado:', data.projectId, data.projectName)
 
-      // Salva o projeto selecionado no localStorage
-      localStorage.setItem('selectedProject', JSON.stringify({
-        id: data.projectId,
-        name: data.projectName
-      }))
+      // Salva o projeto selecionado no sessionStorage usando o serviço
+      import('@/services/projectService').then(module => {
+        const projectService = module.projectService;
+        projectService.saveSelectedProject({
+          id: data.projectId,
+          name: data.projectName
+        });
+        console.log('Projeto salvo no sessionStorage:', data.projectId, data.projectName);
+      })
 
       // Redireciona para o caminho original
       router.push({ path: data.redirectPath, replace: true })

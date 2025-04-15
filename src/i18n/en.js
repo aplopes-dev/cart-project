@@ -22,6 +22,7 @@ export default {
     signIn: 'SIGN IN',
     signUp: 'SIGN UP',
     email: 'Email',
+    username: 'Username',
     password: 'Password',
     forgotPassword: 'Forgot your password?',
     dontHaveAccount: "Don't have an account yet?",
@@ -51,6 +52,7 @@ export default {
     firstNamePlaceholder: 'Enter your first name',
     lastNamePlaceholder: 'Enter your last name',
     emailPlaceholder: 'Enter your email',
+    usernamePlaceholder: 'Enter your username',
     passwordPlaceholder: 'Enter your password',
     confirmPasswordPlaceholder: 'Confirm your password',
     fieldRequired: 'This field is required',
@@ -60,7 +62,8 @@ export default {
     selectProject: 'Select a Project',
     project: 'Project',
     selectProjectPlaceholder: 'Select a project',
-    confirm: 'CONFIRM'
+    confirm: 'CONFIRM',
+    close: 'CLOSE'
   },
   cart: {
     checkout: 'CHECKOUT',
@@ -210,7 +213,11 @@ export default {
       message: 'You are completing the order for project:',
       confirm: 'Confirm and Continue',
       changeProject: 'Select Another Project',
-      applyChange: 'Apply Change'
+      applyChange: 'Apply Change',
+      noProjectsFound: 'No projects found for this user.',
+      loadingProjects: 'Loading projects...',
+      loadError: 'Error loading projects. Please try again.',
+      retry: 'Retry'
     }
   },
   thankYou: {
