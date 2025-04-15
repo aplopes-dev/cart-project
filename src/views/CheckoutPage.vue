@@ -724,8 +724,7 @@ export default {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
-    handleImageError(e) {
-      console.log('[CheckoutPage] Erro ao carregar imagem, usando placeholder');
+    handleImageError(e) {      
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     },

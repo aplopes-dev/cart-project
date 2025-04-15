@@ -211,7 +211,7 @@ export default {
       this.$router.push('/categories')
     },
     handleImageError(e) {
-      console.log('[CartWidget] Erro ao carregar imagem, usando placeholder');
+      
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     },

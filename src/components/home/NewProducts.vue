@@ -355,8 +355,7 @@ export default {
         this.showToast = false
       }, 3000) // Toast desaparece após 3 segundos
     },
-    handleImageError(e) {
-      console.log('[NewProducts] Erro ao carregar imagem, usando placeholder');
+    handleImageError(e) {      
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     }

@@ -355,8 +355,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleImageError(e) {
-      console.log('[ShoppingCartPage] Erro ao carregar imagem, usando placeholder');
+    handleImageError(e) {      
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     },

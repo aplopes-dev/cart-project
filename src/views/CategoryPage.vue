@@ -841,8 +841,7 @@ const getProductImage = (product) => {
   return imageUrl;
 }
 
-const handleImageError = (e) => {
-  console.log('[CategoryPage] Erro ao carregar imagem, usando placeholder');
+const handleImageError = (e) => {  
   e.target.src = PLACEHOLDER_IMAGE_PATH
   e.target.onerror = null // Previne loop infinito
 }
