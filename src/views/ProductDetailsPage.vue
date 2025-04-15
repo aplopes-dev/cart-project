@@ -218,7 +218,7 @@
 <script>
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import BestSeller from '@/components/product/BestSeller.vue'
-import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+// import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants' // Não é mais necessário, usando imageService.handleImageError
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { imageService } from '@/services/imageService'
@@ -554,7 +554,8 @@ export default {
       return imageUrl;
     },
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_PATH
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
     },
     showSuccessToast() {
       this.showToast = true

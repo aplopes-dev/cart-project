@@ -334,7 +334,7 @@ import { ref, onMounted, computed } from 'vue'
 import api from '@/services/api'
 import ColorCircle from '@/components/common/ColorCircle.vue'
 
-import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import { imageService } from '@/services/imageService'
 
 const orders = ref([])
 const loading = ref(false)
@@ -442,12 +442,8 @@ onMounted(() => {
 })
 
 const handleImageError = (e) => {
-  e.target.src = PLACEHOLDER_IMAGE_PATH
-
-  // Se mesmo a imagem de fallback falhar, use uma imagem base64 mínima
-  e.target.onerror = () => {
-    e.target.onerror = null
-  }
+  // Usa a função utilitária do imageService para lidar com erros de imagem
+  imageService.handleImageError(e)
 }
 
 // Verifica se o pedido foi feito sem preços (toggle master desabilitado)

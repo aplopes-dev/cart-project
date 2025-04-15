@@ -203,7 +203,8 @@ export default {
       return imageUrl;
     },
     handleImageError(e) {
-      e.target.src = '/images/placeholder.png'
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
     },
     async navigateToProduct(productId, showValidation = false) {
       await this.$router.push({

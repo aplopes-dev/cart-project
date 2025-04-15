@@ -51,7 +51,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+// import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants' // Não é mais necessário, usando imageService.handleImageError
 import { useCartStore } from '@/stores/cartStore'
 import { settingsService } from '@/services/settingsService'
 // eslint-disable-next-line no-unused-vars
@@ -133,7 +133,8 @@ export default defineComponent({
       return imageUrl;
     },
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_PATH
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
     },
     addToCart() {
       // Verifica se o produto tem características que precisam ser selecionadas

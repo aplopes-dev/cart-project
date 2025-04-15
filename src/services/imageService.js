@@ -100,5 +100,36 @@ export const imageService = {
     const folderPath = `/images/products/${foxproCode}`;
     console.log(`[ImageService] Pasta de imagens para código FoxPro ${foxproCode}: ${folderPath}`);
     return folderPath;
+  },
+
+  /**
+   * Função utilitária para lidar com erros de carregamento de imagem
+   * @param {Event} event - Evento de erro de carregamento de imagem
+   * @returns {void}
+   */
+  handleImageError(event) {
+    // Tenta usar o caminho absoluto para a imagem de fallback
+    const baseUrl = window.location.origin;
+    const fallbackUrl = `${baseUrl}${PLACEHOLDER_IMAGE_PATH}`;
+
+    // Se a imagem que falhou já é a imagem de fallback, use uma imagem base64 mínima
+    if (event.target.src === fallbackUrl || event.target.src.includes(PLACEHOLDER_IMAGE_PATH)) {
+      console.error('Fallback image not found:', fallbackUrl);
+      // Imagem base64 mínima transparente como último recurso
+      event.target.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      event.target.onerror = null; // Previne loop infinito
+      return;
+    }
+
+    // Tenta usar a imagem de fallback
+    event.target.src = fallbackUrl;
+
+    // Se mesmo a imagem de fallback falhar, use uma imagem base64 mínima
+    event.target.onerror = () => {
+      console.error('Fallback image not found:', fallbackUrl);
+      // Imagem base64 mínima transparente como último recurso
+      event.target.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      event.target.onerror = null; // Previne loop infinito
+    };
   }
 }

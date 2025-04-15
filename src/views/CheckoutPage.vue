@@ -496,7 +496,7 @@ import { useAddressStore } from '@/stores/addressStore'
 import { settingsService } from '@/services/settingsService'
 import { useCheckoutStore } from '@/stores/checkoutStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
-import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import { imageService } from '@/services/imageService' // Para usar o handleImageError
 
 export default {
   name: 'CheckoutPage',
@@ -724,9 +724,9 @@ export default {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
-    handleImageError(e) {      
-      e.target.src = PLACEHOLDER_IMAGE_PATH
-      e.target.onerror = null // Previne loop infinito
+    handleImageError(e) {
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
     },
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
