@@ -22,6 +22,7 @@ export default {
     signIn: 'ENTRAR',
     signUp: 'CADASTRAR',
     email: 'E-mail',
+    username: 'Usuário',
     password: 'Senha',
     forgotPassword: 'Esqueceu sua senha?',
     dontHaveAccount: 'Ainda não tem uma conta?',
@@ -39,6 +40,16 @@ export default {
     firstNamePlaceholder: 'Digite seu nome',
     lastNamePlaceholder: 'Digite seu sobrenome',
     emailPlaceholder: 'Digite seu e-mail',
+    usernamePlaceholder: 'Digite seu usuário',
+    selectProject: 'Selecione um Projeto',
+    project: 'Projeto',
+    selectProjectPlaceholder: 'Selecione um projeto',
+    confirm: 'Confirmar',
+    close: 'Fechar',
+    loadingProjects: 'Carregando projetos...',
+    projectLoadError: 'Erro ao carregar projetos. Tente novamente.',
+    retry: 'Tentar novamente',
+    noProjectsFound: 'Nenhum projeto encontrado para este usuário.',
     passwordPlaceholder: 'Digite sua senha',
     confirmPasswordPlaceholder: 'Confirme sua senha',
     forgotPasswordTitle: 'ESQUECI MINHA SENHA',
@@ -154,6 +165,8 @@ export default {
     emailPlaceholder: 'Digite seu e-mail...',
     phone: 'Telefone',
     phonePlaceholder: 'Digite seu telefone...',
+    emptyCart: 'Seu carrinho está vazio',
+    continueShopping: 'CONTINUAR COMPRANDO',
 
     shippingDetails: 'Detalhes de Envio',
     address: 'Endereço',
@@ -210,7 +223,11 @@ export default {
       message: 'Você está finalizando o pedido para o projeto:',
       confirm: 'Confirmar e Continuar',
       changeProject: 'Selecionar Outro Projeto',
-      applyChange: 'Aplicar Alteração'
+      applyChange: 'Aplicar Alteração',
+      loadingProjects: 'Carregando projetos...',
+      loadError: 'Erro ao carregar projetos. Tente novamente.',
+      retry: 'Tentar novamente',
+      noProjectsFound: 'Nenhum projeto encontrado para este usuário.'
     }
   },
   thankYou: {
@@ -500,7 +517,8 @@ export default {
     shippingAddress: 'Endereço de Entrega',
     noShippingAddress: 'Nenhum endereço de entrega disponível',
     neighborhood: 'Bairro',
-    noPriceOrder: 'Pedido sem preços'
+    noPriceOrder: 'Pedido sem preços',
+    project: 'Projeto'
   },
   security: {
     title: 'Segurança',

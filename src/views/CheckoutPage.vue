@@ -869,7 +869,7 @@ export default {
           shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
           taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null,
           // Adiciona o ID do projeto selecionado
-          projectId: project.id
+          project_id: project.id
         };
 
         console.log('Order data being sent:', orderData);

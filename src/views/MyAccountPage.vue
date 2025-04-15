@@ -86,8 +86,8 @@
             </button>
           </div>
 
-          <!-- Card - Configurações -->
-          <div class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Configurações (apenas para ADMIN e MANAGER) -->
+          <div v-if="isAdminOrManager" class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
@@ -107,18 +107,28 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore' // Corrigido o caminho do import
-// Nota: authorizationService é usado indiretamente pela diretiva v-permission
-// eslint-disable-next-line no-unused-vars
 import { authorizationService } from '@/services/authorization.service'
 
 const router = useRouter()
 const store = useStore()
 const cartStore = useCartStore()
 useI18n()
+
+// Verifica se o usuário é ADMIN ou MANAGER
+const isAdminOrManager = computed(() => {
+  return authorizationService.hasProfile(['ADMIN', 'MANAGER'])
+})
+
+// Verifica o perfil do usuário ao montar o componente
+onMounted(() => {
+  console.log('User profile:', authorizationService.getUserProfile())
+  console.log('Is Admin or Manager:', isAdminOrManager.value)
+})
 
 const handleLogout = async () => {
   const userId = JSON.parse(localStorage.getItem('user'))?.id;

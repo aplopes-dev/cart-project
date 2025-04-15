@@ -22,6 +22,7 @@ export default {
     signIn: 'CONNEXION',
     signUp: 'INSCRIPTION',
     email: 'E-mail',
+    username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     forgotPassword: 'Mot de passe oublié?',
     dontHaveAccount: "Vous n'avez pas de compte?",
@@ -39,6 +40,7 @@ export default {
     firstNamePlaceholder: 'Entrez votre prénom',
     lastNamePlaceholder: 'Entrez votre nom',
     emailPlaceholder: 'Entrez votre e-mail',
+    usernamePlaceholder: 'Entrez votre nom d\'utilisateur',
     passwordPlaceholder: 'Entrez votre mot de passe',
     confirmPasswordPlaceholder: 'Confirmez votre mot de passe',
     forgotPasswordTitle: 'MOT DE PASSE OUBLIÉ',
@@ -60,7 +62,8 @@ export default {
     selectProject: 'Sélectionnez un Projet',
     project: 'Projet',
     selectProjectPlaceholder: 'Sélectionnez un projet',
-    confirm: 'CONFIRMER'
+    confirm: 'CONFIRMER',
+    close: 'FERMER'
   },
   cart: {
     shoppingCart: 'PANIER',
@@ -208,7 +211,11 @@ export default {
       message: 'Vous finalisez la commande pour le projet:',
       confirm: 'Confirmer et Continuer',
       changeProject: 'Sélectionner un Autre Projet',
-      applyChange: 'Appliquer le Changement'
+      applyChange: 'Appliquer le Changement',
+      noProjectsFound: 'Aucun projet trouvé pour cet utilisateur.',
+      loadingProjects: 'Chargement des projets...',
+      loadError: 'Erreur lors du chargement des projets. Veuillez réessayer.',
+      retry: 'Réessayer'
     }
   },
   thankYou: {
