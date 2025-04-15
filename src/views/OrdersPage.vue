@@ -441,7 +441,7 @@ onMounted(() => {
   fetchOrders()
 })
 
-const handleImageError = (e) => {  c
+const handleImageError = (e) => {
   e.target.src = PLACEHOLDER_IMAGE_PATH
 
   // Se mesmo a imagem de fallback falhar, use uma imagem base64 mínima
