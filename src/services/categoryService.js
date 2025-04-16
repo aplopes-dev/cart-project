@@ -31,18 +31,8 @@ export const categoryService = {
     try {
       // Endpoint para obter categorias paginadas
       const { page = 1, limit = 10, includeInactive = false, onlyWithProducts = true, search = '' } = params
-      console.log('[categoryService] Enviando requisição para obter categorias paginadas com parâmetros:', {
-        page,
-        limit,
-        includeInactive,
-        onlyWithProducts,
-        search
-      })
-      console.log('[categoryService] includeInactive:', includeInactive, 'tipo:', typeof includeInactive)
-
       // Converter explicitamente para string para garantir que o backend receba o valor correto
       const includeInactiveStr = includeInactive === true ? 'true' : 'false'
-      console.log('[categoryService] includeInactive convertido para string:', includeInactiveStr)
 
       const response = await axios.get(`${API_URL}/categories/paginated`, {
         params: {
@@ -83,7 +73,6 @@ export const categoryService = {
 
       // Faz a requisição para o endpoint de busca de categorias
       const response = await axios.get(`${API_URL}/categories/search`, { params })
-      console.log(`[categoryService] Recebidas ${response.data.length} categorias raiz do backend`)
 
       return response.data
     } catch (error) {
@@ -134,13 +123,13 @@ export const categoryService = {
 
     // Verifica se alguma subcategoria tem produtos
     if (category.children && category.children.length > 0) {
-      console.log(`[categoryService] 🔍 Verificando ${category.children.length} subcategorias de ${category.name} (ID: ${category.id}). Caminho: ${currentPath}`)
+      // Removido log desnecessário sobre verificação de subcategorias
 
       let hasProductsInChildren = false
       for (const child of category.children) {
         // Chamada recursiva para verificar subcategorias
         if (this.hasCategoryProducts(child, productCountMap, currentPath)) {
-          console.log(`[categoryService] ✅ Categoria ${category.name} (ID: ${category.id}) tem produtos através da subcategoria ${child.name} (ID: ${child.id}). Caminho: ${currentPath}`)
+          // Removido log desnecessário sobre produtos em subcategorias
           hasProductsInChildren = true
           // Não retorna imediatamente para verificar todas as subcategorias (para fins de log)
         }
@@ -163,7 +152,7 @@ export const categoryService = {
   buildCategoryTree(categories) {
     if (!categories || !categories.length) return []
 
-    console.log(`[categoryService] Construindo árvore de categorias com ${categories.length} categorias`)
+    // Removido log desnecessário sobre construção da árvore
 
     // Primeiro, criamos um mapa de todas as categorias por ID para fácil acesso
     const categoryMap = {}
@@ -180,15 +169,15 @@ export const categoryService = {
       if (category.parent_id && categoryMap[category.parent_id]) {
         // Adiciona esta categoria como filho do parent
         categoryMap[category.parent_id].children.push(categoryMap[category.id])
-        console.log(`[categoryService] Categoria ${category.name} (ID: ${category.id}) adicionada como filha de ${categoryMap[category.parent_id].name} (ID: ${category.parent_id})`)
+        // Removido log desnecessário sobre hierarquização
       } else {
         // Se não tem parent_id ou o parent não existe, é uma categoria raiz
         rootCategories.push(categoryMap[category.id])
-        console.log(`[categoryService] Categoria ${category.name} (ID: ${category.id}) adicionada como categoria raiz`)
+        // Removido log desnecessário sobre hierarquização
       }
     })
 
-    console.log(`[categoryService] Árvore construída com ${rootCategories.length} categorias raiz`)
+    // Removido log desnecessário sobre categorias raiz
     return rootCategories
   },
 
@@ -201,7 +190,7 @@ export const categoryService = {
   filterCategoryTree(categoryTree, productCountMap = {}) {
     if (!categoryTree || !categoryTree.length) return []
 
-    console.log(`[categoryService] Filtrando árvore de categorias com ${categoryTree.length} categorias raiz`)
+    // Removido log desnecessário sobre filtragem de categorias
 
     // Função recursiva para filtrar a árvore
     const filterTree = (tree) => {
@@ -220,18 +209,14 @@ export const categoryService = {
         // Mantém a categoria se ela tem produtos diretamente OU se tem filhos (que já foram filtrados)
         const shouldKeep = hasDirectProducts || hasChildrenWithProducts
 
-        if (shouldKeep) {
-          console.log(`[categoryService] ✅ Mantendo categoria ${category.name} (ID: ${category.id}) - Produtos diretos: ${hasDirectProducts ? 'Sim' : 'Não'}, Filhos com produtos: ${hasChildrenWithProducts ? 'Sim' : 'Não'}`)
-        } else {
-          console.log(`[categoryService] ❌ Removendo categoria ${category.name} (ID: ${category.id}) - Sem produtos e sem filhos com produtos`)
-        }
+        // Removidos logs desnecessários sobre manter/remover categorias
 
         return shouldKeep
       })
     }
 
     const filteredTree = filterTree(categoryTree)
-    console.log(`[categoryService] Árvore filtrada com ${filteredTree.length} categorias raiz`)
+    // Removido log desnecessário sobre árvore filtrada
 
     return filteredTree
   },
@@ -245,7 +230,7 @@ export const categoryService = {
   expandCategoriesForSelected(categoryTree, selectedCategoryId) {
     if (!categoryTree || !categoryTree.length || !selectedCategoryId) return categoryTree;
 
-    console.log(`[categoryService] Expandindo categorias para a categoria selecionada: ${selectedCategoryId}`);
+    // Removido log desnecessário sobre expansão de categorias
 
     // Cria uma cópia profunda da árvore para não modificar a original
     const treeCopy = JSON.parse(JSON.stringify(categoryTree));

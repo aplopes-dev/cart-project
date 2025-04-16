@@ -88,7 +88,7 @@
                         class="block"
                       >
                         <img
-                          :src="item.image || PLACEHOLDER_IMAGE_PATH"
+                          :src="imageService.getProductImageUrl(item.image)"
                           :alt="item.product_name"
                           @error="handleImageError"
                           class="w-16 h-16 object-cover rounded"
@@ -96,7 +96,7 @@
                       </router-link>
                       <img
                         v-else
-                        :src="item.image || PLACEHOLDER_IMAGE_PATH"
+                        :src="imageService.getProductImageUrl(item.image)"
                         :alt="item.product_name"
                         @error="handleImageError"
                         class="w-16 h-16 object-cover rounded shrink-0"
@@ -335,6 +335,7 @@ import api from '@/services/api'
 import ColorCircle from '@/components/common/ColorCircle.vue'
 
 import { imageService } from '@/services/imageService'
+// Removida importação não utilizada de PLACEHOLDER_IMAGE_PATH e NO_IMAGE_PATH
 
 const orders = ref([])
 const loading = ref(false)
@@ -443,6 +444,7 @@ onMounted(() => {
 
 const handleImageError = (e) => {
   // Usa a função utilitária do imageService para lidar com erros de imagem
+  console.log('[OrdersPage] Tratando erro de imagem')
   imageService.handleImageError(e)
 }
 

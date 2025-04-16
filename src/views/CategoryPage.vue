@@ -752,12 +752,9 @@ watch([selectedBrands, selectedCategory], async () => {
 const fetchCategories = async () => {
   try {
     loadingCategories.value = true
-    console.log('[CategoryPage] Iniciando busca de categorias')
-
     // Buscar categorias diretamente do backend com estrutura hierárquica
     // e apenas categorias ativas com produtos
     const hierarchicalCategories = await categoryService.searchCategories('', true)
-    console.log(`[CategoryPage] Recebidas ${hierarchicalCategories.length} categorias raiz do backend com estrutura hierárquica`)
 
     // Garantir que todas as categorias estejam contraídas por padrão
     const setAllCollapsed = (tree) => {
@@ -792,7 +789,7 @@ const fetchCategories = async () => {
 
     listCategoriesWithPath(categoryTree.value)
 
-    console.log(`[CategoryPage] Total de categorias raiz carregadas: ${categoryTree.value.length}`)
+    // Removido log desnecessário sobre categorias raiz
   } catch (err) {
     console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'

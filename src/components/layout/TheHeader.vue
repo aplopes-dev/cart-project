@@ -1050,12 +1050,9 @@ const fetchCategories = async () => {
   try {
     loading.value = true
     error.value = null
-    console.log('[Header] Iniciando carregamento de categorias')
-
     // Buscar categorias diretamente do backend com estrutura hierárquica
     // e apenas categorias ativas com produtos
     const hierarchicalCategories = await categoryService.searchCategories('', true)
-    console.log(`[Header] Recebidas ${hierarchicalCategories.length} categorias raiz do backend com estrutura hierárquica`)
 
     // Usar as categorias hierárquicas diretamente
     categories.value = hierarchicalCategories
@@ -1295,12 +1292,10 @@ const searchCategories = async (searchTerm) => {
   }
 
   try {
-    console.log(`[Header] Buscando categorias com termo: "${searchTerm}"`)
     loading.value = true
 
     // Buscar categorias que correspondem ao termo de busca
     const matchingCategories = await categoryService.searchCategories(searchTerm, true)
-    console.log(`[Header] Encontradas ${matchingCategories.length} categorias raiz que correspondem ao termo "${searchTerm}"`)
 
     // Atualizar as categorias exibidas
     categories.value = matchingCategories

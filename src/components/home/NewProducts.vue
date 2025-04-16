@@ -6,8 +6,16 @@
         {{ $t('products.newProducts') }}
       </h2>
 
+      <!-- Loading Spinner -->
+      <div v-if="isLoading" class="py-16 w-full flex justify-center">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
+          <p class="mt-4 font-archivo text-black/70">{{ $t('common.loading') }}</p>
+        </div>
+      </div>
+
       <!-- Container do Carrossel -->
-      <div class="relative w-full carousel-container">
+      <div v-else-if="products && products.length > 0" class="relative w-full carousel-container">
         <!-- Carrossel de Produtos -->
         <div class="relative w-full overflow-hidden px-4 md:px-[72px]">
           <div
@@ -31,7 +39,7 @@
                 >
                   <!-- Imagem do Produto -->
                   <img
-                    :src="product.image"
+                    :src="getProductImage(product.image, product)"
                     :alt="product.name"
                     class="w-full h-[180px] md:h-[230px] object-cover object-center"
                     @error="handleImageError"
@@ -140,6 +148,11 @@
           </svg>
         </button>
       </div>
+
+      <!-- Mensagem quando não há produtos -->
+      <div v-else-if="!isLoading && (!products || products.length === 0)" class="py-16 w-full flex justify-center">
+        <p class="font-archivo text-black/70 text-lg">{{ $t('products.noProductsFound') }}</p>
+      </div>
     </div>
     <!-- Toast Message -->
     <div
@@ -164,17 +177,18 @@ import { settingsService } from '@/services/settingsService'
 import { ref, onMounted, watch } from 'vue'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { useRouter } from 'vue-router'
-import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import { imageService } from '@/services/imageService'
 
 export default {
   name: 'NewProducts',
   setup() {
     const i18n = useI18n()
+    const { locale } = i18n // Extrair locale do i18n
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
     const router = useRouter()
     const currencySymbol = ref('$')
-    const products = ref([])  // Adicionando ref para products
+    // Removendo a ref products do setup, pois já está sendo usada no data()
     const showPrices = ref(true)  // Controla a visibilidade dos preços
 
     // Carrega as configurações financeiras e o estado dos toggles
@@ -205,13 +219,9 @@ export default {
     }
 
     // Observar mudanças no locale
-    watch(() => i18n.locale.value, (newLocale) => {
-      if (products.value.length) {
-        products.value = products.value.map(product => ({
-          ...product,
-          description: product[`description_${newLocale}`] || product.description_en || ''
-        }))
-      }
+    watch(() => i18n.locale.value, () => {
+      // Atualizará os produtos no componente quando o locale mudar
+      // A atualização será feita no método updated
     })
 
     onMounted(() => {
@@ -220,9 +230,9 @@ export default {
 
     return {
       t: i18n.t,
+      locale, // Expondo locale para uso nos métodos
       cartStore,
       currencySymbol,
-      products,  // Expondo products
       showPrices,  // Expondo showPrices
       router
     }
@@ -234,8 +244,19 @@ export default {
       resizeHandler: null,
       touchStartX: 0,
       touchEndX: 0,
-      showToast: false
+      showToast: false,
+      isLoading: true, // Estado de carregamento para a seção de novos produtos
+      products: [] // Array de produtos
     }
+  },
+  mounted() {
+    // Ativar o estado de loading
+    this.isLoading = true
+
+    this.resizeHandler = () => {
+      this.currentSlide = 0
+    }
+    window.addEventListener('resize', this.resizeHandler)
   },
   async created() {
     try {
@@ -256,6 +277,9 @@ export default {
     } catch (err) {
       console.error('Error fetching data:', err)
       this.products = []
+    } finally {
+      // Desativar o estado de loading após carregar os dados
+      this.isLoading = false
     }
   },
   computed: {
@@ -356,17 +380,19 @@ export default {
         this.showToast = false
       }, 3000) // Toast desaparece após 3 segundos
     },
+    getProductImage(imagePath, product) {
+      console.log(`[NewProducts] Obtendo imagem com caminho: ${imagePath}`);
+      console.log(`[NewProducts] FoxPro code do produto: ${product?.foxpro_code}`);
+      const imageUrl = imageService.getProductImageUrl(imagePath, product);
+      console.log(`[NewProducts] Caminho da imagem processado: ${imageUrl}`);
+      return imageUrl;
+    },
     handleImageError(e) {
-      e.target.src = PLACEHOLDER_IMAGE_PATH
-      e.target.onerror = null // Previne loop infinito
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
     }
   },
-  mounted() {
-    this.resizeHandler = () => {
-      this.currentSlide = 0
-    }
-    window.addEventListener('resize', this.resizeHandler)
-  },
+
   beforeUnmount() {
     if (this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler)

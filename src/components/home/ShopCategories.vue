@@ -169,15 +169,11 @@ const thirdCategoryProducts = computed(() => {
 
 const fetchCategories = async () => {
   try {
-    console.log('[ShopCategories] Iniciando carregamento de categorias');
-
     // Buscar todas as categorias
     const allCategories = await categoryService.getCategories();
-    console.log(`[ShopCategories] Recebidas ${allCategories.length} categorias da API`);
 
     // Buscar contagem de produtos por categoria
     const topCategories = await categoryService.getTopCategoriesWithMostProducts(100);
-    console.log(`[ShopCategories] Recebidas ${topCategories.length} categorias com contagem de produtos`);
 
     // Criar um mapa de contagem de produtos por categoria
     const productCountMap = {};

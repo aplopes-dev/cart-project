@@ -128,18 +128,10 @@ export default {
       event.stopPropagation()
     },
     selectCategory(categoryId) {
-      // Adicionar logs para debug
-      console.log(`[CategoryTreeItem] Tentando selecionar categoria: ${categoryId}, nome: ${this.category.name}`)
-      console.log(`[CategoryTreeItem] Categoria tem produtos: ${this.category.has_products}, isActive: ${this.category.isActive}`)
-
       // Temporariamente removendo a verificação de produtos para debug
       // if (this.category.has_products === false) {
-      //   console.log(`[CategoryTreeItem] Categoria sem produtos: ${this.category.name}, ignorando seleção`)
       //   return
       // }
-
-      console.log(`[CategoryTreeItem] Selecionando categoria: ${categoryId}, nome: ${this.category.name}`)
-      console.log(`[CategoryTreeItem] Categoria tem filhos: ${this.hasChildren}, quantidade de filhos: ${this.category.children?.length || 0}`)
 
       // Emitir evento de seleção com o ID da categoria
       this.$emit('select', categoryId)

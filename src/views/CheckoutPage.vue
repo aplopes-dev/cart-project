@@ -1,6 +1,6 @@
 <template>
   <div class="checkout-page">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 py-8">
       <!-- Loading Spinner -->
       <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
         <LoadingSpinner />
@@ -14,7 +14,7 @@
         </button>
       </div>
 
-      <div v-else class="max-w-[1408px] mx-auto py-8">
+      <div v-else class="max-w-[1408px] mx-auto">
         <!-- Title -->
         <div class="pb-6 text-center">
           <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('checkout.title') }}</h1>
@@ -342,7 +342,12 @@
                   <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-center mx-auto">{{ $t('checkout.summary.title') }}</h2>
                 </div>
 
-                <template v-if="cartItems.length > 0">
+                <!-- Loading Spinner para o resumo do pedido -->
+                <div v-if="isLoadingSummary" class="py-8 flex justify-center">
+                  <LoadingSpinner text="Carregando resumo..." />
+                </div>
+
+                <template v-else-if="cartItems.length > 0">
                   <!-- Products List -->
                   <div class="space-y-0">
                     <div v-for="(item, index) in cartItems" :key="index"
@@ -534,7 +539,8 @@ export default {
     const minOrderValueEnabled = ref(false) // Status do toggle de valor mínimo
     const togglesStore = useFinancialTogglesStore()
     const showPrices = ref(true) // Controla a visibilidade dos preços
-    const loading = ref(true) // Estado de carregamento
+    const loading = ref(true) // Estado de carregamento principal
+    const summaryLoading = ref(true) // Estado de carregamento do resumo
     const error = ref(null) // Estado de erro
 
     const loadFinancialSettings = async () => {
@@ -609,9 +615,16 @@ export default {
       cartStore.removeItem(index)
     }
 
+    // Variável ref para controlar o estado de loading do resumo no setup
+    const isLoadingSummaryRef = ref(true)
+
     const loadCheckoutData = async () => {
       try {
+        console.log('Iniciando carregamento de dados do checkout')
+        // Definir os estados de loading como true
         loading.value = true
+        summaryLoading.value = true
+        isLoadingSummaryRef.value = true
         error.value = null
 
         // Adicionando um pequeno atraso para garantir que o loading seja exibido
@@ -622,11 +635,21 @@ export default {
 
         // Carrega os endereços do usuário
         await addressStore.fetchAddresses()
+
+        console.log('Dados básicos carregados, desativando loading principal')
+        // Desativa o loading principal após carregar os dados básicos
+        loading.value = false
+
+        console.log('Desativando loading do resumo')
+        // Desativa o loading do resumo imediatamente
+        summaryLoading.value = false
+        isLoadingSummaryRef.value = false
       } catch (err) {
         console.error('Error loading checkout data:', err)
         error.value = 'Failed to load checkout data'
-      } finally {
         loading.value = false
+        summaryLoading.value = false
+        isLoadingSummaryRef.value = false
       }
     }
 
@@ -653,8 +676,13 @@ export default {
       minOrderValue,
       minOrderValueEnabled,
       loading,
+      summaryLoading,
       error,
-      loadCheckoutData
+      loadCheckoutData,
+      // Expor a função loadFinancialSettings para uso nos methods
+      loadFinancialSettings,
+      // Expor a variável isLoadingSummaryRef para sincronização com isLoadingSummary
+      isLoadingSummaryRef
     }
   },
   data() {
@@ -690,11 +718,11 @@ export default {
       /* eslint-disable vue/no-dupe-keys */
       error: null,
       showErrorAlert: false,
-      loading: false,
       /* eslint-enable vue/no-dupe-keys */
       showAddressModal: false,
       currentAddressId: null,
-      showProjectModal: false
+      showProjectModal: false,
+      isLoadingSummary: true // Estado de carregamento para o resumo do pedido
     }
   },
   computed: {
@@ -765,11 +793,43 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.checkDesktop)
+
+    // Não precisamos mais definir os estados de loading aqui,
+    // pois eles já são definidos no loadCheckoutData
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkDesktop)
   },
   methods: {
+    // Métodos para controlar os estados de loading
+    setLoading(value) {
+      // Atualiza diretamente a variável loading do setup se disponível
+      try {
+        if (this.$setup && this.$setup.loading) {
+          this.$setup.loading.value = value;
+        }
+      } catch (err) {
+        console.warn('Não foi possível acessar loading do setup:', err);
+      }
+    },
+    setSummaryLoading(value) {
+      // Atualiza diretamente a variável summaryLoading do setup se disponível
+      try {
+        if (this.$setup && this.$setup.summaryLoading) {
+          this.$setup.summaryLoading.value = value;
+        }
+
+        // Atualiza também isLoadingSummaryRef se disponível
+        if (this.$setup && this.$setup.isLoadingSummaryRef) {
+          this.$setup.isLoadingSummaryRef.value = value;
+        }
+      } catch (err) {
+        console.warn('Não foi possível acessar variáveis de loading do setup:', err);
+      }
+
+      // Atualiza diretamente a variável isLoadingSummary para garantir sincronização
+      this.isLoadingSummary = value;
+    },
     handleImageError(e) {
       // Usa a função utilitária do imageService para lidar com erros de imagem
       imageService.handleImageError(e)
@@ -879,7 +939,9 @@ export default {
 
     async confirmProjectAndProceed(project) {
       this.showProjectModal = false;
-      this.loading = true;
+      console.log('Iniciando processamento do pedido');
+      this.setLoading(true); // Ativar o loading global
+      this.setSummaryLoading(true); // Ativar o loading do resumo
       this.error = null;
 
       try {
@@ -945,7 +1007,10 @@ export default {
         this.error = this.$t('checkout.errorProcessingOrder');
         this.showErrorAlert = true;
       } finally {
-        this.loading = false;
+        console.log('Finalizando processamento do pedido');
+        this.setLoading(false); // Desativar o loading global
+        this.setSummaryLoading(false); // Desativar o loading do resumo
+        console.log('Estado final do loading do resumo:', this.isLoadingSummary);
       }
     },
     updateShippingAddress(address) {
@@ -972,6 +1037,14 @@ export default {
         }
       },
       immediate: true
+    },
+    // Watcher para sincronizar isLoadingSummaryRef com isLoadingSummary
+    '$setup.isLoadingSummaryRef': {
+      handler(newValue) {
+        console.log('isLoadingSummaryRef mudou para:', newValue)
+        this.isLoadingSummary = newValue
+      },
+      immediate: true
     }
   },
   async beforeRouteEnter(_, __, next) {
@@ -984,9 +1057,9 @@ export default {
     }
   },
   async created() {
-    // Carregar endereço padrão do usuário
+    // Não carregamos os endereços aqui, pois já estão sendo carregados no loadCheckoutData
+    // Apenas configuramos o endereço padrão se já estiver carregado
     try {
-      await this.addressStore.fetchAddresses()
       const defaultAddress = this.addressStore.addresses.find(addr => addr.isDefault)
 
       if (defaultAddress) {
