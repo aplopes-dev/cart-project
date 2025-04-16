@@ -271,7 +271,7 @@ export default defineComponent({
 
     const loadCurrencySymbol = async () => {
       try {
-        loading.value = true
+        // Não definimos loading.value = false aqui, pois isso será feito no loadCart
         error.value = null
 
         const settings = await settingsService.getFinancialSettings()
@@ -296,8 +296,7 @@ export default defineComponent({
       } catch (err) {
         console.error('Error loading financial settings:', err)
         error.value = 'Failed to load financial settings'
-      } finally {
-        loading.value = false
+        throw err; // Propaga o erro para ser tratado no loadCart
       }
     }
 
@@ -344,6 +343,9 @@ export default defineComponent({
       try {
         loading.value = true
         error.value = null
+
+        // Adicionando um pequeno atraso para garantir que o loading seja exibido
+        await new Promise(resolve => setTimeout(resolve, 300))
 
         // Carrega as configurações financeiras
         await loadCurrencySymbol()

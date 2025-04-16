@@ -614,6 +614,9 @@ export default {
         loading.value = true
         error.value = null
 
+        // Adicionando um pequeno atraso para garantir que o loading seja exibido
+        await new Promise(resolve => setTimeout(resolve, 300))
+
         // Carrega as configurações financeiras
         await loadFinancialSettings()
 

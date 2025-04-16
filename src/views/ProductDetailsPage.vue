@@ -318,6 +318,10 @@ export default {
       try {
         loading.value = true
         error.value = null
+
+        // Adicionando um pequeno atraso para garantir que o loading seja exibido
+        await new Promise(resolve => setTimeout(resolve, 300))
+
         const productId = route.params.id
         console.log(`[ProductDetailsPage] Carregando produto com ID: ${productId}`);
         await loadFinancialSettings() // Carrega as configurações financeiras
@@ -375,7 +379,8 @@ export default {
     }
 
     onMounted(() => {
-      loadFinancialSettings()
+      // Definir loading como true antes de carregar os dados
+      loading.value = true
       loadProduct()
     })
 
