@@ -1,7 +1,7 @@
 /**
  * Serviço para manipulação de imagens de produtos
  */
-import { PLACEHOLDER_IMAGE_PATH, NO_IMAGE_PATH } from './imageConstants'
+import { PLACEHOLDER_IMAGE_PATH } from './imageConstants'
 
 export const imageService = {
   /**
@@ -111,14 +111,11 @@ export const imageService = {
     // Tenta usar o caminho absoluto para a imagem de fallback
     const baseUrl = window.location.origin;
     const fallbackUrl = `${baseUrl}${PLACEHOLDER_IMAGE_PATH}`;
-    const noImageUrl = `${baseUrl}${NO_IMAGE_PATH}`;
 
-    // Verifica se a imagem que falhou já é uma das imagens de fallback
+    // Verifica se a imagem que falhou já é a imagem de fallback
     const isAlreadyFallback = (
       event.target.src === fallbackUrl ||
-      event.target.src.includes(PLACEHOLDER_IMAGE_PATH) ||
-      event.target.src === noImageUrl ||
-      event.target.src.includes(NO_IMAGE_PATH)
+      event.target.src.includes(PLACEHOLDER_IMAGE_PATH)
     );
 
     if (isAlreadyFallback) {
@@ -133,18 +130,12 @@ export const imageService = {
     console.log(`[ImageService] Usando imagem de fallback: ${fallbackUrl}`);
     event.target.src = fallbackUrl;
 
-    // Se mesmo a imagem de fallback falhar, tenta usar a imagem no-image.png
+    // Se mesmo a imagem de fallback falhar, use uma imagem base64 mínima
     event.target.onerror = () => {
-      console.log(`[ImageService] Primeira imagem de fallback falhou, tentando: ${noImageUrl}`);
-      event.target.src = noImageUrl;
-
-      // Se mesmo a segunda imagem de fallback falhar, use uma imagem base64 mínima
-      event.target.onerror = () => {
-        console.error('Todas as imagens de fallback falharam');
-        // Imagem base64 mínima transparente como último recurso
-        event.target.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-        event.target.onerror = null; // Previne loop infinito
-      };
+      console.error('Imagem de fallback falhou');
+      // Imagem base64 mínima transparente como último recurso
+      event.target.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      event.target.onerror = null; // Previne loop infinito
     };
   }
 }
