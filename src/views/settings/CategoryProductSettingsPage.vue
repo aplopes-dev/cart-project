@@ -232,15 +232,11 @@
                             <div class="flex items-center">
                               <div class="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden mr-3">
                                 <img
-                                  v-if="product.image"
-                                  :src="product.image"
+                                  :src="getProductImage(product.image, product)"
                                   :alt="product.name"
                                   class="w-full h-full object-cover"
                                   @error="handleImageError"
                                 />
-                                <svg v-else class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
                               </div>
                               <div class="font-archivo text-sm">
                                 {{ product.name }}
@@ -373,6 +369,7 @@ import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { useToast } from '@/composables/useToast'
 import CategoryTreeItem from '@/components/CategoryTreeItem.vue'
+import { imageService } from '@/services/imageService'
 
 export default {
   name: 'CategoryProductSettingsPage',
@@ -1110,7 +1107,13 @@ export default {
 
     // Tratamento de erro de imagem
     const handleImageError = (e) => {
-      e.target.src = '/images/products/no-image.png'
+      // Usa a função utilitária do imageService para lidar com erros de imagem
+      imageService.handleImageError(e)
+    }
+
+    // Obter URL da imagem do produto
+    const getProductImage = (imagePath, product) => {
+      return imageService.getProductImageUrl(imagePath, product)
     }
 
     // Resetar paginação e recarregar categorias quando os filtros mudam
@@ -1196,6 +1199,7 @@ export default {
       prevProductPage,
       formatPrice,
       handleImageError,
+      getProductImage,
       collapseAllCategories
     }
   }
