@@ -130,7 +130,8 @@ export default {
     outOfStock: 'Fora de Estoque',
     price: 'Preço',
     // eslint-disable-next-line no-dupe-keys
-    description: 'Descrição'
+    description: 'Descrição',
+    noProductsFound: 'Nenhum produto encontrado'
   },
   productSearch: {
     title: 'Adicionar Produtos ao Carrinho',

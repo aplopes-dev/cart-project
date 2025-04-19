@@ -121,7 +121,8 @@ export default {
     outOfStock: 'Out of Stock',
     price: 'Price',
     // eslint-disable-next-line no-dupe-keys
-    description: 'Description'
+    description: 'Description',
+    noProductsFound: 'No products found'
   },
   productSearch: {
     title: 'Add Products to Cart',

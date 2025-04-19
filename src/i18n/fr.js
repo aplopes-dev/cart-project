@@ -121,7 +121,8 @@ export default {
     newProducts: 'NOUVEAUX PRODUITS',
     outOfStock: 'Rupture de Stock',
     price: 'Prix',
-    description: 'Description'
+    description: 'Description',
+    noProductsFound: 'Aucun produit trouvé'
   },
   productSearch: {
     title: 'Ajouter des Produits au Panier',
