@@ -573,11 +573,9 @@ watch(showPrices, (newValue) => {
 const loadFinancialSettings = async () => {
   try {
     const settings = await settingsService.getFinancialSettings()
-    console.log('🔧 Financial Settings loaded:', settings)
     currencySymbol.value = settings.currency_symbol
-    console.log('💱 Currency Symbol set to:', currencySymbol.value)
 
-    // Carrega o estado dos toggles
+    // Load toggles state
     togglesStore.loadTogglesFromBackend({
       currency_code_enabled: settings.currency_code_enabled,
       currency_symbol_enabled: settings.currency_symbol_enabled,
@@ -589,12 +587,10 @@ const loadFinancialSettings = async () => {
       master_toggle_enabled: settings.master_toggle_enabled
     })
 
-    // Atualiza a visibilidade dos preços com base no toggle master
+    // Update price visibility based on master toggle
     showPrices.value = togglesStore.masterToggle
-    console.log('Master toggle state:', togglesStore.masterToggle)
-    console.log('Show prices:', showPrices.value)
   } catch (error) {
-    console.error('Error loading financial settings:', error)
+    // Handle error loading financial settings
   }
 }
 
@@ -617,14 +613,10 @@ const fetchFilteredProducts = async () => {
       filterParams.maxPrice = priceRange.value[1]
     }
 
-    console.log('Buscando produtos com os seguintes filtros:', filterParams)
-
     const [productsResponse, settings] = await Promise.all([
       productService.getProducts(filterParams),
       settingsService.getFinancialSettings()
     ])
-
-    console.log('Resposta da API de produtos:', productsResponse)
 
     products.value = productsResponse.items.map(product => ({
       ...product,
@@ -636,7 +628,6 @@ const fetchFilteredProducts = async () => {
     currencySymbol.value = settings.currency_symbol
 
   } catch (err) {
-    console.error('Error fetching data:', err)
     error.value = 'Error loading products'
     products.value = []
   } finally {
@@ -730,22 +721,15 @@ const itemRange = computed(() => {
   return { start, end }
 })
 
-// Watched para reagir às mudanças nos filtros
+// Watch to react to filter changes
 watch([selectedBrands, selectedCategory], async () => {
-  console.log('Filtros alterados:', {
-    selectedBrands: selectedBrands.value,
-    selectedCategory: selectedCategory.value
-  });
-
   currentPage.value = 1;
 
-  // Se houver uma categoria selecionada, atualiza o preço máximo
+  // If there is a selected category, update the maximum price
   if (selectedCategory.value) {
-    console.log('Atualizando preço máximo para a categoria:', selectedCategory.value);
     await updateMaxPrice();
   }
 
-  console.log('Buscando produtos após mudança nos filtros');
   await fetchFilteredProducts();
 }, { deep: true })
 
@@ -775,23 +759,10 @@ const fetchCategories = async () => {
     // Usar as categorias hierárquicas com todas contraídas
     categoryTree.value = hierarchicalCategories
 
-    // Listar categorias para debug
-    const listCategoriesWithPath = (tree, path = '') => {
-      tree.forEach(category => {
-        const currentPath = path ? `${path} > ${category.name}` : category.name
-        console.log(`[CategoryPage] Categoria carregada: ${currentPath} (ID: ${category.id}, expanded: ${category.expanded})`)
 
-        if (category.children && category.children.length > 0) {
-          listCategoriesWithPath(category.children, currentPath)
-        }
-      })
-    }
-
-    listCategoriesWithPath(categoryTree.value)
 
     // Removido log desnecessário sobre categorias raiz
   } catch (err) {
-    console.error('Error fetching categories:', err)
     error.value = 'Error loading categories'
     categoryTree.value = []
   } finally {
@@ -808,9 +779,8 @@ const fetchBrands = async (categoryId = null) => {
       response = await productService.getBrands()
     }
     brands.value = response || []
-    console.log('Brands loaded:', brands.value)
+
   } catch (err) {
-    console.error('Error fetching brands:', err)
     error.value = 'Error loading brands'
     brands.value = []
   }
@@ -818,9 +788,8 @@ const fetchBrands = async (categoryId = null) => {
 
 // Função para atualizar o preço máximo com base na categoria selecionada
 const updateMaxPrice = async () => {
-  // Se o toggle master estiver desabilitado, não atualiza o preço máximo
+  // If the master toggle is disabled, don't update the maximum price
   if (!showPrices.value) {
-    console.log('Preços desabilitados, não atualizando o preço máximo');
     return;
   }
 
@@ -828,34 +797,25 @@ const updateMaxPrice = async () => {
     // Busca o preço máximo dos produtos da categoria selecionada
     const categoryMaxPrice = await productService.getMaxPrice(selectedCategory.value, selectedBrands.value);
 
-    console.log('Preço máximo obtido da API:', categoryMaxPrice);
-
-    // Arredonda para o milheiro superior
-    // Por exemplo, se o preço máximo for 2345, arredonda para 3000
+    // Round to the next thousand
+    // For example, if the maximum price is 2345, round to 3000
     const roundedMaxPrice = Math.ceil(categoryMaxPrice / 1000) * 1000;
 
-    // Define o valor máximo do filtro de preço
-    // Garantindo que o valor mínimo seja 3000 para cobrir produtos com preços maiores que 1000
+    // Set the maximum value of the price filter
+    // Ensuring that the minimum value is 3000 to cover products with prices greater than 1000
     maxPrice.value = Math.max(roundedMaxPrice, 3000);
 
-    // Atualiza o intervalo de preço para usar o novo valor máximo
+    // Update the price range to use the new maximum value
     priceRange.value = [0, maxPrice.value];
-
-    console.log(`Preço máximo atualizado para: ${maxPrice.value}`);
   } catch (err) {
-    console.error('Erro ao buscar preço máximo:', err);
-    // Em caso de erro, define um valor padrão mais alto
+    // In case of error, set a higher default value
     maxPrice.value = 3000;
     priceRange.value = [0, 3000];
   }
 }
 
 const getProductImage = (product) => {
-  console.log(`[CategoryPage] Obtendo imagem para produto: ${product.id} - ${product.name}`);
-  console.log(`[CategoryPage] Caminho da imagem original: ${product.image}`);
-  console.log(`[CategoryPage] FoxPro code: ${product.foxpro_code}`);
   const imageUrl = imageService.getProductImageUrl(product.image, product);
-  console.log(`[CategoryPage] Caminho da imagem processado: ${imageUrl}`);
   return imageUrl;
 }
 
@@ -865,70 +825,66 @@ const handleImageError = (e) => {
 }
 
 const selectCategory = async (categoryId) => {
-  // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
+  // If a category is already selected and it's the same as the one being clicked, do nothing
   if (selectedCategory.value === categoryId) {
-    return; // Não permite desmarcar a categoria
+    return; // Don't allow deselecting the category
   }
 
-  console.log('Categoria selecionada:', categoryId);
-
-  // Ativa o loading apenas para a lista de produtos
+  // Activate loading only for the product list
   loading.value = true;
 
   try {
-    // Reset da página atual ao mudar de categoria
+    // Reset the current page when changing category
     currentPage.value = 1;
 
-    // Define a nova categoria selecionada
+    // Set the new selected category
     selectedCategory.value = categoryId;
 
-    // Busca as marcas relacionadas à categoria selecionada
+    // Get brands related to the selected category
     await fetchBrands(selectedCategory.value);
     selectedBrands.value = brands.value.map(brand => brand.id);
 
-    // Atualiza o preço máximo com base na categoria selecionada
+    // Update the maximum price based on the selected category
     await updateMaxPrice();
 
-    // Atualiza a URL sem recarregar a página
+    // Update the URL without reloading the page
     const newPath = `/categories/${categoryId}`;
     if (window.history.pushState) {
       window.history.pushState({ path: newPath }, '', newPath);
     }
 
-    // Busca produtos filtrados explicitamente
+    // Get filtered products explicitly
     await fetchFilteredProducts();
 
-    console.log('Produtos carregados para a categoria:', selectedCategory.value);
-
-    // Rolar para a parte de ordenação para garantir que seja visível
+    // Scroll to the sorting part to ensure it's visible
     setTimeout(() => {
       const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black')
       if (sortingElement) {
-        const yOffset = -20 // Ajuste para garantir que a parte de ordenação fique visível
+        const yOffset = -20 // Adjustment to ensure the sorting part is visible
         const y = sortingElement.getBoundingClientRect().top + window.pageYOffset + yOffset
         window.scrollTo({ top: y, behavior: 'smooth' })
       }
-    }, 100); // Pequeno delay para garantir que o DOM foi atualizado
+    }, 100); // Small delay to ensure the DOM has been updated
   } catch (error) {
-    console.error('Erro ao selecionar categoria:', error);
+    // Handle error selecting category
   } finally {
-    // Desativa o loading
+    // Deactivate loading
     loading.value = false;
   }
 }
 
 const handleAddToCart = (product, quantity) => {
-  // Verifica se o produto tem características que precisam ser selecionadas
+  // Check if the product has characteristics that need to be selected
   if (productCharacteristicsService.hasCharacteristics(product)) {
-    // Se tiver características, redireciona para a página de detalhes do produto
+    // If it has characteristics, redirect to the product details page
     router.push({
       path: `/product/${product.id}`,
-      query: { showValidation: 'true' } // Passa um parâmetro para mostrar a validação
+      query: { showValidation: 'true' } // Pass a parameter to show validation
     });
     return;
   }
 
-  // Se não tiver características, adiciona diretamente ao carrinho
+  // If it doesn't have characteristics, add directly to cart
   const cartItem = {
     id: product.id,
     name: product.name,
@@ -950,123 +906,101 @@ const showSuccessToast = () => {
 }
 
 const handlePageChange = async (page) => {
-  // Ativa o loading apenas para a lista de produtos
+  // Activate loading only for the product list
   loading.value = true
 
   try {
     currentPage.value = page
     await fetchFilteredProducts()
 
-    // Rolar para a parte de ordenação para garantir que seja visível
+    // Scroll to the sorting part to ensure it's visible
     setTimeout(() => {
       const sortingElement = document.querySelector('.flex.justify-between.items-center.p-3.border-2.border-black')
       if (sortingElement) {
-        const yOffset = -20 // Ajuste para garantir que a parte de ordenação fique visível
+        const yOffset = -20 // Adjustment to ensure the sorting part is visible
         const y = sortingElement.getBoundingClientRect().top + window.pageYOffset + yOffset
         window.scrollTo({ top: y, behavior: 'smooth' })
       } else {
-        // Fallback para o comportamento anterior
+        // Fallback to previous behavior
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
-    }, 100) // Pequeno delay para garantir que o DOM foi atualizado
+    }, 100) // Small delay to ensure the DOM has been updated
   } catch (error) {
-    console.error('Erro ao mudar de página:', error)
+    // Handle error changing page
   } finally {
-    // Desativa o loading
+    // Deactivate loading
     loading.value = false
   }
 }
 
-// Função para selecionar a primeira categoria
+// Function to select the first category
 const selectFirstCategory = () => {
-  console.log('[CategoryPage] Tentando selecionar a primeira categoria')
-
-  // Verifica se há categorias disponíveis
+  // Check if there are available categories
   if (categoryTree.value && categoryTree.value.length > 0) {
-    console.log(`[CategoryPage] Selecionando primeira categoria: ${categoryTree.value[0].name} (ID: ${categoryTree.value[0].id})`)
     selectCategory(categoryTree.value[0].id)
 
-    // Rola até a categoria selecionada
+    // Scroll to the selected category
     scrollToCategoryItem(categoryTree.value[0].id)
   } else {
-    console.log('[CategoryPage] Nenhuma categoria disponível para seleção')
-    // Tenta buscar categorias novamente
+    // Try to fetch categories again
     fetchCategories().then(() => {
       if (categoryTree.value && categoryTree.value.length > 0) {
         selectCategory(categoryTree.value[0].id)
 
-        // Rola até a categoria selecionada
+        // Scroll to the selected category
         scrollToCategoryItem(categoryTree.value[0].id)
       }
     })
   }
 }
 
-// Função para selecionar categoria por slug
-// Função para rolar até o item selecionado no filtro de categorias
+// Function to select category by slug
+// Function to scroll to the selected item in the category filter
 const scrollToCategoryItem = (categoryId) => {
-  console.log(`[CategoryPage] Rolando até a categoria selecionada: ${categoryId}`)
-
-  // Aumentamos o delay para garantir que o DOM foi completamente atualizado
+  // Increased delay to ensure the DOM has been completely updated
   setTimeout(() => {
     try {
-      // Busca todos os elementos que podem conter o ID da categoria
+      // Find all elements that may contain the category ID
       const categoryElements = document.querySelectorAll(`[data-category-id="${categoryId}"]`)
-      console.log(`[CategoryPage] Encontrados ${categoryElements.length} elementos com data-category-id=${categoryId}`)
 
-      // Encontra o elemento mais específico (o header da categoria)
+      // Find the most specific element (the category header)
       let selectedElement = null
       categoryElements.forEach(el => {
         if (el.classList.contains('category-header') || el.querySelector('.category-header')) {
           selectedElement = el
-          console.log('[CategoryPage] Encontrado elemento header da categoria')
         }
       })
 
-      // Se não encontrou o header, usa o primeiro elemento encontrado
+      // If the header was not found, use the first element found
       if (!selectedElement && categoryElements.length > 0) {
         selectedElement = categoryElements[0]
-        console.log('[CategoryPage] Usando o primeiro elemento encontrado')
       }
 
       if (selectedElement) {
-        console.log(`[CategoryPage] Elemento da categoria encontrado, rolando até ele`)
-
-        // Encontra o container de filtro de categorias (desktop e mobile)
+        // Find the category filter container (desktop and mobile)
         const desktopContainer = document.querySelector('.category-filter-container')
         const mobileContainer = document.querySelector('.category-filter-container-mobile')
 
-        // Determina qual container está visível
+        // Determine which container is visible
         const container = window.innerWidth >= 1024 ? desktopContainer : mobileContainer
 
         if (container) {
-          console.log(`[CategoryPage] Container encontrado: ${container.className}`)
-
-          // Força o container a ser rolável
+          // Force the container to be scrollable
           container.style.overflowY = 'auto'
 
-          // Usa scrollIntoView para rolar até o elemento
+          // Use scrollIntoView to scroll to the element
           selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-
-          console.log(`[CategoryPage] Rolagem iniciada para o elemento`)
-        } else {
-          console.log(`[CategoryPage] Container de filtro de categorias não encontrado`)
         }
-      } else {
-        console.log(`[CategoryPage] Elemento da categoria com ID ${categoryId} não encontrado no DOM`)
       }
     } catch (error) {
-      console.error(`[CategoryPage] Erro ao tentar rolar até a categoria:`, error)
+      // Handle error scrolling to category
     }
-  }, 500) // Aumentamos o delay para 500ms para garantir que o DOM foi completamente atualizado
+  }, 500) // Increased delay to 500ms to ensure the DOM has been completely updated
 }
 
 const selectCategoryBySlug = async (slug) => {
-  console.log(`[CategoryPage] Tentando selecionar categoria por slug: ${slug}`)
-
-  // Aguarda o carregamento das categorias se ainda não estiverem carregadas
+  // Wait for categories to load if they are not loaded yet
   if (loadingCategories.value) {
-    console.log(`[CategoryPage] Aguardando carregamento das categorias...`)
     await new Promise(resolve => {
       const checkLoading = setInterval(() => {
         if (!loadingCategories.value) {
@@ -1077,19 +1011,17 @@ const selectCategoryBySlug = async (slug) => {
     })
   }
 
-  // Verifica se temos categorias carregadas
+  // Check if we have loaded categories
   if (categoryTree.value && categoryTree.value.length > 0) {
-    console.log(`[CategoryPage] Buscando categoria com ID ${slug} na árvore de categorias`)
-
-    // Função para encontrar o caminho até a categoria
+    // Function to find the path to the category
     const findPathToCategory = (tree, id, path = []) => {
       for (const node of tree) {
-        // Tenta com o nó atual
+        // Try with the current node
         const currentPath = [...path, node]
         if (node.id === id) {
           return currentPath
         }
-        // Tenta com os filhos
+        // Try with the children
         if (node.children && node.children.length > 0) {
           const foundPath = findPathToCategory(node.children, id, currentPath)
           if (foundPath) return foundPath
@@ -1098,73 +1030,59 @@ const selectCategoryBySlug = async (slug) => {
       return null
     }
 
-    // Encontra o caminho até a categoria
+    // Find the path to the category
     const categoryPath = findPathToCategory(categoryTree.value, slug)
 
     if (categoryPath) {
-      console.log(`[CategoryPage] Categoria encontrada na árvore: ${categoryPath[categoryPath.length-1].name} (ID: ${slug})`)
-      console.log(`[CategoryPage] Caminho até a categoria: ${categoryPath.map(c => c.name).join(' > ')}`)
-
-      // Expande todas as categorias no caminho
+      // Expand all categories in the path
       categoryPath.forEach(cat => {
         cat.expanded = true
       })
 
-      // Atualiza a árvore de categorias para refletir as expansões
+      // Update the category tree to reflect the expansions
       categoryTree.value = [...categoryTree.value]
 
-      // Seleciona a categoria
+      // Select the category
       await selectCategory(slug)
 
-      // Rola até o item selecionado
+      // Scroll to the selected item
       scrollToCategoryItem(slug)
 
       return
-    } else {
-      console.log(`[CategoryPage] Categoria com ID ${slug} não encontrada na árvore de categorias`)
     }
   }
 
-  // Se chegou até aqui, tenta buscar a categoria diretamente do backend
+  // If we got here, try to get the category directly from the backend
   try {
-    console.log(`[CategoryPage] Tentando buscar a categoria ${slug} diretamente do backend`)
-
-    // Buscar categorias com a estrutura hierárquica incluindo a categoria especificada
+    // Get categories with the hierarchical structure including the specified category
     await fetchCategories()
 
-    // Tenta novamente encontrar a categoria na árvore atualizada
+    // Try again to find the category in the updated tree
     return selectCategoryBySlug(slug)
   } catch (error) {
-    console.error(`[CategoryPage] Erro ao buscar categoria ${slug} do backend:`, error)
+    // Handle error fetching category from backend
   }
 
-  // Se chegou até aqui, seleciona a primeira categoria como fallback
-  console.log(`[CategoryPage] Selecionando a primeira categoria como fallback`)
+  // If we got here, select the first category as fallback
   selectFirstCategory()
 }
 
 onMounted(async () => {
   try {
-    console.log('Inicializando a página de categorias')
     await loadFinancialSettings()
     await fetchCategories()
-    console.log('Categorias carregadas com árvore hierárquica')
 
-    // Verifica se a rota tem um ID de categoria
+    // Check if the route has a category ID
     if (route.params.slug) {
-      console.log('ID de categoria encontrado na rota:', route.params.slug)
-      // Seleciona a categoria especificada na rota e expande seus pais
+      // Select the category specified in the route and expand its parents
       await selectCategoryBySlug(route.params.slug)
     } else {
-      console.log('Nenhum ID de categoria na rota, selecionando a primeira categoria')
-      // Se não houver ID na rota, seleciona a primeira categoria
+      // If there is no ID in the route, select the first category
       selectFirstCategory()
     }
 
-    console.log('Categoria selecionada após inicialização:', selectedCategory.value)
     await fetchFilteredProducts()
   } catch (err) {
-    console.error('Error in initialization:', err)
     error.value = 'Error loading page'
   }
 })

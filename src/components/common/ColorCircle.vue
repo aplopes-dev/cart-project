@@ -26,25 +26,23 @@ export default {
       default: 20
     }
   },
-  mounted() {
-    console.log('ColorCircle mounted with color:', this.color, 'type:', typeof this.color, 'normalized:', this.normalizedColor);
-  },
+  // No mounted hook needed
   computed: {
     normalizedColor() {
       if (!this.color) return 'transparent';
 
-      // Se a cor já é um código hexadecimal válido, retorna como está
+      // If the color is already a valid hexadecimal code, return as is
       if (/^#([0-9A-F]{3}){1,2}$/i.test(this.color)) {
         return this.color;
       }
 
-      // Se a cor é um nome de cor CSS válido, retorna como está
+      // If the color is a valid CSS color name, return as is
       const validColorNames = ['black', 'white', 'red', 'green', 'blue', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray', 'grey'];
       if (validColorNames.includes(this.color.toLowerCase())) {
         return this.color.toLowerCase();
       }
 
-      // Tenta converter nomes de cores comuns para hexadecimal
+      // Try to convert common color names to hexadecimal
       const colorMap = {
         'black': '#000000',
         'white': '#FFFFFF',
@@ -64,7 +62,7 @@ export default {
         return colorMap[lowerColor];
       }
 
-      // Se não conseguiu converter, tenta usar como está
+      // If conversion failed, try to use as is
       return this.color;
     }
   },
@@ -72,44 +70,44 @@ export default {
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
 
-      // Cores claras conhecidas
-      const lightColors = ['#ffffff', '#fff', 'white', 'branco', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
+      // Known light colors
+      const lightColors = ['#ffffff', '#fff', 'white', '#f5f5f5', '#fafafa', '#f0f0f0', '#eeeeee', '#e0e0e0', 'lightgray', 'lightgrey'];
       if (lightColors.includes(color.toLowerCase())) {
         return true;
       }
 
-      // Tenta extrair os componentes RGB
+      // Try to extract RGB components
       let r, g, b;
 
       if (color.startsWith('#')) {
         const hex = color.replace('#', '');
         if (hex.length === 3) {
-          // Formato abreviado #RGB
+          // Abbreviated format #RGB
           r = parseInt(hex[0] + hex[0], 16);
           g = parseInt(hex[1] + hex[1], 16);
           b = parseInt(hex[2] + hex[2], 16);
         } else if (hex.length === 6) {
-          // Formato completo #RRGGBB
+          // Complete format #RRGGBB
           r = parseInt(hex.substr(0, 2), 16);
           g = parseInt(hex.substr(2, 2), 16);
           b = parseInt(hex.substr(4, 2), 16);
         }
       } else if (color.startsWith('rgb')) {
-        // Formato rgb(r,g,b) ou rgba(r,g,b,a)
+        // Format rgb(r,g,b) or rgba(r,g,b,a)
         const rgbValues = color.match(/\d+/g);
         if (rgbValues && rgbValues.length >= 3) {
           [r, g, b] = rgbValues.map(Number);
         }
       }
 
-      // Se conseguiu extrair os componentes RGB, calcula a luminosidade
+      // If RGB components were successfully extracted, calculate luminosity
       if (r !== undefined && g !== undefined && b !== undefined) {
-        // Fórmula YIQ para determinar a luminosidade
+        // YIQ formula to determine luminosity
         const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-        return yiq >= 128; // Valor de corte para cores claras
+        return yiq >= 128; // Cutoff value for light colors
       }
 
-      // Se não conseguiu determinar, assume que não é clara
+      // If unable to determine, assume it's not light
       return false;
     }
   }

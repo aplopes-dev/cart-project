@@ -1,6 +1,6 @@
 /**
- * Constantes para imagens
+ * Constants for images
  */
 
-// Caminho para a imagem de fallback
+// Path for the fallback image
 export const PLACEHOLDER_IMAGE_PATH = '/images/products/default.png'

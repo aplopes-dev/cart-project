@@ -152,29 +152,23 @@ export default {
         await store.dispatch('updateUser')
         await nextTick()
 
-        // Carrega o carrinho após login bem-sucedido
+        // Load cart after successful login
         const userId = store.state.currentUser?.id
-        console.log('Login successful, userId:', userId)
 
         if (userId) {
-          console.log('Loading cart for user:', userId)
           try {
-            // Busca dados do carrinho do banco e salva no localStorage
+            // Get cart data from database and save to localStorage
             await cartStore.loadCartFromStorage(userId)
-            console.log('Cart loaded from database:', cartStore.items)
           } catch (cartError) {
-            console.error('Error loading cart:', cartError)
+            // Handle cart loading error
           }
         }
 
-        // Salva o caminho de redirecionamento e mostra o modal de seleção de projeto
+        // Save the redirect path and show the project selection modal
         redirectPath.value = route.query.redirect || '/'
-        console.log('Exibindo modal de seleção de projeto, redirectPath:', redirectPath.value)
         showProjectModal.value = true
-        console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
 
       } catch (err) {
-        console.error('Login error:', err)
         const errorMessage = err.response?.data?.message === 'Invalid credentials'
           ? t('auth.invalidCredentials')
           : t('auth.loginError')
@@ -188,25 +182,23 @@ export default {
 
     const closeProjectModal = () => {
       showProjectModal.value = false
-      // Se o usuário fechar o modal sem selecionar um projeto, redireciona para a página inicial
+      // If the user closes the modal without selecting a project, redirect to the home page
       router.push({ path: redirectPath.value, replace: true })
     }
 
     const handleProjectSelected = (data) => {
       showProjectModal.value = false
-      console.log('Projeto selecionado:', data.projectId, data.projectName)
 
-      // Salva o projeto selecionado no sessionStorage usando o serviço
+      // Save the selected project in sessionStorage using the service
       import('@/services/projectService').then(module => {
         const projectService = module.projectService;
         projectService.saveSelectedProject({
           id: data.projectId,
           name: data.projectName
         });
-        console.log('Projeto salvo no sessionStorage:', data.projectId, data.projectName);
       })
 
-      // Redireciona para o caminho original
+      // Redirect to the original path
       router.push({ path: data.redirectPath, replace: true })
     }
 
@@ -246,20 +238,4 @@ export default {
   border-color: #FFDD00;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -18,16 +18,8 @@ app.use(Toast, options)
 const pinia = createPinia()
 app.use(pinia)
 
-// Registrar diretivas personalizadas
+// Register custom directives
 app.directive('permission', permission)
 app.directive('has-permission', hasPermission)
 
 app.mount('#app')
-
-
-
-
-
-
-
-

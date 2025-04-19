@@ -197,19 +197,19 @@ export default {
     const validateForm = () => {
       showErrors.value = true
 
-      // Verifica campos obrigatórios
+      // Check required fields
       if (!firstName.value || !lastName.value || !email.value || !password.value || !confirmPassword.value) {
         error.value = t('auth.allFieldsRequired')
         return false
       }
 
-      // Verifica o comprimento mínimo da senha
+      // Check minimum password length
       if (password.value.length < 6) {
         error.value = t('auth.passwordTooShort')
         return false
       }
 
-      // Verifica se as senhas coincidem
+      // Check if passwords match
       if (password.value !== confirmPassword.value) {
         error.value = t('auth.passwordsDoNotMatch')
         return false
@@ -220,7 +220,7 @@ export default {
 
     const handleSignup = async () => {
       try {
-        // Validação do formulário
+        // Form validation
         if (!validateForm()) {
           toast.error(error.value)
           return
@@ -229,7 +229,7 @@ export default {
         isLoading.value = true
         error.value = ''
 
-        // Realizar o signup
+        // Perform signup
         await store.dispatch('signup', {
           firstName: firstName.value,
           lastName: lastName.value,
@@ -237,10 +237,10 @@ export default {
           password: password.value
         })
 
-        // Atualizar informações do usuário
+        // Update user information
         await store.dispatch('updateUser')
 
-        // Transferir carrinho de visitante para o novo usuário
+        // Transfer guest cart to the new user
         const userId = store.state.currentUser?.id
         if (userId) {
           const guestCart = localStorage.getItem('cart_guest')
@@ -253,9 +253,8 @@ export default {
 
         toast.success(t('auth.signupSuccess'))
 
-        // Verificar e realizar o redirecionamento
+        // Check and perform redirection
         const redirectPath = route.query.redirect
-        console.log('Redirect path after signup:', redirectPath)
 
         if (redirectPath) {
           await router.push(redirectPath)
@@ -263,7 +262,6 @@ export default {
           await router.push('/')
         }
       } catch (err) {
-        console.error('Signup error:', err)
         error.value = t('auth.signupError')
         toast.error(error.value)
       } finally {
@@ -308,22 +306,9 @@ export default {
   border-color: #FFDD00;
 }
 
-/* Adicionar estilo para garantir que o ícone do olho não interfira com o texto da senha */
+/* Add style to ensure the eye icon doesn't interfere with the password text */
 input[type="password"],
 input[type="text"] {
   padding-right: 2.5rem;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
