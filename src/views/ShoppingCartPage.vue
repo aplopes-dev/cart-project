@@ -289,11 +289,14 @@ export default defineComponent({
           master_toggle_enabled: settings.master_toggle_enabled
         })
 
-        // Update price visibility based on master toggle
+        // Atualiza a visibilidade dos preços com base no toggle master
         showPrices.value = togglesStore.masterToggle
+        console.log('Master toggle state:', togglesStore.masterToggle)
+        console.log('Show prices:', showPrices.value)
       } catch (err) {
+        console.error('Error loading financial settings:', err)
         error.value = 'Failed to load financial settings'
-        throw err; // Propagate the error to be handled in loadCart
+        throw err; // Propaga o erro para ser tratado no loadCart
       }
     }
 
@@ -332,7 +335,7 @@ export default defineComponent({
           description: details[`description_${locale.value}`] || details.description_en || ''
         }
       } catch (error) {
-        // Error handling for product details fetch
+        console.error(`Error fetching details for product ${productId}:`, error)
       }
     }
 
@@ -354,6 +357,7 @@ export default defineComponent({
           }
         }
       } catch (err) {
+        console.error('Error loading cart:', err)
         error.value = 'Failed to load cart details'
       } finally {
         loading.value = false
@@ -436,7 +440,7 @@ export default defineComponent({
             }
           }
         } catch (error) {
-          // Error handling for product details fetch
+          console.error('Erro ao buscar detalhes do produto:', error)
         }
       }
 
@@ -453,16 +457,19 @@ export default defineComponent({
       this.cartStore.removeItem(index)
     },
     handleButtonClick() {
+      console.log('=== Debug Checkout Flow ===')
       const hasToken = !!localStorage.getItem('token')
       const isAuthenticated = this.store.state.isAuthenticated || hasToken
 
       if (this.cartItems.length > 0) {
         if (!isAuthenticated) {
+          console.log('User not authenticated, redirecting to login...')
           this.$router.push({
             name: 'Login',
             query: { redirect: '/checkout' }
           })
         } else {
+          console.log('User authenticated, proceeding to checkout...')
           this.$router.push({ name: 'Checkout' })
         }
       } else {

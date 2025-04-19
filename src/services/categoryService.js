@@ -6,9 +6,7 @@ export const categoryService = {
   async getCategories() {
     try {
       // Usando o endpoint que retorna apenas categorias com produtos
-      // Usando o endpoint que retorna apenas categorias com produtos
       const response = await axios.get(`${API_URL}/categories`)
-      console.log('Categorias recebidas da API:', response.data.length)
       console.log('Categorias recebidas da API:', response.data.length)
       // Retorna diretamente response.data que já é o array de categorias
       return response.data

@@ -25,11 +25,8 @@
             <!-- Form -->
             <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-4">
               <!-- Username Input -->
-              <!-- Username Input -->
               <input
                 v-model="email"
-                type="text"
-                :placeholder="$t('auth.usernamePlaceholder')"
                 type="text"
                 :placeholder="$t('auth.usernamePlaceholder')"
                 class="w-full p-4 border border-gray-300"
@@ -155,23 +152,29 @@ export default {
         await store.dispatch('updateUser')
         await nextTick()
 
-        // Load cart after successful login
+        // Carrega o carrinho após login bem-sucedido
         const userId = store.state.currentUser?.id
+        console.log('Login successful, userId:', userId)
 
         if (userId) {
+          console.log('Loading cart for user:', userId)
           try {
-            // Get cart data from database and save to localStorage
+            // Busca dados do carrinho do banco e salva no localStorage
             await cartStore.loadCartFromStorage(userId)
+            console.log('Cart loaded from database:', cartStore.items)
           } catch (cartError) {
-            // Handle cart loading error
+            console.error('Error loading cart:', cartError)
           }
         }
 
-        // Save the redirect path and show the project selection modal
+        // Salva o caminho de redirecionamento e mostra o modal de seleção de projeto
         redirectPath.value = route.query.redirect || '/'
+        console.log('Exibindo modal de seleção de projeto, redirectPath:', redirectPath.value)
         showProjectModal.value = true
+        console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
 
       } catch (err) {
+        console.error('Login error:', err)
         const errorMessage = err.response?.data?.message === 'Invalid credentials'
           ? t('auth.invalidCredentials')
           : t('auth.loginError')
@@ -185,23 +188,25 @@ export default {
 
     const closeProjectModal = () => {
       showProjectModal.value = false
-      // If the user closes the modal without selecting a project, redirect to the home page
+      // Se o usuário fechar o modal sem selecionar um projeto, redireciona para a página inicial
       router.push({ path: redirectPath.value, replace: true })
     }
 
     const handleProjectSelected = (data) => {
       showProjectModal.value = false
+      console.log('Projeto selecionado:', data.projectId, data.projectName)
 
-      // Save the selected project in sessionStorage using the service
+      // Salva o projeto selecionado no sessionStorage usando o serviço
       import('@/services/projectService').then(module => {
         const projectService = module.projectService;
         projectService.saveSelectedProject({
           id: data.projectId,
           name: data.projectName
         });
+        console.log('Projeto salvo no sessionStorage:', data.projectId, data.projectName);
       })
 
-      // Redirect to the original path
+      // Redireciona para o caminho original
       router.push({ path: data.redirectPath, replace: true })
     }
 
@@ -241,4 +246,20 @@ export default {
   border-color: #FFDD00;
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
