@@ -8,7 +8,7 @@
           <div class="sticky top-8">
             <div> <!-- Removido border border-[#FAFAFA] -->
               <!-- Filtro de Categorias -->
-              <div class="flex flex-col gap-12 w-[328px]">
+              <div class="flex flex-col gap-6 w-[328px]">
                 <!-- Título do Filtro -->
                 <div class="flex flex-col w-full">
                   <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow transform rotate-[0.21deg]">
@@ -26,6 +26,12 @@
                       <div class="loader-text">{{ $t('common.loading') }}...</div>
                     </div>
                   </div>
+                  <CategoryTree
+                    v-else
+                    :categories="categoryTree"
+                    :selected-category="selectedCategory"
+                    @select="selectCategory"
+                  />
                   <CategoryTree
                     v-else
                     :categories="categoryTree"
@@ -114,6 +120,7 @@
                           class="w-6 h-6 accent-[#FBBD1E]"
                         >
                         <span class="font-archivo text-[16px] leading-[18px] text-black/70">
+                        <span class="font-archivo text-[16px] leading-[18px] text-black/70">
                           {{ brand.name }}
                         </span>
                       </label>
@@ -194,7 +201,7 @@
             class="w-full mb-6 transition-all duration-300"
           >
             <!-- Filtro de Categorias -->
-            <div class="mb-6">
+            <div class="mb-3">
               <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
                 <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
                   {{ $t('categoryPage.categories') }}
@@ -309,7 +316,11 @@
               <div
                 v-for="product in filteredProducts"
                 :key="product.id"
-                class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
+                class="flex flex-col bg-white border border-[#FAFAFA]"
+                :class="{
+                  'min-h-[500px] md:h-[700px]': showPrices,
+                  'min-h-[450px] md:h-[650px]': !showPrices
+                }"
               >
                 <!-- Wrap the clickable area in a div -->
                 <div
@@ -322,7 +333,7 @@
                     class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
                     @error="handleImageError"
                   >
-                  <div class="p-4 flex flex-col flex-grow">
+                  <div class="p-4 pb-0 md:pb-4 flex flex-col flex-grow">
                     <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
                       {{ product.name }}
                     </h3>
@@ -337,9 +348,12 @@
                       <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
                       <div v-else class="mt-3"></div>
                       <!-- Wrap the button in a div that stops event propagation -->
-                      <div @click.stop>
+                      <div @click.stop class="-mb-8 md:mb-0">
+                        <!-- Não adiciona margem superior quando não há preço na versão mobile -->
                         <ProductQuantitySelector
                           @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
+                          class="text-responsive-add-cart"
+                          :class="{ 'md:mt-4': !showPrices }"
                         />
                       </div>
                     </div>
@@ -511,6 +525,8 @@ import { imageService } from '@/services/imageService'
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import CategoryTree from '@/components/category/CategoryTree.vue'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import CategoryTree from '@/components/category/CategoryTree.vue'
+import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import { debounce } from 'lodash'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
@@ -520,7 +536,7 @@ import { productCharacteristicsService } from '@/services/productCharacteristics
 
 const route = useRoute()
 const router = useRouter()
-const { locale } = useI18n() // Adicionando aqui no topo com os outros composables
+const { locale, t } = useI18n() // Adicionando aqui no topo com os outros composables
 
 // Removendo registro do componente VueSlider
 const currentPage = ref(1)
@@ -548,6 +564,7 @@ const togglesStore = useFinancialTogglesStore()
 const showToast = ref(false)
 const currencySymbol = ref('$')
 const showPrices = ref(true) // Controla a visibilidade dos preços
+// Removidas variáveis e funções relacionadas à busca de categorias
 
 // Watch para atualizar descrições quando mudar o idioma
 watch(locale, (newLocale) => {
@@ -618,20 +635,39 @@ const fetchFilteredProducts = async () => {
       settingsService.getFinancialSettings()
     ])
 
-    products.value = productsResponse.items.map(product => ({
-      ...product,
-      description: product[`description_${locale.value}`] || product.description_en || ''
-    }))
+    console.log('[CategoryPage] Resposta da API de produtos:', productsResponse)
+    console.log(`[CategoryPage] Total de produtos retornados: ${productsResponse.items?.length || 0}`)
+    console.log(`[CategoryPage] Total de produtos na resposta: ${productsResponse.total}`)
+
+    if (!productsResponse.items || productsResponse.items.length === 0) {
+      console.log('[CategoryPage] Nenhum produto retornado pela API')
+      products.value = []
+    } else {
+      products.value = productsResponse.items.map(product => ({
+        ...product,
+        description: product[`description_${locale.value}`] || product.description_en || ''
+      }))
+      console.log(`[CategoryPage] ${products.value.length} produtos processados e armazenados`)
+    }
 
     totalItems.value = productsResponse.total
     totalPages.value = Math.ceil(productsResponse.total / itemsPerPage.value)
     currencySymbol.value = settings.currency_symbol
+
+    console.log(`[CategoryPage] Atualizado totalItems: ${totalItems.value}, totalPages: ${totalPages.value}`)
 
   } catch (err) {
     error.value = 'Error loading products'
     products.value = []
   } finally {
     loading.value = false
+
+    // Remover o overlay de carregamento da lista de produtos
+    const loadingOverlay = document.getElementById('products-loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.remove();
+      console.log('[CategoryPage] Overlay de carregamento removido em fetchFilteredProducts');
+    }
   }
 }
 
@@ -723,13 +759,20 @@ const itemRange = computed(() => {
 
 // Watch to react to filter changes
 watch([selectedBrands, selectedCategory], async () => {
+  console.log('Filtros alterados:', {
+    selectedBrands: selectedBrands.value,
+    selectedCategory: selectedCategory.value
+  });
+
   currentPage.value = 1;
 
   // If there is a selected category, update the maximum price
   if (selectedCategory.value) {
+    console.log('Atualizando preço máximo para a categoria:', selectedCategory.value);
     await updateMaxPrice();
   }
 
+  console.log('Buscando produtos após mudança nos filtros');
   await fetchFilteredProducts();
 }, { deep: true })
 
@@ -829,6 +872,35 @@ const selectCategory = async (categoryId) => {
   if (selectedCategory.value === categoryId) {
     return; // Don't allow deselecting the category
   }
+
+  // Mostrar indicador de carregamento apenas para a lista de produtos
+  // Isso evita que o filtro de categorias seja recarregado
+  const productsGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+  if (productsGrid) {
+    // Adiciona um overlay de carregamento apenas na lista de produtos
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10';
+    loadingOverlay.id = 'products-loading-overlay';
+    loadingOverlay.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow"></div>';
+
+    // Adiciona posicionamento relativo ao grid de produtos se ainda não tiver
+    if (window.getComputedStyle(productsGrid).position === 'static') {
+      productsGrid.style.position = 'relative';
+    }
+
+    // Remove qualquer overlay existente antes de adicionar um novo
+    const existingOverlay = document.getElementById('products-loading-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+
+    productsGrid.appendChild(loadingOverlay);
+  } else {
+    // Fallback para o indicador de carregamento global se não encontrar o grid de produtos
+    loading.value = true;
+  }
+
+  console.log(`[CategoryPage] Indicador de carregamento ativado apenas para produtos`);
 
   // Activate loading only for the product list
   loading.value = true;
@@ -1071,6 +1143,7 @@ onMounted(async () => {
   try {
     await loadFinancialSettings()
     await fetchCategories()
+    console.log('Categorias carregadas:', categories.value)
 
     // Check if the route has a category ID
     if (route.params.slug) {
@@ -1081,6 +1154,7 @@ onMounted(async () => {
       selectFirstCategory()
     }
 
+    console.log('Categoria selecionada após inicialização:', selectedCategory.value)
     await fetchFilteredProducts()
   } catch (err) {
     error.value = 'Error loading page'
@@ -1187,6 +1261,8 @@ const navigateToProduct = (productId) => {
   router.push(`/product/${productId}`)
 }
 
+// Removidas funções não utilizadas relacionadas à busca de categorias e toggle de categorias com produtos
+
 const formatPrice = (price) => {
   return `${currencySymbol.value}${Number(price).toFixed(2)}`
 }
@@ -1212,25 +1288,18 @@ export default {
   methods: {
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_PATH
+      e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null
     },
     addToCart(product, quantity) {
       console.log('Adding to cart:', product, 'quantity:', quantity)
-    },
-    selectCategory(categoryId) {
-      // Se já tiver uma categoria selecionada e for a mesma que está sendo clicada, não faz nada
-      if (this.selectedCategory === categoryId) {
-        return; // Não permite desmarcar a categoria
-      }
-
-      // Define a nova categoria selecionada
-      this.selectedCategory = categoryId;
     }
   }
 }
 </script>
 <style scoped>
 input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
   pointer-events: auto;
   -webkit-appearance: none;
   width: 16px;
@@ -1241,6 +1310,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
   pointer-events: auto;
   width: 16px;
   height: 16px;
@@ -1254,6 +1324,7 @@ input[type="range"]::-moz-range-thumb {
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   width: 24px;
   height: 24px;
   border: 2px solid rgba(0, 0, 0, 0.7);
@@ -1367,6 +1438,7 @@ select:focus {
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
+  appearance: none;
   height: 5px;
   background: #E0E0E0; /* Voltando para o cinza claro original */
   border-radius: 5px;
@@ -1376,6 +1448,7 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   height: 22px;
   width: 22px;
   border-radius: 50%;
@@ -1431,6 +1504,7 @@ input[type="range"]::-ms-thumb:hover {
 
 input[type="range"]::-webkit-slider-runnable-track {
   -webkit-appearance: none;
+  appearance: none;
   box-shadow: none;
   border: none;
   background: #E0E0E0; /* Voltando para o cinza claro original */

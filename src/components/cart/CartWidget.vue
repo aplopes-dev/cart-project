@@ -210,11 +210,6 @@ export default {
       this.cartStore.closeCart()
       this.$router.push('/categories')
     },
-    handleImageError(e) {
-      
-      e.target.src = PLACEHOLDER_IMAGE_PATH
-      e.target.onerror = null // Previne loop infinito
-    },
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
 

@@ -27,6 +27,7 @@
       <!-- Preço (exibido apenas se o toggle master estiver habilitado) -->
       <div class="mt-auto">
         <p v-if="showPrices" class="text-2xl font-bold text-black/70 mb-4">
+        <p v-if="showPrices" class="text-2xl font-bold text-black/70 mb-4">
           {{ formatPrice(product.price) }}
         </p>
         <!-- Quando showPrices é false, não adiciona espaço -->

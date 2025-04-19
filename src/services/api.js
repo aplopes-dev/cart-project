@@ -12,8 +12,12 @@ api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
   if (token) {
+    console.log('Token encontrado, adicionando ao header Authorization');
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    console.warn('Token não encontrado no localStorage!');
   }
+
 
   return config;
 }, (error) => {

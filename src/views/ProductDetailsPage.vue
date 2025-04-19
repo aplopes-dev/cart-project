@@ -73,6 +73,7 @@
 
               <!-- Preços (exibidos apenas se o toggle master estiver habilitado) -->
               <div v-if="showPrices" class="flex items-center gap-4 mb-4">
+              <div v-if="showPrices" class="flex items-center gap-4 mb-4">
                 <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>

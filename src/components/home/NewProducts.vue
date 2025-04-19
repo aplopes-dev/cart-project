@@ -1,7 +1,10 @@
 <template>
   <section class="flex flex-col items-center py-8 md:py-24 px-4 md:px-6 gap-4 md:gap-6 w-full bg-[#FAFAFA]">
     <div class="flex flex-col items-center gap-4 md:gap-6 max-w-[1346px] w-full">
+  <section class="flex flex-col items-center py-8 md:py-24 px-4 md:px-6 gap-4 md:gap-6 w-full bg-[#FAFAFA]">
+    <div class="flex flex-col items-center gap-4 md:gap-6 max-w-[1346px] w-full">
       <!-- Título -->
+      <h2 class="w-full text-xl sm:text-2xl md:text-[45px] leading-normal md:leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
       <h2 class="w-full text-xl sm:text-2xl md:text-[45px] leading-normal md:leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
         {{ $t('products.newProducts') }}
       </h2>

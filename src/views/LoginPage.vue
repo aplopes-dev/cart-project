@@ -25,8 +25,11 @@
             <!-- Form -->
             <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-4">
               <!-- Username Input -->
+              <!-- Username Input -->
               <input
                 v-model="email"
+                type="text"
+                :placeholder="$t('auth.usernamePlaceholder')"
                 type="text"
                 :placeholder="$t('auth.usernamePlaceholder')"
                 class="w-full p-4 border border-gray-300"

@@ -1,15 +1,16 @@
 <template>
   <footer class="flex flex-col items-center w-full">
-    <div class="flex flex-row justify-center items-center py-12 md:py-[72px] px-4 md:px-[10px] w-full bg-empire-dark">
-      <div class="flex flex-col justify-center items-start md:items-center gap-9 w-full max-w-content px-4">
-        <div class="flex flex-col md:flex-row justify-start md:justify-center items-center md:items-start gap-8 md:gap-20 w-full">
+    <div class="flex flex-row justify-center items-center py-4 md:py-12 px-4 md:px-[10px] w-full bg-empire-dark">
+      <div class="flex flex-col justify-center items-start md:items-center gap-3 md:gap-9 w-full max-w-content px-4">
+        <!-- Logo e Links de Navegação -->
+        <div class="flex flex-col md:flex-row justify-start md:justify-center items-center md:items-start gap-3 md:gap-20 w-full">
           <!-- Logo -->
-          <div class="w-[200px] mb-4 md:mb-0">
+          <div class="w-[100px] md:w-[200px] mb-2 md:mb-0">
             <router-link to="/">
               <img
                 :src="logoUrl"
                 alt="Empire Logo"
-                class="w-[200px] h-[87.06px] object-contain"
+                class="w-[100px] md:w-[200px] h-auto md:h-[87.06px] object-contain"
                 @error="handleImageError"
               >
             </router-link>
@@ -21,46 +22,54 @@
               <!-- Desktop Navigation (Column) -->
               <div class="hidden md:flex md:flex-col gap-2">
                 <router-link to="/" class="flex items-center">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                  <div class="w-[24px] md:w-[40px]">
+                    <svg class="w-3 h-3 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.home') }}</span>
+                  <div class="w-[100px] md:w-[160px]">
+                    <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
+                      {{ $t('footer.navigation.home') }}
+                    </span>
                   </div>
                 </router-link>
 
                 <router-link to="/history" class="flex items-center">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                  <div class="w-[24px] md:w-[40px]">
+                    <svg class="w-3 h-3 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.history') }}</span>
+                  <div class="w-[100px] md:w-[160px]">
+                    <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
+                      {{ $t('footer.navigation.history') }}
+                    </span>
                   </div>
                 </router-link>
 
                 <router-link to="/suppliers" class="flex items-center">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                  <div class="w-[24px] md:w-[40px]">
+                    <svg class="w-3 h-3 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.suppliers') }}</span>
+                  <div class="w-[100px] md:w-[160px]">
+                    <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
+                      {{ $t('footer.navigation.suppliers') }}
+                    </span>
                   </div>
                 </router-link>
 
                 <router-link to="/career" class="flex items-center">
-                  <div class="w-[40px]">
-                    <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
+                  <div class="w-[24px] md:w-[40px]">
+                    <svg class="w-3 h-3 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24" fill="#FBBD1E">
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
                   </div>
-                  <div class="w-[160px]">
-                    <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70">{{ $t('footer.navigation.career') }}</span>
+                  <div class="w-[100px] md:w-[160px]">
+                    <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70">
+                      {{ $t('footer.navigation.career') }}
+                    </span>
                   </div>
                 </router-link>
               </div>
@@ -209,8 +218,8 @@
         </div>
 
         <!-- Copyright -->
-        <div class="flex justify-center items-center w-full mt-8 md:mt-0">
-          <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70 text-center">
+        <div class="flex justify-center items-center w-full mt-2 md:mt-8">
+          <span class="font-archivo font-normal text-[10px] md:text-nav leading-3 md:leading-nav text-empire-white-70 text-center">
             © Copyright {{ companyData.name }} {{ new Date().getFullYear() }} | {{ $t('footer.allRightsReserved') }}
           </span>
         </div>
