@@ -1,10 +1,10 @@
 <template>
   <footer class="flex flex-col items-center w-full">
-    <div class="flex flex-row justify-center items-center py-12 md:py-[72px] px-4 md:px-[10px] w-full bg-empire-dark">
-      <div class="flex flex-col justify-center items-start md:items-center gap-9 w-full max-w-content px-4">
+    <div class="flex flex-row justify-center items-center py-8 md:py-[72px] px-4 md:px-[10px] w-full bg-empire-dark">
+      <div class="flex flex-col justify-center items-start md:items-center gap-6 md:gap-9 w-full max-w-content px-4">
         <div class="flex flex-col md:flex-row justify-start md:justify-center items-center md:items-start gap-8 md:gap-20 w-full">
-          <!-- Logo -->
-          <div class="w-[200px] mb-4 md:mb-0">
+          <!-- Logo (apenas para desktop) -->
+          <div class="hidden md:block w-[200px] mb-4 md:mb-0">
             <router-link to="/">
               <img
                 :src="logoUrl"
@@ -203,14 +203,26 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Logo (apenas para mobile) -->
+                <div class="flex md:hidden justify-start items-center w-full mt-8 pt-2 border-t border-[rgba(78,78,78,0.35)]">
+                  <router-link to="/" class="w-[160px]">
+                    <img
+                      :src="logoUrl"
+                      alt="Empire Logo"
+                      class="w-[160px] h-[70px] object-contain"
+                      @error="handleImageError"
+                    >
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Copyright -->
-        <div class="flex justify-center items-center w-full mt-8 md:mt-0">
-          <span class="font-archivo font-normal text-nav leading-nav text-empire-white-70 text-center">
+        <div class="flex justify-center items-center w-full mt-4 md:mt-0">
+          <span class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70 text-center">
             © Copyright {{ companyData.name }} {{ new Date().getFullYear() }} | {{ $t('footer.allRightsReserved') }}
           </span>
         </div>

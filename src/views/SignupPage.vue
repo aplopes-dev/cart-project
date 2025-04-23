@@ -4,27 +4,27 @@
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-2 md:pb-3 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('auth.signUp') }}</h1>
+          <h1 class="font-archivo-narrow font-semibold text-[28px] md:text-[34px] leading-[36px] md:leading-[40px]">{{ $t('auth.signUp') }}</h1>
         </div>
 
-        <!-- Conteúdo Principal - Reduzido o py-16 para py-8 -->
-        <div class="flex flex-col justify-center items-center px-4 gap-6 py-8">
-          <div class="flex flex-col justify-center items-center p-16 gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
+        <!-- Conteúdo Principal -->
+        <div class="flex flex-col justify-center items-center px-4 gap-4 md:gap-6 py-4 md:py-8">
+          <div class="flex flex-col justify-center items-center p-6 md:p-16 gap-3 md:gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
             <!-- Sign In Text -->
-            <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
+            <p class="w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E]">
               {{ $t('auth.alreadyHaveAccount') }}
               <router-link to="/login" class="text-empire-yellow hover:underline">{{ $t('auth.signIn') }}</router-link>
             </p>
 
             <!-- Form -->
-            <form @submit.prevent="handleSignup" class="w-full flex flex-col gap-4">
+            <form @submit.prevent="handleSignup" class="w-full flex flex-col gap-2 md:gap-4">
               <!-- First Name Input -->
               <input
                 type="text"
                 v-model="firstName"
                 :placeholder="$t('auth.firstName')"
                 :class="[
-                  'w-full p-4 border',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border',
                   (showErrors && !firstName) ? 'border-red-500' : 'border-gray-300'
                 ]"
               />
@@ -38,7 +38,7 @@
                 v-model="lastName"
                 :placeholder="$t('auth.lastName')"
                 :class="[
-                  'w-full p-4 border',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border',
                   (showErrors && !lastName) ? 'border-red-500' : 'border-gray-300'
                 ]"
               />
@@ -52,7 +52,7 @@
                 v-model="email"
                 :placeholder="$t('auth.email')"
                 :class="[
-                  'w-full p-4 border',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border',
                   (showErrors && !email) ? 'border-red-500' : 'border-gray-300'
                 ]"
               />
@@ -67,7 +67,7 @@
                   v-model="password"
                   :placeholder="$t('auth.password')"
                   :class="[
-                    'w-full p-4 border',
+                    'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border',
                     (showErrors && !password) ? 'border-red-500' : 'border-gray-300'
                   ]"
                 />
@@ -108,7 +108,7 @@
                   v-model="confirmPassword"
                   :placeholder="$t('auth.confirmPassword')"
                   :class="[
-                    'w-full p-4 border',
+                    'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border',
                     (showErrors && !confirmPassword) ? 'border-red-500' : 'border-gray-300'
                   ]"
                 />
@@ -146,13 +146,13 @@
               <p v-if="error" class="text-red-500 text-center">{{ error }}</p>
 
               <!-- Sign Up Button -->
-              <div class="w-full mt-4">
+              <div class="w-full mt-2 md:mt-4">
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="w-full bg-empire-yellow py-4 flex justify-center items-center"
+                  class="w-full bg-empire-yellow py-2 md:py-4 flex justify-center items-center"
                 >
-                  <span class="font-archivo-narrow font-semibold text-[28px] leading-[72px] text-black">
+                  <span class="font-archivo-narrow font-semibold text-base md:text-[28px] leading-normal md:leading-[72px] text-black">
                     {{ isLoading ? $t('auth.loading') : $t('auth.signUp') }}
                   </span>
                 </button>
@@ -312,6 +312,24 @@ export default {
 input[type="password"],
 input[type="text"] {
   padding-right: 2.5rem;
+}
+
+/* Estilos específicos para mobile */
+@media (max-width: 768px) {
+  .signup-page input {
+    font-size: 14px;
+  }
+
+  .signup-page button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .signup-page span.text-red-500.text-sm {
+    font-size: 12px;
+    margin-top: -2px;
+    margin-bottom: 2px;
+  }
 }
 </style>
 

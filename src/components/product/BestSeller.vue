@@ -3,18 +3,23 @@
 
     <!-- Best Sellers Section -->
     <div class="flex flex-col justify-center items-start w-full">
-      <div class="w-full border-b border-black/25 mb-8">
-        <h2 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-[40px] py-4">
+      <div class="w-full border-b border-black/25 mb-4 md:mb-8">
+        <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl lg:text-[34px] leading-[30px] md:leading-[40px] py-2 md:py-4">
           {{ $t('productDetails.bestSellers') }}
         </h2>
       </div>
 
-      <div class="w-full overflow-x-auto pb-4">
-        <div class="flex md:grid md:grid-cols-5 gap-6 min-w-max md:min-w-0">
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="w-full flex justify-center items-center py-16">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+      </div>
+
+      <div v-else class="w-full overflow-x-auto pb-4">
+        <div class="flex md:grid md:grid-cols-5 gap-3 md:gap-4 lg:gap-6 min-w-max md:min-w-0">
           <div
             v-for="product in bestSellers"
             :key="product.id"
-            class="w-[320px] md:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
+            class="w-[250px] md:w-[320px] lg:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
           >
             <!-- Área clicável para navegação -->
             <div
@@ -24,13 +29,13 @@
               <img
                 :src="getProductImage(product.image, product)"
                 :alt="product.name"
-                class="w-[80%] max-w-[280px] h-[200px] md:h-[280px] object-contain object-center mx-auto"
+                class="w-[80%] max-w-[280px] h-[150px] md:h-[200px] lg:h-[280px] object-contain object-center mx-auto"
                 @error="handleImageError"
               />
 
-              <div class="flex flex-col items-center gap-4 w-full p-6 product-content">
+              <div class="flex flex-col items-center gap-2 md:gap-4 w-full p-3 md:p-6 product-content">
                 <div class="flex flex-col gap-2 md:gap-4 w-full">
-                  <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg lg:text-2xl leading-tight md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
                     {{ product.name }}
                   </h3>
                   <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center w-full description-fixed-height">
@@ -40,7 +45,7 @@
 
                 <!-- Área de preço - só exibida quando os preços estão habilitados -->
                 <div v-if="showPrices" class="w-full text-center mb-4 mt-3">
-                  <p class="font-archivo-narrow font-semibold text-[28px] md:text-[30px] leading-[32px] md:leading-[36px]">
+                  <p class="font-archivo-narrow font-semibold text-[22px] md:text-[28px] lg:text-[30px] leading-[26px] md:leading-[32px] lg:leading-[36px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
@@ -51,10 +56,10 @@
 
             <!-- Botão Add Cart com evento de clique isolado -->
             <button
-              class="w-full h-[73.31px] bg-black"
+              class="w-full h-[50px] md:h-[60px] lg:h-[73.31px] bg-black"
               @click.stop="addToCart(product)"
             >
-              <span class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-[#FFDD00]">
+              <span class="font-archivo-narrow font-semibold text-[20px] md:text-[28px] lg:text-[34px] leading-[50px] md:leading-[60px] lg:leading-[72px] text-[#FFDD00]">
                 {{ $t('productDetails.addCart') }}
               </span>
             </button>
@@ -79,7 +84,7 @@
 <script>
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
-import eventBus from '@/utils/eventBus'
+
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
@@ -94,7 +99,7 @@ export default {
     currentProductId: {
       type: String,
       required: false,
-      default: null
+      default: ''
     }
   },
   setup() {
@@ -103,6 +108,7 @@ export default {
     const togglesStore = useFinancialTogglesStore()
     const bestSellers = ref([])
     const showPrices = ref(true) // Controla a visibilidade dos preços
+    const loading = ref(true) // Controla o estado de carregamento
 
     // Observar mudanças no locale
     watch(() => i18n.locale.value, (newLocale) => {
@@ -118,7 +124,8 @@ export default {
       cartStore,
       bestSellers,
       showPrices,
-      togglesStore
+      togglesStore,
+      loading
     }
   },
   data() {
@@ -128,47 +135,9 @@ export default {
     }
   },
   async created() {
-    try {
-      const { locale } = useI18n()
-      const [response, settings] = await Promise.all([
-        productService.getProducts({
-          limit: 10,
-          sortBy: 'featured'
-        }),
-        settingsService.getFinancialSettings()
-      ])
-
-      this.bestSellers = response.items
-        .filter(product => String(product.id) !== String(this.currentProductId))
-        .slice(0, 5)
-        .map(product => ({
-          ...product,
-          description: product[`description_${locale.value}`] || product.description_en || ''
-        }))
-
-      this.currencySymbol = settings.currency_symbol
-
-      // Carrega o estado dos toggles
-      this.togglesStore.loadTogglesFromBackend({
-        currency_code_enabled: settings.currency_code_enabled,
-        currency_symbol_enabled: settings.currency_symbol_enabled,
-        tax_rate_enabled: settings.tax_rate_enabled,
-        discount_percentage_enabled: settings.discount_percentage_enabled,
-        min_order_value_enabled: settings.min_order_value_enabled,
-        free_shipping_threshold_enabled: settings.free_shipping_threshold_enabled,
-        shipping_cost_enabled: settings.shipping_cost_enabled,
-        master_toggle_enabled: settings.master_toggle_enabled
-      })
-
-      // Atualiza a visibilidade dos preços com base no toggle master
-      this.showPrices = this.togglesStore.masterToggle
-      console.log('Master toggle state:', this.togglesStore.masterToggle)
-      console.log('Show prices:', this.showPrices)
-
-    } catch (error) {
-      console.error('Error fetching best sellers:', error)
-      this.bestSellers = []
-    }
+    // O método loadBestSellers será chamado pelo watcher do currentProductId
+    // Não precisamos fazer nada aqui, pois o watcher tem immediate: true
+    console.log('[BestSeller] Componente criado, aguardando carregamento dos produtos...')
   },
   watch: {
     // Adiciona um watcher para recarregar quando currentProductId mudar
@@ -181,19 +150,67 @@ export default {
   },
   methods: {
     async loadBestSellers() {
-      try {
-        const response = await productService.getProducts({
-          limit: 10,
-          sortBy: 'featured'
-        })
+      // Ativa o estado de loading
+      this.loading = true
 
-        this.bestSellers = response.items
-          .filter(product => String(product.id) !== String(this.currentProductId))
-          .slice(0, 5)
+      try {
+        console.log(`[BestSeller] Carregando produtos mais vendidos (produto atual: ${this.currentProductId})...`)
+        const { locale } = useI18n()
+
+        // Adiciona um pequeno atraso para garantir que o loading seja exibido
+        await new Promise(resolve => setTimeout(resolve, 300))
+
+        // Carrega os produtos e as configurações financeiras em paralelo
+        const [response, settings] = await Promise.all([
+          productService.getProducts({
+            limit: 10,
+            sortBy: 'featured'
+          }),
+          settingsService.getFinancialSettings()
+        ])
+
+        console.log(`[BestSeller] Recebidos ${response.items.length} produtos da API`)
+
+        // Verifica se temos produtos para exibir
+        if (response.items && response.items.length > 0) {
+          // Filtra e mapeia os produtos, garantindo que as descrições localizadas sejam definidas
+          let filteredProducts = response.items;
+
+          // Só filtra se tivermos um ID de produto válido
+          if (this.currentProductId && this.currentProductId.trim() !== '') {
+            console.log(`[BestSeller] Filtrando produto atual: ${this.currentProductId}`)
+            filteredProducts = filteredProducts.filter(product => String(product.id) !== String(this.currentProductId));
+          } else {
+            console.log('[BestSeller] Nenhum produto atual para filtrar')
+          }
+
+          this.bestSellers = filteredProducts
+            .slice(0, 5)
+            .map(product => ({
+              ...product,
+              description: product[`description_${locale.value}`] || product.description_en || ''
+            }))
+
+          console.log(`[BestSeller] Processados ${this.bestSellers.length} produtos para exibição`)
+          console.log('[BestSeller] Produtos filtrados:', this.bestSellers.map(p => p.name))
+        } else {
+          console.log('[BestSeller] Nenhum produto recebido da API')
+          this.bestSellers = []
+        }
+
+        // Atualiza o símbolo da moeda
+        this.currencySymbol = settings.currency_symbol
+
+        // Atualiza a visibilidade dos preços com base no toggle master
+        this.showPrices = this.togglesStore.masterToggle
+        console.log('[BestSeller] Configurações financeiras atualizadas')
 
       } catch (error) {
         console.error('Error fetching best sellers:', error)
         this.bestSellers = []
+      } finally {
+        // Desativa o estado de loading quando terminar, independentemente do resultado
+        this.loading = false
       }
     },
     getProductImage(imagePath, product) {
@@ -207,14 +224,25 @@ export default {
       // Usa a função utilitária do imageService para lidar com erros de imagem
       imageService.handleImageError(e)
     },
-    async navigateToProduct(productId, showValidation = false) {
-      await this.$router.push({
-        name: 'ProductDetails',
-        params: { id: productId },
-        query: showValidation ? { showValidation: 'true' } : {}
-      })
+    navigateToProduct(productId, showValidation = false) {
+      // Verifica se estamos navegando para um produto diferente do atual
+      if (String(productId) !== this.currentProductId) {
+        console.log(`[BestSeller] Navegando para o produto ${productId} a partir do produto ${this.currentProductId}`)
 
-      eventBus.emit('reload-product-details')
+        // Usar replace em vez de push para evitar problemas de histórico
+        this.$router.replace({
+          name: 'ProductDetails',
+          params: { id: productId },
+          query: showValidation ? { showValidation: 'true' } : {}
+        }).catch(err => {
+          // Ignora erros de navegação duplicada
+          if (err.name !== 'NavigationDuplicated') {
+            console.error('[BestSeller] Erro na navegação:', err)
+          }
+        })
+      } else {
+        console.log(`[BestSeller] Tentativa de navegação para o mesmo produto ${productId}, ignorando`)
+      }
     },
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
@@ -280,11 +308,19 @@ export default {
 /* Estilo para manter a altura fixa da descrição */
 .description-fixed-height {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  @media (min-width: 768px) {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
   -webkit-box-orient: vertical;
-  height: 4.5em; /* Altura fixa para 3 linhas */
-  min-height: 4.5em;
+  height: 3em; /* Altura fixa para 2 linhas na versão mobile */
+  min-height: 3em;
+  @media (min-width: 768px) {
+    height: 4.5em; /* Altura fixa para 3 linhas na versão desktop */
+    min-height: 4.5em;
+  }
   line-height: 1.5em;
   overflow: hidden;
 }
@@ -293,7 +329,10 @@ export default {
 .product-content {
   display: flex;
   flex-direction: column;
-  min-height: 200px; /* Altura mínima para garantir espaço consistente */
+  min-height: 150px; /* Altura mínima para garantir espaço consistente na versão mobile */
+  @media (min-width: 768px) {
+    min-height: 200px; /* Altura mínima para garantir espaço consistente na versão desktop */
+  }
 }
 </style>
 

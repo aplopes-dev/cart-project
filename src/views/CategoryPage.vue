@@ -195,12 +195,18 @@
           >
             <!-- Filtro de Categorias -->
             <div class="mb-6">
-              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
-                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+              <div @click="isCategoryExpanded = !isCategoryExpanded" class="flex items-center justify-between w-full h-[50px] md:h-[72.66px] bg-black border-b-[3px] md:border-b-[5px] border-b-empire-yellow cursor-pointer md:cursor-default">
+                <h3 class="font-archivo-narrow font-semibold text-[20px] md:text-[34px] leading-[50px] md:leading-[72px] text-empire-yellow px-4 md:px-6">
                   {{ $t('categoryPage.categories') }}
                 </h3>
+                <!-- Seta amarela para expandir/contrair (apenas mobile) -->
+                <div class="md:hidden flex items-center pr-4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" :class="{ 'transform rotate-180': !isCategoryExpanded }">
+                    <path d="M6 9L12 15L18 9" stroke="#FFDD00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
               </div>
-              <div class="category-filter-container-mobile">
+              <div v-show="isCategoryExpanded" class="category-filter-container-mobile">
                 <div v-if="loadingCategories" class="flex justify-center items-center py-4">
                   <div class="loader-container">
                     <div class="loader-spinner"></div>
@@ -218,12 +224,18 @@
 
             <!-- Filtro de Preço (exibido apenas se o toggle master estiver habilitado) -->
             <div v-if="showPrices" class="mb-6">
-              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
-                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+              <div @click="isPriceExpanded = !isPriceExpanded" class="flex items-center justify-between w-full h-[50px] md:h-[72.66px] bg-black border-b-[3px] md:border-b-[5px] border-b-empire-yellow cursor-pointer md:cursor-default">
+                <h3 class="font-archivo-narrow font-semibold text-[20px] md:text-[34px] leading-[50px] md:leading-[72px] text-empire-yellow px-4 md:px-6">
                   {{ $t('categoryPage.price') }}
                 </h3>
+                <!-- Seta amarela para expandir/contrair (apenas mobile) -->
+                <div class="md:hidden flex items-center pr-4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" :class="{ 'transform rotate-180': !isPriceExpanded }">
+                    <path d="M6 9L12 15L18 9" stroke="#FFDD00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
               </div>
-              <div class="border border-[#FAFAFA] p-4">
+              <div v-show="isPriceExpanded" class="border border-[#FAFAFA] p-4">
                 <div class="flex justify-between items-center mb-2">
                   <span class="font-archivo text-sm">
                     {{ currencySymbol }}{{ priceRange[0] }}
@@ -266,12 +278,18 @@
 
             <!-- Filtro de Marcas -->
             <div class="mb-6">
-              <div class="flex items-center w-full h-[72.66px] bg-black border-b-[5px] border-b-empire-yellow">
-                <h3 class="font-archivo-narrow font-semibold text-[34px] leading-[72px] text-empire-yellow px-6">
+              <div @click="isBrandsExpanded = !isBrandsExpanded" class="flex items-center justify-between w-full h-[50px] md:h-[72.66px] bg-black border-b-[3px] md:border-b-[5px] border-b-empire-yellow cursor-pointer md:cursor-default">
+                <h3 class="font-archivo-narrow font-semibold text-[20px] md:text-[34px] leading-[50px] md:leading-[72px] text-empire-yellow px-4 md:px-6">
                   {{ $t('categoryPage.brands') }}
                 </h3>
+                <!-- Seta amarela para expandir/contrair (apenas mobile) -->
+                <div class="md:hidden flex items-center pr-4">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" :class="{ 'transform rotate-180': !isBrandsExpanded }">
+                    <path d="M6 9L12 15L18 9" stroke="#FFDD00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
               </div>
-              <div class="border border-[#FAFAFA] p-4">
+              <div v-show="isBrandsExpanded" class="border border-[#FAFAFA] p-4">
                 <div class="flex flex-col gap-3">
                   <label
                     v-for="brand in brands"
@@ -294,7 +312,7 @@
           </div>
 
           <!-- Grid de Produtos -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
             <div v-if="loading" class="col-span-full flex justify-center items-center py-12">
               <div class="loader-container">
                 <div class="loader-spinner"></div>
@@ -309,7 +327,10 @@
               <div
                 v-for="product in filteredProducts"
                 :key="product.id"
-                class="flex flex-col bg-white border border-[#FAFAFA] min-h-[600px] md:h-[700px]"
+                :class="[
+                  'flex flex-col bg-white border border-[#FAFAFA]',
+                  showPrices ? 'min-h-[370px] md:min-h-[600px] md:h-[700px]' : 'min-h-[320px] md:min-h-[600px] md:h-[700px]'
+                ]"
               >
                 <!-- Wrap the clickable area in a div -->
                 <div
@@ -319,23 +340,23 @@
                   <img
                     :src="getProductImage(product)"
                     :alt="product.name"
-                    class="w-[80%] h-[200px] md:h-[350px] object-contain object-center mx-auto"
+                    class="w-[90%] h-[140px] md:h-[350px] object-contain object-center mx-auto pt-2 md:pt-0"
                     @error="handleImageError"
                   >
-                  <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] text-black/70 h-[56px] md:h-[64px] line-clamp-2 mb-2">
+                  <div class="p-2 pb-0 md:p-4 flex flex-col h-full">
+                    <h3 class="font-archivo-narrow font-bold text-[16px] md:text-[28px] leading-[20px] md:leading-[32px] text-black h-[20px] md:h-[64px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-3 md:mb-2">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo text-base md:text-lg text-black/70 overflow-hidden description-fixed-height">
+                    <p class="font-archivo text-sm md:text-lg text-black/70 overflow-hidden description-fixed-height">
                       {{ product.description || '&nbsp;'.repeat(3) }}
                     </p>
-                    <div class="mt-auto w-full">
+                    <div class="mt-auto w-full mb-0 pb-0">
                       <!-- Quando showPrices é true, mostra o preço com espaçamento adequado -->
-                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[24px] md:text-[28px] leading-[28px] md:leading-[32px] mt-3 mb-2">
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[20px] md:text-[28px] leading-[24px] md:leading-[32px] mt-2 md:mt-3 mb-1 md:mb-2">
                         {{ formatPrice(product.price) }}
                       </p>
-                      <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
-                      <div v-else class="mt-3"></div>
+                      <!-- Quando showPrices é false, não adiciona espaçamento no mobile -->
+                      <div v-else class="mt-0 md:mt-3"></div>
                       <!-- Wrap the button in a div that stops event propagation -->
                       <div @click.stop>
                         <ProductQuantitySelector
@@ -415,11 +436,11 @@
       @click="showMobileFilters = false"
     >
       <div
-        class="absolute right-0 top-0 bottom-0 w-[300px] bg-white p-6 overflow-y-auto"
+        class="absolute right-0 top-0 bottom-0 w-[300px] bg-white p-4 overflow-y-auto"
         @click.stop
       >
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('categoryPage.filters') }}</h2>
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="font-archivo-narrow font-semibold text-[18px] leading-[22px]">{{ $t('categoryPage.filters') }}</h2>
           <button
             @click="showMobileFilters = false"
             class="p-2"
@@ -431,18 +452,18 @@
         </div>
 
         <!-- Conteúdo dos Filtros Mobile -->
-        <div class="space-y-8">
+        <div class="space-y-2">
           <!-- Filtro de Preço (visível apenas quando showPrices é true) -->
           <div v-if="showPrices">
-            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.priceRange') }}</h3>
+            <h3 class="font-archivo-narrow font-semibold text-sm mb-1">{{ $t('categoryPage.priceRange') }}</h3>
             <div class="space-y-2">
               <!-- Slider de preço usando input range nativo -->
-              <div class="px-2 py-4">
-                <div class="mb-4 flex justify-between">
+              <div class="px-1 py-2">
+                <div class="mb-2 flex justify-between">
                   <span class="font-archivo text-sm">{{ showPrices ? `${currencySymbol}${priceRange[0]}` : '' }}</span>
                   <span class="font-archivo text-sm">{{ showPrices ? `${currencySymbol}${priceRange[1]}` : '' }}</span>
                 </div>
-                <div class="relative h-8 mt-4 mb-6">
+                <div class="relative h-8 mt-2 mb-2">
                   <input
                     type="range"
                     :min="0"
@@ -470,16 +491,16 @@
 
           <!-- Filtro de Marca -->
           <div>
-            <h3 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('categoryPage.brand') }}</h3>
-            <div class="space-y-2">
-              <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-2">
+            <h3 class="font-archivo-narrow font-semibold text-sm mb-1">{{ $t('categoryPage.brand') }}</h3>
+            <div class="space-y-1">
+              <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-1">
                 <input
                   type="checkbox"
                   :value="brand.id"
                   v-model="selectedBrands"
-                  class="w-5 h-5"
+                  class="w-4 h-4"
                 >
-                <span class="font-archivo text-lg">{{ brand.name }}</span>
+                <span class="font-archivo text-sm">{{ brand.name }}</span>
               </label>
             </div>
           </div>
@@ -536,6 +557,9 @@ const selectedBrands = ref([])
 const brands = ref([])
 const showMobileFilters = ref(false)
 const isMobileFiltersExpanded = ref(false)
+const isCategoryExpanded = ref(true)
+const isPriceExpanded = ref(true)
+const isBrandsExpanded = ref(true)
 const priceRange = ref([0, 3000])
 const maxPrice = ref(3000)
 const totalItems = ref(0)
@@ -1549,6 +1573,18 @@ input[type="range"]:nth-child(2) {
   height: 4.5em; /* Altura fixa para 3 linhas */
   min-height: 4.5em;
   line-height: 1.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .description-fixed-height {
+    height: 2.4em; /* Altura menor para mobile */
+    min-height: 2.4em;
+    -webkit-line-clamp: 2; /* Apenas 2 linhas no mobile */
+    line-clamp: 2;
+    line-height: 1.2em;
+  }
 }
 
 /* Removendo os estilos da linha cinza escuro */

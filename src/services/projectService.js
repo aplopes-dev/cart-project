@@ -31,6 +31,27 @@ export const projectService = {
   },
 
   /**
+   * Busca projetos do usuário logado (usando o token JWT)
+   * @returns {Promise<Array>} - Lista de projetos do usuário logado
+   */
+  async getCurrentUserProjects() {
+    console.log('Iniciando chamada à API para buscar projetos do usuário logado')
+    try {
+      const response = await api.get(`${API_URL}/users/projects/current`)
+      console.log('Resposta da API de projetos do usuário logado:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar projetos do usuário logado:', error)
+      console.error('Detalhes do erro:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
+      throw error
+    }
+  },
+
+  /**
    * Salva o projeto selecionado no sessionStorage
    * @param {Object} project - Objeto do projeto
    */

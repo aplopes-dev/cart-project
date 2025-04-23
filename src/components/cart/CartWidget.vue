@@ -70,7 +70,7 @@
               </div>
 
               <!-- Container para o seletor de quantidade e botão de excluir -->
-              <div class="flex items-center gap-4 mt-2">
+              <div class="flex items-center gap-4 md:gap-4 gap-2 md:mt-2 mt-1">
                 <div class="quantity-selector">
                   <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -211,7 +211,7 @@ export default {
       this.$router.push('/categories')
     },
     handleImageError(e) {
-      
+
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
     },
@@ -364,7 +364,7 @@ export default {
 .item-image {
   width: 120px;
   height: 110px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .item-details {
@@ -374,11 +374,24 @@ export default {
   width: 100%;
 }
 
+@media (max-width: 768px) {
+  .item-details {
+    gap: 4px;
+    justify-content: space-between;
+  }
+}
+
 .item-info {
   display: flex;
   flex-direction: column;
   gap: 8px; /* Adiciona espaçamento entre nome e preço */
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .item-info {
+    gap: 4px;
+  }
 }
 
 .item-info h2 {
@@ -388,10 +401,24 @@ export default {
   line-height: 28px;
 }
 
+@media (max-width: 768px) {
+  .item-info h2 {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
 .price {
   font-family: 'Archivo';
   font-size: 18px;
   line-height: 24px;
+}
+
+@media (max-width: 768px) {
+  .price {
+    font-size: 14px;
+    line-height: 18px;
+  }
 }
 
 .item-characteristics {
@@ -405,9 +432,24 @@ export default {
   color: rgba(0, 0, 0, 0.7);
 }
 
+@media (max-width: 768px) {
+  .item-characteristics {
+    gap: 2px;
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
 .characteristic {
   display: flex;
   gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .characteristic {
+    gap: 2px;
+  }
 }
 
 .value {
@@ -511,20 +553,31 @@ export default {
   .cart-item {
     grid-template-columns: auto 1fr;
     gap: 8px;
-    padding: 16px 0;
+    padding: 10px 0;
+    align-items: center;
   }
 
   .item-image {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
   }
 
   .quantity-selector {
-    width: 120px;
-    height: 36px;
-    padding: 8px;
+    width: 100px;
+    height: 32px;
+    padding: 6px;
   }
 
-  /* Removido o reset da ordem do botão de excluir para mobile */
+  /* Ajustes para o botão de excluir no mobile */
+  .delete-btn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .delete-btn svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 </style>

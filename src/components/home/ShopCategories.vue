@@ -1,5 +1,5 @@
 <template>
-  <section class="flex flex-col items-center py-24 px-6 gap-6 w-full bg-white">
+  <section class="flex flex-col items-center py-12 md:py-24 px-6 gap-4 md:gap-6 w-full bg-white">
     <div class="flex flex-col items-center gap-6 max-w-[1346px]">
       <!-- Title -->
       <h2 class="w-full text-xl sm:text-2xl md:text-[45px] leading-normal md:leading-[72px] font-semibold font-archivo-narrow text-center text-black/70">
@@ -12,29 +12,29 @@
         <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[0]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
-            <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
-              <svg class="w-16 h-16" viewBox="0 0 64 64">
+            <div class="w-[80px] md:w-[120px] h-[80px] md:h-[120px] bg-[#FFDD00] flex justify-center items-center">
+              <svg class="w-10 h-10 md:w-16 md:h-16" viewBox="0 0 64 64">
                 <path d="M54 28h-2v-8c0-1.1-.9-2-2-2h-4v-2c0-1.1-.9-2-2-2h-8V6c0-1.1-.9-2-2-2H16c-1.1 0-2 .9-2 2v26H8c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h48c1.1 0 2-.9 2-2V30c0-1.1-.9-2-2-2zM16 8h16v8H16V8zm0 12h16v8H16v-8zm-6 38V34h44v24H10z" fill="#000"/>
               </svg>
             </div>
             <!-- Title Container -->
-            <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
+            <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase()">
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase()">
                   {{ (firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase() }}
                 </span>
               </div>
             </div>
           </div>
           <!-- Items List -->
-          <div class="w-full border border-[#FAFAFA] p-6">
-            <div class="flex flex-row justify-between">
-              <ul class="flex flex-col gap-3">
+          <div class="w-full border border-[#FAFAFA] p-4 md:p-6">
+            <div class="flex flex-row justify-between items-start">
+              <ul class="flex flex-col gap-2 md:gap-3">
                 <li v-for="product in firstCategoryProducts" :key="product" class="flex items-center gap-2">
-                  <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-lg text-black/70">{{ product }}</span>
+                  <span class="text-sm md:text-lg text-black/70 whitespace-nowrap overflow-hidden truncate block max-w-[150px] md:max-w-[200px]" :title="product">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
@@ -52,29 +52,29 @@
         <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[1]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
-            <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
-              <svg class="w-16 h-16" viewBox="0 0 64 64">
+            <div class="w-[80px] md:w-[120px] h-[80px] md:h-[120px] bg-[#FFDD00] flex justify-center items-center">
+              <svg class="w-10 h-10 md:w-16 md:h-16" viewBox="0 0 64 64">
                 <path d="M56 16L48 8l-8 8-6-6-4 4 6 6-20 20-6-6-4 4 6 6-8 8 8 8 8-8 6 6 4-4-6-6 20-20 6 6 4-4-6-6 8-8zm-28 28L16 32l20-20 12 12-20 20z" fill="#000"/>
               </svg>
             </div>
             <!-- Title Container -->
-            <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
+            <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[1]?.name || 'TOOLS').toUpperCase()">
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[1]?.name || 'TOOLS').toUpperCase()">
                   {{ (firstThreeCategories[1]?.name || 'TOOLS').toUpperCase() }}
                 </span>
               </div>
             </div>
           </div>
           <!-- Items List -->
-          <div class="w-full border border-[#FAFAFA] p-6">
-            <div class="flex flex-row justify-between">
-              <ul class="flex flex-col gap-3">
+          <div class="w-full border border-[#FAFAFA] p-4 md:p-6">
+            <div class="flex flex-row justify-between items-start">
+              <ul class="flex flex-col gap-2 md:gap-3">
                 <li v-for="product in secondCategoryProducts" :key="product" class="flex items-center gap-2">
-                  <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-lg text-black/70">{{ product }}</span>
+                  <span class="text-sm md:text-lg text-black/70 whitespace-nowrap overflow-hidden truncate block max-w-[150px] md:max-w-[200px]" :title="product">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">
@@ -92,29 +92,29 @@
         <div class="flex flex-col items-start gap-6 cursor-pointer" @click="navigateToCategory(firstThreeCategories[2]?.id)">
           <div class="flex flex-row items-center w-full">
             <!-- Icon Container -->
-            <div class="w-[120px] h-[120px] bg-[#FFDD00] flex justify-center items-center">
-              <svg class="w-16 h-16" viewBox="0 0 64 64">
+            <div class="w-[80px] md:w-[120px] h-[80px] md:h-[120px] bg-[#FFDD00] flex justify-center items-center">
+              <svg class="w-10 h-10 md:w-16 md:h-16" viewBox="0 0 64 64">
                 <path d="M32 4C16.536 4 4 16.536 4 32s12.536 28 28 28 28-12.536 28-28S47.464 4 32 4zm0 50c-12.15 0-22-9.85-22-22s9.85-22 22-22 22 9.85 22 22-9.85 22-22 22zm0-38c-8.84 0-16 7.16-16 16s7.16 16 16 16 16-7.16 16-16-7.16-16-16-16z" fill="#000"/>
               </svg>
             </div>
             <!-- Title Container -->
-            <div class="flex-1 h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[250px]">
+            <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[2]?.name || 'HEATING').toUpperCase()">
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[2]?.name || 'HEATING').toUpperCase()">
                   {{ (firstThreeCategories[2]?.name || 'HEATING').toUpperCase() }}
                 </span>
               </div>
             </div>
           </div>
           <!-- Items List -->
-          <div class="w-full border border-[#FAFAFA] p-6">
-            <div class="flex flex-row justify-between">
-              <ul class="flex flex-col gap-3">
+          <div class="w-full border border-[#FAFAFA] p-4 md:p-6">
+            <div class="flex flex-row justify-between items-start">
+              <ul class="flex flex-col gap-2 md:gap-3">
                 <li v-for="product in thirdCategoryProducts" :key="product" class="flex items-center gap-2">
-                  <svg class="w-6 h-6 rotate-[-90deg]" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 md:w-6 md:h-6 rotate-[-90deg]" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5H7z" fill="#FBBD1E"/>
                   </svg>
-                  <span class="text-lg text-black/70">{{ product }}</span>
+                  <span class="text-sm md:text-lg text-black/70 whitespace-nowrap overflow-hidden truncate block max-w-[150px] md:max-w-[200px]" :title="product">{{ product }}</span>
                 </li>
               </ul>
               <div class="w-[120px] h-[120px]">

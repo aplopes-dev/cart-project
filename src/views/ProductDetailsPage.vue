@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white">
-    <div class="container mx-auto px-4 py-12">
+    <div class="container mx-auto px-4 py-2 md:py-12">
       <!-- Loading Spinner -->
       <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
         <LoadingSpinner />
@@ -17,7 +17,7 @@
       <!-- Seção principal do produto -->
       <div v-else class="max-w-[1408px] mx-auto pb-16">
         <!-- Breadcrumb -->
-        <div class="mb-8">
+        <div class="mb-2 md:mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Product Details Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12">
           <!-- Left Column - Images -->
           <div class="space-y-4">
             <!-- Main Image -->
@@ -46,7 +46,7 @@
               >
             </div>
             <!-- Thumbnail Images -->
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-4 gap-2 md:gap-4">
               <button
                 v-for="(image, index) in product.images"
                 :key="index"
@@ -65,42 +65,42 @@
           </div>
 
           <!-- Right Column - Product Info -->
-          <div class="space-y-8">
+          <div class="space-y-4 md:space-y-8">
             <div class="space-y-4">
-              <h1 class="font-archivo-narrow font-semibold text-[45px] leading-[52px] text-black/70">
+              <h1 class="font-archivo-narrow font-semibold text-[28px] md:text-[45px] leading-[34px] md:leading-[52px] text-black/70">
                 {{ product.name }}
               </h1>
 
               <!-- Preços (exibidos apenas se o toggle master estiver habilitado) -->
               <div v-if="showPrices" class="flex items-center gap-4 mb-4">
-                <p class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+                <p class="font-archivo-narrow font-semibold text-[24px] md:text-[34px] leading-[30px] md:leading-[40px]">
                   {{ formatPrice(product.price) }}
                 </p>
                 <template v-if="hasDiscount">
-                  <p class="font-archivo-narrow font-medium text-[34px] leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
+                  <p class="font-archivo-narrow font-medium text-[20px] md:text-[34px] leading-[26px] md:leading-[40px] text-[#E30505] opacity-80 relative after:content-[''] after:absolute after:left-0 after:right-0 after:top-1/2 after:border-t-2 after:border-[#E30505] after:border-opacity-80">
                     {{ formatPrice(calculateOriginalPrice(product.price)) }}
                   </p>
                 </template>
               </div>
 
-              <p class="font-archivo text-xl text-black/70">
+              <p class="font-archivo text-base md:text-xl text-black/70">
                 {{ product.description }}
 
               </p>
               <!-- Características do Produto -->
-              <div class="space-y-6">
+              <div class="space-y-3 md:space-y-6">
                 <!-- Cores -->
                 <div v-if="product.characteristics?.COLOR?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg flex items-center">
+                  <label class="font-archivo font-medium text-base md:text-lg flex items-center">
                     {{ $t('productDetails.selectColor') }}
                     <span v-if="showValidationErrors && !selectedColor" class="text-red-500 ml-2">*</span>
                   </label>
-                  <div class="flex flex-wrap gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedColor}">
+                  <div class="flex flex-wrap gap-2 md:gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedColor}">
                     <button
                       v-for="color in product.characteristics.COLOR"
                       :key="color"
                       @click="handleColorSelect(color)"
-                      class="w-12 h-12 rounded-full border-2 transition-all duration-200"
+                      class="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 transition-all duration-200"
                       :style="{
                         backgroundColor: color,
                         borderColor: isWhiteOrLight(color)
@@ -118,16 +118,16 @@
 
                 <!-- Tamanhos -->
                 <div v-if="product.characteristics?.SIZE?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg flex items-center">
+                  <label class="font-archivo font-medium text-base md:text-lg flex items-center">
                     {{ $t('productDetails.selectSize') }}
                     <span v-if="showValidationErrors && !selectedSize" class="text-red-500 ml-2">*</span>
                   </label>
-                  <div class="grid grid-cols-4 gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedSize}">
+                  <div class="grid grid-cols-4 gap-2 md:gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedSize}">
                     <button
                       v-for="size in product.characteristics.SIZE"
                       :key="size"
                       @click="handleSizeSelect(size)"
-                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      class="h-10 md:h-12 border-2 font-archivo transition-all duration-200 text-sm md:text-base"
                       :class="[
                         selectedSize === size
                           ? 'border-black bg-black text-white'
@@ -143,16 +143,16 @@
 
                 <!-- Pesos -->
                 <div v-if="product.characteristics?.WEIGHT?.length" class="space-y-2">
-                  <label class="font-archivo font-medium text-lg flex items-center">
+                  <label class="font-archivo font-medium text-base md:text-lg flex items-center">
                     {{ $t('productDetails.selectWeight') }}
                     <span v-if="showValidationErrors && !selectedWeight" class="text-red-500 ml-2">*</span>
                   </label>
-                  <div class="grid grid-cols-4 gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedWeight}">
+                  <div class="grid grid-cols-4 gap-2 md:gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedWeight}">
                     <button
                       v-for="weight in product.characteristics.WEIGHT"
                       :key="weight"
                       @click="handleWeightSelect(weight)"
-                      class="h-12 border-2 font-archivo transition-all duration-200"
+                      class="h-10 md:h-12 border-2 font-archivo transition-all duration-200 text-sm md:text-base"
                       :class="[
                         selectedWeight === weight
                           ? 'border-black bg-black text-white'
@@ -173,16 +173,16 @@
               </div>
 
               <!-- Buttons Container -->
-              <div class="flex flex-col space-y-4">
+              <div class="flex flex-col space-y-2 md:space-y-4">
                 <!-- Quantity Selector -->
                 <ProductQuantitySelector @add-to-cart="handleAddToCart" />
 
                 <!-- Shop Now Button -->
                 <button
                   @click="handleShopNow"
-                  class="w-full h-[70px] bg-empire-yellow"
+                  class="w-full h-[50px] md:h-[70px] bg-empire-yellow"
                 >
-                  <span class="font-archivo-narrow font-semibold text-[34px] leading-[70px] text-black">
+                  <span class="font-archivo-narrow font-semibold text-[24px] md:text-[34px] leading-[50px] md:leading-[70px] text-black">
                     {{ $t('productDetails.shopNow') }}
                   </span>
                 </button>
@@ -192,13 +192,13 @@
         </div>
 
         <!-- Seção de descrição -->
-        <div class="mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-6">
-          <h2 class="w-full font-archivo-narrow font-semibold text-[36px] leading-[56px] text-black">
+        <div class="mt-8 md:mt-12 flex flex-col items-start w-full bg-white border border-[#FAFAFA] p-4 md:p-6">
+          <h2 class="w-full font-archivo-narrow font-semibold text-[24px] md:text-[36px] leading-[32px] md:leading-[56px] text-black">
             {{ $t('productDetails.description') }}
           </h2>
 
           <!-- Descrição técnica -->
-          <div class="w-full font-archivo font-medium text-[22px] leading-[33px] text-black/70">
+          <div class="w-full font-archivo font-medium text-[16px] md:text-[22px] leading-[24px] md:leading-[33px] text-black/70">
             <pre v-if="hasDescription"
                  class="whitespace-pre-line font-archivo">{{ getDescription }}</pre>
             <p v-else class="font-archivo">{{ $t('productDetails.noDescription') }}</p>
@@ -207,10 +207,10 @@
       </div>
 
       <!-- Best Sellers Section -->
-      <div class="mt-16 w-full" style="max-width: 1408px; margin: 48px auto 0;">
+      <div class="mt-8 md:mt-16 w-full" style="max-width: 1408px; margin: 16px auto 0;">
         <BestSeller
-          :current-product-id="String(product?.id)"
-          v-if="product?.id"
+          :key="'bestseller-' + String(product?.id || 'loading')"
+          :current-product-id="String(product?.id || '')"
         />
       </div>
     </div>
@@ -238,9 +238,10 @@ import { settingsService } from '@/services/settingsService'
 import { imageService } from '@/services/imageService'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import eventBus from '@/utils/eventBus'
 
 export default {
   name: 'ProductDetailsPage',
@@ -382,6 +383,17 @@ export default {
       // Definir loading como true antes de carregar os dados
       loading.value = true
       loadProduct()
+
+      // Adicionar listener para o evento de recarregar detalhes do produto
+      eventBus.on('reload-product-details', () => {
+        console.log('[ProductDetailsPage] Evento reload-product-details recebido, recarregando produto...')
+        loadProduct()
+      })
+    })
+
+    // Remover o listener quando o componente for desmontado
+    onBeforeUnmount(() => {
+      eventBus.off('reload-product-details')
     })
 
     // Watch para mudanças na rota

@@ -59,7 +59,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { projectService } from '@/services/projectService'
-import { useStore } from 'vuex'
 import eventBus from '@/utils/eventBus'
 
 export default {
@@ -77,7 +76,6 @@ export default {
   emits: ['close', 'project-selected'],
   setup(props, { emit }) {
     const { t } = useI18n()
-    const store = useStore()
     const selectedProject = ref('')
     const projects = ref([])
     const isLoading = ref(false)
@@ -138,21 +136,30 @@ export default {
       error.value = ''
 
       try {
-        // Obtém o email do usuário logado
-        const user = store.state.currentUser
-        if (!user || !user.email) {
-          console.error('Usuário não encontrado no store:', store.state)
-          throw new Error('Usuário não encontrado')
-        }
+        console.log('Buscando projetos para o usuário logado')
 
-        console.log('Buscando projetos para o usuário:', user.email)
-
-        // Busca os projetos associados ao usuário
-        const userProjects = await projectService.getProjectsByUserEmail(user.email)
+        // Busca os projetos do usuário logado usando o token JWT
+        const userProjects = await projectService.getCurrentUserProjects()
         projects.value = userProjects
 
-        // Se houver apenas um projeto, seleciona automaticamente
-        if (userProjects.length === 1) {
+        // Carrega o projeto selecionado do sessionStorage
+        const savedProject = projectService.getSelectedProject()
+
+        // Verifica se o projeto salvo existe na lista de projetos do usuário
+        if (savedProject && savedProject.id) {
+          const projectExists = userProjects.some(p => p.id === savedProject.id)
+          console.log('Projeto existe na lista?', projectExists, 'ID:', savedProject.id)
+
+          if (projectExists) {
+            selectedProject.value = savedProject.id
+            console.log('Projeto selecionado do sessionStorage:', savedProject)
+          } else if (userProjects.length > 0) {
+            // Se o projeto salvo não existir na lista, seleciona o primeiro
+            selectedProject.value = userProjects[0].id
+            console.log('Projeto não encontrado, selecionando o primeiro:', userProjects[0])
+          }
+        } else if (userProjects.length === 1) {
+          // Se houver apenas um projeto, seleciona automaticamente
           selectedProject.value = userProjects[0].id
         }
       } catch (err) {

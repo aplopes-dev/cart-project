@@ -6,11 +6,18 @@
         @click="toggleProjectDropdown"
         class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
         :disabled="isLoading"
+        style="max-width: 200px;"
       >
-        <span v-if="selectedProject">{{ selectedProject.name || selectedProject.nome }}</span>
+        <span
+          v-if="selectedProject"
+          class="truncate max-w-[160px]"
+          :title="selectedProject.name || selectedProject.nome"
+        >
+          {{ (selectedProject.name || selectedProject.nome).length > 15 ? (selectedProject.name || selectedProject.nome).substring(0, 15) + '...' : (selectedProject.name || selectedProject.nome) }}
+        </span>
         <span v-else>{{ $t('project.selectProject') }}</span>
         <svg
-          class="w-4 h-4"
+          class="w-4 h-4 flex-shrink-0"
           :class="{ 'transform rotate-180': isProjectDropdownOpen }"
           viewBox="0 0 24 24"
           fill="#FFDD00"
@@ -55,13 +62,16 @@
     <div v-if="isAuthenticated && projects.length > 0" class="relative project-dropdown md:hidden" ref="projectDropdownRefMobile">
       <button
         @click="toggleProjectDropdown"
-        class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center w-full flex items-center justify-center gap-1"
+        class="px-1 py-1 text-[13px] leading-6 text-white font-archivo font-medium text-center flex items-center justify-center gap-1"
         :disabled="isLoading"
+        style="max-width: 120px; min-width: 80px;"
       >
-        <span v-if="selectedProject" class="truncate max-w-[100px]">{{ selectedProject.name || selectedProject.nome }}</span>
-        <span v-else class="truncate max-w-[100px]">{{ $t('project.selectProject') }}</span>
+        <span v-if="selectedProject" class="truncate max-w-[80px]" :title="selectedProject.name || selectedProject.nome">
+          {{ (selectedProject.name || selectedProject.nome).length > 10 ? (selectedProject.name || selectedProject.nome).substring(0, 10) + '...' : (selectedProject.name || selectedProject.nome) }}
+        </span>
+        <span v-else class="truncate max-w-[80px]">{{ $t('project.selectProject') }}</span>
         <svg
-          class="w-4 h-4 transition-transform duration-200"
+          class="w-3 h-3 flex-shrink-0 transition-transform duration-200"
           :class="{ 'transform rotate-180': isProjectDropdownOpen }"
           viewBox="0 0 24 24"
           fill="#FFDD00"
@@ -74,32 +84,25 @@
       <div
         v-if="isProjectDropdownOpen"
         class="absolute top-full bg-black shadow-lg z-50 rounded-lg mt-2 left-1/2 transform -translate-x-1/2 mobile-project-menu"
-        style="width: 250px;"
+        style="width: 180px;"
       >
-        <div class="max-h-[50vh] overflow-y-auto py-1">
+        <div class="max-h-[40vh] overflow-y-auto py-1">
           <div
             v-for="project in projects"
             :key="project.id"
             class="relative project-item"
           >
             <div
-              :class="['flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-project-item', selectedProject && selectedProject.id === project.id ? 'expanded' : '']"
-              :style="{
-                'background-color': selectedProject && selectedProject.id === project.id ? '#FFDD00 !important' : 'black !important',
-                'color': selectedProject && selectedProject.id === project.id ? 'black !important' : 'white !important',
-                'display': 'flex',
-                'align-items': 'center',
-                'justify-content': 'space-between',
-                'gap': '8px'
-              }"
+              :class="['flex items-center justify-between px-3 py-2 cursor-pointer transition-colors duration-200 group font-medium text-[13px] leading-5 mobile-project-item', selectedProject && selectedProject.id === project.id ? 'bg-empire-yellow text-black' : 'text-white hover:bg-empire-yellow hover:text-black']"
               @click="selectProject(project)"
             >
               <!-- Nome do projeto -->
               <span
-                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
-                :style="{'color': selectedProject && selectedProject.id === project.id ? 'black !important' : 'white !important'}"
+                class="truncate max-w-[140px]"
                 :title="project.name || project.nome"
-              >{{ project.name || project.nome }}</span>
+              >
+                {{ (project.name || project.nome).length > 15 ? (project.name || project.nome).substring(0, 15) + '...' : (project.name || project.nome) }}
+              </span>
             </div>
           </div>
         </div>
@@ -188,29 +191,20 @@ export default {
       isLoading.value = true
 
       try {
-        // Obtém o email do usuário logado
-        const user = JSON.parse(localStorage.getItem('user'))
-        if (!user || !user.email) {
-          console.error('Usuário não encontrado no localStorage')
-          return
-        }
-
-        // Busca os projetos associados ao usuário
-        const userProjects = await projectService.getProjectsByUserEmail(user.email)
+        // Busca os projetos do usuário logado usando o token JWT
+        const userProjects = await projectService.getCurrentUserProjects()
         projects.value = userProjects
 
         // Carrega o projeto selecionado do sessionStorage
         const savedProject = projectService.getSelectedProject()
-        
+
         // Verifica se o projeto salvo existe na lista de projetos do usuário
         if (savedProject && savedProject.id) {
-          const projectExists = userProjects.some(p => p.id === savedProject.id)
-          console.log('Projeto existe na lista?', projectExists, 'ID:', savedProject.id)
+          const projectExists = userProjects.some(p => p.id === savedProject.id)          
 
           if (projectExists) {
             selectedProjectId.value = savedProject.id
-            selectedProject.value = savedProject
-            console.log('Projeto selecionado do sessionStorage:', selectedProject.value)
+            selectedProject.value = savedProject           
           } else {
             // Se o projeto salvo não existir na lista, seleciona o primeiro
             if (userProjects.length > 0) {
@@ -219,8 +213,7 @@ export default {
                 id: userProjects[0].id,
                 name: userProjects[0].name || userProjects[0].nome
               }
-              projectService.saveSelectedProject(selectedProject.value)
-              console.log('Projeto não encontrado, selecionando o primeiro:', selectedProject.value)
+              projectService.saveSelectedProject(selectedProject.value)              
             }
           }
         } else if (userProjects.length > 0) {
@@ -380,13 +373,12 @@ export default {
       if (savedProject && savedProject.id) {
         // Verifica se o projeto existe na lista de projetos
         const projectExists = projects.value.some(p => p.id === savedProject.id)
-        console.log('Projeto existe na lista?', projectExists, 'ID:', savedProject.id)
 
         if (projectExists) {
           // Atualiza diretamente o projeto selecionado
           selectedProjectId.value = savedProject.id
           selectedProject.value = savedProject
-          console.log('Projeto atualizado do sessionStorage:', selectedProject.value)
+          
           return true
         }
       }

@@ -1,6 +1,6 @@
 <template>
   <div class="checkout-page">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-3 md:px-4 py-4 md:py-8">
       <!-- Loading Spinner -->
       <div v-if="loading" class="py-16 max-w-[1408px] mx-auto">
         <LoadingSpinner />
@@ -17,17 +17,17 @@
       <div v-else class="max-w-[1408px] mx-auto">
         <!-- Title -->
         <div class="pb-6 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('checkout.title') }}</h1>
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-[30px] md:leading-[40px]">{{ $t('checkout.title') }}</h1>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <!-- Personal Details Form -->
           <div class="lg:col-span-8">
-            <div class="space-y-8 bg-[#FAFAFA] p-8">
+            <div class="space-y-4 md:space-y-8 bg-[#FAFAFA] p-4 md:p-8">
               <!-- Personal Details Section -->
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('personal')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.personalDetails') }}</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.personalDetails') }}</h2>
                   <svg
                     class="section-arrow lg:hidden absolute right-0"
                     :class="{ 'rotate-270': sections.personal }"
@@ -40,7 +40,7 @@
                     <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
                   </svg>
                 </div>
-                <div v-show="sections.personal || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-show="sections.personal || isDesktop" class="grid grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.firstName') }}</label>
                     <input
@@ -49,7 +49,7 @@
                       :placeholder="$t('checkout.firstNamePlaceholder')"
                       :disabled="isFieldDisabled.firstName"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
                         isFieldDisabled.firstName ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.firstName) ? 'border-red-500' : 'border-black/25'
                       ]"
@@ -66,7 +66,7 @@
                       :placeholder="$t('checkout.lastNamePlaceholder')"
                       :disabled="isFieldDisabled.lastName"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
                         isFieldDisabled.lastName ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.lastName) ? 'border-red-500' : 'border-black/25'
                       ]"
@@ -83,7 +83,7 @@
                       :placeholder="$t('checkout.emailPlaceholder')"
                       :disabled="isFieldDisabled.email"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
                         isFieldDisabled.email ? 'bg-gray-100' : 'bg-white',
                         (showErrors && formErrors.email) ? 'border-red-500' : 'border-black/25'
                       ]"
@@ -99,7 +99,7 @@
                       v-model="formData.phone"
                       :placeholder="$t('checkout.phonePlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.phone) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -113,7 +113,7 @@
               <!-- Shipping Address Section -->
               <section>
                 <div class="flex items-center justify-between cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('shipping')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.shippingDetails') }}</h2>
 
                   <div class="flex items-center lg:absolute lg:right-0 lg:top-0">
                     <button
@@ -138,15 +138,15 @@
                     </svg>
                   </div>
                 </div>
-                <div v-show="sections.shipping || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="md:col-span-2">
+                <div v-show="sections.shipping || isDesktop" class="grid grid-cols-2 gap-3 md:gap-4">
+                  <div class="col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
                     <input
                       type="text"
                       v-model="formData.address"
                       :placeholder="$t('checkout.addressPlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -163,7 +163,7 @@
                       v-model="formData.number"
                       :placeholder="$t('checkout.numberPlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.number) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -179,7 +179,7 @@
                       v-model="formData.neighborhood"
                       :placeholder="$t('checkout.neighborhoodPlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.neighborhood) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -194,7 +194,7 @@
                       type="text"
                       v-model="formData.apartment"
                       :placeholder="$t('checkout.apartmentPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                     >
                   </div>
                   <div>
@@ -204,7 +204,7 @@
                       v-model="formData.city"
                       :placeholder="$t('checkout.cityPlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -219,7 +219,7 @@
                       v-model="formData.state"
                       :placeholder="$t('checkout.statePlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -234,7 +234,7 @@
                       v-model="formData.postalCode"
                       :placeholder="$t('checkout.postalCodePlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -249,7 +249,7 @@
                       v-model="formData.country"
                       :placeholder="$t('checkout.countryPlaceholder')"
                       :class="[
-                        'w-full p-4 border-2 rounded font-archivo text-base bg-white',
+                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                         (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
                       ]"
                     >
@@ -263,7 +263,7 @@
               <!-- Payment Section -->
               <section>
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
-                  <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
+                  <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
 
                   <!-- Bandeiras dos cartões -->
                   <div class="flex flex-wrap items-center gap-2 sm:gap-4 lg:ml-8">
@@ -287,24 +287,24 @@
                     <path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="black"/>
                   </svg>
                 </div>
-                <div v-show="sections.payment || isDesktop" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="md:col-span-2">
+                <div v-show="sections.payment || isDesktop" class="grid grid-cols-2 gap-3 md:gap-4">
+                  <div class="col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardHolder') }}</label>
                     <input
                       type="text"
                       v-model="formData.cardHolder"
                       :placeholder="$t('checkout.cardHolderPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-gray-100"
                       disabled
                     >
                   </div>
-                  <div class="md:col-span-2">
+                  <div class="col-span-2">
                     <label class="block font-archivo text-sm mb-2">{{ $t('checkout.cardNumber') }}</label>
                     <input
                       type="text"
                       v-model="formData.cardNumber"
                       :placeholder="$t('checkout.cardNumberPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-gray-100"
                       disabled
                     >
                   </div>
@@ -314,7 +314,7 @@
                       type="text"
                       v-model="formData.expiryDate"
                       :placeholder="$t('checkout.expiryDatePlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-gray-100"
                       disabled
                     >
                   </div>
@@ -324,7 +324,7 @@
                       type="text"
                       v-model="formData.cvv"
                       :placeholder="$t('checkout.cvvPlaceholder')"
-                      class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-gray-100"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-gray-100"
                       disabled
                     >
                   </div>
@@ -336,10 +336,10 @@
           <!-- Order Summary -->
           <div class="lg:col-span-4">
             <div class="w-full lg:w-[528px] bg-white">
-              <div class="flex flex-col gap-4 p-4">
+              <div class="flex flex-col gap-3 md:gap-4 p-3 md:p-4">
                 <!-- Header -->
-                <div class="flex justify-center items-center w-full h-[72px] bg-[#FAFAFA]">
-                  <h2 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-center mx-auto">{{ $t('checkout.summary.title') }}</h2>
+                <div class="flex justify-center items-center w-full h-[50px] md:h-[72px] bg-[#FAFAFA]">
+                  <h2 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-[30px] md:leading-[40px] text-center mx-auto">{{ $t('checkout.summary.title') }}</h2>
                 </div>
 
                 <!-- Loading Spinner para o resumo do pedido -->
@@ -351,13 +351,13 @@
                   <!-- Products List -->
                   <div class="space-y-0">
                     <div v-for="(item, index) in cartItems" :key="index"
-                      class="flex items-start py-8 border-b border-black/25">
+                      class="flex items-start py-4 md:py-8 border-b border-black/25">
                       <!-- Imagem do Produto -->
                       <router-link :to="`/product/${item.id}`">
                         <img
                           :src="item.image"
                           :alt="item.name"
-                          class="w-[120px] h-[110px] object-cover"
+                          class="w-[80px] h-[80px] md:w-[120px] md:h-[110px] object-contain"
                           @error="handleImageError"
                         />
                       </router-link>
@@ -370,11 +370,11 @@
                             <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
                               <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
                             </div>
-                            <router-link :to="`/product/${item.id}`" class="font-archivo text-[22px] leading-[40px] truncate hover:text-empire-yellow transition-colors">{{ item.name }}</router-link>
+                            <router-link :to="`/product/${item.id}`" class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px] truncate hover:text-empire-yellow transition-colors">{{ item.name }}</router-link>
                           </div>
 
                           <!-- Características do produto -->
-                          <div v-if="item.color || item.size || item.weight" class="flex flex-col gap-1 mt-1">
+                          <div v-if="item.color || item.size || item.weight" class="flex flex-col gap-0.5 md:gap-1 mt-0.5 md:mt-1">
                             <span v-if="item.color" class="font-archivo text-sm text-black/70 flex items-center gap-2">
                               <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                               <span class="flex items-center gap-2">
@@ -401,7 +401,7 @@
                           </div>
 
                           <!-- Preço (exibido apenas se o toggle master estiver habilitado) -->
-                          <span v-if="showPrices" class="font-archivo text-[22px] leading-[40px] text-black/70">
+                          <span v-if="showPrices" class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px] text-black/70">
                             {{ currencySymbol }}{{ (item.price * item.quantity).toFixed(2) }}
                           </span>
                         </div>
@@ -409,10 +409,10 @@
 
                       <!-- Botão de remover -->
                       <button
-                        class="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                        class="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
                         @click="removeItem(index)"
                       >
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="24" height="24" class="md:w-8 md:h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M20 4L21.3333 8H10.6667L12 4H20Z" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                           <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                           <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -426,23 +426,23 @@
                   <!-- Totals (exibidos apenas se o toggle master estiver habilitado) -->
                   <div v-if="showPrices" class="space-y-4">
                     <div class="flex justify-between">
-                      <span class="font-archivo text-[22px] leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
-                      <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateTaxes }}</span>
+                      <span class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px]">{{ $t('checkout.summary.taxes') }}</span>
+                      <span class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px]">{{ currencySymbol }}{{ calculateTaxes }}</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="font-archivo text-[22px] leading-[40px]">
+                      <span class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px]">
                         {{ $t('checkout.summary.shipping') }}
-                        <span v-if="calculateShipping === '0.00'" class="text-green-600 text-sm ml-2">
+                        <span v-if="calculateShipping === '0.00'" class="text-green-600 text-xs md:text-sm ml-1 md:ml-2">
                           ({{ $t('checkout.summary.freeShipping') }})
                         </span>
                       </span>
-                      <span class="font-archivo text-[22px] leading-[40px]">{{ currencySymbol }}{{ calculateShipping }}</span>
+                      <span class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px]">{{ currencySymbol }}{{ calculateShipping }}</span>
                     </div>
                     <div class="flex justify-between items-center py-4">
-                      <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
+                      <span class="font-archivo-narrow font-semibold text-xl md:text-[34px] leading-[30px] md:leading-[40px] text-black/70">
                         {{ $t('checkout.summary.total') }}
                       </span>
-                      <span class="font-archivo-narrow font-semibold text-[34px] leading-[40px] text-black/70">
+                      <span class="font-archivo-narrow font-semibold text-xl md:text-[34px] leading-[30px] md:leading-[40px] text-black/70">
                         {{ currencySymbol }}{{ calculateTotal }}
                       </span>
                     </div>
@@ -455,7 +455,7 @@
 
                   <!-- Complete Purchase Button -->
                   <button
-                    class="w-full py-4 font-archivo-narrow font-semibold text-[34px] leading-[72px] text-center"
+                    class="w-full py-3 md:py-4 font-archivo-narrow font-semibold text-xl md:text-[34px] leading-[40px] md:leading-[72px] text-center"
                     :class="{
                       'bg-empire-yellow': isCheckoutButtonEnabled,
                       'bg-gray-300 cursor-not-allowed': !isCheckoutButtonEnabled
@@ -469,9 +469,9 @@
 
                 <template v-else>
                   <div class="flex flex-col items-center gap-6 py-8">
-                    <p class="font-archivo-narrow font-semibold text-2xl text-center">{{ $t('checkout.emptyCart') }}</p>
+                    <p class="font-archivo-narrow font-semibold text-xl md:text-2xl text-center">{{ $t('checkout.emptyCart') }}</p>
                     <button
-                      class="bg-empire-yellow px-8 py-4 font-archivo-narrow font-semibold text-2xl"
+                      class="bg-empire-yellow px-6 md:px-8 py-3 md:py-4 font-archivo-narrow font-semibold text-lg md:text-2xl"
                       @click="continueShopping"
                     >
                       {{ $t('checkout.continueShopping') }}

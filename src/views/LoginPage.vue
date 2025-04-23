@@ -4,14 +4,14 @@
       <div class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-2 md:pb-3 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('auth.signIn') }}</h1>
+          <h1 class="font-archivo-narrow font-semibold text-[28px] md:text-[34px] leading-[36px] md:leading-[40px]">{{ $t('auth.signIn') }}</h1>
         </div>
 
         <!-- Conteúdo Principal -->
-        <div class="flex flex-col justify-center items-center px-4 gap-6 py-8">
-          <div class="flex flex-col justify-center items-center p-16 gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
+        <div class="flex flex-col justify-center items-center px-4 gap-4 md:gap-6 py-4 md:py-8">
+          <div class="flex flex-col justify-center items-center p-6 md:p-16 gap-3 md:gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
             <!-- Sign Up Text -->
-            <p class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E]">
+            <p class="w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E]">
               {{ $t('auth.dontHaveAccount') }}
               <a
                 @click.prevent="goToSignup"
@@ -23,13 +23,13 @@
             </p>
 
             <!-- Form -->
-            <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-4">
+            <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-3 md:gap-4">
               <!-- Username Input -->
               <input
                 v-model="email"
                 type="text"
                 :placeholder="$t('auth.usernamePlaceholder')"
-                class="w-full p-4 border border-gray-300"
+                class="w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300"
               />
 
               <!-- Password Input -->
@@ -38,8 +38,7 @@
                   v-model="password"
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$t('auth.password')"
-                  class="w-full p-4 border border-gray-300"
-
+                  class="w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300"
                 />
                 <button
                   type="button"
@@ -74,19 +73,19 @@
               <!-- Forgot Password -->
               <router-link
                 to="/forgot-password"
-                class="w-full font-archivo text-[20px] leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
+                class="w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
               >
                 {{ $t('auth.forgotPassword') }}
               </router-link>
 
               <!-- Sign In Button -->
-              <div class="w-full mt-4">
+              <div class="w-full mt-2 md:mt-4">
                 <button
                   type="submit"
                   :disabled="isLoading"
                   class="w-full bg-empire-yellow py-2 md:py-4 flex justify-center items-center"
                 >
-                  <span class="font-archivo-narrow font-semibold text-lg md:text-[28px] leading-normal md:leading-[72px] text-black">
+                  <span class="font-archivo-narrow font-semibold text-base md:text-[28px] leading-normal md:leading-[72px] text-black">
                     {{ isLoading ? $t('auth.loading') : $t('auth.signIn') }}
                   </span>
                 </button>
@@ -258,6 +257,18 @@ export default {
 .login-page input:focus {
   outline: none;
   border-color: #FFDD00;
+}
+
+/* Estilos específicos para mobile */
+@media (max-width: 768px) {
+  .login-page input {
+    font-size: 14px;
+  }
+
+  .login-page button svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 </style>
 

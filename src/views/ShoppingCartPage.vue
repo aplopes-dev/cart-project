@@ -28,7 +28,7 @@
       <div v-else class="max-w-[1408px] mx-auto">
         <!-- Título Principal -->
         <div class="pt-0 pb-4 md:pb-6 text-center">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">{{ $t('shoppingCart.title') }}</h1>
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-[30px] md:leading-[40px]">{{ $t('shoppingCart.title') }}</h1>
         </div>
 
         <!-- Área de Pesquisa de Produtos -->
@@ -51,46 +51,48 @@
         </div>
 
         <!-- Lista de Produtos -->
-        <div class="space-y-6 py-6">
+        <div class="space-y-4 md:space-y-6 py-4 md:py-6">
           <div v-for="(item, index) in cartItems" :key="index"
-               class="grid grid-cols-1 md:grid-cols-12 gap-4 pb-6 border-b border-black/25">
+               class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 pb-4 md:pb-6 border-b border-black/25">
             <!-- Produto Info -->
             <div class="col-span-1 md:col-span-6">
-              <div class="flex gap-4 md:gap-8">
+              <div class="flex gap-2 md:gap-4 lg:gap-8">
                 <router-link :to="`/product/${item.id}`">
-                  <img
-                    :src="item.image"
-                    :alt="item.name"
-                    class="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover"
-                    @error="handleImageError"
-                  />
+                  <div class="cart-item-image">
+                    <img
+                      :src="item.image"
+                      :alt="item.name"
+                      class="max-w-full max-h-full"
+                      @error="handleImageError"
+                    />
+                  </div>
                 </router-link>
                 <div class="flex flex-col">
-                  <h3 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] md:leading-[40px]">
-                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                  <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl lg:text-[34px] md:leading-[40px]">
+                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors line-clamp-2 md:line-clamp-none">
                       {{ item.name }}
                     </router-link>
                   </h3>
-                  <p v-if="productDetails[item.id]?.description" class="font-archivo text-base md:text-xl text-black/70">
+                  <p v-if="productDetails[item.id]?.description" class="font-archivo text-sm md:text-base lg:text-xl text-black/70 line-clamp-2 md:line-clamp-none">
                     {{ productDetails[item.id].description }}
                   </p>
 
                   <!-- Options -->
-                  <div class="mt-2 md:mt-4">
-                    <p class="font-archivo text-base text-black/70">{{ item.description }}</p>
+                  <div class="mt-1 md:mt-4">
+                    <p class="font-archivo text-xs md:text-sm lg:text-base text-black/70 line-clamp-1 md:line-clamp-none">{{ item.description }}</p>
 
                     <!-- Características do produto -->
-                    <div v-if="item.color || item.size || item.weight" class="mt-2 space-y-1">
-                      <p v-if="item.color" class="font-archivo text-base text-black/70 flex items-center gap-2">
+                    <div v-if="item.color || item.size || item.weight" class="mt-1 md:mt-2 space-y-0.5 md:space-y-1">
+                      <p v-if="item.color" class="font-archivo text-xs md:text-sm lg:text-base text-black/70 flex items-center gap-1 md:gap-2">
                         <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
-                        <span class="flex items-center gap-2">
-                          <ColorCircle :color="item.color" :size="16" />
+                        <span class="flex items-center gap-1 md:gap-2">
+                          <ColorCircle :color="item.color" :size="12" class="md:w-4 md:h-4" />
                         </span>
                       </p>
-                      <p v-if="item.size" class="font-archivo text-base text-black/70">
+                      <p v-if="item.size" class="font-archivo text-xs md:text-sm lg:text-base text-black/70">
                         <span class="font-semibold">{{ $t('productDetails.selectSize') }}:</span> {{ item.size }}
                       </p>
-                      <p v-if="item.weight" class="font-archivo text-base text-black/70">
+                      <p v-if="item.weight" class="font-archivo text-xs md:text-sm lg:text-base text-black/70">
                         <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
                       </p>
                     </div>
@@ -113,20 +115,20 @@
               <!-- Versão Mobile: Flex container para alinhar à direita -->
               <div class="flex md:hidden items-center ml-auto">
                 <!-- Seletor de quantidade - Mobile (mais largo e menos alto) -->
-                <div class="flex items-center border border-black/25 h-8 w-[140px]">
+                <div class="flex items-center border border-black/25 h-8 w-[100px] md:w-[140px]">
                   <button @click="decreaseQuantity(index)"
-                          class="px-3 h-full flex items-center justify-center text-lg hover:bg-black/5 w-12">-</button>
-                  <span class="flex-1 flex items-center justify-center text-lg">{{ item.quantity }}</span>
+                          class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">-</button>
+                  <span class="flex-1 flex items-center justify-center text-base md:text-lg">{{ item.quantity }}</span>
                   <button @click="increaseQuantity(index)"
-                          class="px-3 h-full flex items-center justify-center text-lg hover:bg-black/5 w-12">+</button>
+                          class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">+</button>
                 </div>
 
                 <!-- Ícone de Lixeira - Mobile (mesma altura do seletor de quantidade) -->
                 <button
                   @click="removeItem(index)"
-                  class="w-8 h-8 ml-2 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                  class="w-7 h-7 md:w-8 md:h-8 ml-1 md:ml-2 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
                 >
-                  <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="20" height="20" class="md:w-6 md:h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -153,8 +155,8 @@
 
             <!-- Total (exibido apenas se o toggle master estiver habilitado) -->
             <div v-if="showPrices" class="col-span-1 md:col-span-3 flex items-start justify-between md:justify-end">
-              <span class="md:hidden font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.total') }}</span>
-              <span class="font-archivo-narrow font-semibold text-xl">
+              <span class="md:hidden font-archivo-narrow font-semibold text-base md:text-xl">{{ $t('shoppingCart.total') }}</span>
+              <span class="font-archivo-narrow font-semibold text-base md:text-xl">
                 {{ formatPrice(item.price * item.quantity) }}
               </span>
             </div>
@@ -162,9 +164,9 @@
         </div>
 
         <!-- Notes Section -->
-        <div class="py-6 border-b border-black/25">
+        <div class="py-4 md:py-6 border-b border-black/25">
           <button
-            class="font-archivo-narrow font-semibold text-xl hover:opacity-70 flex items-center gap-2"
+            class="font-archivo-narrow font-semibold text-lg md:text-xl hover:opacity-70 flex items-center gap-2"
             @click="toggleNotes"
           >
             {{ $t('shoppingCart.addNotes') }}
@@ -193,20 +195,20 @@
         </div>
 
         <!-- Summary -->
-        <div class="py-6 max-w-[456px] ml-auto">
+        <div class="py-4 md:py-6 max-w-[456px] ml-auto">
           <div v-if="showPrices" class="flex justify-between items-center mb-4">
-            <span class="font-archivo-narrow font-semibold text-xl">{{ $t('shoppingCart.subtotal') }}</span>
-            <span class="font-archivo-narrow font-semibold text-xl">
+            <span class="font-archivo-narrow font-semibold text-lg md:text-xl">{{ $t('shoppingCart.subtotal') }}</span>
+            <span class="font-archivo-narrow font-semibold text-lg md:text-xl">
               {{ formatPrice(subtotal) }}
             </span>
           </div>
 
-          <p v-if="showPrices" class="font-archivo text-black/70 mb-6">
+          <p v-if="showPrices" class="font-archivo text-sm md:text-base text-black/70 mb-4 md:mb-6">
             {{ $t('shoppingCart.taxesAndShipping') }}
           </p>
 
           <button
-            class="w-full bg-empire-yellow py-4 font-archivo-narrow font-semibold text-2xl hover:opacity-90"
+            class="w-full bg-empire-yellow py-3 md:py-4 font-archivo-narrow font-semibold text-xl md:text-2xl hover:opacity-90"
             @click="handleButtonClick"
           >
             {{ cartItems.length ? $t('cart.checkout') : $t('shoppingCart.continueShopping') }}
@@ -408,6 +410,9 @@ export default defineComponent({
     handleImageError(e) {
       e.target.src = PLACEHOLDER_IMAGE_PATH
       e.target.onerror = null // Previne loop infinito
+      e.target.style.maxWidth = '90%'
+      e.target.style.maxHeight = '90%'
+      e.target.style.objectFit = 'contain'
     },
     toggleNotes() {
       this.showNotes = !this.showNotes
@@ -499,6 +504,32 @@ export default defineComponent({
 
 textarea::placeholder {
   color: rgba(0, 0, 0, 0.5);
+}
+
+/* Garantir que todas as imagens tenham o mesmo tamanho */
+.shopping-cart-page .cart-item-image {
+  width: 80px !important;
+  height: 80px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: white !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+.shopping-cart-page .cart-item-image img {
+  max-width: 90% !important;
+  max-height: 90% !important;
+  object-fit: contain !important;
+}
+
+@media (min-width: 768px) {
+  .shopping-cart-page .cart-item-image {
+    width: 180px !important;
+    height: 180px !important;
+  }
 }
 
 

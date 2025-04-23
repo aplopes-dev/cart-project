@@ -16,7 +16,7 @@
               <img
                 :src="logoUrl"
                 alt="Logo"
-                class="w-[180px] h-[103.28px] object-contain"
+                class="w-[140px] h-[80px] md:w-[180px] md:h-[103.28px] object-contain"
                 @error="handleImageError"
               >
             </router-link>
@@ -647,22 +647,22 @@
       <!-- Mobile Menu -->
       <div v-show="isMobileMenuOpen" class="md:hidden w-full">
         <!-- Navigation Links Mobile -->
-        <nav class="grid grid-cols-4 gap-2 w-full py-4 border-t border-[rgba(78,78,78,0.35)]">
-          <router-link to="/" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+        <nav class="grid grid-cols-4 gap-1 w-full py-2 border-t border-[rgba(78,78,78,0.35)]">
+          <router-link to="/" class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center">
             {{ $t('header.home') }}
           </router-link>
-          <router-link to="/history" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+          <router-link to="/history" class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center">
             {{ $t('header.history') }}
           </router-link>
           <!-- Menu Loja mobile -->
           <div class="md:hidden category-dropdown relative">
             <button
               @click="toggleCategoryDropdown"
-              class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center w-full flex items-center justify-center gap-1"
+              class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center w-full flex items-center justify-center gap-1"
             >
               {{ $t('header.shop') }}
               <svg
-                class="w-4 h-4 transition-transform duration-200"
+                class="w-3 h-3 transition-transform duration-200"
                 :class="{ 'transform rotate-180': showCategoryDropdown }"
                 viewBox="0 0 24 24"
                 fill="#FFDD00"
@@ -675,9 +675,9 @@
             <div
               v-if="showCategoryDropdown"
               class="absolute bg-black shadow-lg z-50 rounded-lg mt-12 left-1/2 transform -translate-x-1/2 mobile-shop-menu"
-              style="width: 250px;"
+              style="width: 220px;"
             >
-              <div class="max-h-[50vh] overflow-y-auto py-1">
+              <div class="max-h-[40vh] overflow-y-auto py-1 scrollbar-hide" ref="categoryScrollContainer">
                 <!-- Primeiro nível de categorias -->
                 <div
                   v-for="category in categories"
@@ -685,28 +685,29 @@
                   class="relative category-item"
                 >
                   <div
-                    :class="['flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-category-item', category.expanded ? 'expanded' : '']"
+                    :class="['flex items-center justify-between px-3 py-1.5 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-category-item text-xs', category.expanded ? 'expanded' : '']"
                     :style="{
                       'background-color': category.expanded ? '#FFDD00 !important' : 'black !important',
                       'color': category.expanded ? 'black !important' : 'white !important',
                       'display': 'flex',
                       'align-items': 'center',
                       'justify-content': 'space-between',
-                      'gap': '8px'
+                      'gap': '6px'
                     }"
                     @click="setActiveCategory(category)"
                   >
                     <!-- Nome da categoria -->
                     <span
-                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: block;"
                       :style="{'color': category.expanded ? 'black !important' : 'white !important'}"
                       :title="category.name"
+                      class="text-xs"
                     >{{ category.name }}</span>
 
                     <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
                     <svg
                       v-if="category.children && category.children.length > 0"
-                      class="transition-transform duration-200 mobile-arrow"
+                      class="transition-transform duration-200 mobile-arrow w-3 h-3 flex-shrink-0"
                       :class="{'transform rotate-180': category.expanded}"
                       viewBox="0 0 24 24"
                       :fill="category.expanded ? '#000000' : '#FFDD00'"
@@ -724,28 +725,29 @@
                       :class="['relative subcategory-item', subcategory.expanded ? 'expanded' : '']"
                     >
                       <div
-                        :class="['flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-subcategory-item', subcategory.expanded ? 'expanded' : '']"
+                        :class="['flex items-center justify-between px-3 py-1.5 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-subcategory-item text-xs', subcategory.expanded ? 'expanded' : '']"
                         :style="{
                           'background-color': subcategory.expanded ? 'black !important' : '#FFDD00 !important',
                           'color': subcategory.expanded ? '#FFDD00 !important' : 'black !important',
                           'display': 'flex',
                           'align-items': 'center',
                           'justify-content': 'space-between',
-                          'gap': '8px'
+                          'gap': '6px'
                         }"
                         @click="setActiveSubcategory(subcategory)"
                       >
                         <!-- Nome da subcategoria -->
                         <span
-                          style="color: black !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: block;"
                           :style="{'color': subcategory.expanded ? '#FFDD00 !important' : 'black !important'}"
                           :title="subcategory.name"
+                          class="text-xs"
                         >{{ subcategory.name }}</span>
 
                         <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
                         <svg
                           v-if="subcategory.children && subcategory.children.length > 0"
-                          class="transition-transform duration-200 mobile-arrow"
+                          class="transition-transform duration-200 mobile-arrow w-3 h-3 flex-shrink-0"
                           :class="{'transform rotate-180': subcategory.expanded}"
                           viewBox="0 0 24 24"
                           :fill="subcategory.expanded ? '#FFDD00' : '#000000'"
@@ -759,13 +761,14 @@
                         <div
                           v-for="childCategory in subcategory.children"
                           :key="childCategory.id"
-                          class="px-6 py-2 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-childcategory-item"
+                          class="px-4 py-1.5 cursor-pointer transition-colors duration-200 group font-medium tracking-wide mobile-childcategory-item text-xs"
                           style="background-color: black !important; color: #FFDD00 !important; display: flex; align-items: center;"
                           @click="navigateToCategory(childCategory.id)"
                         >
                           <span
-                            style="color: #FFDD00 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: block;"
+                            style="color: #FFDD00 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: block;"
                             :title="childCategory.name"
+                            class="text-xs"
                           >{{ childCategory.name }}</span>
                         </div>
                       </div>
@@ -790,13 +793,13 @@
               </div>
             </div>
           </div>
-          <router-link to="/suppliers" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+          <router-link to="/suppliers" class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center">
             {{ $t('header.suppliers') }}
           </router-link>
-          <router-link to="/career" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+          <router-link to="/career" class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center">
             {{ $t('header.career') }}
           </router-link>
-          <router-link to="/contact" class="px-1 py-2 text-[15px] leading-7 text-white font-archivo font-medium text-center">
+          <router-link to="/contact" class="px-1 py-1 text-[13px] leading-5 text-white font-archivo font-medium text-center">
             {{ $t('header.contactUs') }}
           </router-link>
 
@@ -915,6 +918,19 @@ const projectHasProjects = computed(() => {
 // Refs para os componentes ProjectSelector
 const projectSelector = ref(null)
 const projectSelectorMobile = ref(null)
+
+// Ref para o container de scroll das categorias
+const categoryScrollContainer = ref(null)
+
+// Armazenar as posições originais das categorias e subcategorias
+const originalCategoryPositions = ref({})
+const originalSubcategoryPositions = ref({})
+
+// Variável para armazenar se estamos na versão mobile
+const isMobile = ref(window.innerWidth < 768)
+
+// Variável para armazenar a posição de scroll antes de expandir/contrair
+const lastScrollPosition = ref(0)
 
 // Estado
 const isMobileMenuOpen = ref(false)
@@ -1040,8 +1056,34 @@ const toggleCategoryDropdown = (event) => {
     if (projectSelectorMobile.value && typeof projectSelectorMobile.value.closeDropdown === 'function') {
       projectSelectorMobile.value.closeDropdown()
     }
+
+    // Verifica se é versão mobile
+    if (isMobile.value) {
+      // Garante que todos os itens estejam contraídos ao abrir o menu pela primeira vez
+      categories.value.forEach(category => {
+        // Redefine o estado de expansão para falso
+        category.expanded = false
+
+        // Se a categoria tiver filhos, também redefine o estado de expansão deles
+        if (category.children && category.children.length > 0) {
+          category.children.forEach(subcategory => {
+            subcategory.expanded = false
+          })
+        }
+      })
+
+      // Limpa as categorias ativas
+      activeCategory.value = null
+      activeSubcategory.value = null
+
+      console.log('Todos os itens do menu de Loja foram contraídos (mobile)')
+    }
+  } else {
+    // Quando fechar o dropdown, limpa as posições originais armazenadas
+    originalCategoryPositions.value = {}
+    originalSubcategoryPositions.value = {}
+    console.log('Posições originais das categorias e subcategorias resetadas')
   }
-  // Não limpa mais as categorias ativas quando fecha o menu
 }
 
 
@@ -1144,6 +1186,12 @@ const fetchCategories = async () => {
 
 // Função para definir a categoria ativa
 const setActiveCategory = (category) => {
+  // Salva a posição atual de scroll antes de qualquer modificação
+  if (categoryScrollContainer.value) {
+    lastScrollPosition.value = categoryScrollContainer.value.scrollTop
+    console.log(`Posição de scroll salva: ${lastScrollPosition.value}px`)
+  }
+
   // Verifica se a categoria já está ativa
   const isAlreadyActive = activeCategory.value && activeCategory.value.id === category.id
 
@@ -1151,9 +1199,13 @@ const setActiveCategory = (category) => {
   if (isAlreadyActive && category.children && category.children.length > 0) {
     category.expanded = !category.expanded
 
-    // Se estiver retraindo, garante que a categoria ativa continue sendo esta
+    // Se estiver retraindo, restaura a categoria para sua posição original (apenas em desktop)
     if (!category.expanded) {
+      // Mantém a categoria ativa
       activeCategory.value = category
+
+      // Não precisamos mais restaurar a posição original, pois não movemos os itens
+      console.log(`Categoria ${category.name} contraída (sem reordenar)`)
     }
 
     return
@@ -1174,11 +1226,40 @@ const setActiveCategory = (category) => {
         cat.expanded = false
       }
     })
+
+    // Na versão mobile, não reordenamos mais as categorias ao expandir
+    // e restauramos a posição de scroll para manter exatamente onde foi clicado
+    if (isMobile.value) {
+      const index = categories.value.findIndex(cat => cat.id === category.id)
+      console.log(`Categoria ${category.name} expandida na posição ${index} (sem reordenar)`)
+
+      // Restaura a posição de scroll após o Vue atualizar o DOM
+      setTimeout(() => {
+        if (categoryScrollContainer.value) {
+          categoryScrollContainer.value.scrollTop = lastScrollPosition.value
+          console.log(`Posição de scroll restaurada para ${lastScrollPosition.value}px após expandir/contrair`)
+        }
+      }, 50)
+    } else {
+      // Em desktop, não movemos mais os itens para o topo
+      const index = categories.value.findIndex(cat => cat.id === category.id)
+      if (index > 0) {
+        // Apenas armazenamos a posição original para referência
+        originalCategoryPositions.value[category.id] = index
+        console.log(`Posição original da categoria ${category.name} salva: ${index}`)
+      }
+    }
   }
 }
 
 // Função para definir a subcategoria ativa
 const setActiveSubcategory = (subcategory) => {
+  // Salva a posição atual de scroll antes de qualquer modificação
+  if (categoryScrollContainer.value) {
+    lastScrollPosition.value = categoryScrollContainer.value.scrollTop
+    console.log(`Posição de scroll salva (subcategoria): ${lastScrollPosition.value}px`)
+  }
+
   // Verifica se a subcategoria já está ativa
   const isAlreadyActive = activeSubcategory.value && activeSubcategory.value.id === subcategory.id
 
@@ -1186,9 +1267,13 @@ const setActiveSubcategory = (subcategory) => {
   if (isAlreadyActive && subcategory.children && subcategory.children.length > 0) {
     subcategory.expanded = !subcategory.expanded
 
-    // Se estiver retraindo, garante que a subcategoria ativa continue sendo esta
+    // Se estiver retraindo, restaura a subcategoria para sua posição original (apenas em desktop)
     if (!subcategory.expanded) {
+      // Mantém a subcategoria ativa
       activeSubcategory.value = subcategory
+
+      // Não precisamos mais restaurar a posição original, pois não movemos os itens
+      console.log(`Subcategoria ${subcategory.name} contraída (sem reordenar)`)
     }
 
     return
@@ -1204,6 +1289,30 @@ const setActiveSubcategory = (subcategory) => {
 
     // Certifica-se de que outras subcategorias do mesmo nível estão retraídas
     if (activeCategory.value && activeCategory.value.children) {
+      // Na versão mobile, não reordenamos mais as subcategorias ao expandir
+      // e restauramos a posição de scroll para manter exatamente onde foi clicado
+      if (isMobile.value) {
+        const index = activeCategory.value.children.findIndex(sub => sub.id === subcategory.id)
+        console.log(`Subcategoria ${subcategory.name} expandida na posição ${index} (sem reordenar)`)
+
+        // Restaura a posição de scroll após o Vue atualizar o DOM
+        setTimeout(() => {
+          if (categoryScrollContainer.value) {
+            categoryScrollContainer.value.scrollTop = lastScrollPosition.value
+            console.log(`Posição de scroll restaurada para ${lastScrollPosition.value}px após expandir/contrair subcategoria`)
+          }
+        }, 50)
+      } else {
+        // Em desktop, não movemos mais os itens para o topo
+        const index = activeCategory.value.children.findIndex(sub => sub.id === subcategory.id)
+        if (index > 0) {
+          // Apenas armazenamos a posição original para referência
+          originalSubcategoryPositions.value[subcategory.id] = index
+          console.log(`Posição original da subcategoria ${subcategory.name} salva: ${index}`)
+        }
+      }
+
+      // Depois retraí todas as outras subcategorias
       activeCategory.value.children.forEach(sibling => {
         if (sibling.id !== subcategory.id) {
           sibling.expanded = false
@@ -1254,7 +1363,13 @@ const handleClickOutside = (event) => {
 
   // Fecha o menu de categorias apenas quando clicar fora dele
   if (!categoryDropdown) {
-    showCategoryDropdown.value = false
+    if (showCategoryDropdown.value) {
+      showCategoryDropdown.value = false
+      // Limpa as posições originais quando o dropdown é fechado por clique fora
+      originalCategoryPositions.value = {}
+      originalSubcategoryPositions.value = {}
+      console.log('Posições originais resetadas por clique fora do dropdown')
+    }
   }
 
   // Fecha o dropdown de projetos no componente ProjectSelector
@@ -1266,13 +1381,24 @@ const handleClickOutside = (event) => {
   }
 }
 
+// Função para atualizar o estado mobile
+const updateMobileState = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
 // Lifecycle hooks
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+
+  // Adiciona listener para redimensionamento da janela
+  window.addEventListener('resize', updateMobileState)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+
+  // Remove listener de redimensionamento
+  window.removeEventListener('resize', updateMobileState)
 })
 
 // Watchers
@@ -1291,14 +1417,65 @@ watch(isMobileMenuOpen, (newValue) => {
     showAutocomplete.value = false
     searchQuery.value = ''
     showCategoryDropdown.value = false
+
+    // Limpa as posições originais quando o menu mobile é fechado
+    originalCategoryPositions.value = {}
+    originalSubcategoryPositions.value = {}
+    console.log('Posições originais resetadas ao fechar menu mobile')
   }
 })
 
+// Watch para monitorar a autenticação e atualizar o projeto selecionado
 watch(
   () => localStorage.getItem('token'),
-  () => {
+  (newValue) => {
+    // Atualiza o estado de autenticação
+    updateAuthState()
+
+    // Se o usuário acabou de fazer login (token existe)
+    if (newValue) {
+      console.log('Usuário fez login, verificando projeto no sessionStorage')
+
+      // Aguarda um momento para garantir que os componentes estejam montados
+      setTimeout(() => {
+        // Verifica se o projeto está selecionado no sessionStorage
+        if (projectSelector.value && typeof projectSelector.value.checkSessionStorageProject === 'function') {
+          console.log('Verificando projeto no sessionStorage após login (desktop)')
+          projectSelector.value.checkSessionStorageProject()
+        }
+
+        if (projectSelectorMobile.value && typeof projectSelectorMobile.value.checkSessionStorageProject === 'function') {
+          console.log('Verificando projeto no sessionStorage após login (mobile)')
+          projectSelectorMobile.value.checkSessionStorageProject()
+        }
+      }, 1000) // Aguarda 1 segundo para garantir que tudo esteja carregado
+    }
+  },
+  { immediate: true }
+)
+
+// Watch para mudanças no estado de autenticação do store
+watch(
+  () => store.state.isAuthenticated,
+  (newValue) => {
     // Força reavaliação do estado de autenticação
-    isAuthenticated.value = !!localStorage.getItem('token')
+    updateAuthState()
+
+    // Verifica o projeto selecionado quando o status de autenticação muda
+    if (newValue) {
+      console.log('Estado de autenticação do store mudou para autenticado')
+      setTimeout(() => {
+        if (projectSelector.value && typeof projectSelector.value.checkSessionStorageProject === 'function') {
+          console.log('Verificando projeto no sessionStorage após mudança de autenticação (desktop)')
+          projectSelector.value.checkSessionStorageProject()
+        }
+
+        if (projectSelectorMobile.value && typeof projectSelectorMobile.value.checkSessionStorageProject === 'function') {
+          console.log('Verificando projeto no sessionStorage após mudança de autenticação (mobile)')
+          projectSelectorMobile.value.checkSessionStorageProject()
+        }
+      }, 1000)
+    }
   }
 )
 
@@ -1578,6 +1755,16 @@ onUnmounted(() => {
 .flex.items-center.justify-between.px-4.py-2.cursor-pointer.group.font-medium.border-0.border-none.outline-none.whitespace-nowrap.overflow-hidden.truncate.no-transition.bg-black.text-empire-yellow.hover-style * {
   background-color: black !important;
   color: #FFDD00 !important;
+}
+
+/* Esconde a scrollbar mas mantém a funcionalidade */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 .font-archivo-narrow {
   font-family: 'Archivo Narrow', sans-serif;

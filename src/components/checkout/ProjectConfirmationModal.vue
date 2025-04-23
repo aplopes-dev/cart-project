@@ -94,7 +94,6 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { projectService } from '@/services/projectService'
-import { useStore } from 'vuex'
 
 export default {
   name: 'ProjectConfirmationModal',
@@ -107,7 +106,6 @@ export default {
   emits: ['close', 'confirm', 'change-project'],
   setup(props, { emit }) {
     const { t } = useI18n()
-    const store = useStore()
     const showProjectSelector = ref(false)
     const newProjectId = ref('')
     const isLoading = ref(false)
@@ -137,17 +135,10 @@ export default {
       error.value = ''
 
       try {
-        // Obtém o email do usuário logado
-        const user = store.state.currentUser
-        if (!user || !user.email) {
-          console.error('Usuário não encontrado no store:', store.state)
-          throw new Error('Usuário não encontrado')
-        }
+        console.log('Buscando projetos para o usuário logado')
 
-        console.log('Buscando projetos para o usuário:', user.email)
-
-        // Busca os projetos associados ao usuário
-        const userProjects = await projectService.getProjectsByUserEmail(user.email)
+        // Busca os projetos do usuário logado usando o token JWT
+        const userProjects = await projectService.getCurrentUserProjects()
         projects.value = userProjects
       } catch (err) {
         console.error('Erro ao carregar projetos:', err)

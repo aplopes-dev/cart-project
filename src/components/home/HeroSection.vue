@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen">
+  <section class="relative h-[70vh] md:h-screen">
     <!-- Loading Indicator -->
     <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-gray-100">
       <div class="w-12 h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
@@ -24,20 +24,20 @@
           <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div class="text-center px-4 md:px-8">
               <h1
-                class="text-2xl sm:text-4xl md:text-6xl font-bold mb-2 md:mb-4"
+                class="text-xl sm:text-3xl md:text-6xl font-bold mb-1 md:mb-4"
                 :style="{ color: banner.title_color }"
               >
                 {{ banner.title }}
               </h1>
               <p
-                class="text-sm sm:text-lg md:text-xl mb-4 md:mb-6 max-w-2xl mx-auto"
+                class="text-xs sm:text-base md:text-xl mb-3 md:mb-6 max-w-2xl mx-auto"
                 :style="{ color: banner.subtitle_color }"
               >
                 {{ banner.subtitle }}
               </p>
               <router-link
                 to="/categories"
-                class="bg-empire-yellow text-black px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:bg-yellow-500 transition-colors"
+                class="bg-empire-yellow text-black px-3 sm:px-5 md:px-8 py-1.5 sm:py-2.5 md:py-4 rounded-full text-xs sm:text-sm md:text-lg font-semibold hover:bg-yellow-500 transition-colors"
               >
                 {{ $t('hero.shopNow') }}
               </router-link>
@@ -68,16 +68,20 @@
       </button>
 
       <!-- Dots Indicator -->
-      <div v-if="banners.length > 1" class="absolute bottom-[72px] left-1/2 -translate-x-1/2 flex flex-row items-center gap-[13px]">
+      <div v-if="banners.length > 1" class="absolute bottom-[40px] md:bottom-[72px] left-1/2 -translate-x-1/2 flex flex-row items-center gap-[13px] max-w-[90vw] overflow-x-auto scrollbar-hide">
         <div
           v-for="(_, index) in banners"
           :key="index"
           @click="currentSlide = index"
-          class="flex justify-center items-center w-[72px] h-[6px] transition-all duration-300"
+          class="flex justify-center items-center transition-all duration-300 flex-shrink-0"
           :class="[
             currentSlide === index
               ? 'bg-[#FFDD00]'
-              : 'bg-white/15 border-2 border-white'
+              : 'bg-white/15 border-2 border-white',
+            // Tamanho responsivo baseado na quantidade de banners
+            banners.length <= 3 ? 'w-[72px] h-[6px]' : // Tamanho original para 3 ou menos
+            banners.length <= 5 ? 'w-[50px] md:w-[72px] h-[6px]' : // Tamanho médio para 4-5
+            'w-[30px] md:w-[72px] h-[6px]' // Tamanho pequeno para 6+
           ]"
         ></div>
       </div>
@@ -172,6 +176,16 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 </style>
 
