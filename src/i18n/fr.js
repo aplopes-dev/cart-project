@@ -63,7 +63,11 @@ export default {
     project: 'Projet',
     selectProjectPlaceholder: 'Sélectionnez un projet',
     confirm: 'CONFIRMER',
-    close: 'FERMER'
+    close: 'FERMER',
+    noProjectsFound: 'Aucun projet trouvé pour cet utilisateur.',
+    loadingProjects: 'Chargement des projets...',
+    projectLoadError: 'Erreur lors du chargement des projets. Veuillez réessayer.',
+    retry: 'Réessayer'
   },
   cart: {
     shoppingCart: 'PANIER',

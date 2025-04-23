@@ -20,13 +20,13 @@
       </div>
 
       <!-- Título da Página -->
-      <div class="mb-8">
-        <h1 class="font-archivo-narrow font-semibold text-3xl mb-2">{{ $t('systemSettings.users') }}</h1>
-        <p class="text-black/70">{{ $t('systemSettings.usersDescription') }}</p>
+      <div class="mb-6 md:mb-8">
+        <h1 class="font-archivo-narrow font-semibold text-2xl md:text-3xl mb-1 md:mb-2">{{ $t('systemSettings.users') }}</h1>
+        <p class="text-black/70 text-sm md:text-base">{{ $t('systemSettings.usersDescription') }}</p>
       </div>
 
       <!-- Filtros e Busca -->
-      <div class="bg-[#FAFAFA] p-6 mb-6">
+      <div class="bg-[#FAFAFA] p-4 md:p-6 mb-4 md:mb-6">
         <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <!-- Campo de Busca -->
           <div class="flex-1">
@@ -34,7 +34,7 @@
               v-model="searchQuery"
               type="text"
               :placeholder="$t('users.searchPlaceholder')"
-              class="w-full p-3 border border-gray-300"
+              class="w-full p-2 md:p-3 h-10 md:h-auto text-sm md:text-base border border-gray-300"
               @input="filterUsers"
             />
           </div>
@@ -43,7 +43,7 @@
           <div class="w-full md:w-auto">
             <select
               v-model="profileFilter"
-              class="w-full md:w-48 p-3 border border-gray-300"
+              class="w-full md:w-48 p-2 md:p-3 h-10 md:h-auto text-sm md:text-base border border-gray-300"
               @change="filterUsers"
             >
               <option value="">{{ $t('users.allProfiles') }}</option>
@@ -57,8 +57,10 @@
 
       <!-- Lista de Usuários -->
       <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
+        <!-- Container com rolagem horizontal para mobile -->
+        <div class="md:block overflow-x-auto">
         <!-- Cabeçalho da Tabela -->
-        <div class="grid grid-cols-12 bg-gray-100 p-4 font-archivo font-semibold">
+        <div class="grid grid-cols-12 bg-gray-100 p-3 md:p-4 font-archivo font-semibold text-xs md:text-sm min-w-[600px] md:min-w-0">
           <div class="col-span-3">{{ $t('users.name') }}</div>
           <div class="col-span-4">{{ $t('users.email') }}</div>
           <div class="col-span-3">{{ $t('users.profile') }}</div>
@@ -66,13 +68,13 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading" class="p-8 text-center">
+        <div v-if="loading" class="p-6 md:p-8 text-center">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           <p class="mt-2">{{ $t('common.loading') }}</p>
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="p-8 text-center text-red-500">
+        <div v-else-if="error" class="p-6 md:p-8 text-center text-red-500">
           <p>{{ error }}</p>
           <button
             @click="loadUsers"
@@ -83,7 +85,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="filteredUsers.length === 0" class="p-8 text-center text-gray-500">
+        <div v-else-if="filteredUsers.length === 0" class="p-6 md:p-8 text-center text-gray-500">
           <p>{{ $t('users.noUsersFound') }}</p>
         </div>
 
@@ -92,14 +94,14 @@
           <div
             v-for="user in filteredUsers"
             :key="user.id"
-            class="grid grid-cols-12 p-4 border-b border-gray-200 items-center"
+            class="grid grid-cols-12 p-3 md:p-4 border-b border-gray-200 items-center text-xs md:text-sm min-w-[600px] md:min-w-0"
           >
-            <div class="col-span-3">{{ user.firstName }} {{ user.lastName }}</div>
-            <div class="col-span-4">{{ user.email }}</div>
+            <div class="col-span-3 truncate">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="col-span-4 truncate">{{ user.email }}</div>
             <div class="col-span-3">
               <span
                 :class="[
-                  'px-2 py-1 rounded-full text-xs font-semibold',
+                  'px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-semibold',
                   user.profile === 'ADMIN' ? 'bg-red-100 text-red-800' :
                   user.profile === 'MANAGER' ? 'bg-blue-100 text-blue-800' :
                   'bg-green-100 text-green-800'
@@ -117,54 +119,56 @@
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- Paginação -->
-          <div class="flex flex-col items-center mt-8 mb-4 w-full gap-4">
-            <!-- Informação de página -->
-            <div class="text-sm text-gray-600">
-              {{ $t('users.showing') }} {{ itemRange.start }}-{{ itemRange.end }} {{ $t('users.of') }} {{ totalItems }} {{ $t('users.items') }}
-            </div>
+        </div>
 
-            <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
-              <!-- Botão Previous -->
+        <!-- Paginação -->
+        <div class="flex flex-col items-center mt-6 md:mt-8 mb-3 md:mb-4 w-full gap-3 md:gap-4">
+          <!-- Informação de página -->
+          <div class="text-xs md:text-sm text-gray-600">
+            {{ $t('users.showing') }} {{ itemRange.start }}-{{ itemRange.end }} {{ $t('users.of') }} {{ totalItems }} {{ $t('users.items') }}
+          </div>
+
+          <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
+            <!-- Botão Previous -->
+            <button
+              class="flex items-center justify-center h-8 md:h-10 px-1 md:px-4 gap-1 rounded-lg min-w-[70px] md:min-w-[120px]"
+              :class="currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#F9F9FB] hover:bg-gray-200 cursor-pointer'"
+              :disabled="currentPage === 1"
+              @click="changePage(currentPage - 1)"
+            >
+              <svg class="w-3 h-3 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.5 15L7.5 10L12.5 5" :stroke="currentPage === 1 ? '#9CA3AF' : '#1E1E1E'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="font-inter font-medium text-xs md:text-base">{{ $t('common.previous') }}</span>
+            </button>
+
+            <!-- Números das Páginas -->
+            <div class="flex gap-1 md:gap-2">
               <button
-                class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 rounded-lg min-w-[90px] md:min-w-[120px]"
-                :class="currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#F9F9FB] hover:bg-gray-200 cursor-pointer'"
-                :disabled="currentPage === 1"
-                @click="changePage(currentPage - 1)"
+                v-for="page in displayedPages"
+                :key="page"
+                class="w-6 h-6 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-xs md:text-base"
+                :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
+                @click="changePage(page)"
               >
-                <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12.5 15L7.5 10L12.5 5" :stroke="currentPage === 1 ? '#9CA3AF' : '#1E1E1E'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span class="font-inter font-medium text-sm md:text-base">{{ $t('common.previous') }}</span>
-              </button>
-
-              <!-- Números das Páginas -->
-              <div class="flex gap-1 md:gap-2">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
-                  :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
-                  @click="changePage(page)"
-                >
-                  {{ page }}
-                </button>
-              </div>
-
-              <!-- Botão Next -->
-              <button
-                class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 rounded-lg min-w-[90px] md:min-w-[120px]"
-                :class="currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#F9F9FB] hover:bg-gray-200 cursor-pointer'"
-                :disabled="currentPage === totalPages"
-                @click="changePage(currentPage + 1)"
-              >
-                <span class="font-inter font-medium text-sm md:text-base">{{ $t('common.next') }}</span>
-                <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.5 15L12.5 10L7.5 5" :stroke="currentPage === totalPages ? '#9CA3AF' : '#1E1E1E'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                {{ page }}
               </button>
             </div>
+
+            <!-- Botão Next -->
+            <button
+              class="flex items-center justify-center h-8 md:h-10 px-1 md:px-4 gap-1 rounded-lg min-w-[70px] md:min-w-[120px]"
+              :class="currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#F9F9FB] hover:bg-gray-200 cursor-pointer'"
+              :disabled="currentPage === totalPages"
+              @click="changePage(currentPage + 1)"
+            >
+              <span class="font-inter font-medium text-xs md:text-base">{{ $t('common.next') }}</span>
+              <svg class="w-3 h-3 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 15L12.5 10L7.5 5" :stroke="currentPage === totalPages ? '#9CA3AF' : '#1E1E1E'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -172,24 +176,24 @@
 
     <!-- Modal de Edição -->
     <div v-if="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-md w-full max-w-md">
-        <h2 class="font-archivo-narrow font-semibold text-2xl mb-4">{{ $t('users.editUser') }}</h2>
+      <div class="bg-white p-4 md:p-6 rounded-md w-full max-w-[90%] md:max-w-md">
+        <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl mb-3 md:mb-4">{{ $t('users.editUser') }}</h2>
 
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2">{{ $t('users.name') }}</label>
-          <p class="p-3 bg-gray-100 rounded">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</p>
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.name') }}</label>
+          <p class="p-2 md:p-3 bg-gray-100 rounded text-sm md:text-base">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</p>
         </div>
 
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2">{{ $t('users.email') }}</label>
-          <p class="p-3 bg-gray-100 rounded">{{ selectedUser.email }}</p>
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.email') }}</label>
+          <p class="p-2 md:p-3 bg-gray-100 rounded text-sm md:text-base">{{ selectedUser.email }}</p>
         </div>
 
-        <div class="mb-6">
-          <label class="block text-gray-700 mb-2">{{ $t('users.profile') }}</label>
+        <div class="mb-4 md:mb-6">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.profile') }}</label>
           <select
             v-model="selectedUser.profile"
-            class="w-full p-3 border border-gray-300 rounded"
+            class="w-full p-2 md:p-3 h-10 md:h-auto text-sm md:text-base border border-gray-300 rounded"
           >
             <option value="ADMIN">{{ $t('users.admin') }}</option>
             <option value="MANAGER">{{ $t('users.manager') }}</option>
@@ -197,17 +201,17 @@
           </select>
         </div>
 
-        <div class="flex justify-end gap-3">
+        <div class="flex justify-end gap-2 md:gap-3">
           <button
             @click="closeEditModal"
-            class="px-4 py-2 border border-gray-300 rounded"
+            class="px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded"
           >
             {{ $t('common.cancel') }}
           </button>
           <button
             @click="saveUserProfile"
             :disabled="updateLoading"
-            class="px-4 py-2 bg-empire-yellow text-black rounded disabled:opacity-50"
+            class="px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base bg-empire-yellow text-black rounded disabled:opacity-50"
           >
             {{ updateLoading ? $t('common.saving') : $t('common.save') }}
           </button>

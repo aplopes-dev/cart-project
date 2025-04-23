@@ -215,7 +215,7 @@
       <!-- Lower Section - Navigation -->
       <div class="hidden md:flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-4 py-1.5 border-t border-[rgba(78,78,78,0.35)]"> <!-- Reduzido py-3 para py-1.5 -->
         <!-- Navigation Links -->
-        <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-8 mb-4 md:mb-0">
+        <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-5 mb-4 md:mb-0">
           <router-link to="/" class="text-[15px] leading-7 text-white font-archivo font-medium">
             {{ $t('header.home') }}
           </router-link>
@@ -365,21 +365,21 @@
         </nav>
 
         <!-- Right Section -->
-        <div class="flex flex-wrap justify-center items-center gap-4">
+        <div class="flex flex-wrap justify-center items-center gap-3 md:gap-1">
           <!-- Language Desktop (ícones + texto) -->
-          <div class="relative hidden md:block">
+          <div class="relative hidden md:block mr-0">
             <button
               @click="toggleLanguageDropdown"
-              class="language-selector flex items-center gap-2 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-2 pr-6"
+              class="language-selector flex items-center gap-1 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-1 pr-2"
             >
               <img
                 :src="flagImages[selectedLanguage]"
-                class="w-5 h-5"
+                class="w-4 h-4"
                 :alt="`${selectedLanguage} flag`"
               />
               {{ selectedLanguage }}
               <svg
-                class="w-4 h-4"
+                class="w-3 h-3"
                 :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
                 viewBox="0 0 24 24"
                 fill="#FFDD00"
@@ -413,11 +413,11 @@
           <ProjectSelector
             :is-authenticated="isAuthenticated"
             ref="projectSelector"
-            :class="{ 'mr-4': projectHasProjects }"
+            :class="{ 'mr-2 md:mr-1': projectHasProjects }"
           />
 
           <!-- Cart and Sign In -->
-          <div class="flex items-center gap-6">
+          <div class="flex items-center gap-4 md:gap-3">
             <button @click="toggleCart" class="relative flex items-center">
               <div v-if="cartStore.itemCount > 0" class="absolute -top-2 -right-2 bg-empire-yellow text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                 {{ cartStore.itemCount }}

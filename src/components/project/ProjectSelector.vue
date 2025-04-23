@@ -6,14 +6,14 @@
         @click="toggleProjectDropdown"
         class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
         :disabled="isLoading"
-        style="max-width: 200px;"
+        style="max-width: 250px;"
       >
         <span
           v-if="selectedProject"
-          class="truncate max-w-[160px]"
+          class="truncate max-w-[210px]"
           :title="selectedProject.name || selectedProject.nome"
         >
-          {{ (selectedProject.name || selectedProject.nome).length > 15 ? (selectedProject.name || selectedProject.nome).substring(0, 15) + '...' : (selectedProject.name || selectedProject.nome) }}
+          {{ (selectedProject.name || selectedProject.nome).length > 20 ? (selectedProject.name || selectedProject.nome).substring(0, 20) + '...' : (selectedProject.name || selectedProject.nome) }}
         </span>
         <span v-else>{{ $t('project.selectProject') }}</span>
         <svg
@@ -200,11 +200,11 @@ export default {
 
         // Verifica se o projeto salvo existe na lista de projetos do usuário
         if (savedProject && savedProject.id) {
-          const projectExists = userProjects.some(p => p.id === savedProject.id)          
+          const projectExists = userProjects.some(p => p.id === savedProject.id)
 
           if (projectExists) {
             selectedProjectId.value = savedProject.id
-            selectedProject.value = savedProject           
+            selectedProject.value = savedProject
           } else {
             // Se o projeto salvo não existir na lista, seleciona o primeiro
             if (userProjects.length > 0) {
@@ -213,7 +213,7 @@ export default {
                 id: userProjects[0].id,
                 name: userProjects[0].name || userProjects[0].nome
               }
-              projectService.saveSelectedProject(selectedProject.value)              
+              projectService.saveSelectedProject(selectedProject.value)
             }
           }
         } else if (userProjects.length > 0) {
@@ -378,7 +378,7 @@ export default {
           // Atualiza diretamente o projeto selecionado
           selectedProjectId.value = savedProject.id
           selectedProject.value = savedProject
-          
+
           return true
         }
       }

@@ -20,8 +20,8 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+        <div class="mb-6 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px]">
             {{ $t('systemSettings.home') }}
           </h1>
         </div>
@@ -155,46 +155,46 @@
 
         <!-- Banner Modal -->
         <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[95%] md:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 class="text-xl md:text-2xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ editingBanner ? $t('homeBanner.editBanner') : $t('homeBanner.addBanner') }}
             </h2>
 
             <form @submit.prevent="saveBanner">
               <!-- Title -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="title">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="title">
                   {{ $t('homeBanner.title') }} *
                 </label>
                 <input
                   id="title"
                   v-model="bannerForm.title"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                   required
                 >
               </div>
 
               <!-- Subtitle -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="subtitle">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="subtitle">
                   {{ $t('homeBanner.subtitle') }} *
                 </label>
                 <textarea
                   id="subtitle"
                   v-model="bannerForm.subtitle"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
-                  rows="3"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  rows="2" md:rows="3"
                   required
                 ></textarea>
               </div>
 
               <!-- Image Upload -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="image">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="image">
                   {{ $t('homeBanner.image') }} *
                 </label>
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-2 md:space-x-4">
                   <div class="flex-1">
                     <div class="flex items-center">
                       <input
@@ -208,11 +208,11 @@
                       <button
                         type="button"
                         @click="$refs.imageInput.click()"
-                        class="px-4 py-2 border-2 border-black/25 rounded font-archivo text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
+                        class="px-2 md:px-4 py-1 md:py-2 border-2 border-black/25 rounded font-archivo text-xs md:text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
                       >
                         {{ $t('homeBanner.chooseFile') }}
                       </button>
-                      <span class="ml-2 text-sm text-gray-600">
+                      <span class="ml-1 md:ml-2 text-xs md:text-sm text-gray-600 truncate max-w-[100px] md:max-w-none">
                         {{ selectedFileName || $t('homeBanner.noFileChosen') }}
                       </span>
                     </div>
@@ -231,10 +231,10 @@
               </div>
 
               <!-- Colors -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-2 md:mb-4">
                 <!-- Title Color -->
                 <div>
-                  <label class="block font-archivo text-sm font-medium mb-2" for="titleColor">
+                  <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="titleColor">
                     {{ $t('homeBanner.titleColor') }}
                   </label>
                   <div class="flex items-center">
@@ -242,20 +242,20 @@
                       id="titleColor"
                       v-model="bannerForm.title_color"
                       type="text"
-                      class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                      class="flex-1 px-2 md:px-3 py-1 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                       placeholder="#FFFFFF"
                     >
                     <input
                       type="color"
                       v-model="bannerForm.title_color"
-                      class="ml-2 w-10 h-10 rounded cursor-pointer"
+                      class="ml-1 md:ml-2 w-8 h-8 md:w-10 md:h-10 rounded cursor-pointer"
                     >
                   </div>
                 </div>
 
                 <!-- Subtitle Color -->
                 <div>
-                  <label class="block font-archivo text-sm font-medium mb-2" for="subtitleColor">
+                  <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="subtitleColor">
                     {{ $t('homeBanner.subtitleColor') }}
                   </label>
                   <div class="flex items-center">
@@ -263,23 +263,23 @@
                       id="subtitleColor"
                       v-model="bannerForm.subtitle_color"
                       type="text"
-                      class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                      class="flex-1 px-2 md:px-3 py-1 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                       placeholder="#FFFFFF"
                     >
                     <input
                       type="color"
                       v-model="bannerForm.subtitle_color"
-                      class="ml-2 w-10 h-10 rounded cursor-pointer"
+                      class="ml-1 md:ml-2 w-8 h-8 md:w-10 md:h-10 rounded cursor-pointer"
                     >
                   </div>
                 </div>
               </div>
 
               <!-- Position and Status -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-3 md:mb-6">
                 <!-- Position -->
                 <div>
-                  <label class="block font-archivo text-sm font-medium mb-2" for="position">
+                  <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="position">
                     {{ $t('homeBanner.position') }}
                   </label>
                   <input
@@ -287,36 +287,36 @@
                     v-model.number="bannerForm.position"
                     type="number"
                     min="0"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                    class="w-full px-2 md:px-3 py-1 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                   >
                 </div>
 
                 <!-- Status -->
-                <div class="flex items-center h-full pt-8">
+                <div class="flex items-center h-full pt-4 md:pt-8">
                   <input
                     id="isActive"
                     v-model="bannerForm.is_active"
                     type="checkbox"
                     class="w-4 h-4 text-empire-yellow focus:ring-empire-yellow rounded"
                   >
-                  <label class="ml-2 font-archivo text-sm font-medium" for="isActive">
+                  <label class="ml-1 md:ml-2 font-archivo text-xs md:text-sm font-medium" for="isActive">
                     {{ $t('homeBanner.isActive') }}
                   </label>
                 </div>
               </div>
 
               <!-- Form Actions -->
-              <div class="flex justify-end space-x-3">
+              <div class="flex justify-end space-x-2 md:space-x-3">
                 <button
                   type="button"
                   @click="closeModal"
-                  class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
                 >
                   {{ $t('common.cancel') }}
                 </button>
                 <button
                   type="submit"
-                  class="px-4 py-2 bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
                   :disabled="saving"
                 >
                   <span v-if="saving">{{ $t(editingBanner ? 'common.updating' : 'common.saving') }}...</span>
@@ -329,23 +329,23 @@
 
         <!-- Delete Confirmation Modal -->
         <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[90%] md:max-w-md">
+            <h2 class="text-lg md:text-xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ $t('homeBanner.confirmDelete') }}
             </h2>
-            <p class="mb-6 font-archivo text-gray-700">
+            <p class="mb-3 md:mb-6 font-archivo text-xs md:text-sm text-gray-700">
               {{ $t('homeBanner.deleteWarning') }}
             </p>
-            <div class="flex justify-end space-x-3">
+            <div class="flex justify-end space-x-2 md:space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
               >
                 {{ $t('common.cancel') }}
               </button>
               <button
                 @click="deleteBanner"
-                class="px-4 py-2 bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
                 :disabled="deleting"
               >
                 <span v-if="deleting">{{ $t('common.deleting') }}...</span>
@@ -508,45 +508,45 @@
 
         <!-- Logo Modal -->
         <div v-if="showLogoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[95%] md:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 class="text-xl md:text-2xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ editingLogo ? $t('logo.editLogo') : $t('logo.addLogo') }}
             </h2>
 
             <form @submit.prevent="saveLogo">
               <!-- Name -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="logoName">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="logoName">
                   {{ $t('logo.name') }} *
                 </label>
                 <input
                   id="logoName"
                   v-model="logoForm.name"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                   required
                 >
               </div>
 
               <!-- Description -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="logoDescription">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="logoDescription">
                   {{ $t('logo.description') }}
                 </label>
                 <textarea
                   id="logoDescription"
                   v-model="logoForm.description"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
-                  rows="3"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  rows="2" md:rows="3"
                 ></textarea>
               </div>
 
               <!-- Image Upload -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="logoImage">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="logoImage">
                   {{ $t('logo.image') }} *
                 </label>
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-2 md:space-x-4">
                   <div class="flex-1">
                     <div class="flex items-center">
                       <input
@@ -560,11 +560,11 @@
                       <button
                         type="button"
                         @click="$refs.logoImageInput.click()"
-                        class="px-4 py-2 border-2 border-black/25 rounded font-archivo text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
+                        class="px-2 md:px-4 py-1 md:py-2 border-2 border-black/25 rounded font-archivo text-xs md:text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
                       >
                         {{ $t('logo.chooseFile') }}
                       </button>
-                      <span class="ml-2 text-sm text-gray-600">
+                      <span class="ml-1 md:ml-2 text-xs md:text-sm text-gray-600 truncate max-w-[100px] md:max-w-none">
                         {{ logoSelectedFileName || $t('logo.noFileChosen') }}
                       </span>
                     </div>
@@ -583,7 +583,7 @@
               </div>
 
               <!-- Status -->
-              <div class="mb-6">
+              <div class="mb-3 md:mb-6">
                 <div class="flex items-center">
                   <input
                     id="logoIsActive"
@@ -593,30 +593,30 @@
                     :disabled="isOnlyActiveLogo"
                     :title="isOnlyActiveLogo ? $t('logo.cannotDeactivateOnly') : ''"
                   >
-                  <label class="ml-2 font-archivo text-sm font-medium" for="logoIsActive">
+                  <label class="ml-1 md:ml-2 font-archivo text-xs md:text-sm font-medium" for="logoIsActive">
                     {{ $t('logo.isActive') }}
                   </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500">
+                <p class="mt-0.5 md:mt-1 text-[10px] md:text-xs text-gray-500">
                   {{ $t('logo.activeInfo') }}
                 </p>
-                <p v-if="isOnlyActiveLogo" class="mt-1 text-xs text-red-500">
+                <p v-if="isOnlyActiveLogo" class="mt-0.5 md:mt-1 text-[10px] md:text-xs text-red-500">
                   {{ $t('logo.cannotDeactivateOnly') }}
                 </p>
               </div>
 
               <!-- Form Actions -->
-              <div class="flex justify-end space-x-3">
+              <div class="flex justify-end space-x-2 md:space-x-3">
                 <button
                   type="button"
                   @click="closeLogoModal"
-                  class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
                 >
                   {{ $t('common.cancel') }}
                 </button>
                 <button
                   type="submit"
-                  class="px-4 py-2 bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
                   :disabled="logoSaving"
                 >
                   <span v-if="logoSaving">{{ $t(editingLogo ? 'common.updating' : 'common.saving') }}...</span>
@@ -629,23 +629,23 @@
 
         <!-- Logo Delete Confirmation Modal -->
         <div v-if="showLogoDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[90%] md:max-w-md">
+            <h2 class="text-lg md:text-xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ $t('logo.confirmDelete') }}
             </h2>
-            <p class="mb-6 font-archivo text-gray-700">
+            <p class="mb-3 md:mb-6 font-archivo text-xs md:text-sm text-gray-700">
               {{ $t('logo.deleteWarning') }}
             </p>
-            <div class="flex justify-end space-x-3">
+            <div class="flex justify-end space-x-2 md:space-x-3">
               <button
                 @click="showLogoDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
               >
                 {{ $t('common.cancel') }}
               </button>
               <button
                 @click="deleteLogo"
-                class="px-4 py-2 bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
                 :disabled="logoDeleting"
               >
                 <span v-if="logoDeleting">{{ $t('common.deleting') }}...</span>
@@ -657,45 +657,45 @@
 
         <!-- Brand Modal -->
         <div v-if="showBrandModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[95%] md:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 class="text-xl md:text-2xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ editingBrand ? $t('brand.editBrand') : $t('brand.addBrand') }}
             </h2>
 
             <form @submit.prevent="saveBrand">
               <!-- Name -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="brandName">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="brandName">
                   {{ $t('brand.name') }} *
                 </label>
                 <input
                   id="brandName"
                   v-model="brandForm.name"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                   required
                 >
               </div>
 
               <!-- Description -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="brandDescription">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="brandDescription">
                   {{ $t('brand.description') }}
                 </label>
                 <textarea
                   id="brandDescription"
                   v-model="brandForm.description"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
-                  rows="3"
+                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  rows="2" md:rows="3"
                 ></textarea>
               </div>
 
               <!-- Image Upload -->
-              <div class="mb-4">
-                <label class="block font-archivo text-sm font-medium mb-2" for="brandImage">
+              <div class="mb-2 md:mb-4">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="brandImage">
                   {{ $t('brand.image') }} *
                 </label>
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-2 md:space-x-4">
                   <div class="flex-1">
                     <div class="flex items-center">
                       <input
@@ -709,11 +709,11 @@
                       <button
                         type="button"
                         @click="$refs.brandImageInput.click()"
-                        class="px-4 py-2 border-2 border-black/25 rounded font-archivo text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
+                        class="px-2 md:px-4 py-1 md:py-2 border-2 border-black/25 rounded font-archivo text-xs md:text-base hover:border-empire-yellow focus:outline-none focus:border-empire-yellow"
                       >
                         {{ $t('brand.chooseFile') }}
                       </button>
-                      <span class="ml-2 text-sm text-gray-600">
+                      <span class="ml-1 md:ml-2 text-xs md:text-sm text-gray-600 truncate max-w-[100px] md:max-w-none">
                         {{ brandSelectedFileName || $t('brand.noFileChosen') }}
                       </span>
                     </div>
@@ -732,10 +732,10 @@
               </div>
 
               <!-- Position and Status -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-3 md:mb-6">
                 <!-- Position -->
                 <div>
-                  <label class="block font-archivo text-sm font-medium mb-2" for="brandPosition">
+                  <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="brandPosition">
                     {{ $t('brand.position') }}
                   </label>
                   <input
@@ -743,36 +743,36 @@
                     v-model.number="brandForm.position"
                     type="number"
                     min="0"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                   >
                 </div>
 
                 <!-- Status -->
-                <div class="flex items-center h-full pt-8">
+                <div class="flex items-center h-full pt-4 md:pt-8">
                   <input
                     id="brandIsActive"
                     v-model="brandForm.isActive"
                     type="checkbox"
                     class="w-4 h-4 text-empire-yellow focus:ring-empire-yellow rounded"
                   >
-                  <label class="ml-2 font-archivo text-sm font-medium" for="brandIsActive">
+                  <label class="ml-1 md:ml-2 font-archivo text-xs md:text-sm font-medium" for="brandIsActive">
                     {{ $t('brand.isActive') }}
                   </label>
                 </div>
               </div>
 
               <!-- Form Actions -->
-              <div class="flex justify-end space-x-3">
+              <div class="flex justify-end space-x-2 md:space-x-3">
                 <button
                   type="button"
                   @click="closeBrandModal"
-                  class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
                 >
                   {{ $t('common.cancel') }}
                 </button>
                 <button
                   type="submit"
-                  class="px-4 py-2 bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
+                  class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-empire-yellow text-black rounded-md font-archivo hover:bg-yellow-500"
                   :disabled="brandSaving"
                 >
                   <span v-if="brandSaving">{{ $t(editingBrand ? 'common.updating' : 'common.saving') }}...</span>
@@ -785,23 +785,23 @@
 
         <!-- Brand Delete Confirmation Modal -->
         <div v-if="showBrandDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-xl font-archivo-narrow font-semibold mb-4">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[90%] md:max-w-md">
+            <h2 class="text-lg md:text-xl font-archivo-narrow font-semibold mb-2 md:mb-4">
               {{ $t('brand.confirmDelete') }}
             </h2>
-            <p class="mb-6 font-archivo text-gray-700">
+            <p class="mb-3 md:mb-6 font-archivo text-xs md:text-sm text-gray-700">
               {{ $t('brand.deleteWarning') }}
             </p>
-            <div class="flex justify-end space-x-3">
+            <div class="flex justify-end space-x-2 md:space-x-3">
               <button
                 @click="showBrandDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm border border-gray-300 rounded-md text-gray-700 font-archivo hover:bg-gray-50"
               >
                 {{ $t('common.cancel') }}
               </button>
               <button
                 @click="deleteBrand"
-                class="px-4 py-2 bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
+                class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm bg-red-600 text-white rounded-md font-archivo hover:bg-red-700"
                 :disabled="brandDeleting"
               >
                 <span v-if="brandDeleting">{{ $t('common.deleting') }}...</span>

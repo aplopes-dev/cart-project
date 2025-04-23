@@ -24,58 +24,58 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+        <div class="mb-6 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px]">
             {{ $t('content.history.title') }}
-          </h1>         
+          </h1>
         </div>
 
         <!-- Form -->
-        <div class="bg-[#FAFAFA] p-8 mb-8">
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+        <div class="bg-[#FAFAFA] p-4 md:p-8 mb-6 md:mb-8">
+          <form @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
             <!-- Campos para cada idioma -->
-            <div v-for="lang in availableLanguages" :key="lang" class="space-y-4">
-              <h3 class="font-archivo-narrow font-semibold text-lg">
+            <div v-for="lang in availableLanguages" :key="lang" class="space-y-3 md:space-y-4">
+              <h3 class="font-archivo-narrow font-semibold text-base md:text-lg">
                 {{ lang.toUpperCase() }}
               </h3>
-              
+
               <div>
-                <label class="block font-archivo text-sm mb-2">
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">
                   {{ $t('content.history.form.title') }} ({{ lang.toUpperCase() }})
                 </label>
-                <input 
+                <input
                   type="text"
                   v-model="formData[`title_${lang}`]"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none"
+                  class="w-full p-3 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white focus:border-empire-yellow focus:outline-none h-10 md:h-auto"
                   :placeholder="$t('content.history.form.titlePlaceholder')"
                 />
               </div>
 
               <div>
-                <label class="block font-archivo text-sm mb-2">
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">
                   {{ $t('content.history.form.content') }} ({{ lang.toUpperCase() }})
                 </label>
-                <textarea 
+                <textarea
                   v-model="formData[`content_${lang}`]"
-                  rows="4"
-                  class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
+                  rows="3" md:rows="4"
+                  class="w-full p-3 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white focus:border-empire-yellow focus:outline-none resize-none"
                   :placeholder="$t('content.history.form.contentPlaceholder')"
                 ></textarea>
               </div>
             </div>
 
-            <div class="flex justify-end gap-4">
-              <button 
+            <div class="flex justify-end gap-2 md:gap-4">
+              <button
                 v-if="editingId"
                 type="button"
                 @click="cancelEdit"
-                class="px-6 py-2 border-2 border-black/25 rounded font-archivo"
+                class="px-3 md:px-6 py-1.5 md:py-2 border-2 border-black/25 rounded font-archivo text-sm md:text-base"
               >
                 {{ $t('content.history.form.cancel') }}
               </button>
-              <button 
+              <button
                 type="submit"
-                class="px-6 py-2 bg-empire-yellow text-black rounded font-archivo hover:opacity-90"
+                class="px-3 md:px-6 py-1.5 md:py-2 bg-empire-yellow text-black rounded font-archivo hover:opacity-90 text-sm md:text-base"
               >
                 {{ editingId ? $t('content.history.form.edit') : $t('content.history.form.add') }}
               </button>
@@ -85,49 +85,49 @@
 
         <!-- Lista de Cards -->
         <div class="space-y-6">
-          <div 
-            v-for="(item, index) in localizedHistoryItems" 
+          <div
+            v-for="(item, index) in localizedHistoryItems"
             :key="index"
             class="bg-[#FAFAFA] p-6 md:p-8 rounded-lg relative"
             :class="{ 'opacity-50': !item.is_active }"
           >
             <!-- Botões de ação -->
             <div class="absolute top-4 right-4 flex gap-4">
-              <button 
+              <button
                 @click="toggleVisibility(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t(item.is_active ? 'content.history.actions.hide' : 'content.history.actions.show')"
               >
-                <svg 
-                  class="w-6 h-6" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  class="w-6 h-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path 
+                  <path
                     v-if="item.is_active"
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
-                  <path 
+                  <path
                     v-if="item.is_active"
                     d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"
                   />
-                  <path 
+                  <path
                     v-else
                     d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
                   />
-                  <line 
+                  <line
                     v-if="!item.is_active"
-                    x1="1" 
-                    y1="1" 
-                    x2="23" 
+                    x1="1"
+                    y1="1"
+                    x2="23"
                     y2="23"
                   />
                 </svg>
               </button>
 
-              <button 
+              <button
                 @click="editItem(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t('content.history.actions.edit')"
@@ -138,7 +138,7 @@
                 </svg>
               </button>
 
-              <button 
+              <button
                 @click="deleteItem(index)"
                 class="hover:opacity-70 transition-opacity"
                 :title="$t('content.history.actions.delete')"
@@ -151,8 +151,8 @@
               </button>
             </div>
 
-            <h2 class="font-archivo-narrow text-2xl text-black mb-4">{{ item.title }}</h2>
-            <p class="text-black whitespace-pre-wrap">{{ item.content }}</p>
+            <h2 class="font-archivo-narrow text-xl md:text-2xl text-black mb-2 md:mb-4">{{ item.title }}</h2>
+            <p class="text-black whitespace-pre-wrap text-sm md:text-base">{{ item.content }}</p>
           </div>
         </div>
       </div>
@@ -160,27 +160,27 @@
   </div>
 
   <!-- Modal de Confirmação -->
-  <div 
-    v-if="showDeleteModal" 
+  <div
+    v-if="showDeleteModal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
-    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-      <h3 class="font-archivo-narrow text-2xl mb-4">
+    <div class="bg-white rounded-lg p-4 md:p-8 max-w-md w-full mx-4">
+      <h3 class="font-archivo-narrow text-xl md:text-2xl mb-3 md:mb-4">
         {{ $t('content.history.deleteModal.title') }}
       </h3>
-      <p class="text-black/70 mb-8">
+      <p class="text-black/70 mb-4 md:mb-8 text-sm md:text-base">
         {{ $t('content.history.deleteModal.message') }}
       </p>
-      <div class="flex justify-end gap-4">
-        <button 
+      <div class="flex justify-end gap-2 md:gap-4">
+        <button
           @click="showDeleteModal = false"
-          class="bg-gray-200 text-black px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
+          class="bg-gray-200 text-black px-3 md:px-6 py-1.5 md:py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity text-sm md:text-base"
         >
           {{ $t('content.history.deleteModal.cancel') }}
         </button>
-        <button 
+        <button
           @click="confirmDelete"
-          class="bg-red-600 text-white px-6 py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity"
+          class="bg-red-600 text-white px-3 md:px-6 py-1.5 md:py-2 rounded font-archivo-narrow hover:opacity-90 transition-opacity text-sm md:text-base"
         >
           {{ $t('content.history.deleteModal.confirm') }}
         </button>

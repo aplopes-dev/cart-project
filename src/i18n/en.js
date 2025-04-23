@@ -63,7 +63,11 @@ export default {
     project: 'Project',
     selectProjectPlaceholder: 'Select a project',
     confirm: 'CONFIRM',
-    close: 'CLOSE'
+    close: 'CLOSE',
+    noProjectsFound: 'No projects found for this user.',
+    loadingProjects: 'Loading projects...',
+    projectLoadError: 'Error loading projects. Please try again.',
+    retry: 'Retry'
   },
   cart: {
     checkout: 'CHECKOUT',

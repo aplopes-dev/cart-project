@@ -251,8 +251,8 @@ onMounted(() => {
         <!-- Form -->
         <div class="max-w-[754px] mx-auto">
           <!-- Header -->
-          <div class="mb-8">
-            <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+          <div class="mb-6 md:mb-8">
+            <h1 class="font-archivo-narrow font-semibold text-2xl sm:text-[34px] leading-8 sm:leading-[40px]">
               {{ $t('systemSettings.financial') }}
             </h1>
           </div>
@@ -263,9 +263,9 @@ onMounted(() => {
           </div>
 
           <!-- Form content -->
-          <form v-else @submit.prevent="handleSubmit" class="space-y-6">
+          <form v-else @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
             <!-- Read-only message for managers -->
-            <div v-if="isReadOnly" class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+            <div v-if="isReadOnly" class="bg-yellow-50 border-l-4 border-yellow-500 p-3 md:p-4 mb-4 md:mb-6">
               <div class="flex items-start">
                 <div class="flex-shrink-0">
                   <svg class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
@@ -282,10 +282,10 @@ onMounted(() => {
               </div>
             </div>
             <!-- Master Toggle -->
-            <div class="flex items-center justify-between p-4 bg-gray-100 rounded mb-6">
+            <div class="flex items-center justify-between p-3 md:p-4 bg-gray-100 rounded mb-4 md:mb-6">
               <div>
-                <h3 class="font-archivo-narrow font-semibold text-lg">{{ $t('financial.enableAllFields') }}</h3>
-                <p class="text-sm text-gray-600">{{ $t('financial.enableAllFieldsDescription') }}</p>
+                <h3 class="font-archivo-narrow font-semibold text-base md:text-lg">{{ $t('financial.enableAllFields') }}</h3>
+                <p class="text-xs md:text-sm text-gray-600">{{ $t('financial.enableAllFieldsDescription') }}</p>
               </div>
               <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                 <input
@@ -303,8 +303,8 @@ onMounted(() => {
             </div>
             <!-- Currency Code -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.currencyCode') }}</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.currencyCode') }}</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -326,7 +326,7 @@ onMounted(() => {
                 :disabled="!fieldToggles.currency_code || isReadOnly"
                 :readonly="isReadOnly"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.currency_code && fieldToggles.currency_code) ? 'border-red-500' : '',
                   !fieldToggles.currency_code ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
@@ -340,8 +340,8 @@ onMounted(() => {
 
             <!-- Currency Symbol -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.currencySymbol') }}</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.currencySymbol') }}</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -363,7 +363,7 @@ onMounted(() => {
                 :disabled="!fieldToggles.currency_symbol || isReadOnly"
                 :readonly="isReadOnly"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.currency_symbol && fieldToggles.currency_symbol) ? 'border-red-500' : '',
                   !fieldToggles.currency_symbol ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
@@ -376,8 +376,8 @@ onMounted(() => {
 
             <!-- Tax Rate -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.taxRate') }} (%)</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.taxRate') }} (%)</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -402,7 +402,7 @@ onMounted(() => {
                 :readonly="isReadOnly"
                 :placeholder="$t('financial.taxRatePlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   // Tax rate não é obrigatório
                   !fieldToggles.tax_rate ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
@@ -413,8 +413,8 @@ onMounted(() => {
 
             <!-- Discount Percentage -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.discountPercentage') }} (%)</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.discountPercentage') }} (%)</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -439,7 +439,7 @@ onMounted(() => {
                 :readonly="isReadOnly"
                 :placeholder="$t('financial.discountPercentagePlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   !fieldToggles.discount_percentage ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
                 ]"
@@ -448,8 +448,8 @@ onMounted(() => {
 
             <!-- Minimum Order Value -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.minOrderValue') }}</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.minOrderValue') }}</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -473,7 +473,7 @@ onMounted(() => {
                 :readonly="isReadOnly"
                 :placeholder="$t('financial.minOrderValuePlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   !fieldToggles.min_order_value ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
                 ]"
@@ -482,8 +482,8 @@ onMounted(() => {
 
             <!-- Free Shipping Threshold -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.freeShippingThreshold') }}</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.freeShippingThreshold') }}</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -507,7 +507,7 @@ onMounted(() => {
                 :readonly="isReadOnly"
                 :placeholder="$t('financial.freeShippingThresholdPlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   !fieldToggles.free_shipping_threshold ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
                 ]"
@@ -516,8 +516,8 @@ onMounted(() => {
 
             <!-- Shipping Cost -->
             <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="font-archivo text-sm">{{ $t('financial.shippingCost') }}</label>
+              <div class="flex justify-between items-center mb-1 md:mb-2">
+                <label class="font-archivo text-xs md:text-sm">{{ $t('financial.shippingCost') }}</label>
                 <label :class="['relative inline-flex items-center', isAdmin ? 'cursor-pointer' : 'cursor-not-allowed']">
                   <input
                     type="checkbox"
@@ -541,7 +541,7 @@ onMounted(() => {
                 :readonly="isReadOnly"
                 :placeholder="$t('financial.shippingCostPlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   !fieldToggles.shipping_cost ? 'bg-gray-100 text-gray-500' : '',
                   isReadOnly ? disabledFieldClass : ''
                 ]"
@@ -549,11 +549,11 @@ onMounted(() => {
             </div>
 
             <!-- Buttons -->
-            <div class="flex gap-4 mt-8">
+            <div class="flex gap-2 md:gap-4 mt-6 md:mt-8">
               <button
                 type="submit"
                 :class="[
-                  'flex-1 font-archivo font-semibold py-4 px-8 transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+                  'flex-1 font-archivo font-semibold py-2 md:py-4 px-4 md:px-8 text-sm md:text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
                   isAdmin ? 'bg-empire-yellow text-black hover:bg-yellow-400' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 ]"
                 :disabled="loading || isReadOnly"
@@ -564,7 +564,7 @@ onMounted(() => {
               <button
                 type="button"
                 @click="goBack"
-                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 px-8 hover:bg-gray-300 transition-colors"
+                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-2 md:py-4 px-4 md:px-8 text-sm md:text-base hover:bg-gray-300 transition-colors"
               >
                 {{ $t('common.cancel') }}
               </button>

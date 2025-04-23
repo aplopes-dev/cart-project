@@ -20,37 +20,37 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+        <div class="mb-6 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px]">
             {{ $t('ordersSettings.title') }}
           </h1>
         </div>
 
         <!-- Filtros -->
-        <div class="bg-[#FAFAFA] p-6 mb-6 rounded">
-          <h2 class="font-archivo-narrow font-semibold text-xl mb-4">{{ $t('ordersSettings.filters') }}</h2>
+        <div class="bg-[#FAFAFA] p-4 md:p-6 mb-4 md:mb-6 rounded">
+          <h2 class="font-archivo-narrow font-semibold text-lg md:text-xl mb-3 md:mb-4">{{ $t('ordersSettings.filters') }}</h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-4">
             <!-- Filtro por data -->
             <div class="form-group">
-              <label class="block text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.dateRange') }}</label>
-              <div class="flex space-x-2">
+              <label class="block text-xs md:text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.dateRange') }}</label>
+              <div class="flex space-x-1 md:space-x-2">
                 <input
                   type="date"
                   v-model="filters.startDate"
-                  class="form-input border border-gray-300 rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  class="form-input border border-gray-300 rounded w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-empire-yellow"
                 />
                 <input
                   type="date"
                   v-model="filters.endDate"
-                  class="form-input border border-gray-300 rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                  class="form-input border border-gray-300 rounded w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-empire-yellow"
                 />
               </div>
             </div>
 
             <!-- Filtro por produto -->
             <div class="form-group">
-              <label class="block text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.product') }}</label>
+              <label class="block text-xs md:text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.product') }}</label>
               <multiselect
                 v-model="filters.products"
                 :options="productOptions"
@@ -73,7 +73,7 @@
 
             <!-- Filtro por cidade -->
             <div class="form-group">
-              <label class="block text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.city') }}</label>
+              <label class="block text-xs md:text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.city') }}</label>
               <multiselect
                 v-model="filters.cities"
                 :options="cityOptions"
@@ -96,7 +96,7 @@
 
             <!-- Filtro por projetos (multiselect) -->
             <div class="form-group">
-              <label class="block text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.projects') }}</label>
+              <label class="block text-xs md:text-sm font-medium font-archivo mb-1">{{ $t('ordersSettings.projects') }}</label>
               <multiselect
                 v-model="filters.projects"
                 :options="projectOptions"
@@ -118,22 +118,22 @@
             </div>
           </div>
 
-          <div class="flex justify-between items-center">
-            <div class="flex space-x-2">
+          <div class="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
+            <div class="flex space-x-2 w-full md:w-auto">
               <button
                 @click="applyFilters"
-                class="bg-empire-yellow hover:bg-yellow-500 text-black font-archivo py-2 px-4 rounded flex items-center"
+                class="bg-empire-yellow hover:bg-yellow-500 text-black font-archivo py-1.5 md:py-2 px-3 md:px-4 rounded flex items-center text-xs md:text-sm flex-1 md:flex-none justify-center md:justify-start"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
                 {{ $t('ordersSettings.applyFilters') }}
               </button>
               <button
                 @click="resetFilters"
-                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-archivo py-2 px-4 rounded flex items-center"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-archivo py-1.5 md:py-2 px-3 md:px-4 rounded flex items-center text-xs md:text-sm flex-1 md:flex-none justify-center md:justify-start"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 {{ $t('ordersSettings.resetFilters') }}
@@ -141,13 +141,13 @@
             </div>
             <button
               @click="exportToExcel"
-              class="bg-empire-yellow hover:bg-yellow-500 text-black font-archivo py-2 px-4 rounded flex items-center"
+              class="bg-empire-yellow hover:bg-yellow-500 text-black font-archivo py-1.5 md:py-2 px-3 md:px-4 rounded flex items-center text-xs md:text-sm w-full md:w-auto justify-center"
               :disabled="isExporting"
             >
-              <svg v-if="!isExporting" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg v-if="!isExporting" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <svg v-else class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg v-else class="animate-spin h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -158,14 +158,14 @@
         </div>
 
         <!-- Tabela de pedidos -->
-        <div class="bg-[#FAFAFA] p-6 rounded">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-archivo-narrow font-semibold text-xl">{{ $t('ordersSettings.ordersList') }}</h2>
-            <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium font-archivo">{{ $t('ordersSettings.sortBy') }}</label>
+        <div class="bg-[#FAFAFA] p-4 md:p-6 rounded">
+          <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-3 md:mb-4 space-y-2 md:space-y-0">
+            <h2 class="font-archivo-narrow font-semibold text-lg md:text-xl">{{ $t('ordersSettings.ordersList') }}</h2>
+            <div class="flex items-center space-x-2 w-full md:w-auto">
+              <label class="text-xs md:text-sm font-medium font-archivo">{{ $t('ordersSettings.sortBy') }}</label>
               <select
                 v-model="sortOption"
-                class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                class="border border-gray-300 rounded px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-empire-yellow flex-1 md:flex-none"
                 @change="applyFilters"
               >
                 <option value="date_desc">{{ $t('ordersSettings.dateNewest') }}</option>
@@ -177,85 +177,93 @@
           </div>
 
           <!-- Loading indicator -->
-          <div v-if="isLoading" class="flex justify-center items-center py-8">
-            <div class="w-12 h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
+          <div v-if="isLoading" class="flex justify-center items-center py-6 md:py-8">
+            <div class="w-8 h-8 md:w-12 md:h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
           </div>
 
           <!-- Tabela -->
           <div v-else-if="orders.length > 0" class="overflow-x-auto">
+            <!-- Tabela com scroll horizontal para mobile -->
+            <div class="min-w-[700px] md:min-w-0">
             <table class="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.orderNumber') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.date') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.project') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.city') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.total') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.status') }}
                   </th>
-                  <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                  <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                     {{ $t('ordersSettings.actions') }}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="order in orders" :key="order.id" class="hover:bg-gray-50">
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     {{ order.order_number }}
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     {{ formatDate(order.created_at) }}
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
                     {{ order.project_name || $t('ordersSettings.noProject') }}
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     {{ order.city }}
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     {{ formatCurrency(order.total) }}
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     <span :class="getStatusClass(order.status)">
                       {{ $t(`ordersSettings.status_${order.status}`) }}
                     </span>
                   </td>
-                  <td class="py-3 px-4 border-b">
+                  <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
                     <button
                       @click="viewOrderDetails(order.id)"
                       class="text-empire-yellow hover:text-yellow-500 font-archivo"
                     >
-                      {{ $t('ordersSettings.viewDetails') }}
+                      <!-- Ícone para mobile, texto para desktop -->
+                      <span class="hidden md:inline">{{ $t('ordersSettings.viewDetails') }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
                     </button>
                   </td>
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
 
           <!-- Mensagem de nenhum pedido encontrado -->
-          <div v-else class="text-center py-8 text-gray-500 font-archivo">
+          <div v-else class="text-center py-8 text-gray-500 font-archivo text-sm">
             {{ $t('ordersSettings.noOrdersFound') }}
           </div>
 
           <!-- Paginação -->
-          <div v-if="totalPages > 1" class="flex justify-center mt-6">
+          <div v-if="totalPages > 1" class="flex justify-center mt-4 md:mt-6">
             <nav class="relative z-0 inline-flex font-archivo" aria-label="Pagination">
               <button
                 @click="changePage(currentPage - 1)"
                 :disabled="currentPage === 1"
-                class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="relative inline-flex items-center px-2 md:px-3 py-1 md:py-2 rounded-l-md border border-gray-300 bg-white text-xs md:text-sm font-medium text-gray-700 hover:bg-gray-50"
                 :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
               >
                 <span class="sr-only">{{ $t('ordersSettings.previous') }}</span>
@@ -266,7 +274,7 @@
                 <button
                   @click="changePage(page)"
                   :class="[
-                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                    'relative inline-flex items-center px-2 md:px-4 py-1 md:py-2 border text-xs md:text-sm font-medium',
                     currentPage === page
                       ? 'z-10 bg-empire-yellow border-empire-yellow text-black'
                       : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -279,7 +287,7 @@
               <button
                 @click="changePage(currentPage + 1)"
                 :disabled="currentPage === totalPages"
-                class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="relative inline-flex items-center px-2 md:px-3 py-1 md:py-2 rounded-r-md border border-gray-300 bg-white text-xs md:text-sm font-medium text-gray-700 hover:bg-gray-50"
                 :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
               >
                 <span class="sr-only">{{ $t('ordersSettings.next') }}</span>
@@ -291,75 +299,75 @@
 
         <!-- Modal de detalhes do pedido -->
         <div v-if="showOrderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('ordersSettings.orderDetails') }} #{{ selectedOrder.order_number }}</h2>
-              <button @click="showOrderModal = false" class="text-gray-500 hover:text-gray-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <div class="bg-white rounded-lg p-3 md:p-6 w-full max-w-[95%] md:max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-2 md:mb-4">
+              <h2 class="font-archivo-narrow font-semibold text-lg md:text-2xl">{{ $t('ordersSettings.orderDetails') }} #{{ selectedOrder.order_number }}</h2>
+              <button @click="showOrderModal = false" class="text-gray-500 hover:text-gray-700 p-1">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
               </button>
             </div>
 
-            <div v-if="isLoadingOrderDetails" class="flex justify-center items-center py-8">
-              <div class="w-12 h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
+            <div v-if="isLoadingOrderDetails" class="flex justify-center items-center py-6 md:py-8">
+              <div class="w-8 h-8 md:w-12 md:h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
             </div>
 
             <div v-else>
               <!-- Informações gerais do pedido -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
                 <div>
-                  <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('ordersSettings.orderInfo') }}</h3>
-                  <p class="font-archivo"><span class="font-medium">{{ $t('ordersSettings.date') }}:</span> {{ formatDate(selectedOrder.created_at) }}</p>
-                  <p class="font-archivo"><span class="font-medium">{{ $t('ordersSettings.status') }}:</span> {{ $t(`ordersSettings.status_${selectedOrder.status}`) }}</p>
-                  <p class="font-archivo"><span class="font-medium">{{ $t('ordersSettings.project') }}:</span> {{ selectedOrder.project_name || $t('ordersSettings.noProject') }}</p>
-                  <p v-if="selectedOrder.notes" class="font-archivo"><span class="font-medium">{{ $t('ordersSettings.notes') }}:</span> {{ selectedOrder.notes }}</p>
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">{{ $t('ordersSettings.orderInfo') }}</h3>
+                  <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.date') }}:</span> {{ formatDate(selectedOrder.created_at) }}</p>
+                  <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.status') }}:</span> {{ $t(`ordersSettings.status_${selectedOrder.status}`) }}</p>
+                  <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.project') }}:</span> {{ selectedOrder.project_name || $t('ordersSettings.noProject') }}</p>
+                  <p v-if="selectedOrder.notes" class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.notes') }}:</span> {{ selectedOrder.notes }}</p>
                 </div>
 
                 <div>
-                  <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('ordersSettings.shippingAddress') }}</h3>
-                  <p class="font-archivo">{{ selectedOrder.address }}, {{ selectedOrder.number }}</p>
-                  <p v-if="selectedOrder.complement" class="font-archivo">{{ selectedOrder.complement }}</p>
-                  <p class="font-archivo">{{ selectedOrder.neighborhood }}</p>
-                  <p class="font-archivo">{{ selectedOrder.city }}, {{ selectedOrder.state }}</p>
-                  <p class="font-archivo">{{ selectedOrder.postal_code }}</p>
-                  <p class="font-archivo">{{ selectedOrder.country }}</p>
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">{{ $t('ordersSettings.shippingAddress') }}</h3>
+                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.address }}, {{ selectedOrder.number }}</p>
+                  <p v-if="selectedOrder.complement" class="font-archivo text-xs md:text-sm">{{ selectedOrder.complement }}</p>
+                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.neighborhood }}</p>
+                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.city }}, {{ selectedOrder.state }}</p>
+                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.postal_code }}</p>
+                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.country }}</p>
                 </div>
               </div>
 
               <!-- Itens do pedido -->
-              <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('ordersSettings.orderItems') }}</h3>
+              <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">{{ $t('ordersSettings.orderItems') }}</h3>
               <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200">
                   <thead>
                     <tr>
-                      <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                      <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                         {{ $t('ordersSettings.product') }}
                       </th>
-                      <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                      <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                         {{ $t('ordersSettings.quantity') }}
                       </th>
-                      <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                      <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                         {{ $t('ordersSettings.unitPrice') }}
                       </th>
-                      <th class="py-3 px-4 border-b text-left font-archivo font-semibold text-sm">
+                      <th class="py-2 md:py-3 px-2 md:px-4 border-b text-left font-archivo font-semibold text-xs md:text-sm">
                         {{ $t('ordersSettings.totalPrice') }}
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in selectedOrder.items" :key="index" class="hover:bg-gray-50">
-                      <td class="py-3 px-4 border-b">
+                      <td class="py-2 md:py-3 px-2 md:px-4 border-b">
                         <div class="flex items-center">
                           <img
                             v-if="item.image"
                             :src="item.image"
-                            class="h-10 w-10 object-cover mr-2"
+                            class="h-8 w-8 md:h-10 md:w-10 object-cover mr-1 md:mr-2"
                             alt="Product image"
                           />
                           <div>
-                            <div class="font-archivo">{{ item.product_name }}</div>
-                            <div v-if="item.color || item.size || item.weight" class="text-xs text-gray-500 font-archivo">
+                            <div class="font-archivo text-xs md:text-sm">{{ item.product_name }}</div>
+                            <div v-if="item.color || item.size || item.weight" class="text-[10px] md:text-xs text-gray-500 font-archivo">
                               <span v-if="item.color">{{ $t('ordersSettings.color') }}: {{ item.color }}</span>
                               <span v-if="item.size" class="ml-1">{{ $t('ordersSettings.size') }}: {{ item.size }}</span>
                               <span v-if="item.weight" class="ml-1">{{ $t('ordersSettings.weight') }}: {{ item.weight }}</span>
@@ -367,13 +375,13 @@
                           </div>
                         </div>
                       </td>
-                      <td class="py-3 px-4 border-b font-archivo">
+                      <td class="py-2 md:py-3 px-2 md:px-4 border-b font-archivo text-xs md:text-sm">
                         {{ item.quantity }}
                       </td>
-                      <td class="py-3 px-4 border-b font-archivo">
+                      <td class="py-2 md:py-3 px-2 md:px-4 border-b font-archivo text-xs md:text-sm">
                         {{ formatCurrency(item.unit_price) }}
                       </td>
-                      <td class="py-3 px-4 border-b font-archivo">
+                      <td class="py-2 md:py-3 px-2 md:px-4 border-b font-archivo text-xs md:text-sm">
                         {{ formatCurrency(item.total_price) }}
                       </td>
                     </tr>
@@ -382,21 +390,21 @@
               </div>
 
               <!-- Resumo do pedido -->
-              <div class="mt-4 flex justify-end">
-                <div class="w-64">
-                  <div class="flex justify-between py-1 font-archivo">
+              <div class="mt-3 md:mt-4 flex justify-end">
+                <div class="w-48 md:w-64">
+                  <div class="flex justify-between py-1 font-archivo text-xs md:text-sm">
                     <span class="font-medium">{{ $t('ordersSettings.subtotal') }}:</span>
                     <span>{{ formatCurrency(calculateSubtotal()) }}</span>
                   </div>
-                  <div v-if="selectedOrder.shipping_cost !== null" class="flex justify-between py-1 font-archivo">
+                  <div v-if="selectedOrder.shipping_cost !== null" class="flex justify-between py-1 font-archivo text-xs md:text-sm">
                     <span class="font-medium">{{ $t('ordersSettings.shippingCost') }}:</span>
                     <span>{{ formatCurrency(selectedOrder.shipping_cost) }}</span>
                   </div>
-                  <div v-if="selectedOrder.tax_amount !== null" class="flex justify-between py-1 font-archivo">
+                  <div v-if="selectedOrder.tax_amount !== null" class="flex justify-between py-1 font-archivo text-xs md:text-sm">
                     <span class="font-medium">{{ $t('ordersSettings.taxAmount') }}:</span>
                     <span>{{ formatCurrency(selectedOrder.tax_amount) }}</span>
                   </div>
-                  <div class="flex justify-between py-1 font-bold border-t border-gray-200 mt-1 pt-1 font-archivo">
+                  <div class="flex justify-between py-1 font-bold border-t border-gray-200 mt-1 pt-1 font-archivo text-xs md:text-sm">
                     <span>{{ $t('ordersSettings.total') }}:</span>
                     <span>{{ formatCurrency(selectedOrder.total) }}</span>
                   </div>
@@ -696,7 +704,7 @@ export default {
         cancelled: 'bg-red-100 text-red-800'
       }
 
-      return `px-2 py-1 text-xs rounded-full ${statusClasses[status] || ''}`
+      return `px-1 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full ${statusClasses[status] || ''}`
     }
 
     // Calcular subtotal

@@ -3,8 +3,8 @@
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Breadcrumb -->
-        <div class="mb-8">
-          <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
+        <div class="mb-4 md:mb-8">
+          <nav class="flex items-center gap-1 md:gap-2 font-archivo text-xs md:text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
             <router-link to="/my-account" class="hover:text-black">
@@ -16,22 +16,22 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+        <div class="mb-4 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px]">
             {{ $t('addresses.title') }}
           </h1>
         </div>
 
         <!-- Addresses List -->
-        <div class="space-y-6">
-          <div v-for="(address, index) in addresses" :key="index" class="bg-[#FAFAFA] p-6 rounded-lg">
-            <div class="flex justify-between items-start mb-6">
-              <div class="flex items-center gap-3">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="space-y-4 md:space-y-6">
+          <div v-for="(address, index) in addresses" :key="index" class="bg-[#FAFAFA] p-4 md:p-6 rounded-lg">
+            <div class="flex justify-between items-start mb-3 md:mb-6">
+              <div class="flex items-center gap-2 md:gap-3">
+                <svg class="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 20s-7-5.5-7-10a7 7 0 0 1 14 0c0 4.5-7 10-7 10z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
-                <h2 class="font-archivo-narrow font-semibold text-2xl">
+                <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">
                   {{ $t('addresses.address') }} {{ index + 1 }}
                 </h2>
               </div>
@@ -39,136 +39,136 @@
                 @click="removeAddress(index)"
                 class="text-red-500 hover:text-red-700"
               >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               <!-- Street -->
               <div class="md:col-span-2">
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.street') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.street') }}</label>
+                <input
                   type="text"
                   v-model="address.street"
                   :placeholder="$t('addresses.streetPlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.street ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.street" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.street" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- Number -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.number') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.number') }}</label>
+                <input
                   type="text"
                   v-model="address.number"
                   :placeholder="$t('addresses.numberPlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.number ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.number" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.number" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- Complement -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.complement') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.complement') }}</label>
+                <input
                   type="text"
                   v-model="address.complement"
                   :placeholder="$t('addresses.complementPlaceholder')"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow"
+                  class="w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow h-9 md:h-auto"
                 />
               </div>
 
               <!-- Neighborhood -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.neighborhood') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.neighborhood') }}</label>
+                <input
                   type="text"
                   v-model="address.neighborhood"
                   :placeholder="$t('addresses.neighborhoodPlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.neighborhood ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.neighborhood" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.neighborhood" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- City -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.city') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.city') }}</label>
+                <input
                   type="text"
                   v-model="address.city"
                   :placeholder="$t('addresses.cityPlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.city ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.city" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.city" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- State -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.state') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.state') }}</label>
+                <input
                   type="text"
                   v-model="address.state"
                   :placeholder="$t('addresses.statePlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.state ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.state" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.state" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- Postal Code -->
               <div>
-                <label class="block font-archivo text-sm mb-2">{{ $t('addresses.postalCode') }}</label>
-                <input 
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.postalCode') }}</label>
+                <input
                   type="text"
                   v-model="address.postalCode"
                   :placeholder="$t('addresses.postalCodePlaceholder')"
                   :class="[
-                    'w-full px-4 py-2 border rounded-lg focus:outline-none',
+                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
                     showErrors && !address.postalCode ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.postalCode" class="text-red-500 text-sm mt-1">
+                <span v-if="showErrors && !address.postalCode" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
               <!-- Default Address Checkbox -->
               <div class="md:col-span-2">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input 
+                <label class="flex items-center gap-1 md:gap-2 cursor-pointer">
+                  <input
                     type="checkbox"
                     :checked="address.isDefault"
                     @change="handleDefaultChange(index)"
                     class="form-checkbox text-empire-yellow rounded"
                   />
-                  <span class="font-archivo text-sm">{{ $t('addresses.setAsDefault') }}</span>
+                  <span class="font-archivo text-xs md:text-sm">{{ $t('addresses.setAsDefault') }}</span>
                 </label>
               </div>
             </div>
@@ -177,16 +177,16 @@
           <!-- Add New Address Button -->
           <button
             @click="addAddress"
-            class="w-full bg-[#FAFAFA] p-4 rounded-lg border-2 border-dashed border-gray-300 text-empire-yellow hover:bg-gray-50 font-archivo"
+            class="w-full bg-[#FAFAFA] p-3 md:p-4 rounded-lg border-2 border-dashed border-gray-300 text-empire-yellow hover:bg-gray-50 font-archivo text-sm md:text-base"
           >
             + {{ $t('addresses.addNew') }}
           </button>
 
           <!-- Save Button -->
-          <div class="flex justify-end mt-8">
+          <div class="flex justify-end mt-4 md:mt-8">
             <button
               @click="saveAddresses"
-              class="bg-empire-yellow text-black px-8 py-3 rounded-lg font-archivo hover:bg-empire-yellow/80"
+              class="bg-empire-yellow text-black px-4 md:px-8 py-2 md:py-3 rounded-lg font-archivo hover:bg-empire-yellow/80 text-sm md:text-base"
               :disabled="saving"
             >
               {{ saving ? $t('profile.saving') : $t('profile.save') }}
@@ -198,65 +198,65 @@
   </div>
 
   <!-- Modal de Confirmação de Exclusão -->
-  <div 
-    v-if="showDeleteModal" 
+  <div
+    v-if="showDeleteModal"
     class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
   >
     <div class="flex items-center justify-center h-full translate-y-[-10%]">
-      <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+      <div class="bg-white rounded-xl p-4 md:p-8 max-w-md w-full mx-4 shadow-2xl">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-6">
-          <div class="flex items-center gap-4">
-            <div class="bg-red-100 rounded-full p-3">
-              <svg 
-                class="w-6 h-6 text-red-600" 
-                fill="none" 
-                stroke="currentColor" 
+        <div class="flex items-start justify-between mb-3 md:mb-6">
+          <div class="flex items-center gap-2 md:gap-4">
+            <div class="bg-red-100 rounded-full p-2 md:p-3">
+              <svg
+                class="w-5 h-5 md:w-6 md:h-6 text-red-600"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round" 
-                  stroke-width="2" 
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                 />
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-archivo-narrow font-semibold text-gray-900">
+              <h3 class="text-lg md:text-xl font-archivo-narrow font-semibold text-gray-900">
                 {{ $t('addresses.deleteModal.title') }}
               </h3>
-              <p class="mt-2 text-sm text-gray-500">
+              <p class="mt-1 md:mt-2 text-xs md:text-sm text-gray-500">
                 {{ $t('addresses.deleteModal.message') }}
               </p>
             </div>
           </div>
-          <button 
+          <button
             @click="showDeleteModal = false"
             class="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         <!-- Ações -->
-        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
+        <div class="flex justify-end gap-2 md:gap-3 mt-4 md:mt-8 pt-3 md:pt-6 border-t border-gray-100">
           <button
             @click="showDeleteModal = false"
-            class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"
+            class="px-3 md:px-5 py-1.5 md:py-2.5 text-xs md:text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center gap-1 md:gap-2"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
             {{ $t('addresses.deleteModal.cancel') }}
           </button>
           <button
             @click="confirmDelete"
-            class="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center gap-2"
+            class="px-3 md:px-5 py-1.5 md:py-2.5 text-xs md:text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center gap-1 md:gap-2"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
             {{ $t('addresses.deleteModal.confirm') }}
@@ -337,7 +337,7 @@ const loadAddresses = async () => {
 // Salvar endereços
 const saveAddresses = async () => {
   showErrors.value = true  // Só mostra erros quando tentar salvar
-  
+
   if (!validateAddresses()) {
     toast.error(t('addresses.fillAllRequired'))
     return
@@ -346,7 +346,7 @@ const saveAddresses = async () => {
   saving.value = true
   try {
     const user = JSON.parse(localStorage.getItem('user') || '{}')
-    
+
     if (!user.id) {
       throw new Error('User ID not found')
     }
@@ -393,7 +393,7 @@ const confirmDelete = async () => {
     }
 
     const addressToRemove = addresses.value[addressToDelete.value];
-    
+
     // Verificar se o endereço tem ID
     if (!addressToRemove.id) {
       // Se não tiver ID, apenas remove do array local
@@ -403,11 +403,11 @@ const confirmDelete = async () => {
       await api.delete(`/users/${user.id}/addresses/${addressToRemove.id}`);
       addresses.value.splice(addressToDelete.value, 1);
     }
-    
+
     if (addresses.value.length === 0) {
       addAddress();
     }
-    
+
     toast.success(t('addresses.deleteSuccess'));
   } catch (error) {
     console.error('Error deleting address:', error);

@@ -22,8 +22,8 @@
         <!-- Form -->
         <div class="max-w-[754px] mx-auto">
           <!-- Header -->
-          <div class="mb-8">
-            <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+          <div class="mb-6 md:mb-8">
+            <h1 class="font-archivo-narrow font-semibold text-2xl sm:text-[34px] leading-8 sm:leading-[40px]">
               {{ $t('systemSettings.company') }}
             </h1>
           </div>
@@ -34,16 +34,16 @@
           </div>
 
           <!-- Form content -->
-          <form v-else @submit.prevent="handleSubmit" class="space-y-6">
+          <form v-else @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
             <!-- Nome da Empresa -->
             <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('company.name') }}</label>
-              <input 
+              <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.name') }}</label>
+              <input
                 type="text"
                 v-model="formData.name"
                 :placeholder="$t('company.namePlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.name) ? 'border-red-500' : ''
                 ]"
               >
@@ -54,13 +54,13 @@
 
             <!-- Email -->
             <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('company.email') }}</label>
-              <input 
+              <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.email') }}</label>
+              <input
                 type="email"
                 v-model="formData.email"
                 :placeholder="$t('company.emailPlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.email) ? 'border-red-500' : ''
                 ]"
               >
@@ -71,13 +71,13 @@
 
             <!-- Telefone -->
             <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('company.phone') }}</label>
-              <input 
+              <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.phone') }}</label>
+              <input
                 type="tel"
                 v-model="formData.phone"
                 :placeholder="$t('company.phonePlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.phone) ? 'border-red-500' : ''
                 ]"
               >
@@ -88,13 +88,13 @@
 
             <!-- Endereço -->
             <div>
-              <label class="block font-archivo text-sm mb-2">{{ $t('company.address') }}</label>
-              <input 
+              <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.address') }}</label>
+              <input
                 type="text"
                 v-model="formData.address"
                 :placeholder="$t('company.addressPlaceholder')"
                 :class="[
-                  'w-full p-4 border border-gray-300',
+                  'w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300',
                   (showErrors && !formData.address) ? 'border-red-500' : ''
                 ]"
               >
@@ -104,15 +104,15 @@
             </div>
 
             <!-- Seção de Contatos -->
-            <div class="mt-6">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="font-archivo text-lg">{{ $t('company.contacts.sectionTitle') }}</h3>
+            <div class="mt-4 md:mt-6">
+              <div class="flex justify-between items-center mb-3 md:mb-4">
+                <h3 class="font-archivo text-base md:text-lg">{{ $t('company.contacts.sectionTitle') }}</h3>
                 <button
                   type="button"
                   @click="openContactsModal"
-                  class="px-4 py-2 bg-empire-yellow text-black rounded-md hover:bg-empire-yellow/90 transition-colors flex items-center font-archivo"
+                  class="px-3 md:px-4 py-1 md:py-2 bg-empire-yellow text-black rounded-md hover:bg-empire-yellow/90 transition-colors flex items-center font-archivo text-xs md:text-sm"
                 >
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   {{ $t('company.contacts.manage') }}
@@ -120,20 +120,20 @@
               </div>
 
               <!-- Lista de contatos -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div 
-                  v-for="(contact, index) in contacts" 
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div
+                  v-for="(contact, index) in contacts"
                   :key="index"
-                  class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 relative group overflow-hidden"
+                  class="bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 relative group overflow-hidden"
                 >
                   <!-- Barra superior decorativa -->
                   <div class="h-2 bg-empire-yellow rounded-t-xl"></div>
 
                   <!-- Conteúdo -->
-                  <div class="p-6">
+                  <div class="p-3 md:p-6">
                     <!-- Ações -->
                     <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/90 rounded-lg p-1">
-                      <button 
+                      <button
                         type="button"
                         @click="editContact(index)"
                         class="p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition-colors"
@@ -143,7 +143,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                       </button>
-                      <button 
+                      <button
                         type="button"
                         @click="deleteContact(index)"
                         class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
@@ -159,10 +159,10 @@
                     <div class="space-y-4">
                       <!-- Nome e Departamento -->
                       <div>
-                        <h3 class="font-archivo-narrow text-xl font-semibold text-gray-900">
+                        <h3 class="font-archivo-narrow text-lg md:text-xl font-semibold text-gray-900">
                           {{ contact.name }}
                         </h3>
-                        <span class="inline-block mt-1 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                        <span class="inline-block mt-1 px-2 md:px-3 py-0.5 md:py-1 bg-gray-100 text-gray-700 text-xs md:text-sm rounded-full">
                           {{ contact.department }}
                         </span>
                       </div>
@@ -174,8 +174,8 @@
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                           </svg>
-                          <a 
-                            :href="`mailto:${contact.email}`" 
+                          <a
+                            :href="`mailto:${contact.email}`"
                             class="text-gray-600 hover:text-empire-yellow transition-colors"
                           >
                             {{ contact.email }}
@@ -187,8 +187,8 @@
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                           </svg>
-                          <a 
-                            :href="`tel:${contact.phone}`" 
+                          <a
+                            :href="`tel:${contact.phone}`"
                             class="text-gray-600 hover:text-empire-yellow transition-colors"
                           >
                             {{ contact.phone }}
@@ -211,10 +211,10 @@
             </div>
 
             <!-- Botões -->
-            <div class="flex gap-4 mt-8">
+            <div class="flex gap-2 md:gap-4 mt-6 md:mt-8">
               <button
                 type="submit"
-                class="flex-1 bg-empire-yellow text-black font-archivo font-semibold py-4 px-8 hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 bg-empire-yellow text-black font-archivo font-semibold py-2 md:py-4 px-4 md:px-8 text-sm md:text-base hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 :disabled="loading"
               >
                 {{ loading ? $t('company.saving') : $t('company.save') }}
@@ -222,7 +222,7 @@
               <button
                 type="button"
                 @click="goBack"
-                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 px-8 hover:bg-gray-300 transition-colors"
+                class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-2 md:py-4 px-4 md:px-8 text-sm md:text-base hover:bg-gray-300 transition-colors"
               >
                 {{ $t('common.cancel') }}
               </button>
@@ -339,7 +339,7 @@ const handleSubmit = async () => {
         address: contact.address
       }))
     }
-    
+
     await api.put('/settings/company', dataToSubmit)
     toast.success(t('company.updateSuccess'))
     eventBus.emit('company-data-updated')

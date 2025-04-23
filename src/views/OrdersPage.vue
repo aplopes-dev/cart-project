@@ -3,8 +3,8 @@
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Breadcrumb -->
-        <div class="mb-8">
-          <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
+        <div class="mb-4 md:mb-8">
+          <nav class="flex items-center gap-1 md:gap-2 font-archivo text-xs md:text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
             <router-link to="/my-account" class="hover:text-black">
@@ -16,70 +16,70 @@
         </div>
 
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px]">
+        <div class="mb-4 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px]">
             {{ $t('orders.title') }}
           </h1>
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading" class="text-center py-8">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-yellow mx-auto"></div>
+        <div v-if="loading" class="text-center py-4 md:py-8">
+          <div class="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-empire-yellow mx-auto"></div>
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="text-center py-8 text-red-600">
+        <div v-else-if="error" class="text-center py-4 md:py-8 text-red-600 text-sm md:text-base">
           {{ error }}
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="!orders.length" class="text-center py-8">
-          <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div v-else-if="!orders.length" class="text-center py-4 md:py-8">
+          <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 17h6M9 13h6M3 8h18v13H3V8zM3 8l2-4h14l2 4"/>
           </svg>
-          <p class="text-xl font-archivo mb-4">{{ $t('orders.noOrders') }}</p>
+          <p class="text-lg md:text-xl font-archivo mb-3 md:mb-4">{{ $t('orders.noOrders') }}</p>
           <router-link
             to="/categories"
-            class="inline-block bg-empire-yellow text-black font-archivo font-semibold py-3 px-6 rounded hover:bg-yellow-400 transition-colors"
+            class="inline-block bg-empire-yellow text-black font-archivo font-semibold py-2 md:py-3 px-4 md:px-6 text-sm md:text-base rounded hover:bg-yellow-400 transition-colors"
           >
             {{ $t('orders.startShopping') }}
           </router-link>
         </div>
 
         <!-- Orders List -->
-        <div v-else class="space-y-6">
-          <div v-for="order in orders" :key="order.id" class="border-2 border-black/10 rounded-lg p-6">
+        <div v-else class="space-y-4 md:space-y-6">
+          <div v-for="order in orders" :key="order.id" class="border-2 border-black/10 rounded-lg p-3 md:p-6">
             <div
-              class="flex flex-wrap justify-between items-start gap-4 mb-4 cursor-pointer"
+              class="flex flex-wrap justify-between items-start gap-2 md:gap-4 mb-2 md:mb-4 cursor-pointer"
               @click="toggleOrder(order.id)"
             >
               <div>
-                <h3 class="font-archivo-narrow font-semibold text-xl mb-1">
+                <h3 class="font-archivo-narrow font-semibold text-base md:text-xl mb-0.5 md:mb-1">
                   {{ $t('orders.orderNumber', { number: order.order_number }) }}
                 </h3>
-                <p class="text-black/60 font-archivo">
+                <p class="text-black/60 font-archivo text-xs md:text-sm">
                   {{ formatDate(order.created_at) }}
                 </p>
               </div>
               <div class="text-right">
-                <p v-if="!isOrderExpanded(order.id) && !isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-xl">
+                <p v-if="!isOrderExpanded(order.id) && !isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-base md:text-xl">
                   {{ formatPrice(calculateOrderTotal(order)) }}
                 </p>
-                <p v-if="!isOrderExpanded(order.id) && isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-xl text-gray-500">
+                <p v-if="!isOrderExpanded(order.id) && isOrderWithoutPrices(order)" class="font-archivo-narrow font-semibold text-base md:text-xl text-gray-500">
                   {{ $t('orders.noPriceOrder') }}
                 </p>
-                <span :class="getStatusClass(order.status.toLowerCase())" class="inline-block px-3 py-1 rounded-full text-sm">
-                  {{ order.status }}
+                <span :class="getStatusClass(order.status.toLowerCase())" class="inline-block px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm">
+                  {{ $t(`orders.status.${order.status.toLowerCase()}`) }}
                 </span>
               </div>
             </div>
 
             <!-- Order Items -->
             <div v-if="isOrderExpanded(order.id)">
-              <div class="mt-4 border-t border-black/10 pt-4">
-                <div v-for="item in order.items" :key="item.product_id" class="flex items-start sm:items-center gap-4 w-full">
+              <div class="mt-3 md:mt-4 border-t border-black/10 pt-3 md:pt-4">
+                <div v-for="item in order.items" :key="item.product_id" class="flex items-start sm:items-center gap-2 md:gap-4 w-full mb-3 md:mb-4 last:mb-0">
                   <!-- Container principal do produto -->
-                  <div class="flex items-start gap-2 flex-1 min-w-0">
+                  <div class="flex items-start gap-1 md:gap-2 flex-1 min-w-0">
                     <!-- Imagem do produto -->
                     <div class="shrink-0">
                       <router-link
@@ -91,7 +91,7 @@
                           :src="imageService.getProductImageUrl(item.image)"
                           :alt="item.product_name"
                           @error="handleImageError"
-                          class="w-16 h-16 object-cover rounded"
+                          class="w-12 h-12 md:w-16 md:h-16 object-cover rounded"
                         />
                       </router-link>
                       <img
@@ -99,53 +99,75 @@
                         :src="imageService.getProductImageUrl(item.image)"
                         :alt="item.product_name"
                         @error="handleImageError"
-                        class="w-16 h-16 object-cover rounded shrink-0"
+                        class="w-12 h-12 md:w-16 md:h-16 object-cover rounded shrink-0"
                       />
                     </div>
 
                     <!-- Container do nome e quantidade -->
                     <div class="flex flex-col sm:flex-row items-start gap-2 min-w-0 flex-1">
-                      <!-- Nome do produto - centralizado verticalmente com a imagem -->
-                      <div class="min-w-0 sm:w-[250px] flex flex-col justify-center h-16">  <!-- h-16 para igualar a altura da imagem -->
-                        <router-link
-                          v-if="item.product_id"
-                          :to="`/product/${item.product_id}`"
-                          class="hover:text-empire-yellow transition-colors text-base sm:text-lg block truncate"
-                        >
-                          {{ item.product_name }}
-                        </router-link>
-                        <span v-else class="text-base sm:text-lg block truncate">{{ item.product_name }}</span>
+                      <!-- Nome do produto e quantidade (na mesma linha em mobile) -->
+                      <div class="min-w-0 sm:w-[250px] flex flex-col justify-center h-12 md:h-16">  <!-- h-12/h-16 para igualar a altura da imagem -->
+                        <div class="flex items-center justify-between">
+                          <!-- Nome do produto -->
+                          <div class="min-w-0 flex-1 pr-2">
+                            <router-link
+                              v-if="item.product_id"
+                              :to="`/product/${item.product_id}`"
+                              class="hover:text-empire-yellow transition-colors text-sm md:text-base block truncate"
+                            >
+                              {{ item.product_name }}
+                            </router-link>
+                            <span v-else class="text-sm md:text-base block truncate">{{ item.product_name }}</span>
+                          </div>
+
+                          <!-- Quantidade em mobile (visível apenas em mobile) -->
+                          <div class="sm:hidden flex items-center gap-1 font-archivo text-[10px] whitespace-nowrap">
+                            <div class="flex items-center justify-center bg-black/5 px-1.5 py-0.5 rounded">
+                              <!-- Quando tem preço, mostra quantidade, x, preço -->
+                              <template v-if="!isOrderWithoutPrices(order)">
+                                <span class="font-semibold">{{ item.quantity }}</span>
+                                <span class="mx-1 text-black/60">x</span>
+                                <span>{{ formatPrice(item.unit_price) }}</span>
+                              </template>
+                              <!-- Quando não tem preço, mostra quantidade, x -->
+                              <template v-else>
+                                <span class="font-semibold">{{ item.quantity }}</span>
+                                <span class="mx-1 text-black/60">x</span>
+                              </template>
+                            </div>
+                          </div>
+                        </div>
 
                         <!-- Características do produto -->
-                        <div v-if="item.color || item.size || item.weight" class="flex flex-wrap gap-x-3 mt-1">
-                          <span v-if="item.color" class="text-xs text-gray-600 flex items-center gap-1">
+                        <div v-if="item.color || item.size || item.weight" class="flex flex-wrap gap-x-2 md:gap-x-3 mt-0.5 md:mt-1">
+                          <span v-if="item.color" class="text-[10px] md:text-xs text-gray-600 flex items-center gap-0.5 md:gap-1">
                             <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                             <span class="flex items-center gap-1">
                               <ColorCircle :color="item.color" :size="12" />
                             </span>
                           </span>
-                          <span v-if="item.size" class="text-xs text-gray-600">
+                          <span v-if="item.size" class="text-[10px] md:text-xs text-gray-600">
                             <span class="font-semibold">{{ $t('productDetails.selectSize') }}:</span> {{ item.size }}
                           </span>
-                          <span v-if="item.weight" class="text-xs text-gray-600">
+                          <span v-if="item.weight" class="text-[10px] md:text-xs text-gray-600">
                             <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
                           </span>
                         </div>
                       </div>
 
-                      <!-- Quantidade e preço unitário -->
-                      <div class="flex items-center gap-1 font-archivo text-xs sm:text-base whitespace-nowrap sm:mx-auto sm:pt-4">
-                        <div class="flex items-center justify-center bg-black/5 px-2 sm:px-3 py-1 rounded">
+                      <!-- Quantidade e preço unitário (visível apenas em desktop) -->
+                      <div class="hidden sm:flex items-center gap-1 font-archivo text-xs whitespace-nowrap mx-auto pt-2 md:pt-4">
+                        <div class="flex items-center justify-center bg-black/5 px-2 md:px-3 py-0.5 md:py-1 rounded">
                           <!-- Quando tem preço, mostra quantidade, x, preço -->
                           <template v-if="!isOrderWithoutPrices(order)">
                             <span class="font-semibold">{{ item.quantity }}</span>
-                            <span class="mx-1 sm:mx-2 text-black/60">x</span>
-                            <span class="sm:text-sm">{{ formatPrice(item.unit_price) }}</span>
+                            <span class="mx-2 text-black/60">x</span>
+                            <span class="text-sm">{{ formatPrice(item.unit_price) }}</span>
                           </template>
                           <!-- Quando não tem preço, mostra quantidade, x -->
                           <template v-else>
                             <span class="font-semibold">{{ item.quantity }}</span>
-                            <span class="mx-1 sm:mx-2 text-black/60">x</span>
+                            <span class="mx-2 text-black/60">x</span>
                           </template>
                         </div>
                       </div>
@@ -153,8 +175,8 @@
                   </div>
 
                   <!-- Preço total com largura fixa (exibido apenas se o pedido tiver preços) -->
-                  <div v-if="!isOrderWithoutPrices(order)" class="w-[80px] sm:w-[120px] flex-shrink-0 text-right sm:self-center">
-                    <p class="font-archivo-narrow font-semibold text-sm sm:text-xl">
+                  <div v-if="!isOrderWithoutPrices(order)" class="w-[60px] sm:w-[80px] md:w-[120px] flex-shrink-0 text-right sm:self-center">
+                    <p class="font-archivo-narrow font-semibold text-xs sm:text-sm md:text-xl">
                       {{ formatPrice(item.total_price) }}
                     </p>
                   </div>
@@ -162,15 +184,15 @@
               </div>
 
               <!-- Sumário do pedido -->
-              <div class="border-t border-black/10 mt-6 pt-4">
+              <div class="border-t border-black/10 mt-4 md:mt-6 pt-3 md:pt-4">
                 <div class="flex flex-wrap justify-between">
                   <!-- Informações do pedido: Notas e Endereço -->
-                  <div class="w-full md:w-3/4 mb-6 md:mb-0 pr-0 md:pr-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="w-full md:w-3/4 mb-4 md:mb-0 pr-0 md:pr-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                       <!-- Notes Section -->
                       <div>
-                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.notes') }}</h4>
-                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                        <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.notes') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[80px] md:max-h-[100px] overflow-y-auto">
                           <p v-if="order.notes" class="font-archivo text-xs whitespace-pre-wrap notes-text">
                             {{ order.notes }}
                           </p>
@@ -182,8 +204,8 @@
 
                       <!-- Shipping Address Section -->
                       <div>
-                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.shippingAddress') }}</h4>
-                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                        <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.shippingAddress') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[80px] md:max-h-[100px] overflow-y-auto">
                           <div v-if="order.address" class="flex items-start gap-2">
                             <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -211,8 +233,8 @@
 
                       <!-- Project Section -->
                       <div>
-                        <h4 class="font-archivo-narrow font-semibold text-base mb-2">{{ $t('orders.project') }}</h4>
-                        <div class="bg-black/5 rounded-lg p-3 max-h-[100px] overflow-y-auto">
+                        <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.project') }}</h4>
+                        <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[80px] md:max-h-[100px] overflow-y-auto">
                           <div v-if="order.project_name" class="flex items-start gap-2">
                             <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -232,23 +254,23 @@
                   <!-- Totals Section (exibido apenas se o pedido tiver preços) -->
                   <div v-if="!isOrderWithoutPrices(order)" class="w-full md:w-1/4">
                     <div class="flex flex-col gap-2 items-end">
-                      <div class="flex justify-end gap-8 w-full">
-                        <span class="font-archivo text-black/70">{{ $t('orders.shipping') }}</span>
-                        <span class="font-archivo w-[120px] text-right">
+                      <div class="flex justify-end gap-4 md:gap-8 w-full">
+                        <span class="font-archivo text-black/70 text-xs md:text-sm">{{ $t('orders.shipping') }}</span>
+                        <span class="font-archivo w-[80px] md:w-[120px] text-right text-xs md:text-sm">
                           {{ formatPrice(order.shipping_cost) }}
                         </span>
                       </div>
 
-                      <div class="flex justify-end gap-8 w-full">
-                        <span class="font-archivo text-black/70">{{ $t('orders.taxes') }}</span>
-                        <span class="font-archivo w-[120px] text-right">
+                      <div class="flex justify-end gap-4 md:gap-8 w-full">
+                        <span class="font-archivo text-black/70 text-xs md:text-sm">{{ $t('orders.taxes') }}</span>
+                        <span class="font-archivo w-[80px] md:w-[120px] text-right text-xs md:text-sm">
                           {{ formatPrice(order.tax_amount) }}
                         </span>
                       </div>
 
-                      <div class="flex justify-end gap-8 w-full pt-2 border-t border-black/10">
-                        <span class="font-archivo-narrow font-semibold text-xl">{{ $t('orders.total') }}</span>
-                        <span class="font-archivo-narrow font-semibold text-xl w-[120px] text-right">
+                      <div class="flex justify-end gap-4 md:gap-8 w-full pt-2 border-t border-black/10">
+                        <span class="font-archivo-narrow font-semibold text-base md:text-xl">{{ $t('orders.total') }}</span>
+                        <span class="font-archivo-narrow font-semibold text-base md:text-xl w-[80px] md:w-[120px] text-right">
                           {{ formatPrice(calculateOrderTotal(order)) }}
                         </span>
                       </div>
@@ -258,8 +280,8 @@
                   <!-- Mensagem para pedidos sem preços -->
                   <div v-if="isOrderWithoutPrices(order)" class="w-full md:w-1/4">
                     <div class="flex flex-col gap-2 items-end">
-                      <div class="flex justify-end gap-8 w-full pt-2">
-                        <span class="font-archivo-narrow font-semibold text-xl text-gray-500">{{ $t('orders.noPriceOrder') }}</span>
+                      <div class="flex justify-end gap-4 md:gap-8 w-full pt-2">
+                        <span class="font-archivo-narrow font-semibold text-base md:text-xl text-gray-500">{{ $t('orders.noPriceOrder') }}</span>
                       </div>
                     </div>
                   </div>
@@ -270,18 +292,18 @@
         </div>
 
         <!-- Paginação -->
-        <div class="flex flex-col items-center mt-12 mb-24 w-full gap-4">
+        <div class="flex flex-col items-center mt-8 md:mt-12 mb-12 md:mb-24 w-full gap-3 md:gap-4">
           <div class="flex justify-center items-center gap-2 md:gap-4 w-full">
             <!-- Botão Previous -->
             <button
-              class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+              class="flex items-center justify-center h-8 md:h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[70px] md:min-w-[120px]"
               :disabled="currentPage === 1"
               @click="changePage(currentPage - 1)"
             >
               <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12.5 15L7.5 10L12.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.previous') }}</span>
+              <span class="font-inter font-medium text-xs md:text-base">{{ $t('categoryPage.previous') }}</span>
             </button>
 
             <!-- Números das Páginas -->
@@ -289,7 +311,7 @@
               <button
                 v-for="page in displayedPages"
                 :key="page"
-                class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-sm md:text-base"
+                class="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center rounded-lg text-xs md:text-base"
                 :class="page === currentPage ? 'bg-black text-white' : 'bg-[#F9F9FB] text-black'"
                 @click="changePage(page)"
               >
@@ -299,11 +321,11 @@
 
             <!-- Botão Next -->
             <button
-              class="flex items-center justify-center h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[90px] md:min-w-[120px]"
+              class="flex items-center justify-center h-8 md:h-10 px-2 md:px-4 gap-1 bg-[#F9F9FB] rounded-lg min-w-[70px] md:min-w-[120px]"
               :disabled="currentPage === totalPages"
               @click="changePage(currentPage + 1)"
             >
-              <span class="font-inter font-medium text-sm md:text-base">{{ $t('categoryPage.next') }}</span>
+              <span class="font-inter font-medium text-xs md:text-base">{{ $t('categoryPage.next') }}</span>
               <svg class="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7.5 15L12.5 10L7.5 5" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -312,7 +334,7 @@
 
           <!-- Contador de Items na paginação -->
           <div class="flex justify-center">
-            <span class="font-inter text-sm md:text-base">
+            <span class="font-inter text-xs md:text-base">
               {{ totalItems === 0
                 ? $t('categoryPage.noResults')
                 : $t('categoryPage.itemsCount', {

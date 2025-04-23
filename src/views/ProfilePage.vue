@@ -3,8 +3,8 @@
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-[768px] mx-auto">
         <!-- Breadcrumb -->
-        <div class="mb-8">
-          <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
+        <div class="mb-4 md:mb-8">
+          <nav class="flex items-center gap-1 md:gap-2 font-archivo text-xs md:text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
             <router-link to="/my-account" class="hover:text-black">
@@ -16,77 +16,77 @@
         </div>
 
         <!-- Título -->
-        <h1 class="font-archivo-narrow font-semibold text-[34px] leading-[40px] mb-8">
+        <h1 class="font-archivo-narrow font-semibold text-2xl md:text-[34px] leading-8 md:leading-[40px] mb-4 md:mb-8">
           {{ $t('profile.title') }}
         </h1>
 
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
           <!-- Nome -->
           <div>
-            <label class="block font-archivo text-sm mb-2">{{ $t('profile.firstName') }}</label>
-            <input 
+            <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('profile.firstName') }}</label>
+            <input
               type="text"
               v-model="formData.firstName"
               :placeholder="$t('profile.firstNamePlaceholder')"
               :class="[
-                'w-full p-4 border border-gray-300',
+                'w-full p-3 md:p-4 border border-gray-300 text-sm md:text-base h-10 md:h-auto',
                 (showErrors && !formData.firstName) ? 'border-red-500' : ''
               ]"
             >
-            <span v-if="showErrors && !formData.firstName" class="text-red-500 text-sm mt-1">
+            <span v-if="showErrors && !formData.firstName" class="text-red-500 text-xs md:text-sm mt-1">
               {{ $t('profile.fieldRequired') }}
             </span>
           </div>
 
           <!-- Sobrenome -->
           <div>
-            <label class="block font-archivo text-sm mb-2">{{ $t('profile.lastName') }}</label>
-            <input 
+            <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('profile.lastName') }}</label>
+            <input
               type="text"
               v-model="formData.lastName"
               :placeholder="$t('profile.lastNamePlaceholder')"
               :class="[
-                'w-full p-4 border border-gray-300',
+                'w-full p-3 md:p-4 border border-gray-300 text-sm md:text-base h-10 md:h-auto',
                 (showErrors && !formData.lastName) ? 'border-red-500' : ''
               ]"
             >
-            <span v-if="showErrors && !formData.lastName" class="text-red-500 text-sm mt-1">
+            <span v-if="showErrors && !formData.lastName" class="text-red-500 text-xs md:text-sm mt-1">
               {{ $t('profile.fieldRequired') }}
             </span>
           </div>
 
           <!-- Email (Desabilitado) -->
           <div>
-            <label class="block font-archivo text-sm mb-2">{{ $t('profile.email') }}</label>
-            <input 
+            <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('profile.email') }}</label>
+            <input
               type="email"
               v-model="formData.email"
               disabled
-              class="w-full p-4 border border-gray-300 bg-gray-100"
+              class="w-full p-3 md:p-4 border border-gray-300 bg-gray-100 text-sm md:text-base h-10 md:h-auto"
             >
-            <p class="text-sm text-black/50 mt-1">{{ $t('profile.emailNotEditable') }}</p>
+            <p class="text-xs md:text-sm text-black/50 mt-1">{{ $t('profile.emailNotEditable') }}</p>
           </div>
 
           <!-- Telefone -->
           <div>
-            <label class="block font-archivo text-sm mb-2">{{ $t('profile.phone') }}</label>
-            <input 
+            <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('profile.phone') }}</label>
+            <input
               type="tel"
               v-model="formData.phone"
               :placeholder="$t('profile.phonePlaceholder')"
-              class="w-full p-4 border border-gray-300"
+              class="w-full p-3 md:p-4 border border-gray-300 text-sm md:text-base h-10 md:h-auto"
             >
           </div>
 
           <!-- Botões -->
-          <div class="flex gap-4 pt-4">
+          <div class="flex gap-2 md:gap-4 pt-2 md:pt-4">
             <!-- Botão Salvar -->
             <button
               type="submit"
               :disabled="loading"
-              class="flex-1 bg-empire-yellow py-4 flex justify-center items-center"
+              class="flex-1 bg-empire-yellow py-2 md:py-4 flex justify-center items-center"
             >
-              <span class="font-archivo-narrow font-semibold text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px] text-black">
+              <span class="font-archivo-narrow font-semibold text-sm md:text-base lg:text-[20px] leading-[20px] md:leading-[24px] text-black">
                 {{ loading ? $t('profile.saving') : $t('profile.save') }}
               </span>
             </button>
@@ -95,16 +95,16 @@
             <button
               type="button"
               @click="goBack"
-              class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-4 flex justify-center items-center hover:bg-gray-300 transition-colors"
+              class="flex-1 bg-gray-200 text-black font-archivo font-semibold py-2 md:py-4 flex justify-center items-center hover:bg-gray-300 transition-colors"
             >
-              <span class="text-base sm:text-lg md:text-[20px] leading-[20px] md:leading-[24px]">
+              <span class="text-sm md:text-base lg:text-[20px] leading-[20px] md:leading-[24px]">
                 {{ $t('profile.cancel') }}
               </span>
             </button>
           </div>
 
           <!-- Mensagem de erro -->
-          <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
+          <p v-if="error" class="text-red-500 text-xs md:text-sm mt-2">{{ error }}</p>
         </form>
       </div>
     </div>
