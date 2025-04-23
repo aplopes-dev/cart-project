@@ -499,7 +499,7 @@
 
 
           <!-- Search - Desktop -->
-          <div class="relative hidden md:block">
+          <div class="relative hidden md:block search-container">
             <div class="flex items-center justify-between px-4 py-2 w-full md:w-[300px] h-[42px] border-2 border-white rounded-full bg-opacity-20 backdrop-blur-sm">
               <input
                 type="text"
@@ -522,7 +522,7 @@
             <!-- Resultados da busca -->
             <div
               v-if="showAutocomplete"
-              class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl mt-2 max-h-[400px] overflow-y-auto z-50 border border-gray-200"
+              class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl mt-2 max-h-[400px] overflow-y-auto z-50 border border-gray-200 search-results"
             >
               <!-- Loading state -->
               <div v-if="isSearching" class="p-4 text-center text-gray-600">
@@ -570,7 +570,7 @@
           </div>
 
           <!-- Search - Mobile -->
-          <div class="md:hidden w-full px-4 mb-4">
+          <div class="md:hidden w-full px-4 mb-4 search-container">
             <div class="relative flex items-center w-full">
               <input
                 type="text"
@@ -595,7 +595,7 @@
             <!-- Mobile Results -->
             <div
               v-if="showAutocomplete"
-              class="absolute left-4 right-4 mt-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl z-50 max-h-[60vh] overflow-y-auto border border-gray-200"
+              class="absolute left-4 right-4 mt-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl z-50 max-h-[60vh] overflow-y-auto border border-gray-200 search-results"
             >
               <!-- Loading state -->
               <div v-if="isSearching" class="p-4 text-center text-gray-600">
@@ -804,7 +804,7 @@
           </router-link>
 
           <!-- Mobile Search Button -->
-          <div class="md:hidden col-span-4 mx-4 mt-2">
+          <div class="md:hidden col-span-4 mx-4 mt-2 search-container">
             <div class="relative flex items-center w-full">
               <input
                 type="text"
@@ -825,7 +825,7 @@
             <!-- Autocomplete dropdown para mobile -->
             <div
               v-if="showAutocomplete && filteredProducts.length > 0"
-              class="absolute left-0 right-0 mt-2 mx-4 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
+              class="absolute left-0 right-0 mt-2 mx-4 bg-white rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto search-results"
             >
               <div
                 v-for="product in filteredProducts"
@@ -837,6 +837,7 @@
                   :src="product.image"
                   :alt="product.name"
                   class="w-12 h-12 object-cover rounded"
+                  @error="handleImageError"
                 />
                 <div>
                   <div class="text-black font-archivo font-medium">{{ product.name }}</div>
@@ -873,6 +874,7 @@ import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
 import { logoService } from '@/services/logoService'
+import { imageService } from '@/services/imageService'
 import { debounce } from 'lodash'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import api from '@/services/api'
@@ -1019,8 +1021,8 @@ const toggleMobileMenu = () => {
 
 const handleImageError = (e) => {
   console.error('Error loading image:', e)
-  e.target.src = 'https://via.placeholder.com/180x103?text=Logo'
-  e.target.onerror = null
+  // Usa a função utilitária do imageService para lidar com erros de imagem
+  imageService.handleImageError(e)
 }
 
 const toggleCart = () => {
@@ -1355,7 +1357,10 @@ const handleClickOutside = (event) => {
   const userMenu = event.target.closest('.user-menu')
   const categoryDropdown = event.target.closest('.category-dropdown')
   const projectDropdown = event.target.closest('.project-dropdown')
+  const searchContainer = event.target.closest('.search-container')
+  const searchResults = event.target.closest('.search-results')
 
+  // Fecha os dropdowns de idioma e usuário
   if (!languageSelector && !userMenu) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
@@ -1378,6 +1383,12 @@ const handleClickOutside = (event) => {
     if (typeof projectSelector.value.closeDropdown === 'function') {
       projectSelector.value.closeDropdown()
     }
+  }
+
+  // Fecha o autocomplete de busca e limpa o campo quando clicar fora
+  if (!searchContainer && !searchResults && showAutocomplete.value) {
+    closeSearch()
+    console.log('Campo de busca limpo e autocomplete fechado por clique fora')
   }
 }
 
@@ -1572,31 +1583,7 @@ watch(() => authState.value.isAuthenticated, (newValue) => {
   }
 })
 
-// Função para buscar categorias com base em um termo de busca
-const searchCategories = async (searchTerm) => {
-  if (!searchTerm || searchTerm.length < 2) {
-    return
-  }
-
-  try {
-    loading.value = true
-
-    // Buscar categorias que correspondem ao termo de busca
-    const matchingCategories = await categoryService.searchCategories(searchTerm, true)
-
-    // Atualizar as categorias exibidas
-    categories.value = matchingCategories
-
-    // Se houver categorias correspondentes, mostrar o dropdown
-    if (matchingCategories.length > 0) {
-      showCategoryDropdown.value = true
-    }
-  } catch (error) {
-    console.error('Error searching categories:', error)
-  } finally {
-    loading.value = false
-  }
-}
+// A função searchCategories foi removida para evitar a abertura indesejada do dropdown de categorias durante a busca
 
 // Adicione esta função para buscar produtos
 const searchProducts = async (query) => {
@@ -1612,7 +1599,16 @@ const searchProducts = async (query) => {
       search: query,  // Aqui está o parâmetro que estava faltando
       limit: 5
     })
-    filteredProducts.value = response.items || []
+
+    // Processa as imagens dos produtos antes de atribuir ao filteredProducts
+    const processedProducts = (response.items || []).map(product => {
+      return {
+        ...product,
+        image: imageService.getProductImageUrl(product.image, product)
+      };
+    });
+
+    filteredProducts.value = processedProducts
     showAutocomplete.value = true
   } catch (error) {
     console.error('Error searching products:', error)
@@ -1625,17 +1621,13 @@ const searchProducts = async (query) => {
 // Adicione o debounce para a busca de produtos
 const debouncedProductSearch = debounce(searchProducts, 300)
 
-// Adicione o debounce para a busca de categorias
-const debouncedCategorySearch = debounce(searchCategories, 300)
-
 // Adicione este watch para buscar produtos quando o termo de busca mudar
 watch(searchQuery, (newValue) => {
   debouncedProductSearch(newValue)
 
-  // Também buscar categorias quando o termo de busca tiver pelo menos 2 caracteres
-  if (newValue && newValue.length >= 2) {
-    debouncedCategorySearch(newValue)
-  } else if (newValue.length === 0) {
+  // Não vamos mais buscar categorias automaticamente ao digitar na busca
+  // Isso evita que o menu de categorias seja aberto aleatoriamente
+  if (newValue.length === 0) {
     // Se o termo de busca for limpo, recarregar todas as categorias
     fetchCategories()
   }
@@ -1690,8 +1682,8 @@ const handleSearchInput = (event) => {
     // Buscar produtos
     debouncedProductSearch(value)
 
-    // Buscar categorias
-    debouncedCategorySearch(value)
+    // Garantir que o dropdown de categorias esteja fechado durante a busca
+    showCategoryDropdown.value = false
   } else {
     filteredProducts.value = []
     showAutocomplete.value = false
@@ -1713,6 +1705,9 @@ watch(() => togglesStore.masterToggle, (newValue) => {
 watch(showAutocomplete, (newValue) => {
   if (!newValue) {
     selectedIndex.value = -1
+  } else {
+    // Se o autocomplete for exibido, garantir que o dropdown de categorias esteja fechado
+    showCategoryDropdown.value = false
   }
 })
 
@@ -1879,6 +1874,18 @@ input {
 
 .search-container {
   position: relative;
+}
+
+/* Estilos para garantir que os resultados da busca flutuem corretamente */
+.search-results {
+  position: absolute !important;
+  z-index: 1000 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  background-color: white !important;
+  border-radius: 8px !important;
+  width: 100% !important;
 }
 
 :deep(mark) {
