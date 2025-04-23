@@ -260,8 +260,8 @@
                 </div>
               </section>
 
-              <!-- Payment Section -->
-              <section>
+              <!-- Payment Section - Exibido apenas se o toggle master estiver habilitado -->
+              <section v-if="showPrices">
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('payment')">
                   <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.paymentDetails') }}</h2>
 

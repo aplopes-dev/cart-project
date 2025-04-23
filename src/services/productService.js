@@ -10,7 +10,7 @@ export const productService = {
       minPrice,
       maxPrice,
       page = 1,
-      limit = 9,
+      limit = 8,
       sortBy = 'featured',
       search  // Adicionando o parâmetro search
     } = filters

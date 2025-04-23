@@ -428,6 +428,7 @@ export default {
     categoryProductDescription: 'Manage the visibility of categories and products on the site.',
     manageCategoryProduct: 'Manage Categories and Products',
     searchCategories: 'Search categories...',
+    exactSearchTip: 'Use double quotes ("") to search for exact category names',
     searchProducts: 'Search products...',
     showDisabled: 'Show disabled',
     showOnlyWithProducts: 'Show only categories with products',

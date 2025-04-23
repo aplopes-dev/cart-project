@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-white">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-3 md:px-4 py-4 md:py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Breadcrumb -->
-        <div class="mb-8">
+        <div class="mb-4 md:mb-8">
           <nav class="flex flex-wrap items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
@@ -20,8 +20,8 @@
         </div>
 
         <!-- Título da Página -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-3xl">
+        <div class="mb-4 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-xl md:text-3xl">
             {{ $t('systemSettings.categoryProduct') }}
           </h1>
           <p class="text-black/70 font-archivo mt-2">
@@ -30,38 +30,43 @@
         </div>
 
         <!-- Filtros e Pesquisa -->
-        <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between">
-          <div class="flex flex-col sm:flex-row gap-4">
+        <div class="mb-3 md:mb-6 flex flex-col md:flex-row gap-2 md:gap-4 justify-between">
+          <div class="flex flex-col sm:flex-row gap-2 md:gap-4">
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                :placeholder="$t('systemSettings.searchCategories')"
-                class="w-full sm:w-64 p-2 border border-black/25 rounded font-archivo text-sm focus:outline-none focus:border-empire-yellow"
-                @input="debouncedSearch"
-              />
-              <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <svg class="w-4 h-4 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+              <div class="relative">
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  :placeholder="$t('systemSettings.searchCategories')"
+                  class="w-full sm:w-[600px] p-2 border border-black/25 rounded font-archivo text-sm focus:outline-none focus:border-empire-yellow pr-8"
+                  @input="debouncedSearch"
+                />
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg class="w-4 h-4 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-1 text-xs text-black/60 font-archivo">
+                {{ $t('systemSettings.exactSearchTip') }}
               </div>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex flex-col sm:flex-row gap-2 md:gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-archivo">{{ $t('systemSettings.showDisabled') }}</span>
+              <span class="text-xs md:text-sm font-archivo">{{ $t('systemSettings.showDisabled') }}</span>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="showDisabled" class="sr-only peer" @change="loadCategories">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
+                <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
               </label>
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="text-sm font-archivo">{{ $t('systemSettings.showOnlyWithProducts') }}</span>
+              <span class="text-xs md:text-sm font-archivo">{{ $t('systemSettings.showOnlyWithProducts') }}</span>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="showOnlyWithProducts" class="sr-only peer" @change="loadCategories">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
+                <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
               </label>
             </div>
           </div>
@@ -84,17 +89,17 @@
           <!-- Paginação Superior -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
             <div class="flex items-center gap-4">
-              <div class="text-sm text-black/70 font-archivo">
+              <div class="text-xs md:text-sm text-black/70 font-archivo">
                 {{ $t('pagination.showing') }} {{ totalItems > 0 ? ((currentPage - 1) * itemsPerPage + 1) : 0 }} -
                 {{ totalItems > 0 ? Math.min(currentPage * itemsPerPage, totalItems) : 0 }}
                 {{ $t('pagination.of') }} {{ totalItems }} (Página {{ currentPage }} de {{ totalPages }})
               </div>
 
               <div class="flex items-center gap-2">
-                <span class="text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
+                <span class="text-xs md:text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
                 <select
                   v-model="itemsPerPage"
-                  class="border border-black/25 rounded px-2 py-1 text-sm font-archivo"
+                  class="border border-black/25 rounded px-1 md:px-2 py-0.5 md:py-1 text-xs md:text-sm font-archivo"
                   @change="currentPage = 1"
                 >
                   <option :value="5">5</option>
@@ -109,7 +114,7 @@
               <button
                 @click="prevPage"
                 :disabled="currentPage === 1"
-                class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                 :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
               >
                 {{ $t('pagination.prev') }}
@@ -117,7 +122,7 @@
               <button
                 @click="nextPage"
                 :disabled="currentPage >= Number(totalPages)"
-                class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                 :class="currentPage >= Number(totalPages) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
               >
                 {{ $t('pagination.next') }}
@@ -153,10 +158,10 @@
                         type="text"
                         v-model="productSearchQuery"
                         :placeholder="$t('systemSettings.searchProducts')"
-                        class="w-full p-2 border border-black/25 rounded font-archivo text-sm focus:outline-none focus:border-empire-yellow"
+                        class="w-full p-2 border border-black/25 rounded font-archivo text-sm focus:outline-none focus:border-empire-yellow pr-8"
                         @input="debouncedProductSearch"
                       />
-                      <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                         <svg class="w-4 h-4 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
@@ -212,25 +217,25 @@
                     <table class="min-w-full divide-y divide-black/10">
                       <thead class="bg-gray-100">
                         <tr>
-                          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
+                          <th scope="col" class="px-2 md:px-4 py-2 md:py-3 text-left text-[10px] md:text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
                             {{ $t('systemSettings.product') }}
                           </th>
-                          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
+                          <th scope="col" class="px-2 md:px-4 py-2 md:py-3 text-left text-[10px] md:text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
                             {{ $t('systemSettings.sku') }}
                           </th>
-                          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
+                          <th scope="col" class="px-2 md:px-4 py-2 md:py-3 text-left text-[10px] md:text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
                             {{ $t('systemSettings.price') }}
                           </th>
-                          <th scope="col" class="px-4 py-3 text-right text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
+                          <th scope="col" class="px-2 md:px-4 py-2 md:py-3 text-right text-[10px] md:text-xs font-semibold font-archivo-narrow text-black/70 uppercase tracking-wider">
                             {{ $t('systemSettings.status') }}
                           </th>
                         </tr>
                       </thead>
                       <tbody class="bg-white divide-y divide-black/10">
                         <tr v-for="product in paginatedProducts" :key="product.id" :class="{ 'opacity-70': !product.isActive, 'bg-yellow-50 transition-colors duration-500': product.recentlyUpdated }">
-                          <td class="px-4 py-4 whitespace-nowrap">
+                          <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                              <div class="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden mr-3">
+                              <div class="w-8 h-8 md:w-10 md:h-10 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden mr-2 md:mr-3">
                                 <img
                                   :src="getProductImage(product.image, product)"
                                   :alt="product.name"
@@ -238,18 +243,18 @@
                                   @error="handleImageError"
                                 />
                               </div>
-                              <div class="font-archivo text-sm">
+                              <div class="font-archivo text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
                                 {{ product.name }}
                               </div>
                             </div>
                           </td>
-                          <td class="px-4 py-4 whitespace-nowrap font-archivo text-sm text-black/70">
+                          <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap font-archivo text-xs md:text-sm text-black/70">
                             {{ product.sku || product.foxpro_code || '-' }}
                           </td>
-                          <td class="px-4 py-4 whitespace-nowrap font-archivo text-sm text-black/70">
+                          <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap font-archivo text-xs md:text-sm text-black/70">
                             {{ formatPrice(product.price) }}
                           </td>
-                          <td class="px-4 py-4 whitespace-nowrap text-right">
+                          <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-right">
                             <div class="flex items-center justify-end gap-2">
                               <span class="text-xs font-archivo">{{ product.isActive ? $t('systemSettings.enabled') : $t('systemSettings.disabled') }}</span>
                               <label class="relative inline-flex items-center cursor-pointer">
@@ -270,17 +275,17 @@
 
                   <!-- Paginação de Produtos (Mobile) -->
                   <div class="flex flex-col sm:hidden items-center mt-4 gap-2">
-                    <div class="text-sm text-black/70 font-archivo mb-2">
+                    <div class="text-xs md:text-sm text-black/70 font-archivo mb-1 md:mb-2">
                       {{ $t('pagination.showing') }} {{ productTotalItems > 0 ? (productCurrentPage - 1) * productItemsPerPage + 1 : 0 }} -
                       {{ productTotalItems > 0 ? Math.min(productCurrentPage * productItemsPerPage, productTotalItems) : 0 }}
                       {{ $t('pagination.of') }} {{ productTotalItems }} (Página {{ productCurrentPage }} de {{ productTotalPages }})
                     </div>
 
                     <div class="flex items-center gap-2 mb-2">
-                      <span class="text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
+                      <span class="text-xs md:text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
                       <select
                         v-model="productItemsPerPage"
-                        class="border border-black/25 rounded px-2 py-1 text-sm font-archivo"
+                        class="border border-black/25 rounded px-1 md:px-2 py-0.5 md:py-1 text-xs md:text-sm font-archivo"
                         @change="productCurrentPage = 1; if (expandedCategory.value) loadCategoryProducts(expandedCategory.value, true)"
                       >
                         <option :value="5">5</option>
@@ -293,7 +298,7 @@
                       <button
                         @click="prevProductPage"
                         :disabled="productCurrentPage === 1"
-                        class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                        class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                         :class="productCurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
                       >
                         {{ $t('pagination.prev') }}
@@ -301,7 +306,7 @@
                       <button
                         @click="nextProductPage"
                         :disabled="productCurrentPage >= productTotalPages"
-                        class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                        class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                         :class="productCurrentPage >= productTotalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
                       >
                         {{ $t('pagination.next') }}
@@ -316,17 +321,17 @@
           <!-- Paginação Inferior -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 gap-2">
             <div class="flex items-center gap-4">
-              <div class="text-sm text-black/70 font-archivo">
+              <div class="text-xs md:text-sm text-black/70 font-archivo">
                 {{ $t('pagination.showing') }} {{ totalItems > 0 ? ((currentPage - 1) * itemsPerPage + 1) : 0 }} -
                 {{ totalItems > 0 ? Math.min(currentPage * itemsPerPage, totalItems) : 0 }}
                 {{ $t('pagination.of') }} {{ totalItems }} (Página {{ currentPage }} de {{ totalPages }})
               </div>
 
               <div class="flex items-center gap-2">
-                <span class="text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
+                <span class="text-xs md:text-sm text-black/70 font-archivo">{{ $t('pagination.itemsPerPage') }}:</span>
                 <select
                   v-model="itemsPerPage"
-                  class="border border-black/25 rounded px-2 py-1 text-sm font-archivo"
+                  class="border border-black/25 rounded px-1 md:px-2 py-0.5 md:py-1 text-xs md:text-sm font-archivo"
                   @change="currentPage = 1"
                 >
                   <option :value="5">5</option>
@@ -341,7 +346,7 @@
               <button
                 @click="prevPage"
                 :disabled="currentPage === 1"
-                class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                 :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
               >
                 {{ $t('pagination.prev') }}
@@ -349,7 +354,7 @@
               <button
                 @click="nextPage"
                 :disabled="currentPage >= Number(totalPages)"
-                class="px-3 py-1 border border-black/25 rounded text-sm font-archivo"
+                class="px-2 md:px-3 py-0.5 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo"
                 :class="currentPage >= Number(totalPages) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'"
               >
                 {{ $t('pagination.next') }}
@@ -940,9 +945,29 @@ export default {
         }
 
         // Verifica se a categoria corresponde ao termo de pesquisa
-        const matchesSearch = !searchTerm ||
-          categoryCopy.name.toLowerCase().includes(searchTerm) ||
-          (categoryCopy.description && categoryCopy.description.toLowerCase().includes(searchTerm))
+        let matchesSearch = false;
+
+        // Verificar se o termo de busca está entre aspas duplas para busca exata
+        const isExactSearch = searchTerm.startsWith('"') && searchTerm.endsWith('"');
+        let searchTermProcessed = searchTerm;
+
+        if (isExactSearch) {
+          // Remover as aspas para a busca exata
+          searchTermProcessed = searchTerm.slice(1, -1).toLowerCase().trim();
+          console.log(`[BUSCA EXATA FRONTEND] Termo sem aspas: "${searchTermProcessed}"`);
+
+          // Busca exata - deve corresponder exatamente ao nome da categoria
+          matchesSearch = !searchTermProcessed ||
+            categoryCopy.name.toLowerCase().trim() === searchTermProcessed ||
+            (categoryCopy.description && categoryCopy.description.toLowerCase().trim() === searchTermProcessed);
+
+          console.log(`[BUSCA EXATA FRONTEND] Comparando "${categoryCopy.name}" com "${searchTermProcessed}": ${matchesSearch}`);
+        } else {
+          // Busca parcial - contém o termo de busca
+          matchesSearch = !searchTerm ||
+            categoryCopy.name.toLowerCase().includes(searchTerm) ||
+            (categoryCopy.description && categoryCopy.description.toLowerCase().includes(searchTerm));
+        }
 
         // Filtra os filhos recursivamente
         let hasMatchingChildren = false
@@ -981,10 +1006,51 @@ export default {
       // Determinar se devemos filtrar apenas categorias com produtos
       const filterOnlyWithProducts = showOnlyWithProducts.value
 
+      // Verificar se o termo de busca está entre aspas duplas para busca exata
+      const isExactSearch = searchTerm.startsWith('"') && searchTerm.endsWith('"');
+      console.log(`[FILTRO FRONTEND] Termo de busca: '${searchTerm}', isExactSearch: ${isExactSearch}`);
+
       // Aplicar o filtro mantendo a estrutura hierárquica
       const filtered = filterCategoryTree(categories.value, searchTerm, filterInactive, filterOnlyWithProducts)
 
       console.log(`Filtrando categorias: termo de busca = '${searchTerm}', filtrar inativas = ${filterInactive}, apenas com produtos = ${filterOnlyWithProducts}, categorias originais = ${categories.value.length}, categorias filtradas = ${filtered.length}`)
+
+      // Função para encontrar categorias com "Lavabo" no nome recursivamente
+      const findLavaboCategoriesRecursive = (categories) => {
+        if (!categories || !Array.isArray(categories)) return [];
+
+        let result = [];
+
+        for (const category of categories) {
+          if (category.name.includes('Lavabo')) {
+            result.push(category);
+          }
+
+          // Buscar recursivamente nos filhos
+          if (category.children && category.children.length > 0) {
+            result = [...result, ...findLavaboCategoriesRecursive(category.children)];
+          }
+        }
+
+        return result;
+      };
+
+      // Verificar se há categorias com "Lavabo" no nome (incluindo filhos)
+      const lavaboCats = findLavaboCategoriesRecursive(filtered);
+      if (lavaboCats.length > 0) {
+        console.log(`[FILTRO FRONTEND] Categorias Lavabo encontradas após filtro: ${lavaboCats.map(c => `"${c.name}"`).join(', ')}`);
+      } else if (searchTerm.includes('Lavabo')) {
+        console.log(`[FILTRO FRONTEND] Nenhuma categoria Lavabo encontrada após filtro com termo '${searchTerm}'`);
+
+        // Verificar se há categorias com "Lavabo" no nome antes do filtro
+        const originalLavaboCats = findLavaboCategoriesRecursive(categories.value);
+        if (originalLavaboCats.length > 0) {
+          console.log(`[FILTRO FRONTEND] Categorias Lavabo existentes antes do filtro: ${originalLavaboCats.map(c => `"${c.name}"`).join(', ')}`);
+        } else {
+          console.log(`[FILTRO FRONTEND] Nenhuma categoria Lavabo encontrada antes do filtro`);
+        }
+      }
+
       return filtered
     })
 

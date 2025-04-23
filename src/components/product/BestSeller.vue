@@ -15,11 +15,11 @@
       </div>
 
       <div v-else class="w-full overflow-x-auto pb-4">
-        <div class="flex md:grid md:grid-cols-5 gap-3 md:gap-4 lg:gap-6 min-w-max md:min-w-0">
+        <div class="flex md:grid md:grid-cols-5 gap-3 md:gap-2 lg:gap-3 min-w-max md:min-w-0">
           <div
             v-for="product in bestSellers"
             :key="product.id"
-            class="w-[250px] md:w-[320px] lg:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
+            class="w-[250px] md:w-auto lg:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
           >
             <!-- Área clicável para navegação -->
             <div
@@ -29,23 +29,23 @@
               <img
                 :src="getProductImage(product.image, product)"
                 :alt="product.name"
-                class="w-[80%] max-w-[280px] h-[150px] md:h-[200px] lg:h-[280px] object-contain object-center mx-auto"
+                class="w-[80%] max-w-[280px] h-[150px] md:h-[180px] lg:h-[200px] object-contain object-center mx-auto"
                 @error="handleImageError"
               />
 
-              <div class="flex flex-col items-center gap-2 md:gap-4 w-full p-3 md:p-6 product-content">
-                <div class="flex flex-col gap-2 md:gap-4 w-full">
-                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg lg:text-2xl leading-tight md:leading-[32px] text-black/70 text-center w-full line-clamp-1">
+              <div class="flex flex-col items-center gap-2 md:gap-2 w-full p-3 md:p-3 product-content">
+                <div class="flex flex-col gap-2 md:gap-2 w-full">
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-base lg:text-lg leading-tight md:leading-[24px] text-black/70 text-center w-full line-clamp-1">
                     {{ product.name }}
                   </h3>
-                  <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center w-full description-fixed-height">
+                  <p class="font-archivo font-medium text-sm md:text-sm leading-normal md:leading-[18px] text-black/70 text-center w-full description-fixed-height">
                     {{ product.description || '&nbsp;'.repeat(3) }}
                   </p>
                 </div>
 
                 <!-- Área de preço - só exibida quando os preços estão habilitados -->
-                <div v-if="showPrices" class="w-full text-center mb-4 mt-3">
-                  <p class="font-archivo-narrow font-semibold text-[22px] md:text-[28px] lg:text-[30px] leading-[26px] md:leading-[32px] lg:leading-[36px]">
+                <div v-if="showPrices" class="w-full text-center mb-2 mt-1">
+                  <p class="font-archivo-narrow font-semibold text-[22px] md:text-[22px] lg:text-[24px] leading-[26px] md:leading-[26px] lg:leading-[28px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
@@ -56,10 +56,10 @@
 
             <!-- Botão Add Cart com evento de clique isolado -->
             <button
-              class="w-full h-[50px] md:h-[60px] lg:h-[73.31px] bg-black"
+              class="w-full h-[50px] md:h-[50px] lg:h-[50px] bg-black"
               @click.stop="addToCart(product)"
             >
-              <span class="font-archivo-narrow font-semibold text-[20px] md:text-[28px] lg:text-[34px] leading-[50px] md:leading-[60px] lg:leading-[72px] text-[#FFDD00]">
+              <span class="font-archivo-narrow font-semibold text-[20px] md:text-[22px] lg:text-[24px] leading-[50px] md:leading-[50px] lg:leading-[50px] text-[#FFDD00]">
                 {{ $t('productDetails.addCart') }}
               </span>
             </button>
@@ -318,8 +318,8 @@ export default {
   height: 3em; /* Altura fixa para 2 linhas na versão mobile */
   min-height: 3em;
   @media (min-width: 768px) {
-    height: 4.5em; /* Altura fixa para 3 linhas na versão desktop */
-    min-height: 4.5em;
+    height: 3em; /* Altura fixa para 2 linhas na versão desktop */
+    min-height: 3em;
   }
   line-height: 1.5em;
   overflow: hidden;
@@ -331,7 +331,7 @@ export default {
   flex-direction: column;
   min-height: 150px; /* Altura mínima para garantir espaço consistente na versão mobile */
   @media (min-width: 768px) {
-    min-height: 200px; /* Altura mínima para garantir espaço consistente na versão desktop */
+    min-height: 150px; /* Altura mínima reduzida para versão desktop */
   }
 }
 </style>

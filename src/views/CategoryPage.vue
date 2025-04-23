@@ -312,7 +312,7 @@
           </div>
 
           <!-- Grid de Produtos -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 md:gap-2">
             <div v-if="loading" class="col-span-full flex justify-center items-center py-12">
               <div class="loader-container">
                 <div class="loader-spinner"></div>
@@ -329,7 +329,7 @@
                 :key="product.id"
                 :class="[
                   'flex flex-col bg-white border border-[#FAFAFA]',
-                  showPrices ? 'min-h-[370px] md:min-h-[600px] md:h-[700px]' : 'min-h-[320px] md:min-h-[600px] md:h-[700px]'
+                  showPrices ? 'min-h-[370px] md:min-h-[450px] md:h-[500px]' : 'min-h-[320px] md:min-h-[400px] md:h-[450px]'
                 ]"
               >
                 <!-- Wrap the clickable area in a div -->
@@ -340,23 +340,23 @@
                   <img
                     :src="getProductImage(product)"
                     :alt="product.name"
-                    class="w-[90%] h-[140px] md:h-[350px] object-contain object-center mx-auto pt-2 md:pt-0"
+                    class="w-[90%] h-[140px] md:h-[200px] object-contain object-center mx-auto pt-2 md:pt-0"
                     @error="handleImageError"
                   >
-                  <div class="p-2 pb-0 md:p-4 flex flex-col h-full">
-                    <h3 class="font-archivo-narrow font-bold text-[16px] md:text-[28px] leading-[20px] md:leading-[32px] text-black h-[20px] md:h-[64px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-3 md:mb-2">
+                  <div class="p-2 pb-0 md:p-2 flex flex-col h-full">
+                    <h3 class="font-archivo-narrow font-bold text-[16px] md:text-[20px] leading-[20px] md:leading-[24px] text-black h-[20px] md:h-[48px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-1 md:mb-1">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo text-sm md:text-lg text-black/70 overflow-hidden description-fixed-height">
+                    <p class="font-archivo text-sm md:text-sm text-black/70 description-fixed-height">
                       {{ product.description || '&nbsp;'.repeat(3) }}
                     </p>
                     <div class="mt-auto w-full mb-0 pb-0">
                       <!-- Quando showPrices é true, mostra o preço com espaçamento adequado -->
-                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[20px] md:text-[28px] leading-[24px] md:leading-[32px] mt-2 md:mt-3 mb-1 md:mb-2">
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[20px] md:text-[22px] leading-[24px] md:leading-[26px] mt-1 md:mt-2 mb-1 md:mb-1">
                         {{ formatPrice(product.price) }}
                       </p>
                       <!-- Quando showPrices é false, não adiciona espaçamento no mobile -->
-                      <div v-else class="mt-0 md:mt-3"></div>
+                      <div v-else class="mt-0 md:mt-1"></div>
                       <!-- Wrap the button in a div that stops event propagation -->
                       <div @click.stop>
                         <ProductQuantitySelector
@@ -521,6 +521,28 @@
   </div>
 </template>
 
+<style scoped>
+/* Estilo para fixar a altura da descrição do produto */
+.description-fixed-height {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 60px;
+  max-height: 60px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .description-fixed-height {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    height: 40px;
+    max-height: 40px;
+  }
+}
+</style>
+
 <script setup>
 /* eslint-disable */
 import { ref, onMounted, watch, computed } from 'vue'
@@ -563,7 +585,7 @@ const isBrandsExpanded = ref(true)
 const priceRange = ref([0, 3000])
 const maxPrice = ref(3000)
 const totalItems = ref(0)
-const itemsPerPage = ref(9)
+const itemsPerPage = ref(8)
 const sortBy = ref('featured')
 const isDragging = ref(false)
 const tempPriceRange = ref([0, 1000])

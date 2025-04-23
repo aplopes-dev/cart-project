@@ -424,6 +424,7 @@ export default {
     categoryProductDescription: 'Gerencie a visibilidade de categorias e produtos no site.',
     manageCategoryProduct: 'Gerenciar Categorias e Produtos',
     searchCategories: 'Buscar categorias...',
+    exactSearchTip: 'Use aspas duplas ("") para buscar categorias com nome exato',
     searchProducts: 'Buscar produtos...',
     showDisabled: 'Mostrar desativados',
     showOnlyWithProducts: 'Mostrar apenas categorias com produtos',

@@ -1,35 +1,35 @@
 <template>
-  <div class="space-y-4">
+  <div class="space-y-2 md:space-y-4">
     <div
-      class="bg-[#FAFAFA] p-6 rounded-lg relative"
+      class="bg-[#FAFAFA] p-3 md:p-6 rounded-lg relative"
       :class="{
         'opacity-70': !category.isActive,
         'border border-dashed border-gray-300 bg-gray-50': !hasProducts,
         'ml-0': level === 0,
-        'ml-6': level === 1,
-        'ml-12': level === 2,
-        'ml-18': level >= 3
+        'ml-2 md:ml-6': level === 1,
+        'ml-4 md:ml-12': level === 2,
+        'ml-6 md:ml-18': level >= 3
       }"
     >
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
+        <div class="flex items-center gap-2 md:gap-4">
           <!-- Ícone de expansão para categorias com filhos -->
           <div v-if="category.children && category.children.length > 0"
-               class="w-6 h-6 flex items-center justify-center cursor-pointer"
+               class="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center cursor-pointer"
                @click="toggleExpanded">
-            <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 md:w-5 md:h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path v-if="!category.expanded" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </div>
-          <div v-else class="w-6"></div>
+          <div v-else class="w-5 md:w-6"></div>
 
           <!-- Debug: Mostrar informações da categoria -->
           <!-- <div class="text-xs text-gray-500 ml-2">
             ({{ category.children ? category.children.length : 0 }} filhos, expanded: {{ category.expanded ? 'sim' : 'não' }})
           </div> -->
 
-          <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+          <div class="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
             <img
               v-if="category.image"
               :src="category.image"
@@ -42,21 +42,21 @@
             </svg>
           </div>
           <div>
-            <h3 class="font-archivo-narrow font-semibold text-lg flex items-center">
+            <h3 class="font-archivo-narrow font-semibold text-sm md:text-lg flex items-center">
               {{ category.name }}
               <span v-if="!hasProducts" class="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                 {{ $t('systemSettings.noProductsInCategory') }}
               </span>
             </h3>
-            <p class="text-black/70 font-archivo text-sm truncate max-w-md">
+            <p class="text-black/70 font-archivo text-xs md:text-sm truncate max-w-[200px] md:max-w-md">
               {{ category.description || $t('systemSettings.noDescription') }}
             </p>
           </div>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 md:gap-4">
           <div class="flex items-center gap-2">
-            <span class="text-sm font-archivo">{{ category.isActive ? $t('systemSettings.enabled') : $t('systemSettings.disabled') }}</span>
+            <span class="text-xs md:text-sm font-archivo">{{ category.isActive ? $t('systemSettings.enabled') : $t('systemSettings.disabled') }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -64,13 +64,13 @@
                 class="sr-only peer"
                 @change="toggleStatus"
               >
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
+              <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
             </label>
           </div>
 
           <button
             @click="showProducts"
-            class="px-3 py-1 border border-black/25 rounded text-sm font-archivo hover:bg-black/5"
+            class="px-2 py-0.5 md:px-3 md:py-1 border border-black/25 rounded text-xs md:text-sm font-archivo hover:bg-black/5"
             :class="{ 'opacity-50 cursor-not-allowed': !hasProducts }"
             :disabled="!hasProducts"
           >
@@ -80,13 +80,13 @@
       </div>
 
       <!-- Lista de Produtos da Categoria -->
-      <div v-if="expandedCategoryId === category.id" class="mt-6 border-t border-black/10 pt-4">
+      <div v-if="expandedCategoryId === category.id" class="mt-3 md:mt-6 border-t border-black/10 pt-2 md:pt-4">
         <slot name="products" :category="category"></slot>
       </div>
     </div>
 
     <!-- Categorias filhas (recursivo) -->
-    <div v-if="category.expanded && category.children && category.children.length > 0" class="ml-6 space-y-4">
+    <div v-if="category.expanded && category.children && category.children.length > 0" class="ml-3 md:ml-6 space-y-2 md:space-y-4">
       <!-- Debug: Mostrar informações da categoria expandida -->
       <!-- <div class="bg-gray-100 p-2 mb-2 text-xs">
         Categoria {{ category.name }} expandida: {{ category.expanded }}

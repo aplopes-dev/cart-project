@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-row gap-1 sm:gap-4">
+  <div class="flex flex-row gap-1 sm:gap-2">
     <!-- Contador de Quantidade -->
-    <div class="w-[100px] sm:w-[150px] h-[35px] sm:h-[73.31px]">
+    <div class="w-[100px] sm:w-[120px] h-[35px] sm:h-[50px]">
       <div class="flex flex-row justify-between items-center h-full border-2 border-black bg-white">
         <button
           @click="decrementQuantity"
@@ -32,10 +32,10 @@
 
     <!-- Botão Add Cart -->
     <button
-      class="flex-1 h-[35px] sm:h-[73.31px] bg-black flex justify-center items-center"
+      class="flex-1 h-[35px] sm:h-[50px] bg-black flex justify-center items-center"
       @click="addToCart"
     >
-      <span class="font-archivo-narrow font-bold text-[18px] sm:text-[34px] leading-[35px] sm:leading-[70px] text-[#FFDD00]">
+      <span class="font-archivo-narrow font-bold text-[18px] sm:text-[28px] leading-[35px] sm:leading-[50px] text-[#FFDD00]">
         {{ $t('cart.addToCart') }}
       </span>
     </button>

@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-white">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-3 md:px-4 py-4 md:py-8">
       <div class="max-w-[1408px] mx-auto">
         <!-- Breadcrumb -->
-        <div class="mb-8">
+        <div class="mb-4 md:mb-8">
           <nav class="flex flex-wrap items-center gap-2 font-archivo text-sm text-black/70">
             <router-link to="/" class="hover:text-black">Home</router-link>
             <span>/</span>
@@ -20,8 +20,8 @@
         </div>
 
         <!-- Título da Página -->
-        <div class="mb-8">
-          <h1 class="font-archivo-narrow font-semibold text-3xl">
+        <div class="mb-4 md:mb-8">
+          <h1 class="font-archivo-narrow font-semibold text-xl md:text-3xl">
             {{ $t('systemSettings.categoryProduct') }}
           </h1>
           <p class="text-black/70 font-archivo mt-2">
@@ -30,8 +30,8 @@
         </div>
 
         <!-- Filtros e Pesquisa -->
-        <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between">
-          <div class="flex flex-col sm:flex-row gap-4">
+        <div class="mb-3 md:mb-6 flex flex-col md:flex-row gap-2 md:gap-4 justify-between">
+          <div class="flex flex-col sm:flex-row gap-2 md:gap-4">
             <div class="relative">
               <input
                 type="text"
@@ -47,20 +47,20 @@
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex flex-col sm:flex-row gap-2 md:gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-archivo">{{ $t('systemSettings.showDisabled') }}</span>
+              <span class="text-xs md:text-sm font-archivo">{{ $t('systemSettings.showDisabled') }}</span>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="showDisabled" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
+                <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
               </label>
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="text-sm font-archivo">{{ $t('systemSettings.showOnlyWithProducts') }}</span>
+              <span class="text-xs md:text-sm font-archivo">{{ $t('systemSettings.showOnlyWithProducts') }}</span>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="showOnlyWithProducts" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
+                <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-empire-yellow"></div>
               </label>
             </div>
           </div>
@@ -80,10 +80,10 @@
         </div>
 
         <div v-else class="space-y-4">
-          <div v-for="category in categories" :key="category.id" class="bg-[#FAFAFA] p-6 rounded-lg">
+          <div v-for="category in categories" :key="category.id" class="bg-[#FAFAFA] p-3 md:p-6 rounded-lg">
             <div class="flex justify-between items-center">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+              <div class="flex items-center gap-2 md:gap-4">
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                   <img
                     :src="getCategoryImage(category.image, category)"
                     :alt="category.name"
@@ -92,8 +92,8 @@
                   />
                 </div>
                 <div>
-                  <h3 class="font-archivo-narrow font-semibold text-lg">{{ category.name }}</h3>
-                  <p class="text-black/70 font-archivo text-sm truncate max-w-md">
+                  <h3 class="font-archivo-narrow font-semibold text-sm md:text-lg">{{ category.name }}</h3>
+                  <p class="text-black/70 font-archivo text-xs md:text-sm truncate max-w-[200px] md:max-w-md">
                     {{ category.description || $t('systemSettings.noDescription') }}
                   </p>
                 </div>
