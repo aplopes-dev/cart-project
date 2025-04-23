@@ -71,6 +71,21 @@
               {{ $t('content.career.manage') }}
             </router-link>
           </div>
+
+          <!-- Card - Home -->
+          <div class="bg-[#FAFAFA] p-8 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path d="M9 22V12h6v10"/>
+              </svg>
+              <h2 class="font-archivo-narrow font-semibold text-2xl">{{ $t('settings.home.title') }}</h2>
+            </div>
+            <p class="text-black/70 font-archivo text-base">{{ $t('settings.home.description') }}</p>
+            <router-link to="/settings/home" class="text-empire-yellow hover:underline mt-auto font-archivo">
+              {{ $t('settings.home.manage') }}
+            </router-link>
+          </div>
         </div>
       </div>
     </div>

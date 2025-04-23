@@ -1,4 +1,5 @@
 import api from './api'
+import eventBus from '@/utils/eventBus'
 
 const API_URL = process.env.VUE_APP_API_URL
 console.log('API_URL no projectService:', API_URL)
@@ -35,6 +36,9 @@ export const projectService = {
    */
   saveSelectedProject(project) {
     sessionStorage.setItem('selectedProject', JSON.stringify(project))
+    // Emite um evento global para notificar todos os componentes
+    eventBus.emit('selected-project-changed', project)
+    console.log('Evento selected-project-changed emitido com:', project)
   },
 
   /**

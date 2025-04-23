@@ -1,31 +1,54 @@
 <template>
   <section class="relative h-screen">
+    <!-- Loading Indicator -->
+    <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-gray-100">
+      <div class="w-12 h-12 border-4 border-empire-yellow border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
     <!-- Carousel Container -->
-    <div class="absolute inset-0 overflow-hidden">
+    <div v-else class="absolute inset-0 overflow-hidden">
       <!-- Images -->
       <div class="flex h-full transition-transform duration-300 ease-in-out" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-        <img
-          v-for="(image, index) in images"
+        <div
+          v-for="(banner, index) in banners"
           :key="index"
-          :src="image.src"
-          :alt="image.alt"
-          class="w-full h-full object-cover flex-shrink-0"
+          class="w-full h-full flex-shrink-0 relative"
         >
-      </div>
+          <img
+            :src="banner.image_url"
+            :alt="`Banner ${index + 1}`"
+            class="w-full h-full object-cover"
+          >
 
-      <!-- Overlay with content -->
-      <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-        <div class="text-center text-white px-4 md:px-8">
-          <h1 class="text-2xl sm:text-4xl md:text-6xl font-bold mb-2 md:mb-4">{{ images[currentSlide].title }}</h1>
-          <p class="text-sm sm:text-lg md:text-xl mb-4 md:mb-6 max-w-2xl mx-auto">{{ images[currentSlide].description }}</p>
-          <router-link to="/categories" class="bg-white text-black px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:bg-gray-100 transition-colors">
-            {{ $t('hero.shopNow') }}
-          </router-link>
+          <!-- Overlay with content -->
+          <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <div class="text-center px-4 md:px-8">
+              <h1
+                class="text-2xl sm:text-4xl md:text-6xl font-bold mb-2 md:mb-4"
+                :style="{ color: banner.title_color }"
+              >
+                {{ banner.title }}
+              </h1>
+              <p
+                class="text-sm sm:text-lg md:text-xl mb-4 md:mb-6 max-w-2xl mx-auto"
+                :style="{ color: banner.subtitle_color }"
+              >
+                {{ banner.subtitle }}
+              </p>
+              <router-link
+                to="/categories"
+                class="bg-empire-yellow text-black px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:bg-yellow-500 transition-colors"
+              >
+                {{ $t('hero.shopNow') }}
+              </router-link>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Navigation Arrows -->
       <button
+        v-if="banners.length > 1"
         @click="prevSlide"
         class="absolute left-2 md:left-8 top-[60%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
       >
@@ -35,6 +58,7 @@
       </button>
 
       <button
+        v-if="banners.length > 1"
         @click="nextSlide"
         class="absolute right-2 md:right-8 top-[60%] md:top-1/2 -translate-y-1/2 w-10 h-10 md:w-[72px] md:h-[72px] flex items-center justify-center md:bg-white/20 md:border-2 md:border-white transition-colors"
       >
@@ -44,9 +68,9 @@
       </button>
 
       <!-- Dots Indicator -->
-      <div class="absolute bottom-[72px] left-1/2 -translate-x-1/2 flex flex-row items-center gap-[13px] w-[242px] h-[6px]">
+      <div v-if="banners.length > 1" class="absolute bottom-[72px] left-1/2 -translate-x-1/2 flex flex-row items-center gap-[13px]">
         <div
-          v-for="(_, index) in images"
+          v-for="(_, index) in banners"
           :key="index"
           @click="currentSlide = index"
           class="flex justify-center items-center w-[72px] h-[6px] transition-all duration-300"
@@ -61,61 +85,83 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'HeroSection',
-  data() {
-    return {
-      currentSlide: 0,
-      images: [
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import axios from 'axios'
+
+// State
+const currentSlide = ref(0)
+const banners = ref([])
+const loading = ref(true)
+const autoSlideInterval = ref(null)
+
+// API URL
+const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api'
+
+// Fetch banners
+const fetchBanners = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/settings/home-banners?active=true`)
+    banners.value = response.data.sort((a, b) => a.position - b.position)
+
+    // Fallback to default banners if none are returned
+    if (banners.value.length === 0) {
+      banners.value = [
         {
-          src: '/images/banner/hero-image-1.png',
-          alt: 'Hero Image 1',
+          id: 'default',
           title: 'Your Best Online Shop',
-          description: 'Discover our amazing collection of products with the best prices in the market.'
-        },
-        {
-          src: '/images/banner/hero-image-2.png',
-          alt: 'Hero Image 2',
-          title: 'Special Offers',
-          description: 'Get up to 50% off on selected items this week only!'
-        },
-        {
-          src: '/images/banner/hero-image-3.png',
-          alt: 'Hero Image 3',
-          title: 'New Collection',
-          description: 'Check out our latest arrivals and stay ahead of the trends.'
-        },
-        {
-          src: '/images/banner/hero-image-4.png',
-          alt: 'Hero Image 4',
-          title: 'Premium Quality',
-          description: 'Experience the difference with our premium quality products.'
-        },
-        {
-          src: '/images/banner/hero-image-5.png',
-          alt: 'Hero Image 5',
-          title: 'Free Shipping',
-          description: 'Enjoy free shipping on all orders over $50!'
+          subtitle: 'Discover our amazing collection of products with the best prices in the market.',
+          image_url: '/images/banner/hero-image-1.png',
+          title_color: '#FFFFFF',
+          subtitle_color: '#FFFFFF'
         }
       ]
     }
-  },
-  methods: {
-    nextSlide() {
-      this.currentSlide = (this.currentSlide + 1) % this.images.length
-    },
-    prevSlide() {
-      this.currentSlide = (this.currentSlide - 1 + this.images.length) % this.images.length
-    },
-    startAutoSlide() {
-      setInterval(this.nextSlide, 5000)
-    }
-  },
-  mounted() {
-    this.startAutoSlide()
+  } catch (err) {
+    console.error('Error fetching banners:', err)
+    // Fallback to default banner
+    banners.value = [
+      {
+        id: 'default',
+        title: 'Your Best Online Shop',
+        subtitle: 'Discover our amazing collection of products with the best prices in the market.',
+        image_url: '/images/banner/hero-image-1.png',
+        title_color: '#FFFFFF',
+        subtitle_color: '#FFFFFF'
+      }
+    ]
+  } finally {
+    loading.value = false
   }
 }
+
+// Navigation methods
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % banners.value.length
+}
+
+const prevSlide = () => {
+  currentSlide.value = (currentSlide.value - 1 + banners.value.length) % banners.value.length
+}
+
+// Auto slide
+const startAutoSlide = () => {
+  if (banners.value.length > 1) {
+    autoSlideInterval.value = setInterval(nextSlide, 5000)
+  }
+}
+
+// Lifecycle hooks
+onMounted(async () => {
+  await fetchBanners()
+  startAutoSlide()
+})
+
+onUnmounted(() => {
+  if (autoSlideInterval.value) {
+    clearInterval(autoSlideInterval.value)
+  }
+})
 </script>
 <style scoped>
 .fade-enter-active,

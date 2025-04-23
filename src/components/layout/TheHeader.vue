@@ -3,6 +3,9 @@
     'w-full z-[100]',
     { 'fixed bg-black/30': isHomePage, 'relative bg-black': !isHomePage }
   ]">
+    <!-- Company Banner -->
+    <CompanyBanner />
+
     <div class="relative flex flex-col items-center px-4 py-1.5 w-full !bg-black/30"> <!-- Reduzido py-3 para py-1.5 -->
       <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[1408px] px-0 md:px-8 py-1.5"> <!-- Alterado px-4 para px-0 -->
         <!-- Logo e Botões Mobile -->
@@ -89,8 +92,16 @@
             </div>
           </div>
 
-          <!-- Segunda linha: Carrinho e Sign in (apenas mobile) -->
+          <!-- Segunda linha: Projeto, Carrinho e Sign in (apenas mobile) -->
           <div class="flex md:hidden justify-end items-center gap-6 mt-0.5">
+            <!-- Project Selector Mobile (visível apenas quando logado e tem projetos) -->
+            <ProjectSelector
+              v-if="isAuthenticated"
+              :is-authenticated="isAuthenticated"
+              ref="projectSelectorMobile"
+              :class="{ 'mr-2': projectHasProjects }"
+            />
+
             <button @click="toggleCart" class="relative flex items-center">
               <div v-if="cartStore.itemCount > 0" class="absolute -top-2 -right-2 bg-empire-yellow text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                 {{ cartStore.itemCount }}
@@ -108,8 +119,9 @@
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg
                     class="w-4 h-4"
+                    :class="{ 'transform rotate-180': isUserMenuOpen }"
                     viewBox="0 0 24 24"
-                    fill="#FFFFFF"
+                    fill="#FFDD00"
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
@@ -370,7 +382,7 @@
                 class="w-4 h-4"
                 :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
                 viewBox="0 0 24 24"
-                fill="#FFFFFF"
+                fill="#FFDD00"
               >
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
               </svg>
@@ -397,6 +409,13 @@
             </div>
           </div>
 
+          <!-- Project Selector (visible only when logged in and has projects) -->
+          <ProjectSelector
+            :is-authenticated="isAuthenticated"
+            ref="projectSelector"
+            :class="{ 'mr-4': projectHasProjects }"
+          />
+
           <!-- Cart and Sign In -->
           <div class="flex items-center gap-6">
             <button @click="toggleCart" class="relative flex items-center">
@@ -416,8 +435,9 @@
                   {{ $t('header.greeting') }}{{ currentUser?.firstName ? `, ${currentUser.firstName}` : '' }}
                   <svg
                     class="w-4 h-4"
+                    :class="{ 'transform rotate-180': isUserMenuOpen }"
                     viewBox="0 0 24 24"
-                    fill="#FFFFFF"
+                    fill="#FFDD00"
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
@@ -844,9 +864,12 @@ import { useStore } from 'vuex'
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import CartWidget from '../cart/CartWidget.vue'
+import ProjectSelector from '../project/ProjectSelector.vue'
+import CompanyBanner from '../company/CompanyBanner.vue'
 import { categoryService } from '@/services/categoryService'
 import { productService } from '@/services/productService'
 import { settingsService } from '@/services/settingsService'
+import { logoService } from '@/services/logoService'
 import { debounce } from 'lodash'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 import api from '@/services/api'
@@ -883,6 +906,15 @@ const updateAuthState = () => {
 const isAuthenticated = computed(() => authState.value.isAuthenticated)
 
 const currentUser = computed(() => authState.value.user)
+
+// Computed para verificar se o seletor de projetos tem projetos
+const projectHasProjects = computed(() => {
+  return (projectSelector.value?.hasProjects || projectSelectorMobile.value?.hasProjects || false)
+})
+
+// Refs para os componentes ProjectSelector
+const projectSelector = ref(null)
+const projectSelectorMobile = ref(null)
 
 // Estado
 const isMobileMenuOpen = ref(false)
@@ -938,6 +970,20 @@ const loadFinancialSettings = async () => {
   }
 }
 
+// Função para carregar a logo ativa
+const loadActiveLogo = async () => {
+  try {
+    const logo = await logoService.getActiveLogo()
+    if (logo && logo.image_url) {
+      logoUrl.value = logo.image_url
+      console.log('[Header] Active logo loaded:', logo.name)
+    }
+  } catch (error) {
+    console.error('Error loading active logo:', error)
+    // Mantém a logo padrão em caso de erro
+  }
+}
+
 // Constantes
 const flagImages = {
   'EN': '/images/flags/US.svg',
@@ -984,7 +1030,16 @@ const toggleCategoryDropdown = (event) => {
   if (showCategoryDropdown.value) {
     isLanguageDropdownOpen.value = false
     isUserMenuOpen.value = false
+    // Emite um evento para fechar outros dropdowns
+    eventBus.emit('dropdown-opened', 'category')
 
+    // Fecha o dropdown de projetos diretamente
+    if (projectSelector.value && typeof projectSelector.value.closeDropdown === 'function') {
+      projectSelector.value.closeDropdown()
+    }
+    if (projectSelectorMobile.value && typeof projectSelectorMobile.value.closeDropdown === 'function') {
+      projectSelectorMobile.value.closeDropdown()
+    }
   }
   // Não limpa mais as categorias ativas quando fecha o menu
 }
@@ -1028,6 +1083,14 @@ const handleLogout = async () => {
   localStorage.removeItem(`cart_${userId}`);
   localStorage.removeItem('user');
 
+  // Remove o projeto selecionado do sessionStorage
+  sessionStorage.removeItem('selectedProject');
+  console.log('Projeto removido do sessionStorage durante logout');
+
+  // Emite um evento para notificar outros componentes
+  eventBus.emit('selected-project-changed', null);
+  console.log('Evento selected-project-changed emitido com null');
+
   // Reset do estado do carrinho
   cartStore.$reset();
 
@@ -1042,6 +1105,16 @@ const toggleUserMenu = (event) => {
   if (isUserMenuOpen.value) {
     isLanguageDropdownOpen.value = false
     showCategoryDropdown.value = false
+    // Emite um evento para fechar outros dropdowns
+    eventBus.emit('dropdown-opened', 'user')
+
+    // Fecha o dropdown de projetos diretamente
+    if (projectSelector.value && typeof projectSelector.value.closeDropdown === 'function') {
+      projectSelector.value.closeDropdown()
+    }
+    if (projectSelectorMobile.value && typeof projectSelectorMobile.value.closeDropdown === 'function') {
+      projectSelectorMobile.value.closeDropdown()
+    }
   }
 }
 
@@ -1148,6 +1221,16 @@ const toggleLanguageDropdown = (event) => {
   if (isLanguageDropdownOpen.value) {
     isUserMenuOpen.value = false
     showCategoryDropdown.value = false
+    // Emite um evento para fechar outros dropdowns
+    eventBus.emit('dropdown-opened', 'language')
+
+    // Fecha o dropdown de projetos diretamente
+    if (projectSelector.value && typeof projectSelector.value.closeDropdown === 'function') {
+      projectSelector.value.closeDropdown()
+    }
+    if (projectSelectorMobile.value && typeof projectSelectorMobile.value.closeDropdown === 'function') {
+      projectSelectorMobile.value.closeDropdown()
+    }
   }
 }
 
@@ -1162,6 +1245,7 @@ const handleClickOutside = (event) => {
   const languageSelector = event.target.closest('.language-selector')
   const userMenu = event.target.closest('.user-menu')
   const categoryDropdown = event.target.closest('.category-dropdown')
+  const projectDropdown = event.target.closest('.project-dropdown')
 
   if (!languageSelector && !userMenu) {
     isLanguageDropdownOpen.value = false
@@ -1171,6 +1255,14 @@ const handleClickOutside = (event) => {
   // Fecha o menu de categorias apenas quando clicar fora dele
   if (!categoryDropdown) {
     showCategoryDropdown.value = false
+  }
+
+  // Fecha o dropdown de projetos no componente ProjectSelector
+  if (!projectDropdown && projectSelector.value) {
+    // Acessa o método do componente ProjectSelector para fechar o dropdown
+    if (typeof projectSelector.value.closeDropdown === 'function') {
+      projectSelector.value.closeDropdown()
+    }
   }
 }
 
@@ -1215,6 +1307,9 @@ onMounted(async () => {
   // Carregar configurações financeiras
   await loadFinancialSettings()
 
+  // Carregar logo ativa
+  await loadActiveLogo()
+
   // Carregar categorias
   await fetchCategories()
 
@@ -1236,8 +1331,20 @@ onMounted(async () => {
 
   document.addEventListener('click', handleClickOutside)
 
+  // Adiciona um listener para o evento dropdown-opened
+  eventBus.on('dropdown-opened', (source) => {
+    console.log('Evento dropdown-opened recebido de:', source)
+    // Se o evento vier do dropdown de projetos, fecha os outros dropdowns
+    if (source === 'project') {
+      isLanguageDropdownOpen.value = false
+      isUserMenuOpen.value = false
+      showCategoryDropdown.value = false
+    }
+  })
+
   onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
+    eventBus.off('dropdown-opened')
   })
 })
 
@@ -1252,6 +1359,9 @@ onUnmounted(() => {
       showCategoryDropdown.value = false
     }
   })
+
+  // Remove o listener do evento dropdown-opened
+  eventBus.off('dropdown-opened')
 })
 
 // Verifica o token a cada renderização do componente

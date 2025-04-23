@@ -184,6 +184,18 @@ const routes = [
     meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
   },
   {
+    path: '/settings/home',
+    name: 'HomeSettings',
+    component: () => import('../views/settings/HomeSettingsPage.vue'),
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
+  },
+  {
+    path: '/settings/orders',
+    name: 'OrdersSettings',
+    component: () => import('../views/settings/OrdersSettingsPage.vue'),
+    meta: { requiresAuth: true, requiresProfile: ['ADMIN', 'MANAGER'] }
+  },
+  {
     path: '/addresses',
     name: 'Addresses',
     component: () => import('../views/AddressesPage.vue'),

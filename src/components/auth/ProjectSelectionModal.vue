@@ -60,6 +60,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { projectService } from '@/services/projectService'
 import { useStore } from 'vuex'
+import eventBus from '@/utils/eventBus'
 
 export default {
   name: 'ProjectSelectionModal',
@@ -102,13 +103,27 @@ export default {
 
       if (selectedProject.value) {
         const project = projects.value.find(p => p.id === selectedProject.value)
+        if (!project) {
+          console.error('Projeto não encontrado na lista:', selectedProject.value)
+          emit('close')
+          return
+        }
 
         // Salva o projeto no sessionStorage
-        projectService.saveSelectedProject({
+        const projectData = {
           id: project.id,
           name: project.name || project.nome
-        })
+        }
 
+        // Salva no sessionStorage antes de emitir eventos
+        projectService.saveSelectedProject(projectData)
+        console.log('Projeto salvo no sessionStorage:', projectData)
+
+        // Emite um evento para notificar outros componentes
+        eventBus.emit('project-changed', projectData)
+        console.log('Evento project-changed emitido com:', projectData)
+
+        // Emite o evento para o componente pai
         emit('project-selected', {
           projectId: project.id,
           projectName: project.name || project.nome,

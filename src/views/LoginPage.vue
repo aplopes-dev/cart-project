@@ -192,22 +192,36 @@ export default {
       router.push({ path: redirectPath.value, replace: true })
     }
 
-    const handleProjectSelected = (data) => {
+    const handleProjectSelected = async (data) => {
       showProjectModal.value = false
       console.log('Projeto selecionado:', data.projectId, data.projectName)
 
-      // Salva o projeto selecionado no sessionStorage usando o serviço
-      import('@/services/projectService').then(module => {
+      try {
+        // Importa o serviço de projeto de forma síncrona
+        const module = await import('@/services/projectService');
         const projectService = module.projectService;
-        projectService.saveSelectedProject({
+
+        // Cria o objeto de projeto
+        const projectData = {
           id: data.projectId,
           name: data.projectName
-        });
-        console.log('Projeto salvo no sessionStorage:', data.projectId, data.projectName);
-      })
+        };
 
-      // Redireciona para o caminho original
-      router.push({ path: data.redirectPath, replace: true })
+        // Salva o projeto no sessionStorage
+        // O serviço irá emitir o evento 'selected-project-changed'
+        projectService.saveSelectedProject(projectData);
+        console.log('Projeto salvo no sessionStorage:', data.projectId, data.projectName);
+
+        // Aguarda um pequeno intervalo para garantir que o evento seja processado
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Redireciona para o caminho original
+        router.push({ path: data.redirectPath, replace: true });
+      } catch (error) {
+        console.error('Erro ao salvar projeto:', error);
+        // Redireciona mesmo em caso de erro
+        router.push({ path: data.redirectPath, replace: true });
+      }
     }
 
     const goToSignup = () => {

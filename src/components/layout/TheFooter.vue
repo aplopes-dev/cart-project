@@ -223,6 +223,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { categoryService } from '@/services/categoryService'
+import { logoService } from '@/services/logoService'
 import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
 
@@ -311,6 +312,20 @@ const loadCompanyData = async () => {
   }
 }
 
+// Função para carregar a logo ativa
+const loadActiveLogo = async () => {
+  try {
+    const logo = await logoService.getActiveLogo()
+    if (logo && logo.image_url) {
+      logoUrl.value = logo.image_url
+      console.log('[Footer] Active logo loaded:', logo.name)
+    }
+  } catch (error) {
+    console.error('Error loading active logo:', error)
+    // Mantém a logo padrão em caso de erro
+  }
+}
+
 // Event handler
 const updateCompanyDataHandler = async () => {
   console.log('Company data update event received') // Debug log
@@ -320,6 +335,7 @@ const updateCompanyDataHandler = async () => {
 onMounted(() => {
   loadCategories()
   loadCompanyData()
+  loadActiveLogo()
   eventBus.on('company-data-updated', updateCompanyDataHandler)
 })
 
