@@ -278,7 +278,7 @@
                       @click.stop="navigateToCategory(category.id)"
                     >
                       <!-- Category Name -->
-                      {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                      {{ $filters.formatCategoryName(category.name).length > 20 ? $filters.formatCategoryName(category.name).substring(0, 20) + '...' : $filters.formatCategoryName(category.name) }}
 
                       <!-- Arrow Icon (only if has children) -->
                       <div
@@ -321,7 +321,7 @@
                     @click.stop="navigateToCategory(subcategory.id)"
                   >
                     <!-- Subcategory Name -->
-                    {{ subcategory.name.length > 18 ? subcategory.name.substring(0, 18) + '...' : subcategory.name }}
+                    {{ $filters.formatCategoryName(subcategory.name).length > 18 ? $filters.formatCategoryName(subcategory.name).substring(0, 18) + '...' : $filters.formatCategoryName(subcategory.name) }}
 
                     <!-- Arrow Icon (only if has children) -->
                     <svg
@@ -351,7 +351,7 @@
                   @click.stop="navigateToCategory(thirdLevel.id)"
                   :title="thirdLevel.name"
                 >
-                  {{ thirdLevel.name.length > 18 ? thirdLevel.name.substring(0, 18) + '...' : thirdLevel.name }}
+                  {{ $filters.formatCategoryName(thirdLevel.name).length > 18 ? $filters.formatCategoryName(thirdLevel.name).substring(0, 18) + '...' : $filters.formatCategoryName(thirdLevel.name) }}
                 </div>
               </div>
             </div>
@@ -702,7 +702,7 @@
                       :style="{'color': category.expanded ? 'black !important' : 'white !important'}"
                       :title="category.name"
                       class="text-xs"
-                    >{{ category.name }}</span>
+                    >{{ $filters.formatCategoryName(category.name) }}</span>
 
                     <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
                     <svg
@@ -742,7 +742,7 @@
                           :style="{'color': subcategory.expanded ? '#FFDD00 !important' : 'black !important'}"
                           :title="subcategory.name"
                           class="text-xs"
-                        >{{ subcategory.name }}</span>
+                        >{{ $filters.formatCategoryName(subcategory.name) }}</span>
 
                         <!-- Ícone de seta se tiver filhos (gira quando expandido) -->
                         <svg
@@ -769,7 +769,7 @@
                             style="color: #FFDD00 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: block;"
                             :title="childCategory.name"
                             class="text-xs"
-                          >{{ childCategory.name }}</span>
+                          >{{ $filters.formatCategoryName(childCategory.name) }}</span>
                         </div>
                       </div>
 

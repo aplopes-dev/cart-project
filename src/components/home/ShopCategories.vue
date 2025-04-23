@@ -20,8 +20,8 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase()">
-                  {{ (firstThreeCategories[0]?.name || 'PLUMBING').toUpperCase() }}
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[0]?.name ? $filters.formatCategoryName(firstThreeCategories[0].name) : 'PLUMBING').toUpperCase()">
+                  {{ (firstThreeCategories[0]?.name ? $filters.formatCategoryName(firstThreeCategories[0].name) : 'PLUMBING').toUpperCase() }}
                 </span>
               </div>
             </div>
@@ -60,8 +60,8 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[1]?.name || 'TOOLS').toUpperCase()">
-                  {{ (firstThreeCategories[1]?.name || 'TOOLS').toUpperCase() }}
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[1]?.name ? $filters.formatCategoryName(firstThreeCategories[1].name) : 'TOOLS').toUpperCase()">
+                  {{ (firstThreeCategories[1]?.name ? $filters.formatCategoryName(firstThreeCategories[1].name) : 'TOOLS').toUpperCase() }}
                 </span>
               </div>
             </div>
@@ -100,8 +100,8 @@
             <!-- Title Container -->
             <div class="flex-1 h-[60px] md:h-[80px] bg-white border border-[#FAFAFA] flex items-center min-w-[200px] md:min-w-[250px]">
               <div class="h-full w-full bg-black flex items-center justify-center">
-                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[2]?.name || 'HEATING').toUpperCase()">
-                  {{ (firstThreeCategories[2]?.name || 'HEATING').toUpperCase() }}
+                <span class="text-[18px] md:text-[24px] font-archivo-narrow font-semibold text-[#FFDD00] whitespace-nowrap overflow-hidden truncate block px-2" :title="(firstThreeCategories[2]?.name ? $filters.formatCategoryName(firstThreeCategories[2].name) : 'HEATING').toUpperCase()">
+                  {{ (firstThreeCategories[2]?.name ? $filters.formatCategoryName(firstThreeCategories[2].name) : 'HEATING').toUpperCase() }}
                 </span>
               </div>
             </div>

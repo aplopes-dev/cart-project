@@ -25,7 +25,7 @@
               :to="`/categories/${product.category?.id}`"
               class="hover:text-black"
             >
-              {{ product.category?.name || 'Loading...' }}
+              {{ product.category?.name ? $filters.formatCategoryName(product.category.name) : 'Loading...' }}
             </router-link>
             <span>/</span>
             <span class="text-black">{{ product.name || 'Loading...' }}</span>
@@ -242,6 +242,7 @@ import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import eventBus from '@/utils/eventBus'
+import { formatCategoryName } from '@/filters'
 
 export default {
   name: 'ProductDetailsPage',
@@ -420,7 +421,8 @@ export default {
       currencySymbol,
       discountPercentage,
       showPrices,
-      loadProduct
+      loadProduct,
+      formatCategoryName
     }
   },
   methods: {

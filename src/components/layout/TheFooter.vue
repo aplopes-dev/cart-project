@@ -148,7 +148,7 @@
                         class="font-archivo font-normal text-xs md:text-nav leading-4 md:leading-nav text-empire-white-70 whitespace-nowrap overflow-hidden truncate block"
                         :title="category.name"
                       >
-                        {{ category.name.length > 20 ? category.name.substring(0, 20) + '...' : category.name }}
+                        {{ $filters.formatCategoryName(category.name).length > 20 ? $filters.formatCategoryName(category.name).substring(0, 20) + '...' : $filters.formatCategoryName(category.name) }}
                       </span>
                     </div>
                   </div>
@@ -238,6 +238,7 @@ import { categoryService } from '@/services/categoryService'
 import { logoService } from '@/services/logoService'
 import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
+import { formatCategoryName } from '@/filters'
 
 const router = useRouter()
 const logoUrl = ref('/images/logo/logo.png')
@@ -302,7 +303,7 @@ const loadCategories = async () => {
       .sort((a, b) => (productCountMap[b.id] || 0) - (productCountMap[a.id] || 0))
       .slice(0, 10)
 
-    console.log(`[Footer] Exibindo as 10 categorias com mais produtos: ${categories.value.map(c => c.name).join(', ')}`)
+    console.log(`[Footer] Exibindo as 10 categorias com mais produtos: ${categories.value.map(c => `${c.name} (formatado: ${formatCategoryName(c.name)})`).join(', ')}`)
   } catch (error) {
     console.error('Error loading categories:', error)
     categories.value = []

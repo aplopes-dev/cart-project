@@ -33,7 +33,7 @@
             :class="selectedCategory === category.id ? 'text-[#FBBD1E] font-semibold' : 'text-gray-800'"
             :title="category.name"
           >
-            {{ category.name }}
+            {{ $filters.formatCategoryName(category.name) }}
           </span>
         </div>
 

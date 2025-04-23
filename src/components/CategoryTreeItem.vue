@@ -43,7 +43,7 @@
           </div>
           <div>
             <h3 class="font-archivo-narrow font-semibold text-sm md:text-lg flex items-center">
-              {{ category.name }}
+              {{ $filters.formatCategoryName(category.name) }}
               <span v-if="!hasProducts" class="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                 {{ $t('systemSettings.noProductsInCategory') }}
               </span>

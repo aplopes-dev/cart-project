@@ -7,6 +7,7 @@ import { Toast, options } from './plugins/toast'
 import './assets/tailwind.css'
 import { createPinia } from 'pinia'
 import { permission, hasPermission } from './directives/permission'
+import { formatCategoryName } from './filters'
 
 const app = createApp(App)
 
@@ -21,6 +22,11 @@ app.use(pinia)
 // Registrar diretivas personalizadas
 app.directive('permission', permission)
 app.directive('has-permission', hasPermission)
+
+// Registrar filtros globais
+app.config.globalProperties.$filters = {
+  formatCategoryName
+}
 
 app.mount('#app')
 
