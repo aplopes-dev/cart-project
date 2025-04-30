@@ -16,7 +16,9 @@ export default {
     close: 'Close',
     greeting: 'Hello',
     logout: 'Logout',
-    myAccount: 'My Account'
+    myAccount: 'My Account',
+    noProductsFound: 'No products found',
+    tryAnotherSearch: 'Try searching with different terms'
   },
   auth: {
     signIn: 'SIGN IN',
@@ -162,6 +164,16 @@ export default {
     completePurchase: "COMPLETE ORDER",
 
     title: 'CHECKOUT',
+    poNumber: 'P.O. Number',
+    poNumberPlaceholder: 'Enter P.O. number...',
+    location: 'Order Location',
+    selectLocation: 'Select location',
+    deliveryMethod: 'Delivery Method',
+    delivery: 'Delivery',
+    pickup: 'Pick-up',
+    companyAddresses: 'Company Addresses',
+    selectCompanyAddress: 'Select an address',
+    useThisAddress: 'Use this address',
     personalDetails: 'Personal Details',
     firstName: 'First Name',
     firstNamePlaceholder: 'Enter your first name...',
@@ -206,6 +218,13 @@ export default {
       freeShipping: "Free Shipping"
     },
     errorLoadingAddress: 'Error loading default address',
+    errorLoadingLocations: 'Error loading locations',
+    selectLocation: 'Select location',
+    location: 'Location',
+    pickupLocation: 'Pickup Location',
+    changeLocation: 'Change location',
+    useThisLocation: 'Use this location',
+    noLocationsFound: 'No locations found',
     completePurchase: 'COMPLETE ORDER',
     fieldRequired: 'This field is required',
     changeAddress: 'Change address',
@@ -529,6 +548,9 @@ export default {
     cityPlaceholder: 'Enter city...',
     projects: 'Projects',
     projectsPlaceholder: 'Select projects...',
+    pickupLocation: 'Pickup Location',
+    pickupAt: 'Pickup at',
+    noLocationSpecified: 'No location specified',
     multiselect: {
       selectLabel: 'Press enter to select',
       selectedLabel: 'Selected',
@@ -619,6 +641,9 @@ export default {
     notes: 'Order Notes',
     noNotes: 'No notes for this order',
     shippingAddress: 'Shipping Address',
+    pickupLocation: 'Pickup Location',
+    pickupAt: 'Pickup at',
+    noLocationSpecified: 'No location specified',
     noShippingAddress: 'No shipping address available',
     neighborhood: 'Neighborhood',
     noPriceOrder: 'Order without prices',
@@ -894,7 +919,13 @@ export default {
     deleteError: 'Error deleting banner. Please try again.',
     createSuccess: 'Banner created successfully!',
     updateSuccess: 'Banner updated successfully!',
-    deleteSuccess: 'Banner deleted successfully!'
+    deleteSuccess: 'Banner deleted successfully!',
+    titlePlaceholderPt: 'Enter title in Portuguese',
+    titlePlaceholderEn: 'Enter title in English',
+    titlePlaceholderFr: 'Enter title in French',
+    subtitlePlaceholderPt: 'Enter subtitle in Portuguese',
+    subtitlePlaceholderEn: 'Enter subtitle in English',
+    subtitlePlaceholderFr: 'Enter subtitle in French'
   },
 
   homeTabs: {

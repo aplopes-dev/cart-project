@@ -27,13 +27,13 @@
                 class="text-xl sm:text-3xl md:text-6xl font-bold mb-1 md:mb-4"
                 :style="{ color: banner.title_color }"
               >
-                {{ banner.title }}
+                {{ getLocalizedTitle(banner) }}
               </h1>
               <p
                 class="text-xs sm:text-base md:text-xl mb-3 md:mb-6 max-w-2xl mx-auto"
                 :style="{ color: banner.subtitle_color }"
               >
-                {{ banner.subtitle }}
+                {{ getLocalizedSubtitle(banner) }}
               </p>
               <router-link
                 to="/categories"
@@ -91,7 +91,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+
+const { locale } = useI18n()
 
 // State
 const currentSlide = ref(0)
@@ -101,6 +104,18 @@ const autoSlideInterval = ref(null)
 
 // API URL
 const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api'
+
+// Helper function to get localized title based on current locale
+const getLocalizedTitle = (banner) => {
+  const currentLocale = locale.value
+  return banner[`title_${currentLocale}`] || banner.title_en || banner.title || ''
+}
+
+// Helper function to get localized subtitle based on current locale
+const getLocalizedSubtitle = (banner) => {
+  const currentLocale = locale.value
+  return banner[`subtitle_${currentLocale}`] || banner.subtitle_en || banner.subtitle || ''
+}
 
 // Fetch banners
 const fetchBanners = async () => {
@@ -114,7 +129,13 @@ const fetchBanners = async () => {
         {
           id: 'default',
           title: 'Your Best Online Shop',
+          title_en: 'Your Best Online Shop',
+          title_pt: 'Sua Melhor Loja Online',
+          title_fr: 'Votre Meilleure Boutique en Ligne',
           subtitle: 'Discover our amazing collection of products with the best prices in the market.',
+          subtitle_en: 'Discover our amazing collection of products with the best prices in the market.',
+          subtitle_pt: 'Descubra nossa incrível coleção de produtos com os melhores preços do mercado.',
+          subtitle_fr: 'Découvrez notre incroyable collection de produits aux meilleurs prix du marché.',
           image_url: '/images/banner/hero-image-1.png',
           title_color: '#FFFFFF',
           subtitle_color: '#FFFFFF'
@@ -128,7 +149,13 @@ const fetchBanners = async () => {
       {
         id: 'default',
         title: 'Your Best Online Shop',
+        title_en: 'Your Best Online Shop',
+        title_pt: 'Sua Melhor Loja Online',
+        title_fr: 'Votre Meilleure Boutique en Ligne',
         subtitle: 'Discover our amazing collection of products with the best prices in the market.',
+        subtitle_en: 'Discover our amazing collection of products with the best prices in the market.',
+        subtitle_pt: 'Descubra nossa incrível coleção de produtos com os melhores preços do mercado.',
+        subtitle_fr: 'Découvrez notre incroyable collection de produits aux meilleurs prix du marché.',
         image_url: '/images/banner/hero-image-1.png',
         title_color: '#FFFFFF',
         subtitle_color: '#FFFFFF'

@@ -89,7 +89,7 @@
                   </td>
                   <td class="py-3 px-4 border-b">
                     <div class="flex items-center">
-                      <span>{{ banner.title }}</span>
+                      <span>{{ getLocalizedTitle(banner) }}</span>
                       <div
                         class="w-4 h-4 ml-2 rounded-full"
                         :style="{ backgroundColor: banner.title_color }"
@@ -99,7 +99,7 @@
                   </td>
                   <td class="py-3 px-4 border-b">
                     <div class="flex items-center">
-                      <span>{{ truncateText(banner.subtitle, 30) }}</span>
+                      <span>{{ truncateText(getLocalizedSubtitle(banner), 30) }}</span>
                       <div
                         class="w-4 h-4 ml-2 rounded-full"
                         :style="{ backgroundColor: banner.subtitle_color }"
@@ -161,32 +161,126 @@
             </h2>
 
             <form @submit.prevent="saveBanner">
-              <!-- Title -->
+              <!-- Titles -->
               <div class="mb-2 md:mb-4">
-                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="title">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2">
                   {{ $t('homeBanner.title') }} *
                 </label>
-                <input
-                  id="title"
-                  v-model="bannerForm.title"
-                  type="text"
-                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
-                  required
-                >
+
+                <!-- Tabs for language selection -->
+                <div class="mb-2 border-b border-gray-200">
+                  <nav class="-mb-px flex space-x-4">
+                    <button
+                      v-for="lang in ['pt', 'en', 'fr']"
+                      :key="lang"
+                      type="button"
+                      @click="activeTitleLang = lang"
+                      :class="[
+                        'py-2 px-3 border-b-2 font-medium text-xs md:text-sm font-archivo',
+                        activeTitleLang === lang
+                          ? 'border-empire-yellow text-empire-yellow'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ]"
+                    >
+                      {{ lang.toUpperCase() }}
+                    </button>
+                  </nav>
+                </div>
+
+                <!-- Portuguese Title -->
+                <div v-show="activeTitleLang === 'pt'">
+                  <input
+                    id="title_pt"
+                    v-model="bannerForm.title_pt"
+                    type="text"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
+                    :placeholder="$t('homeBanner.titlePlaceholderPt')"
+                  >
+                </div>
+
+                <!-- English Title -->
+                <div v-show="activeTitleLang === 'en'">
+                  <input
+                    id="title_en"
+                    v-model="bannerForm.title_en"
+                    type="text"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
+                    :placeholder="$t('homeBanner.titlePlaceholderEn')"
+                    required
+                  >
+                </div>
+
+                <!-- French Title -->
+                <div v-show="activeTitleLang === 'fr'">
+                  <input
+                    id="title_fr"
+                    v-model="bannerForm.title_fr"
+                    type="text"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
+                    :placeholder="$t('homeBanner.titlePlaceholderFr')"
+                  >
+                </div>
               </div>
 
-              <!-- Subtitle -->
+              <!-- Subtitles -->
               <div class="mb-2 md:mb-4">
-                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2" for="subtitle">
+                <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2">
                   {{ $t('homeBanner.subtitle') }} *
                 </label>
-                <textarea
-                  id="subtitle"
-                  v-model="bannerForm.subtitle"
-                  class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
-                  rows="2" md:rows="3"
-                  required
-                ></textarea>
+
+                <!-- Tabs for language selection -->
+                <div class="mb-2 border-b border-gray-200">
+                  <nav class="-mb-px flex space-x-4">
+                    <button
+                      v-for="lang in ['pt', 'en', 'fr']"
+                      :key="lang"
+                      type="button"
+                      @click="activeSubtitleLang = lang"
+                      :class="[
+                        'py-2 px-3 border-b-2 font-medium text-xs md:text-sm font-archivo',
+                        activeSubtitleLang === lang
+                          ? 'border-empire-yellow text-empire-yellow'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ]"
+                    >
+                      {{ lang.toUpperCase() }}
+                    </button>
+                  </nav>
+                </div>
+
+                <!-- Portuguese Subtitle -->
+                <div v-show="activeSubtitleLang === 'pt'">
+                  <textarea
+                    id="subtitle_pt"
+                    v-model="bannerForm.subtitle_pt"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                    rows="2" md:rows="3"
+                    :placeholder="$t('homeBanner.subtitlePlaceholderPt')"
+                  ></textarea>
+                </div>
+
+                <!-- English Subtitle -->
+                <div v-show="activeSubtitleLang === 'en'">
+                  <textarea
+                    id="subtitle_en"
+                    v-model="bannerForm.subtitle_en"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                    rows="2" md:rows="3"
+                    :placeholder="$t('homeBanner.subtitlePlaceholderEn')"
+                    required
+                  ></textarea>
+                </div>
+
+                <!-- French Subtitle -->
+                <div v-show="activeSubtitleLang === 'fr'">
+                  <textarea
+                    id="subtitle_fr"
+                    v-model="bannerForm.subtitle_fr"
+                    class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                    rows="2" md:rows="3"
+                    :placeholder="$t('homeBanner.subtitlePlaceholderFr')"
+                  ></textarea>
+                </div>
               </div>
 
               <!-- Image Upload -->
@@ -820,7 +914,7 @@ import { ref, reactive, onMounted, getCurrentInstance, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const app = getCurrentInstance()
 const toast = app.appContext.config.globalProperties.$toast
 
@@ -854,6 +948,8 @@ const saving = ref(false)
 const deleting = ref(false)
 const imagePreview = ref(null)
 const selectedFileName = ref('')
+const activeTitleLang = ref('en')
+const activeSubtitleLang = ref('en')
 
 // Logo state
 const logos = ref([])
@@ -880,7 +976,13 @@ const brandSelectedFileName = ref('')
 // Form
 const bannerForm = reactive({
   title: '',
+  title_pt: '',
+  title_en: '',
+  title_fr: '',
   subtitle: '',
+  subtitle_pt: '',
+  subtitle_en: '',
+  subtitle_fr: '',
   image_url: '',
   title_color: '#FFFFFF',
   subtitle_color: '#FFFFFF',
@@ -939,10 +1041,32 @@ const openBannerModal = (banner = null) => {
   showModal.value = true
 }
 
+// Reset form
+const resetForm = () => {
+  bannerForm.title = ''
+  bannerForm.title_pt = ''
+  bannerForm.title_en = ''
+  bannerForm.title_fr = ''
+  bannerForm.subtitle = ''
+  bannerForm.subtitle_pt = ''
+  bannerForm.subtitle_en = ''
+  bannerForm.subtitle_fr = ''
+  bannerForm.image_url = ''
+  bannerForm.title_color = '#FFFFFF'
+  bannerForm.subtitle_color = '#FFFFFF'
+  bannerForm.position = 0
+  bannerForm.is_active = true
+  imagePreview.value = null
+  selectedFileName.value = ''
+  editingBanner.value = null
+  activeTitleLang.value = 'en'
+  activeSubtitleLang.value = 'en'
+}
+
 // Close modal
 const closeModal = () => {
   showModal.value = false
-  editingBanner.value = null
+  resetForm()
 }
 
 // Handle image change
@@ -1086,6 +1210,18 @@ const deleteBanner = async () => {
 const truncateText = (text, maxLength) => {
   if (!text) return ''
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+}
+
+// Helper function to get localized title based on current locale
+const getLocalizedTitle = (banner) => {
+  const currentLocale = locale.value
+  return banner[`title_${currentLocale}`] || banner.title_en || banner.title || ''
+}
+
+// Helper function to get localized subtitle based on current locale
+const getLocalizedSubtitle = (banner) => {
+  const currentLocale = locale.value
+  return banner[`subtitle_${currentLocale}`] || banner.subtitle_en || banner.subtitle || ''
 }
 
 // Verifica se é a única logo ativa

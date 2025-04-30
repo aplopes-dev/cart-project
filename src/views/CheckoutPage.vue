@@ -47,12 +47,12 @@
                       type="text"
                       v-model="formData.firstName"
                       :placeholder="$t('checkout.firstNamePlaceholder')"
-                      :disabled="isFieldDisabled.firstName"
                       :class="[
                         'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
-                        isFieldDisabled.firstName ? 'bg-gray-100' : 'bg-white',
-                        (showErrors && formErrors.firstName) ? 'border-red-500' : 'border-black/25'
+                        (showErrors && formErrors.firstName) ? 'border-red-500' : 'border-black/25',
+                        isFieldDisabled.firstName ? 'bg-gray-100' : 'bg-white'
                       ]"
+                      :disabled="isFieldDisabled.firstName"
                     >
                     <span v-if="showErrors && formErrors.firstName" class="text-red-500 text-sm mt-1">
                       {{ $t('checkout.fieldRequired') }}
@@ -64,12 +64,12 @@
                       type="text"
                       v-model="formData.lastName"
                       :placeholder="$t('checkout.lastNamePlaceholder')"
-                      :disabled="isFieldDisabled.lastName"
                       :class="[
                         'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
-                        isFieldDisabled.lastName ? 'bg-gray-100' : 'bg-white',
-                        (showErrors && formErrors.lastName) ? 'border-red-500' : 'border-black/25'
+                        (showErrors && formErrors.lastName) ? 'border-red-500' : 'border-black/25',
+                        isFieldDisabled.lastName ? 'bg-gray-100' : 'bg-white'
                       ]"
+                      :disabled="isFieldDisabled.lastName"
                     >
                     <span v-if="showErrors && formErrors.lastName" class="text-red-500 text-sm mt-1">
                       {{ $t('checkout.fieldRequired') }}
@@ -81,12 +81,12 @@
                       type="email"
                       v-model="formData.email"
                       :placeholder="$t('checkout.emailPlaceholder')"
-                      :disabled="isFieldDisabled.email"
                       :class="[
                         'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base',
-                        isFieldDisabled.email ? 'bg-gray-100' : 'bg-white',
-                        (showErrors && formErrors.email) ? 'border-red-500' : 'border-black/25'
+                        (showErrors && formErrors.email) ? 'border-red-500' : 'border-black/25',
+                        isFieldDisabled.email ? 'bg-gray-100' : 'bg-white'
                       ]"
+                      :disabled="isFieldDisabled.email"
                     >
                     <span v-if="showErrors && formErrors.email" class="text-red-500 text-sm mt-1">
                       {{ $t('checkout.fieldRequired') }}
@@ -109,6 +109,55 @@
                   </div>
                 </div>
               </section>
+
+              <!-- P.O. Number and Location Section -->
+              <section>
+                <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12">
+                  <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.poNumber') }}</h2>
+                </div>
+                <div class="mb-6">
+                  <!-- P.O. Number -->
+                  <div>
+                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.poNumber') }}</label>
+                    <input
+                      type="text"
+                      v-model="formData.poNumber"
+                      :placeholder="$t('checkout.poNumberPlaceholder')"
+                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base"
+                    >
+                  </div>
+                </div>
+
+
+
+                <!-- Delivery Method -->
+                <div class="mb-6">
+                  <label class="block font-archivo text-sm mb-2">{{ $t('checkout.deliveryMethod') }}</label>
+                  <div class="flex gap-3 md:gap-4">
+                    <button
+                      type="button"
+                      @click="setDeliveryMethod('delivery')"
+                      :class="[
+                        'flex-1 px-4 py-2 md:px-6 md:py-3 font-archivo-narrow font-semibold text-base md:text-lg rounded',
+                        deliveryMethod === 'delivery' ? 'bg-empire-yellow text-black' : 'bg-gray-300 text-black'
+                      ]"
+                    >
+                      {{ $t('checkout.delivery') }}
+                    </button>
+                    <button
+                      type="button"
+                      @click="setDeliveryMethod('pickup')"
+                      :class="[
+                        'flex-1 px-4 py-2 md:px-6 md:py-3 font-archivo-narrow font-semibold text-base md:text-lg rounded',
+                        deliveryMethod === 'pickup' ? 'bg-empire-yellow text-black' : 'bg-gray-300 text-black'
+                      ]"
+                    >
+                      {{ $t('checkout.pickup') }}
+                    </button>
+                  </div>
+                </div>
+              </section>
+
 
               <!-- Shipping Address Section -->
               <section>
@@ -138,124 +187,140 @@
                     </svg>
                   </div>
                 </div>
-                <div v-show="sections.shipping || isDesktop" class="grid grid-cols-2 gap-3 md:gap-4">
-                  <div class="col-span-2">
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.address"
-                      :placeholder="$t('checkout.addressPlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.address" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
+                <div v-show="sections.shipping || isDesktop">
+                  <!-- Delivery Mode -->
+                  <div v-if="deliveryMethod === 'delivery'" class="grid grid-cols-2 gap-3 md:gap-4">
+                    <div class="col-span-2">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.address"
+                        :placeholder="$t('checkout.addressPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.address" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+
+                    <!-- Número -->
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.number') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.number"
+                        :placeholder="$t('checkout.numberPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.number) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.number" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.neighborhood') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.neighborhood"
+                        :placeholder="$t('checkout.neighborhoodPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.neighborhood) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.neighborhood" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.apartment"
+                        :placeholder="$t('checkout.apartmentPlaceholder')"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
+                      >
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.city"
+                        :placeholder="$t('checkout.cityPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.city" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.state"
+                        :placeholder="$t('checkout.statePlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.postalCode"
+                        :placeholder="$t('checkout.postalCodePlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.postalCode" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.country"
+                        :placeholder="$t('checkout.countryPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
                   </div>
 
-                  <!-- Número -->
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.number') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.number"
-                      :placeholder="$t('checkout.numberPlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.number) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.number" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
-                  </div>
-
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.neighborhood') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.neighborhood"
-                      :placeholder="$t('checkout.neighborhoodPlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.neighborhood) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.neighborhood" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
-                  </div>
-
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.apartment"
-                      :placeholder="$t('checkout.apartmentPlaceholder')"
-                      class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
-                    >
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.city"
-                      :placeholder="$t('checkout.cityPlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.city" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.state"
-                      :placeholder="$t('checkout.statePlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.postalCode"
-                      :placeholder="$t('checkout.postalCodePlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.postalCode" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
-                  </div>
-                  <div>
-                    <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
-                    <input
-                      type="text"
-                      v-model="formData.country"
-                      :placeholder="$t('checkout.countryPlaceholder')"
-                      :class="[
-                        'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                        (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
-                      ]"
-                    >
-                    <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
-                      {{ $t('checkout.fieldRequired') }}
-                    </span>
+                  <!-- Pick-up Mode -->
+                  <div v-else class="space-y-4">
+                    <!-- Location Information -->
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                      <div>
+                        <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('checkout.pickupLocation') }}</h3>
+                        <p class="font-archivo text-base">
+                          {{ selectedLocation ? selectedLocation.description : $t('checkout.selectLocation') }}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -488,9 +553,14 @@
   <AddressSelectionModal
     :show="showAddressModal"
     :current-address-id="currentAddressId"
+    :is-pickup-mode="deliveryMethod === 'pickup'"
+    :current-location-id="selectedLocationId"
     @close="showAddressModal = false"
     @select="updateShippingAddress"
+    @selectLocation="updateSelectedLocation"
   />
+
+
 
   <!-- Modal de Confirmação de Projeto -->
   <ProjectConfirmationModal
@@ -516,6 +586,8 @@ import { useCheckoutStore } from '@/stores/checkoutStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { imageService } from '@/services/imageService' // Para usar o handleImageError
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import { projectService } from '@/services/projectService'
+import { locationService } from '@/services/locationService'
 
 export default {
   name: 'CheckoutPage',
@@ -696,7 +768,20 @@ export default {
         payment: true
       },
       isDesktop: window.innerWidth >= 1024,
+      deliveryMethod: 'delivery', // Default para entrega
+      companyData: {
+        name: '',
+        address: '',
+        phone: '',
+        email: ''
+      },
+      companyContacts: [],
+      selectedCompanyAddressId: '',
+      selectedCompanyAddress: null,
+      locations: [], // Lista de locais disponíveis
+      selectedLocationId: '', // ID do local selecionado
       formData: {
+        poNumber: '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
@@ -722,6 +807,7 @@ export default {
       showAddressModal: false,
       currentAddressId: null,
       showProjectModal: false,
+      selectedLocation: null, // Objeto do local selecionado
       isLoadingSummary: true // Estado de carregamento para o resumo do pedido
     }
   },
@@ -894,6 +980,96 @@ export default {
         this.showAddressModal = true;
       }, 300);
     },
+
+
+    // Método para definir o modo de entrega
+    setDeliveryMethod(method) {
+      this.deliveryMethod = method;
+
+      // Se mudar para pickup, carrega os locais disponíveis
+      if (method === 'pickup') {
+        // Carrega os locais disponíveis
+        if (this.locations.length === 0) {
+          this.loadLocations();
+        }
+      }
+    },
+
+    // Método para carregar os locais disponíveis
+    async loadLocations() {
+      try {
+        const locations = await locationService.getLocations();
+        this.locations = locations;
+        console.log('Locais carregados:', locations);
+
+        // Se não houver local selecionado e houver locais disponíveis, seleciona o primeiro
+        if (!this.selectedLocationId && locations.length > 0) {
+          this.selectedLocationId = locations[0].id;
+          this.selectedLocation = locations[0];
+        }
+      } catch (error) {
+        console.error('Erro ao carregar locais:', error);
+        this.$toast.error(this.$t('checkout.errorLoadingLocations'));
+      }
+    },
+
+
+
+    // Método para atualizar o local selecionado
+    updateSelectedLocation(location) {
+      this.selectedLocationId = location.id;
+      this.selectedLocation = location;
+      console.log('Local selecionado:', location);
+    },
+
+    // Método para carregar os dados da empresa
+    async loadCompanyData() {
+      try {
+        const response = await api.get('/settings/company');
+        this.companyData = {
+          name: response.data.company_name || '',
+          email: response.data.email || '',
+          phone: response.data.phone || '',
+          address: response.data.address || ''
+        };
+
+        // Mapeia os contatos para o formato correto
+        this.companyContacts = (response.data.contacts || []).map(contact => ({
+          id: contact.id,
+          name: contact.name,
+          department: contact.department,
+          email: contact.email,
+          phone: contact.phone,
+          address: contact.address
+        }));
+      } catch (err) {
+        console.error('Error loading company data:', err);
+        this.$toast.error(this.$t('contact.loadError'));
+      }
+    },
+
+    // Método para atualizar o endereço da empresa selecionado
+    updateSelectedCompanyAddress() {
+      if (this.selectedCompanyAddressId === 'main') {
+        this.selectedCompanyAddress = {
+          name: this.companyData.name,
+          address: this.companyData.address
+        };
+      } else if (this.selectedCompanyAddressId) {
+        const contact = this.companyContacts.find(c => c.id === this.selectedCompanyAddressId);
+        if (contact) {
+          this.selectedCompanyAddress = {
+            name: contact.name,
+            address: contact.address
+          };
+        }
+      } else {
+        this.selectedCompanyAddress = null;
+      }
+    },
+
+
+
     toggleSection(section) {
       if (!this.isDesktop) {
         this.sections[section] = !this.sections[section]
@@ -904,9 +1080,20 @@ export default {
     },
     validateForm() {
       this.showErrors = true
+
+      // Se estiver no modo pickup, não valida os campos de endereço
+      if (this.deliveryMethod === 'pickup') {
+        // Verifica apenas os campos pessoais
+        const personalFieldsValid = !Object.entries(this.formErrors)
+          .filter(([field]) => ['firstName', 'lastName', 'email', 'phone'].includes(field))
+          .some(([, error]) => error);
+
+        return personalFieldsValid;
+      }
+
       return !this.hasErrors
     },
-    completePurchase() {
+    async completePurchase() {
       // Verifica se o botão está habilitado
       if (!this.isCheckoutButtonEnabled) {
         return;
@@ -916,7 +1103,45 @@ export default {
         return;
       }
 
-      // Mostra o modal de confirmação de projeto
+      // Verifica o perfil do usuário
+      const currentUser = this.store.state.currentUser;
+      const userProfile = currentUser?.profile || 'USER';
+
+      // Se o usuário for ADMIN, finaliza o pedido sem mostrar o modal de projeto
+      if (userProfile === 'ADMIN') {
+        console.log('Usuário é ADMIN, finalizando pedido sem projeto');
+        this.confirmProjectAndProceed({ id: null, name: null });
+        return;
+      }
+
+      // Se o usuário for USER ou MANAGER, verifica se tem apenas um projeto
+      if (userProfile === 'USER' || userProfile === 'MANAGER') {
+        try {
+          // Busca os projetos do usuário
+          const userProjects = await projectService.getCurrentUserProjects();
+
+          // Se o usuário tiver apenas um projeto, finaliza o pedido com esse projeto
+          if (userProjects.length === 1) {
+            console.log('Usuário tem apenas um projeto, finalizando pedido com esse projeto:', userProjects[0]);
+            const project = {
+              id: userProjects[0].id,
+              name: userProjects[0].name || userProjects[0].nome
+            };
+
+            // Salva o projeto no sessionStorage
+            projectService.saveSelectedProject(project);
+
+            // Finaliza o pedido com esse projeto
+            this.confirmProjectAndProceed(project);
+            return;
+          }
+        } catch (error) {
+          console.error('Erro ao buscar projetos do usuário:', error);
+          // Em caso de erro, mostra o modal normalmente
+        }
+      }
+
+      // Se não for nenhum dos casos acima, mostra o modal de confirmação de projeto
       this.showProjectModal = true;
     },
 
@@ -970,21 +1195,26 @@ export default {
         }
 
         const orderData = {
-          address: this.formData.address,
-          number: this.formData.number,
-          complement: this.formData.complement,
-          neighborhood: this.formData.neighborhood,
-          city: this.formData.city,
-          state: this.formData.state,
-          postalCode: this.formData.postalCode,
-          country: this.formData.country,
+          poNumber: this.formData.poNumber,
+          deliveryMethod: this.deliveryMethod,
+          address: this.deliveryMethod === 'delivery' ? this.formData.address :
+                  (this.selectedCompanyAddress ? this.selectedCompanyAddress.address : this.companyData.address),
+          number: this.deliveryMethod === 'delivery' ? this.formData.number : '',
+          complement: this.deliveryMethod === 'delivery' ? this.formData.complement : '',
+          neighborhood: this.deliveryMethod === 'delivery' ? this.formData.neighborhood : '',
+          city: this.deliveryMethod === 'delivery' ? this.formData.city : '',
+          state: this.deliveryMethod === 'delivery' ? this.formData.state : '',
+          postalCode: this.deliveryMethod === 'delivery' ? this.formData.postalCode : '',
+          country: this.deliveryMethod === 'delivery' ? this.formData.country : '',
           notes: this.checkoutStore.orderNotes,
           // Se o toggle master estiver desabilitado, envia valores null
           // Agora o backend foi modificado para aceitar null para esses campos
           shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
           taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null,
           // Adiciona o ID do projeto selecionado (pode ser null)
-          project_id: project ? project.id : null
+          project_id: project ? project.id : null,
+          // Adiciona o ID do local selecionado se o método de entrega for pickup
+          location_id: this.deliveryMethod === 'pickup' && this.selectedLocationId ? this.selectedLocationId : null
         };
 
         console.log('Order data being sent:', orderData);
@@ -1045,6 +1275,14 @@ export default {
         this.isLoadingSummary = newValue
       },
       immediate: true
+    },
+    // Watcher para atualizar o endereço selecionado quando o ID mudar
+    selectedCompanyAddressId: {
+      handler(newValue) {
+        if (newValue) {
+          this.updateSelectedCompanyAddress()
+        }
+      }
     }
   },
   async beforeRouteEnter(_, __, next) {
@@ -1073,6 +1311,9 @@ export default {
         this.formData.country = defaultAddress.country
         this.currentAddressId = defaultAddress.id
       }
+
+      // Carrega os dados da empresa para o modo pickup
+      this.loadCompanyData();
     } catch (error) {
       console.error('Error loading default address:', error)
       this.$toast.error(this.$t('checkout.errorLoadingAddress'))

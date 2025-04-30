@@ -344,10 +344,10 @@
                     @error="handleImageError"
                   >
                   <div class="p-2 pb-0 md:p-2 flex flex-col h-full">
-                    <h3 class="font-archivo-narrow font-bold text-[16px] md:text-[20px] leading-[20px] md:leading-[24px] text-black h-[20px] md:h-[48px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-1 md:mb-1">
+                    <h3 class="font-archivo-narrow font-thin text-[16px] md:text-[20px] leading-[20px] md:leading-[24px] text-black h-[20px] md:h-[48px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-1 md:mb-1 product-name">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo text-sm md:text-sm text-black/70 description-fixed-height">
+                    <p class="font-archivo font-bold text-sm md:text-sm text-black/70 description-fixed-height">
                       {{ product.description || '&nbsp;'.repeat(3) }}
                     </p>
                     <div class="mt-auto w-full mb-0 pb-0">
@@ -1703,6 +1703,15 @@ input[type="range"]:nth-child(2) {
   height: 100%;
   background: linear-gradient(to bottom, #FBBD1E, rgba(251, 189, 30, 0.3));
   border-radius: 4px 0 0 4px;
+}
+
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
 }
 </style>
 

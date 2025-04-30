@@ -563,8 +563,8 @@
                 v-else-if="searchQuery && !isSearching"
                 class="p-4 text-center text-gray-600"
               >
-                <div class="text-sm">Nenhum produto encontrado</div>
-                <div class="text-xs mt-1 text-gray-500">Tente buscar com outros termos</div>
+                <div class="text-sm">{{ $t('header.noProductsFound') }}</div>
+                <div class="text-xs mt-1 text-gray-500">{{ $t('header.tryAnotherSearch') }}</div>
               </div>
             </div>
           </div>
@@ -636,8 +636,8 @@
                 v-else-if="searchQuery && !isSearching"
                 class="p-4 text-center text-gray-600"
               >
-                <div class="text-sm">Nenhum produto encontrado</div>
-                <div class="text-xs mt-1 text-gray-500">Tente buscar com outros termos</div>
+                <div class="text-sm">{{ $t('header.noProductsFound') }}</div>
+                <div class="text-xs mt-1 text-gray-500">{{ $t('header.tryAnotherSearch') }}</div>
               </div>
             </div>
           </div>
@@ -938,7 +938,11 @@ const lastScrollPosition = ref(0)
 const isMobileMenuOpen = ref(false)
 const isLanguageDropdownOpen = ref(false)
 const isUserMenuOpen = ref(false)
-const selectedLanguage = ref(localStorage.getItem('selectedLanguage') || 'FR')
+// Verifica se o idioma salvo é PT e, se for, muda para FR (temporariamente)
+const savedLanguage = localStorage.getItem('selectedLanguage')
+const selectedLanguage = ref(
+  savedLanguage === 'PT' ? 'FR' : (savedLanguage || 'FR')
+)
 const searchQuery = ref('')
 const filteredProducts = ref([])
 const showAutocomplete = ref(false)
@@ -1009,7 +1013,9 @@ const flagImages = {
   'PT': '/images/flags/BR.svg'
 }
 
-const availableLanguages = ['FR', 'EN', 'PT']
+// Temporariamente removido PT do array de idiomas disponíveis
+// Quando quiser reativar, basta adicionar 'PT' de volta ao array
+const availableLanguages = ['FR', 'EN']
 
 // Computed Properties
 const isHomePage = computed(() => route.path === '/')

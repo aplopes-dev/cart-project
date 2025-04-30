@@ -16,7 +16,9 @@ export default {
     close: 'Fechar',
     greeting: 'Olá',
     myAccount: 'Minha Conta',
-    logout: 'Sair'
+    logout: 'Sair',
+    noProductsFound: 'Nenhum produto encontrado',
+    tryAnotherSearch: 'Tente buscar com outros termos'
   },
   auth: {
     signIn: 'ENTRAR',
@@ -159,6 +161,16 @@ export default {
   },
   checkout: {
     title: 'CHECKOUT',
+    poNumber: 'P.O. Number',
+    poNumberPlaceholder: 'Digite o número do P.O...',
+    location: 'Order Location',
+    selectLocation: 'Selecione a localização',
+    deliveryMethod: 'Método de Entrega',
+    delivery: 'Delivery',
+    pickup: 'Pick-up',
+    companyAddresses: 'Endereços da Empresa',
+    selectCompanyAddress: 'Selecione um endereço',
+    useThisAddress: 'Usar este endereço',
     personalDetails: 'Dados Pessoais',
     firstName: 'Nome',
     firstNamePlaceholder: 'Digite seu nome...',
@@ -210,6 +222,13 @@ export default {
       freeShipping: "Frete Grátis"
     },
     errorLoadingAddress: 'Erro ao carregar endereço padrão',
+    errorLoadingLocations: 'Erro ao carregar locais',
+    selectLocation: 'Selecionar local',
+    location: 'Local',
+    pickupLocation: 'Local de Retirada',
+    changeLocation: 'Alterar local',
+    useThisLocation: 'Usar este local',
+    noLocationsFound: 'Nenhum local encontrado',
     changeAddress: 'Alterar endereço',
     selectAddress: 'Selecione o endereço de entrega',
     useThisAddress: 'Usar este endereço',
@@ -525,6 +544,9 @@ export default {
     cityPlaceholder: 'Digite a cidade...',
     projects: 'Projetos',
     projectsPlaceholder: 'Selecione os projetos...',
+    pickupLocation: 'Local de Retirada',
+    pickupAt: 'Retirada em',
+    noLocationSpecified: 'Nenhum local especificado',
     multiselect: {
       noResult: 'Nenhum resultado encontrado',
       noOptions: 'Lista vazia',
@@ -621,6 +643,9 @@ export default {
     notes: 'Observações do Pedido',
     noNotes: 'Nenhuma observação para este pedido',
     shippingAddress: 'Endereço de Entrega',
+    pickupLocation: 'Local de Retirada',
+    pickupAt: 'Retirada em',
+    noLocationSpecified: 'Nenhum local especificado',
     noShippingAddress: 'Nenhum endereço de entrega disponível',
     neighborhood: 'Bairro',
     noPriceOrder: 'Pedido sem preços',
@@ -909,7 +934,13 @@ export default {
     deleteError: 'Erro ao excluir o banner. Por favor, tente novamente.',
     createSuccess: 'Banner criado com sucesso!',
     updateSuccess: 'Banner atualizado com sucesso!',
-    deleteSuccess: 'Banner excluído com sucesso!'
+    deleteSuccess: 'Banner excluído com sucesso!',
+    titlePlaceholderPt: 'Digite o título em português',
+    titlePlaceholderEn: 'Digite o título em inglês',
+    titlePlaceholderFr: 'Digite o título em francês',
+    subtitlePlaceholderPt: 'Digite o subtítulo em português',
+    subtitlePlaceholderEn: 'Digite o subtítulo em inglês',
+    subtitlePlaceholderFr: 'Digite o subtítulo em francês'
   },
 
   homeTabs: {

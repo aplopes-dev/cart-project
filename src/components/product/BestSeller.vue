@@ -35,10 +35,10 @@
 
               <div class="flex flex-col items-center gap-2 md:gap-2 w-full p-3 md:p-3 product-content">
                 <div class="flex flex-col gap-2 md:gap-2 w-full">
-                  <h3 class="font-archivo-narrow font-semibold text-base md:text-base lg:text-lg leading-tight md:leading-[24px] text-black/70 text-center w-full line-clamp-1">
+                  <h3 class="font-archivo-narrow font-thin text-base md:text-base lg:text-lg leading-tight md:leading-[24px] text-black/70 text-center w-full line-clamp-1 product-name">
                     {{ product.name }}
                   </h3>
-                  <p class="font-archivo font-medium text-sm md:text-sm leading-normal md:leading-[18px] text-black/70 text-center w-full description-fixed-height">
+                  <p class="font-archivo font-bold text-sm md:text-sm leading-normal md:leading-[18px] text-black/70 text-center w-full description-fixed-height">
                     {{ product.description || '&nbsp;'.repeat(3) }}
                   </p>
                 </div>
@@ -333,6 +333,15 @@ export default {
   @media (min-width: 768px) {
     min-height: 150px; /* Altura mínima reduzida para versão desktop */
   }
+}
+
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
 }
 </style>
 

@@ -325,13 +325,27 @@
                 </div>
 
                 <div>
-                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">{{ $t('ordersSettings.shippingAddress') }}</h3>
-                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.address }}, {{ selectedOrder.number }}</p>
-                  <p v-if="selectedOrder.complement" class="font-archivo text-xs md:text-sm">{{ selectedOrder.complement }}</p>
-                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.neighborhood }}</p>
-                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.city }}, {{ selectedOrder.state }}</p>
-                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.postal_code }}</p>
-                  <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.country }}</p>
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">
+                    {{ selectedOrder.delivery_method === 'pickup' ? $t('orders.pickupLocation') : $t('ordersSettings.shippingAddress') }}
+                  </h3>
+
+                  <!-- Endereço de entrega (delivery) -->
+                  <template v-if="selectedOrder.delivery_method === 'delivery' || !selectedOrder.delivery_method">
+                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.address }}, {{ selectedOrder.number }}</p>
+                    <p v-if="selectedOrder.complement" class="font-archivo text-xs md:text-sm">{{ selectedOrder.complement }}</p>
+                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.neighborhood }}</p>
+                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.city }}, {{ selectedOrder.state }}</p>
+                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.postal_code }}</p>
+                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.country }}</p>
+                  </template>
+
+                  <!-- Local de retirada (pickup) -->
+                  <template v-else-if="selectedOrder.delivery_method === 'pickup'">
+                    <p class="font-archivo text-xs md:text-sm">
+                      <span class="font-medium">{{ $t('orders.pickupAt') }}:</span>
+                      {{ selectedOrder.location_description || $t('orders.noLocationSpecified') }}
+                    </p>
+                  </template>
                 </div>
               </div>
 

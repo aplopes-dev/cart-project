@@ -10,7 +10,8 @@
         <!-- Conteúdo Principal -->
         <div class="flex flex-col justify-center items-center px-4 gap-4 md:gap-6 py-4 md:py-8">
           <div class="flex flex-col justify-center items-center p-6 md:p-16 gap-3 md:gap-4 w-full max-w-[754px] bg-[#FAFAFA]">
-            <!-- Sign Up Text -->
+            <!-- Sign Up Text - Oculto temporariamente, mas mantido para uso futuro -->
+            <!--
             <p class="w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E]">
               {{ $t('auth.dontHaveAccount') }}
               <a
@@ -21,6 +22,7 @@
                 {{ $t('auth.signUpFree') }}
               </a>
             </p>
+            -->
 
             <!-- Form -->
             <form @submit.prevent="handleLogin" class="w-full flex flex-col gap-3 md:gap-4">
@@ -112,6 +114,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { ref, getCurrentInstance, nextTick } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import { projectService } from '@/services/projectService'
 import ProjectSelectionModal from '@/components/auth/ProjectSelectionModal.vue'
 
 export default {
@@ -142,8 +145,7 @@ export default {
         error.value = ''
 
         // Login
-        // eslint-disable-next-line no-unused-vars
-        const loginResponse = await store.dispatch('login', {
+        await store.dispatch('login', {
           email: email.value,
           password: password.value
         })
@@ -153,7 +155,8 @@ export default {
 
         // Carrega o carrinho após login bem-sucedido
         const userId = store.state.currentUser?.id
-        console.log('Login successful, userId:', userId)
+        const userProfile = store.state.currentUser?.profile || 'USER'
+        console.log('Login successful, userId:', userId, 'userProfile:', userProfile)
 
         if (userId) {
           console.log('Loading cart for user:', userId)
@@ -166,11 +169,51 @@ export default {
           }
         }
 
-        // Salva o caminho de redirecionamento e mostra o modal de seleção de projeto
+        // Salva o caminho de redirecionamento
         redirectPath.value = route.query.redirect || '/'
-        console.log('Exibindo modal de seleção de projeto, redirectPath:', redirectPath.value)
-        showProjectModal.value = true
-        console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
+
+        // Verifica se o usuário é admin ou tem apenas um projeto
+        if (userProfile === 'ADMIN') {
+          console.log('Usuário é admin, redirecionando diretamente sem mostrar modal de projetos')
+          router.push({ path: redirectPath.value, replace: true })
+          return
+        }
+
+        // Para usuários não-admin, verifica a quantidade de projetos
+        try {
+          const userProjects = await projectService.getCurrentUserProjects()
+          console.log('Projetos do usuário:', userProjects)
+
+          if (userProjects.length === 1) {
+            console.log('Usuário tem apenas um projeto, selecionando automaticamente:', userProjects[0])
+
+            // Salva o projeto no sessionStorage
+            const projectData = {
+              id: userProjects[0].id,
+              name: userProjects[0].name || userProjects[0].nome
+            }
+
+            projectService.saveSelectedProject(projectData)
+            console.log('Projeto salvo no sessionStorage:', projectData)
+
+            // Redireciona diretamente
+            router.push({ path: redirectPath.value, replace: true })
+            return
+          } else if (userProjects.length > 1) {
+            // Se tiver mais de um projeto, mostra o modal de seleção
+            console.log('Usuário tem múltiplos projetos, exibindo modal de seleção')
+            showProjectModal.value = true
+            console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
+          } else {
+            // Se não tiver projetos, redireciona diretamente
+            console.log('Usuário não tem projetos, redirecionando diretamente')
+            router.push({ path: redirectPath.value, replace: true })
+          }
+        } catch (projectError) {
+          console.error('Erro ao buscar projetos do usuário:', projectError)
+          // Em caso de erro, mostra o modal para garantir que o usuário possa selecionar um projeto
+          showProjectModal.value = true
+        }
 
       } catch (err) {
         console.error('Login error:', err)
@@ -223,6 +266,7 @@ export default {
       }
     }
 
+    // Método temporariamente desativado, mas mantido para uso futuro
     const goToSignup = () => {
       const query = route.query.redirect ? { redirect: route.query.redirect } : {}
       router.push({

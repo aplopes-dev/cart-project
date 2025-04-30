@@ -49,11 +49,11 @@
                   <div class="flex flex-col items-center p-2 md:p-0 gap-1 md:gap-2 w-full md:w-[361.79px]">
                     <!-- Container Nome e Descrição -->
                     <div class="flex flex-col items-center space-y-2 w-full">
-                      <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center">
+                      <h3 class="font-archivo-narrow font-thin text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center product-name">
                         {{ product.name }}
                       </h3>
 
-                      <p class="font-archivo font-medium text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center px-4 md:px-6 w-full description-fixed-height">
+                      <p class="font-archivo font-semibold text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center px-4 md:px-6 w-full description-fixed-height">
                         {{ product.description || '&nbsp;'.repeat(3) }}
                       </p>
                     </div>
@@ -425,6 +425,15 @@ export default {
 
 .transition-opacity {
   transition: opacity 0.3s ease-in-out;
+}
+
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
 }
 </style>
 

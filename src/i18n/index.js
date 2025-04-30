@@ -5,7 +5,10 @@ import pt from './pt'
 
 // Obter o idioma salvo no localStorage ou usar o padrão
 const savedLanguage = localStorage.getItem('selectedLanguage');
-const defaultLocale = savedLanguage ? savedLanguage.toLowerCase() : 'fr';
+// Temporariamente, se o idioma salvo for PT, usar FR como padrão
+const defaultLocale = savedLanguage
+  ? (savedLanguage.toLowerCase() === 'pt' ? 'fr' : savedLanguage.toLowerCase())
+  : 'fr';
 
 export default createI18n({
   legacy: false,

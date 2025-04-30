@@ -202,11 +202,14 @@
                         </div>
                       </div>
 
-                      <!-- Shipping Address Section -->
+                      <!-- Shipping/Pickup Address Section -->
                       <div>
-                        <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.shippingAddress') }}</h4>
+                        <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">
+                          {{ order.delivery_method === 'pickup' ? $t('orders.pickupLocation') : $t('orders.shippingAddress') }}
+                        </h4>
                         <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[80px] md:max-h-[100px] overflow-y-auto">
-                          <div v-if="order.address" class="flex items-start gap-2">
+                          <!-- Endereço de entrega (delivery) -->
+                          <div v-if="order.delivery_method === 'delivery' && order.address" class="flex items-start gap-2">
                             <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -225,6 +228,18 @@
                               </span>
                             </div>
                           </div>
+
+                          <!-- Local de retirada (pickup) -->
+                          <div v-else-if="order.delivery_method === 'pickup'" class="flex items-start gap-2">
+                            <svg class="w-4 h-4 text-empire-yellow flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                            </svg>
+                            <div class="font-archivo text-xs">
+                              <span class="font-medium">{{ $t('orders.pickupAt') }}</span>
+                              <span class="block">{{ order.location_description || $t('orders.noLocationSpecified') }}</span>
+                            </div>
+                          </div>
+
                           <p v-else class="font-archivo text-xs text-black/50 italic">
                             {{ $t('orders.noShippingAddress') }}
                           </p>

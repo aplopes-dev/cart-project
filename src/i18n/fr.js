@@ -16,7 +16,9 @@ export default {
     close: 'Fermer',
     greeting: 'Bonjour',
     logout: 'Déconnexion',
-    myAccount: 'Mon Compte'
+    myAccount: 'Mon Compte',
+    noProductsFound: 'Aucun produit trouvé',
+    tryAnotherSearch: 'Essayez de chercher avec d\'autres termes'
   },
   auth: {
     signIn: 'CONNEXION',
@@ -162,6 +164,16 @@ export default {
     completePurchase: "FINALISER LA COMMANDE",
 
     title: 'PAIEMENT',
+    poNumber: 'Numéro P.O.',
+    poNumberPlaceholder: 'Entrez le numéro P.O...',
+    location: 'Emplacement de Commande',
+    selectLocation: 'Sélectionnez l\'emplacement',
+    deliveryMethod: 'Méthode de Livraison',
+    delivery: 'Livraison',
+    pickup: 'Ramassage',
+    companyAddresses: 'Adresses de l\'Entreprise',
+    selectCompanyAddress: 'Sélectionnez une adresse',
+    useThisAddress: 'Utiliser cette adresse',
     personalDetails: 'Informations Personnelles',
     firstName: 'Prénom',
     firstNamePlaceholder: 'Entrez votre prénom...',
@@ -204,6 +216,13 @@ export default {
       freeShipping: "Livraison Gratuite"
     },
     errorLoadingAddress: "Erreur lors du chargement de l'adresse par défaut",
+    errorLoadingLocations: "Erreur lors du chargement des emplacements",
+    selectLocation: "Sélectionner un emplacement",
+    location: "Emplacement",
+    pickupLocation: "Point de Retrait",
+    changeLocation: "Changer d'emplacement",
+    useThisLocation: "Utiliser cet emplacement",
+    noLocationsFound: "Aucun emplacement trouvé",
     completePurchase: 'FINALISER LA COMMANDE',
     fieldRequired: 'Ce champ est obligatoire',
     changeAddress: 'Changer l\'adresse',
@@ -476,6 +495,9 @@ export default {
     cityPlaceholder: 'Entrez la ville...',
     projects: 'Projets',
     projectsPlaceholder: 'Sélectionnez les projets...',
+    pickupLocation: 'Point de Retrait',
+    pickupAt: 'Retrait à',
+    noLocationSpecified: 'Aucun emplacement spécifié',
     multiselect: {
       noResult: 'Aucun résultat trouvé',
       noOptions: 'Liste vide',
@@ -572,6 +594,9 @@ export default {
     notes: 'Notes de Commande',
     noNotes: 'Aucune note pour cette commande',
     shippingAddress: 'Adresse de Livraison',
+    pickupLocation: 'Point de Retrait',
+    pickupAt: 'Retrait à',
+    noLocationSpecified: 'Aucun emplacement spécifié',
     noShippingAddress: 'Aucune adresse de livraison disponible',
     neighborhood: 'Quartier',
     noPriceOrder: 'Commande sans prix',
@@ -639,7 +664,7 @@ export default {
     contacts: {
       sectionTitle: 'Contacts de l\'entreprise',
       title: 'Gérer les contacts',
-      manage: 'Gérer les contacts',
+      manage: 'Ajouter',
       name: 'Nom',
       email: 'Courriel',
       phone: 'Téléphone',
@@ -899,7 +924,13 @@ export default {
     deleteError: 'Erreur lors de la suppression de la bannière. Veuillez réessayer.',
     createSuccess: 'Bannière créée avec succès!',
     updateSuccess: 'Bannière mise à jour avec succès!',
-    deleteSuccess: 'Bannière supprimée avec succès!'
+    deleteSuccess: 'Bannière supprimée avec succès!',
+    titlePlaceholderPt: 'Entrez le titre en portugais',
+    titlePlaceholderEn: 'Entrez le titre en anglais',
+    titlePlaceholderFr: 'Entrez le titre en français',
+    subtitlePlaceholderPt: 'Entrez le sous-titre en portugais',
+    subtitlePlaceholderEn: 'Entrez le sous-titre en anglais',
+    subtitlePlaceholderFr: 'Entrez le sous-titre en français'
   },
 
   homeTabs: {
