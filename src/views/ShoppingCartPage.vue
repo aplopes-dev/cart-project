@@ -56,7 +56,7 @@
                class="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 pb-4 md:pb-6 border-b border-black/25">
             <!-- Produto Info -->
             <div class="col-span-1 md:col-span-6">
-              <div class="flex gap-2 md:gap-4 lg:gap-8">
+              <div class="flex gap-1 md:gap-2 lg:gap-4 items-center">
                 <router-link :to="`/product/${item.id}`">
                   <div class="cart-item-image">
                     <img
@@ -67,22 +67,27 @@
                     />
                   </div>
                 </router-link>
-                <div class="flex flex-col">
-                  <h3 class="font-archivo-narrow font-semibold text-lg md:text-2xl lg:text-[34px] md:leading-[40px]">
-                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors line-clamp-2 md:line-clamp-none">
+                <div class="flex flex-col gap-1 justify-center">
+                  <!-- Descrição do produto em destaque -->
+                  <p v-if="productDetails[item.id]?.description" class="font-archivo font-bold text-sm md:text-base lg:text-lg text-black/90 line-clamp-2 md:line-clamp-2">
+                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                      {{ productDetails[item.id].description }}
+                    </router-link>
+                  </p>
+
+                  <!-- Nome do produto com fonte mais leve -->
+                  <h3 class="font-archivo-narrow text-xs md:text-sm lg:text-base line-clamp-1 md:line-clamp-1 product-name">
+                    <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
                       {{ item.name }}
                     </router-link>
                   </h3>
-                  <p v-if="productDetails[item.id]?.description" class="font-archivo text-sm md:text-base lg:text-xl text-black/70 line-clamp-2 md:line-clamp-none">
-                    {{ productDetails[item.id].description }}
-                  </p>
 
                   <!-- Options -->
-                  <div class="mt-1 md:mt-4">
+                  <div class="mt-0.5 md:mt-2">
                     <p class="font-archivo text-xs md:text-sm lg:text-base text-black/70 line-clamp-1 md:line-clamp-none">{{ item.description }}</p>
 
                     <!-- Características do produto -->
-                    <div v-if="item.color || item.size || item.weight" class="mt-1 md:mt-2 space-y-0.5 md:space-y-1">
+                    <div v-if="item.color || item.size || item.weight" class="mt-0.5 md:mt-1 space-y-0.5 md:space-y-0.5">
                       <p v-if="item.color" class="font-archivo text-xs md:text-sm lg:text-base text-black/70 flex items-center gap-1 md:gap-2">
                         <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                         <span class="flex items-center gap-1 md:gap-2">
@@ -102,12 +107,19 @@
             </div>
 
             <!-- Quantity -->
-            <div class="col-span-1 md:col-span-3 flex items-center md:justify-center">
+            <div class="col-span-1 md:col-span-3 flex items-center md:items-center md:justify-center">
               <!-- Seletor de quantidade - Desktop -->
               <div class="hidden md:flex items-center border border-black/25 mr-4">
                 <button @click="decreaseQuantity(index)"
                         class="px-4 py-2 text-xl hover:bg-black/5">-</button>
-                <span class="px-4 py-2 text-xl">{{ item.quantity }}</span>
+                <input
+                  type="number"
+                  v-model.number="item.quantity"
+                  min="1"
+                  class="quantity-input px-4 py-2 text-xl w-16 text-center"
+                  :aria-label="$t('cart.quantity')"
+                  @change="validateAndUpdateQuantity(index, item)"
+                />
                 <button @click="increaseQuantity(index)"
                         class="px-4 py-2 text-xl hover:bg-black/5">+</button>
               </div>
@@ -118,7 +130,14 @@
                 <div class="flex items-center border border-black/25 h-8 w-[100px] md:w-[140px]">
                   <button @click="decreaseQuantity(index)"
                           class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">-</button>
-                  <span class="flex-1 flex items-center justify-center text-base md:text-lg">{{ item.quantity }}</span>
+                  <input
+                    type="number"
+                    v-model.number="item.quantity"
+                    min="1"
+                    class="quantity-input flex-1 h-full text-center text-base md:text-lg"
+                    :aria-label="$t('cart.quantity')"
+                    @change="validateAndUpdateQuantity(index, item)"
+                  />
                   <button @click="increaseQuantity(index)"
                           class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">+</button>
                 </div>
@@ -486,6 +505,23 @@ export default defineComponent({
     },
     continueShopping() {
       this.$router.push('/categories')
+    },
+
+    // Método para validar e atualizar a quantidade quando o usuário digita diretamente
+    validateAndUpdateQuantity(index, item) {
+      // Converter para número
+      let numValue = parseInt(item.quantity)
+
+      // Verificar se é um número válido
+      if (isNaN(numValue) || numValue < 1) {
+        numValue = 1
+      } else if (numValue > 999) {
+        // Limitar a um valor razoável para evitar problemas
+        numValue = 999
+      }
+
+      // Atualizar a quantidade no carrinho
+      this.cartStore.updateQuantity(index, numValue)
     }
   },
   watch: {
@@ -497,6 +533,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
+  text-align: left !important; /* Alinha o texto à esquerda */
+}
+
 .shopping-cart-page {
   min-height: 100vh;
   background-color: white;
@@ -530,6 +576,21 @@ textarea::placeholder {
     width: 180px !important;
     height: 180px !important;
   }
+}
+
+/* Remove as setas do input number em todos os navegadores */
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.quantity-input {
+  -moz-appearance: textfield;
+  border: none;
+  outline: none;
+  background: transparent;
 }
 
 

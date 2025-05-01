@@ -5,7 +5,7 @@
         <!-- Breadcrumb -->
         <div class="mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
-            <router-link to="/" class="hover:text-black">Home</router-link>
+            <router-link to="/" class="hover:text-black">{{ $t('breadcrumb.home') }}</router-link>
             <span>/</span>
             <router-link to="/my-account" class="hover:text-black">
               {{ $t('myAccount.title') }}
@@ -206,7 +206,9 @@ const showDeleteModal = ref(false)
 const itemToDelete = ref(null)
 
 // Adicione a lista de idiomas disponíveis
-const availableLanguages = ['fr', 'en', 'pt']
+// Temporariamente removido PT do array de idiomas disponíveis
+// Quando quiser reativar, basta adicionar 'pt' de volta ao array
+const availableLanguages = ['fr', 'en']
 
 // Atualize o formData para incluir campos multilíngues
 const formData = ref({

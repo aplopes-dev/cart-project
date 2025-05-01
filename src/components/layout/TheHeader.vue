@@ -29,11 +29,7 @@
                   @click="toggleLanguageDropdown"
                   class="language-selector flex items-center gap-2 bg-transparent cursor-pointer p-1"
                 >
-                  <img
-                    :src="flagImages[selectedLanguage]"
-                    class="w-7 h-7"
-                    :alt="`${selectedLanguage} flag`"
-                  />
+                  <span class="text-white font-archivo font-medium">{{ selectedLanguage }}</span>
                   <svg
                     class="w-4 h-4"
                     :class="{ 'transform rotate-180': isLanguageDropdownOpen }"
@@ -53,13 +49,9 @@
                     v-for="lang in availableLanguages"
                     :key="lang"
                     @click="selectLanguage(lang)"
-                    class="flex items-center justify-center w-full px-4 py-2 hover:bg-gray-100"
+                    class="flex items-center justify-center w-full px-4 py-2 hover:bg-gray-100 text-black"
                   >
-                    <img
-                      :src="flagImages[lang]"
-                      class="w-6 h-6"
-                      :alt="`${lang} flag`"
-                    />
+                    {{ lang }}
                   </button>
                 </div>
               </div>
@@ -366,17 +358,12 @@
 
         <!-- Right Section -->
         <div class="flex flex-wrap justify-center items-center gap-3 md:gap-1">
-          <!-- Language Desktop (ícones + texto) -->
+          <!-- Language Desktop (apenas iniciais) -->
           <div class="relative hidden md:block mr-0">
             <button
               @click="toggleLanguageDropdown"
               class="language-selector flex items-center gap-1 text-[15px] leading-7 text-white font-archivo font-medium bg-transparent cursor-pointer pl-1 pr-2"
             >
-              <img
-                :src="flagImages[selectedLanguage]"
-                class="w-4 h-4"
-                :alt="`${selectedLanguage} flag`"
-              />
               {{ selectedLanguage }}
               <svg
                 class="w-3 h-3"
@@ -397,13 +384,8 @@
                 v-for="lang in availableLanguages"
                 :key="lang"
                 @click="selectLanguage(lang)"
-                class="flex items-center gap-2 w-full px-4 py-2 text-black hover:bg-gray-100"
+                class="flex items-center justify-center w-full px-4 py-2 text-black hover:bg-gray-100"
               >
-                <img
-                  :src="flagImages[lang]"
-                  class="w-5 h-5"
-                  :alt="`${lang} flag`"
-                />
                 {{ lang }}
               </button>
             </div>
@@ -508,6 +490,7 @@
                 @input="handleSearchInput"
                 @keydown.down="navigateResults('down')"
                 @keydown.up="navigateResults('up')"
+                @keydown.enter="handleSearch"
                 @keydown.esc="closeSearch"
                 class="bg-transparent text-[15px] leading-7 text-white font-archivo font-medium w-full focus:outline-none placeholder-white/70"
                 ref="searchInput"
@@ -550,7 +533,12 @@
                     />
                   </div>
                   <div class="flex-1 min-w-0">
-                    <div class="font-archivo font-medium truncate transition-colors duration-200">
+                    <!-- Descrição do produto em negrito -->
+                    <div class="font-archivo font-bold truncate transition-colors duration-200 text-gray-800">
+                      <span v-html="highlightMatch(product.description, searchQuery)"></span>
+                    </div>
+                    <!-- Nome do produto com fonte mais leve -->
+                    <div class="font-archivo font-light truncate transition-colors duration-200 text-gray-600 text-sm">
                       <span v-html="highlightMatch(product.name, searchQuery)"></span>
                     </div>
                     <div v-if="showPrices" class="text-primary font-medium text-sm">{{ formatPrice(product.price) }}</div>
@@ -579,6 +567,7 @@
                 @input="handleSearchInput"
                 @keydown.down="navigateResults('down')"
                 @keydown.up="navigateResults('up')"
+                @keydown.enter="handleSearch"
                 @keydown.esc="closeSearch"
                 class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none placeholder-white/70"
               />
@@ -811,9 +800,14 @@
                 v-model="searchQuery"
                 :placeholder="$t('header.searchPlaceholder')"
                 @input="handleSearchInput"
+                @keydown.enter="handleSearch"
+                @keydown.down="navigateResults('down')"
+                @keydown.up="navigateResults('up')"
+                @keydown.esc="closeSearch"
                 class="w-full px-4 py-2 h-[42px] bg-transparent border-2 border-white rounded-full text-white font-archivo text-[15px] leading-7 focus:outline-none"
               />
               <button
+                @click="handleSearch"
                 class="absolute right-4 top-1/2 transform -translate-y-1/2"
               >
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
@@ -839,8 +833,11 @@
                   class="w-12 h-12 object-cover rounded"
                   @error="handleImageError"
                 />
-                <div>
-                  <div class="text-black font-archivo font-medium">{{ product.name }}</div>
+                <div class="flex-1 min-w-0">
+                  <!-- Descrição do produto em negrito -->
+                  <div class="text-black font-archivo font-bold truncate">{{ product.description }}</div>
+                  <!-- Nome do produto com fonte mais leve -->
+                  <div class="text-gray-600 font-archivo font-light text-sm truncate">{{ product.name }}</div>
                   <div v-if="showPrices" class="text-gray-600 text-sm">{{ formatPrice(product.price) }}</div>
                 </div>
               </div>
@@ -1004,13 +1001,6 @@ const loadActiveLogo = async () => {
     console.error('Error loading active logo:', error)
     // Mantém a logo padrão em caso de erro
   }
-}
-
-// Constantes
-const flagImages = {
-  'EN': '/images/flags/US.svg',
-  'FR': '/images/flags/FR.svg',
-  'PT': '/images/flags/BR.svg'
 }
 
 // Temporariamente removido PT do array de idiomas disponíveis
@@ -1591,31 +1581,181 @@ watch(() => authState.value.isAuthenticated, (newValue) => {
 
 // A função searchCategories foi removida para evitar a abertura indesejada do dropdown de categorias durante a busca
 
+// Função para normalizar texto (remover acentos e caracteres especiais)
+const normalizeText = (text) => {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ') // Substitui caracteres especiais por espaços
+    .replace(/\s+/g, ' ')     // Substitui múltiplos espaços por um único espaço
+    .trim();
+}
+
 // Adicione esta função para buscar produtos
 const searchProducts = async (query) => {
-  if (!query || query.length < 2) {
+  console.log(`searchProducts chamado com query: "${query}"`)
+
+  // Verifica se a query tem pelo menos 2 caracteres não-espaço
+  const queryWithoutSpaces = query.replace(/\s+/g, '')
+  if (!query || queryWithoutSpaces.length < 2) {
+    console.log('Query muito curta, limpando resultados')
     filteredProducts.value = []
     showAutocomplete.value = false
     return
   }
 
   try {
+    console.log('Definindo isSearching como true')
     isSearching.value = true
-    const response = await productService.getProducts({
-      search: query,  // Aqui está o parâmetro que estava faltando
-      limit: 5
-    })
 
-    // Processa as imagens dos produtos antes de atribuir ao filteredProducts
-    const processedProducts = (response.items || []).map(product => {
+    // Verifica se a consulta está entre aspas duplas para busca exata
+    const isExactSearch = query.startsWith('"') && query.endsWith('"')
+    let searchTerm = query
+
+    if (isExactSearch) {
+      // Remove as aspas para busca exata
+      searchTerm = query.slice(1, -1)
+    }
+
+    console.log(`Iniciando pesquisa por "${searchTerm}"`)
+
+    // Usa o idioma atual já importado no início do componente
+    const descriptionField = `description_${locale.value}`
+    console.log(`Campo de descrição a ser usado: ${descriptionField}`)
+
+    // Para pesquisas com múltiplas palavras, vamos processar cada palavra separadamente
+    // e formatar para o backend usando a sintaxe %TERMO%
+    let searchTermForAPI;
+
+    if (searchTerm.includes(' ')) {
+      // Dividir a string em palavras
+      const words = searchTerm.split(/\s+/).filter(word => word.length > 0);
+      console.log(`Palavras encontradas na busca: [${words.join(', ')}]`);
+
+      if (words.length > 1) {
+        // Formatar cada palavra com % e juntar com &&
+        searchTermForAPI = words.map(word => `%${word}%`).join(' && ');
+        console.log(`Termo de busca formatado para múltiplas palavras: "${searchTermForAPI}"`);
+      } else {
+        // Se só tiver uma palavra após a divisão
+        searchTermForAPI = `%${words[0]}%`;
+        console.log(`Termo de busca formatado para uma palavra: "${searchTermForAPI}"`);
+      }
+    } else {
+      // Se não tiver espaços, é uma única palavra
+      searchTermForAPI = `%${searchTerm}%`;
+      console.log(`Termo de busca formatado para uma palavra: "${searchTermForAPI}"`);
+    }
+
+    console.log(`Termo de pesquisa para API: "${searchTermForAPI}"`)
+
+    console.log('Chamando productService.getProducts...')
+    // Aumentamos o limite para ter mais resultados
+    const response = await productService.getProducts({
+      search: searchTermForAPI,
+      limit: 30 // Aumentamos ainda mais o limite para garantir que encontremos resultados
+    })
+    console.log('Chamada à API concluída')
+
+    console.log(`API retornou ${response.items?.length || 0} produtos para a pesquisa "${searchTermForAPI}"`)
+
+    // Processa as imagens dos produtos e adiciona a descrição localizada
+    let processedProducts = (response.items || []).map(product => {
+      // Seleciona a descrição no idioma atual ou usa fallback para inglês
+      const description = product[descriptionField] || product.description_en || product.description_fr || ''
+
       return {
         ...product,
-        image: imageService.getProductImageUrl(product.image, product)
+        image: imageService.getProductImageUrl(product.image, product),
+        // Adiciona a descrição localizada
+        description: description,
+        // Adiciona campos normalizados para facilitar a busca
+        normalizedName: normalizeText(product.name || ''),
+        normalizedDescription: normalizeText(description)
       };
     });
 
-    filteredProducts.value = processedProducts
+    // Se a pesquisa tiver múltiplas palavras, vamos filtrar os resultados para garantir
+    // que todos os termos estejam presentes no nome ou na descrição
+    if (!isExactSearch && searchTerm.includes(' ')) {
+      const normalizedSearchTerm = normalizeText(searchTerm);
+      const keywords = normalizedSearchTerm.split(' ').filter(k => k.length > 0);
+
+      console.log(`Filtrando resultados para garantir que todas as palavras-chave estejam presentes: [${keywords.join(', ')}]`)
+
+      // Filtra os resultados para garantir que todas as palavras-chave estejam presentes
+      const beforeFilter = processedProducts.length
+      processedProducts = processedProducts.filter(product => {
+        // Texto completo normalizado (nome + descrição)
+        const productText = product.normalizedName + ' ' + product.normalizedDescription;
+
+        // Verifica se todas as palavras-chave estão presentes
+        const allKeywordsPresent = keywords.every(keyword => {
+          const keywordPresent = productText.includes(keyword);
+
+          // Para debug detalhado
+          if (!keywordPresent) {
+            console.log(`Produto "${product.name}" NÃO contém a palavra-chave "${keyword}"`);
+            console.log(`Nome normalizado: "${product.normalizedName}"`);
+            console.log(`Descrição normalizada: "${product.normalizedDescription}"`);
+          }
+
+          return keywordPresent;
+        });
+
+        // Para debug
+        if (allKeywordsPresent) {
+          console.log(`Produto "${product.name}" contém todas as palavras-chave`);
+        }
+
+        return allKeywordsPresent;
+      });
+
+      console.log(`Filtragem reduziu de ${beforeFilter} para ${processedProducts.length} produtos`)
+
+      // Ordena os resultados por relevância (número de ocorrências das palavras-chave)
+      processedProducts.sort((a, b) => {
+        const textA = a.normalizedName + ' ' + a.normalizedDescription;
+        const textB = b.normalizedName + ' ' + b.normalizedDescription;
+
+        // Conta ocorrências de todas as palavras-chave
+        let matchesA = 0;
+        let matchesB = 0;
+
+        keywords.forEach(keyword => {
+          // Conta ocorrências de cada palavra-chave
+          const regexKeyword = new RegExp(keyword, 'g');
+          const matchesInA = (textA.match(regexKeyword) || []).length;
+          const matchesInB = (textB.match(regexKeyword) || []).length;
+
+          matchesA += matchesInA;
+          matchesB += matchesInB;
+        });
+
+        // Ordena por número de ocorrências (decrescente)
+        return matchesB - matchesA;
+      });
+    }
+
+    // Limita a 5 resultados após a filtragem
+    filteredProducts.value = processedProducts.slice(0, 5)
     showAutocomplete.value = true
+
+    // Log para debug
+    console.log(`Pesquisa por "${searchTerm}" retornou ${processedProducts.length} resultados finais`);
+    if (processedProducts.length > 0) {
+      processedProducts.forEach((product, index) => {
+        console.log(`Resultado #${index + 1}:`, {
+          name: product.name,
+          description: product.description,
+          normalizedName: product.normalizedName,
+          normalizedDescription: product.normalizedDescription
+        });
+      });
+    } else {
+      console.log('Nenhum resultado encontrado após filtragem');
+    }
   } catch (error) {
     console.error('Error searching products:', error)
     filteredProducts.value = []
@@ -1629,12 +1769,24 @@ const debouncedProductSearch = debounce(searchProducts, 300)
 
 // Adicione este watch para buscar produtos quando o termo de busca mudar
 watch(searchQuery, (newValue) => {
-  debouncedProductSearch(newValue)
+  console.log(`Watch de searchQuery acionado com valor: "${newValue}"`)
+
+  // Verifica se o valor tem pelo menos 2 caracteres não-espaço
+  const valueWithoutSpaces = newValue.replace(/\s+/g, '')
+  if (newValue && valueWithoutSpaces.length >= 2) {
+    console.log('Chamando debouncedProductSearch a partir do watch')
+    debouncedProductSearch(newValue)
+  } else {
+    console.log('Termo de busca muito curto ou vazio, não chamando a busca')
+    filteredProducts.value = []
+    showAutocomplete.value = false
+  }
 
   // Não vamos mais buscar categorias automaticamente ao digitar na busca
   // Isso evita que o menu de categorias seja aberto aleatoriamente
-  if (newValue.length === 0) {
+  if (newValue.trim().length === 0) {
     // Se o termo de busca for limpo, recarregar todas as categorias
+    console.log('Termo de busca vazio, recarregando categorias')
     fetchCategories()
   }
 })
@@ -1647,10 +1799,61 @@ const formatPrice = (price) => {
     : '$0.00'
 }
 
+// Função para escapar caracteres especiais em expressões regulares
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Adicione esta função para destacar a correspondência na busca
 const highlightMatch = (text, query) => {
-  const regex = new RegExp(`(${query})`, 'gi')
-  return text.replace(regex, '<span class="!text-primary!">$1</span>')
+  if (!text) return '';
+
+  // Verifica se a consulta está entre aspas duplas para busca exata
+  const isExactSearch = query.startsWith('"') && query.endsWith('"')
+  let searchTerm = query
+
+  if (isExactSearch) {
+    // Remove as aspas para busca exata
+    searchTerm = query.slice(1, -1)
+  }
+
+  // Normaliza a consulta para comparação
+  const normalizedSearchTerm = normalizeText(searchTerm);
+
+  // Divide a consulta em palavras-chave
+  const keywords = normalizedSearchTerm.split(' ').filter(k => k.length > 0);
+
+  // Para pesquisas com uma única palavra ou busca exata
+  if (keywords.length === 1 || isExactSearch) {
+    try {
+      const pattern = escapeRegExp(isExactSearch ? normalizedSearchTerm : keywords[0]);
+      const regex = new RegExp(`(${pattern})`, 'gi');
+      return text.replace(regex, '<mark class="bg-yellow-200 text-black font-bold px-0.5 rounded">$1</mark>');
+    } catch (e) {
+      console.error('Erro ao criar regex para highlight:', e);
+      return text;
+    }
+  } else {
+    // Para pesquisas com múltiplas palavras, destaca cada palavra individualmente
+    let highlightedText = text;
+
+    // Ordena as palavras-chave por tamanho (decrescente) para evitar problemas de substituição
+    keywords.sort((a, b) => b.length - a.length);
+
+    keywords.forEach(keyword => {
+      if (keyword.length >= 2) { // Ignora palavras muito curtas
+        try {
+          const pattern = escapeRegExp(keyword);
+          const regex = new RegExp(`(${pattern})`, 'gi');
+          highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 text-black font-bold px-0.5 rounded">$1</mark>');
+        } catch (e) {
+          console.error('Erro ao criar regex para highlight de palavra-chave:', e);
+        }
+      }
+    });
+
+    return highlightedText;
+  }
 }
 
 // Adicione esta função para navegar pelos resultados da busca
@@ -1679,23 +1882,59 @@ const closeSearch = () => {
   selectedIndex.value = -1
 }
 
+// Função para lidar com o clique no botão de pesquisa
+const handleSearch = () => {
+  const query = searchQuery.value.trim()
+
+  if (query.length >= 2) {
+    // Se tiver um produto selecionado, navega para ele
+    if (selectedIndex.value >= 0 && filteredProducts.value[selectedIndex.value]) {
+      selectProduct(filteredProducts.value[selectedIndex.value])
+    } else if (filteredProducts.value.length > 0) {
+      // Se tiver resultados mas nenhum selecionado, navega para o primeiro
+      selectProduct(filteredProducts.value[0])
+    } else {
+      // Se não tiver resultados, navega para a página de pesquisa
+      router.push({
+        path: '/search',
+        query: { q: query }
+      })
+      closeSearch()
+    }
+  }
+}
+
 // Modifique a função handleSearchInput existente
 const handleSearchInput = (event) => {
-  const value = event.target.value.trim()
+  console.log('handleSearchInput chamado')
+  // Não use trim() aqui para permitir espaços na busca
+  const value = event.target.value
+  console.log(`Valor do input: "${value}"`)
+
   selectedIndex.value = -1 // Reset selection on new input
 
-  if (value.length >= 2) {
-    // Buscar produtos
-    debouncedProductSearch(value)
+  // Atualiza o valor do searchQuery para garantir que o watch seja acionado
+  // Não modifique o valor original, mantenha os espaços
+  searchQuery.value = value
+  console.log(`searchQuery atualizado para: "${searchQuery.value}"`)
+
+  // Verifica se o valor tem pelo menos 2 caracteres não-espaço
+  const valueWithoutSpaces = value.replace(/\s+/g, '')
+  if (valueWithoutSpaces.length >= 2) {
+    console.log('Valor tem pelo menos 2 caracteres, buscando produtos...')
+    // Buscar produtos diretamente, sem depender do watch
+    searchProducts(value)
 
     // Garantir que o dropdown de categorias esteja fechado durante a busca
     showCategoryDropdown.value = false
   } else {
+    console.log('Valor tem menos de 2 caracteres, limpando resultados')
     filteredProducts.value = []
     showAutocomplete.value = false
 
     // Se o campo de busca for limpo, recarregar todas as categorias
-    if (value.length === 0) {
+    if (value.trim().length === 0) {
+      console.log('Campo de busca vazio, recarregando categorias')
       fetchCategories()
     }
   }

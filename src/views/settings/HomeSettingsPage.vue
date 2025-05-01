@@ -5,7 +5,7 @@
         <!-- Breadcrumb -->
         <div class="mb-8">
           <nav class="flex items-center gap-2 font-archivo text-sm text-black/70">
-            <router-link to="/" class="hover:text-black">Home</router-link>
+            <router-link to="/" class="hover:text-black">{{ $t('breadcrumb.home') }}</router-link>
             <span>/</span>
             <router-link to="/my-account" class="hover:text-black">
               {{ $t('myAccount.title') }}
@@ -171,10 +171,10 @@
                 <div class="mb-2 border-b border-gray-200">
                   <nav class="-mb-px flex space-x-4">
                     <button
-                      v-for="lang in ['pt', 'en', 'fr']"
+                      v-for="lang in ['en', 'fr']"
                       :key="lang"
                       type="button"
-                      @click="activeTitleLang = lang"
+                      @click="changeTitleLanguage(lang)"
                       :class="[
                         'py-2 px-3 border-b-2 font-medium text-xs md:text-sm font-archivo',
                         activeTitleLang === lang
@@ -232,7 +232,7 @@
                 <div class="mb-2 border-b border-gray-200">
                   <nav class="-mb-px flex space-x-4">
                     <button
-                      v-for="lang in ['pt', 'en', 'fr']"
+                      v-for="lang in ['en', 'fr']"
                       :key="lang"
                       type="button"
                       @click="activeSubtitleLang = lang"
@@ -1039,6 +1039,12 @@ const openBannerModal = (banner = null) => {
   imagePreview.value = null
   selectedFileName.value = ''
   showModal.value = true
+}
+
+// Function to change title language and sync subtitle language
+const changeTitleLanguage = (lang) => {
+  activeTitleLang.value = lang
+  activeSubtitleLang.value = lang // Sync subtitle language with title language
 }
 
 // Reset form

@@ -19,7 +19,7 @@
           <div
             v-for="product in bestSellers"
             :key="product.id"
-            class="w-[250px] md:w-auto lg:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
+            class="w-[220px] md:w-auto lg:w-auto flex flex-col justify-center items-center bg-white border border-[#FAFAFA]"
           >
             <!-- Área clicável para navegação -->
             <div
@@ -29,37 +29,41 @@
               <img
                 :src="getProductImage(product.image, product)"
                 :alt="product.name"
-                class="w-[80%] max-w-[280px] h-[150px] md:h-[180px] lg:h-[200px] object-contain object-center mx-auto"
+                class="w-[80%] max-w-[280px] h-[130px] md:h-[150px] lg:h-[170px] object-contain object-center mx-auto"
                 @error="handleImageError"
               />
 
-              <div class="flex flex-col items-center gap-2 md:gap-2 w-full p-3 md:p-3 product-content">
-                <div class="flex flex-col gap-2 md:gap-2 w-full">
-                  <h3 class="font-archivo-narrow font-thin text-base md:text-base lg:text-lg leading-tight md:leading-[24px] text-black/70 text-center w-full line-clamp-1 product-name">
+              <div class="flex flex-col items-center gap-1 md:gap-1 w-full p-2 md:p-2 product-content">
+                <div class="flex flex-col gap-1 md:gap-1 w-full">
+                  <!-- Descrição do produto em negrito (invertida com o nome) -->
+                  <div class="h-[2.4em] overflow-hidden">
+                    <p class="font-archivo font-bold text-[12px] md:text-[13px] leading-[16px] md:leading-[18px] text-black/90 text-center w-full description-fixed-height">
+                      {{ product.description || '-' }}
+                    </p>
+                  </div>
+                  <!-- Nome do produto com fonte mais leve -->
+                  <h3 class="font-archivo-narrow font-light text-[12px] md:text-[14px] leading-[14px] md:leading-[16px] text-black/70 text-center w-full line-clamp-1 product-name">
                     {{ product.name }}
                   </h3>
-                  <p class="font-archivo font-bold text-sm md:text-sm leading-normal md:leading-[18px] text-black/70 text-center w-full description-fixed-height">
-                    {{ product.description || '&nbsp;'.repeat(3) }}
-                  </p>
                 </div>
 
                 <!-- Área de preço - só exibida quando os preços estão habilitados -->
-                <div v-if="showPrices" class="w-full text-center mb-2 mt-1">
-                  <p class="font-archivo-narrow font-semibold text-[22px] md:text-[22px] lg:text-[24px] leading-[26px] md:leading-[26px] lg:leading-[28px]">
+                <div v-if="showPrices" class="w-full text-center mb-1 mt-0">
+                  <p class="font-archivo-narrow font-semibold text-[18px] md:text-[20px] lg:text-[22px] leading-[22px] md:leading-[24px] lg:leading-[26px]">
                     {{ formatPrice(product.price) }}
                   </p>
                 </div>
-                <!-- Quando showPrices é false, adiciona apenas um pequeno espaçamento -->
-                <div v-else class="w-full h-2 mt-3"></div>
+                <!-- Quando showPrices é false, não adiciona espaçamento -->
+                <div v-else class="w-full h-0"></div>
               </div>
             </div>
 
             <!-- Botão Add Cart com evento de clique isolado -->
             <button
-              class="w-full h-[50px] md:h-[50px] lg:h-[50px] bg-black"
+              class="w-full h-[40px] md:h-[40px] lg:h-[40px] bg-black"
               @click.stop="addToCart(product)"
             >
-              <span class="font-archivo-narrow font-semibold text-[20px] md:text-[22px] lg:text-[24px] leading-[50px] md:leading-[50px] lg:leading-[50px] text-[#FFDD00]">
+              <span class="font-archivo-narrow font-semibold text-[16px] md:text-[18px] lg:text-[20px] leading-[40px] md:leading-[40px] lg:leading-[40px] text-[#FFDD00]">
                 {{ $t('productDetails.addCart') }}
               </span>
             </button>
@@ -305,33 +309,30 @@ export default {
   text-overflow: ellipsis;
 }
 
-/* Estilo para manter a altura fixa da descrição */
+/* Estilo para manter a altura fixa da descrição com exatamente duas linhas */
 .description-fixed-height {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  @media (min-width: 768px) {
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-  -webkit-box-orient: vertical;
-  height: 3em; /* Altura fixa para 2 linhas na versão mobile */
-  min-height: 3em;
-  @media (min-width: 768px) {
-    height: 3em; /* Altura fixa para 2 linhas na versão desktop */
-    min-height: 3em;
-  }
-  line-height: 1.5em;
-  overflow: hidden;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  height: 2.4em !important; /* Altura fixa para exatamente 2 linhas */
+  min-height: 2.4em !important;
+  max-height: 2.4em !important;
+  line-height: 1.2em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Estilo para o container de conteúdo do produto */
 .product-content {
   display: flex;
   flex-direction: column;
-  min-height: 150px; /* Altura mínima para garantir espaço consistente na versão mobile */
+  min-height: 100px; /* Altura mínima reduzida para versão mobile */
   @media (min-width: 768px) {
-    min-height: 150px; /* Altura mínima reduzida para versão desktop */
+    min-height: 110px; /* Altura mínima reduzida para versão desktop */
   }
 }
 

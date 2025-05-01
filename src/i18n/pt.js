@@ -895,6 +895,10 @@ export default {
     itemsPerPage: 'Itens por página'
   },
 
+  breadcrumb: {
+    home: 'Início'
+  },
+
   settings: {
     home: {
       title: 'Página Inicial',

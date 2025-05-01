@@ -1,6 +1,10 @@
 import axios from 'axios'
+import api from './api'
 
 const API_URL = process.env.VUE_APP_API_URL
+
+// Log para verificar se o API_URL está definido
+console.log('API_URL no productService:', API_URL)
 
 export const productService = {
   async getProducts(filters = {}) {
@@ -15,6 +19,7 @@ export const productService = {
       search  // Adicionando o parâmetro search
     } = filters
 
+    console.log('productService.getProducts chamado com filtros:', filters)
     console.log('Enviando requisição para API com parâmetros:', {
       categoryId,
       brands: brands?.join(','),
@@ -26,8 +31,11 @@ export const productService = {
       search
     })
 
-    const response = await axios.get(`${API_URL}/products`, {
-      params: {
+    try {
+      console.log(`Fazendo requisição GET para ${API_URL}/products com parâmetro search:`, search)
+
+      // Construir objeto de parâmetros
+      const params = {
         categoryId,
         brands: brands?.join(','),
         minPrice,
@@ -36,11 +44,26 @@ export const productService = {
         limit,
         sortBy,
         search  // Incluindo o parâmetro search na requisição
-      }
-    })
+      };
 
-    console.log('Resposta da API:', response.data)
-    return response.data
+      console.log('Parâmetros completos da requisição:', params);
+
+      // Usar a instância api em vez de axios diretamente
+      const response = await api.get(`/products`, { params });
+
+      console.log('Resposta da API:', response.data);
+      console.log('Número de itens retornados:', response.data?.items?.length || 0);
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error)
+      console.error('Detalhes do erro:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
+      // Retorna um objeto vazio com array de items vazio para evitar erros
+      return { items: [] }
+    }
   },
 
   async getBrands() {

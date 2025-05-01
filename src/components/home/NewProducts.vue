@@ -46,16 +46,20 @@
                   >
 
                   <!-- Informações do Produto -->
-                  <div class="flex flex-col items-center p-2 md:p-0 gap-1 md:gap-2 w-full md:w-[361.79px]">
-                    <!-- Container Nome e Descrição -->
-                    <div class="flex flex-col items-center space-y-2 w-full">
-                      <h3 class="font-archivo-narrow font-thin text-lg md:text-2xl leading-tight md:leading-[32px] text-black/70 text-center product-name">
+                  <div class="flex flex-col items-center p-2 md:p-0 gap-1 md:gap-2 w-full md:w-[361.79px] mt-2 md:mt-3">
+                    <!-- Container Descrição e Nome (invertidos) -->
+                    <div class="flex flex-col items-center space-y-1 w-full">
+                      <!-- Descrição do produto em negrito (invertida com o nome) -->
+                      <div class="h-[2.4em] overflow-hidden">
+                        <p class="font-archivo font-bold text-sm md:text-base leading-[1.2em] text-black/90 text-center px-4 md:px-6 w-full description-fixed-height">
+                          {{ product.description || '-' }}
+                        </p>
+                      </div>
+
+                      <!-- Nome do produto com fonte mais leve -->
+                      <h3 class="font-archivo-narrow font-light text-[12px] md:text-[14px] leading-[14px] md:leading-[16px] text-black/70 text-center product-name">
                         {{ product.name }}
                       </h3>
-
-                      <p class="font-archivo font-semibold text-sm md:text-base leading-normal md:leading-[20px] text-black/70 text-center px-4 md:px-6 w-full description-fixed-height">
-                        {{ product.description || '&nbsp;'.repeat(3) }}
-                      </p>
                     </div>
 
                     <!-- Container Preço (exibido apenas se o toggle master estiver habilitado) -->
@@ -85,10 +89,15 @@
                         </div>
                       </button>
 
-                      <!-- Número -->
-                      <span class="font-archivo font-bold text-lg md:text-[22px] leading-tight md:leading-[22px] text-center text-[#010101]">
-                        {{ quantities[index] }}
-                      </span>
+                      <!-- Input para número -->
+                      <input
+                        type="number"
+                        v-model.number="quantities[index]"
+                        min="1"
+                        class="font-archivo font-bold text-lg md:text-[22px] leading-tight md:leading-[22px] text-center text-[#010101] w-[40px] sm:w-[50px] h-full border-0 focus:outline-none appearance-none"
+                        :aria-label="$t('cart.quantity')"
+                        style="-moz-appearance: textfield;"
+                      />
 
                       <!-- Plus -->
                       <button
@@ -291,6 +300,18 @@ export default {
       return Math.ceil(this.products.length - itemsPerView)
     }
   },
+  watch: {
+    // Observar mudanças nas quantidades para validação
+    quantities: {
+      handler(newQuantities) {
+        // Validar todas as quantidades quando houver alterações
+        newQuantities.forEach((_, index) => {
+          this.validateQuantity(index)
+        })
+      },
+      deep: true
+    }
+  },
   methods: {
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
@@ -327,10 +348,31 @@ export default {
       } else {
         this.quantities[index]++
       }
+      // Validar após incremento
+      this.validateQuantity(index)
     },
     decrementQuantity(index) {
       if (this.quantities[index] > 1) {
         this.quantities[index]--
+      }
+      // Validar após decremento
+      this.validateQuantity(index)
+    },
+    // Validar entrada manual de quantidade
+    validateQuantity(index) {
+      // Converter para número
+      let numValue = parseInt(this.quantities[index])
+
+      // Verificar se é um número válido
+      if (isNaN(numValue) || numValue < 1) {
+        this.quantities[index] = 1
+      } else {
+        // Limitar a um valor razoável para evitar problemas
+        if (numValue > 999) {
+          this.quantities[index] = 999
+        } else {
+          this.quantities[index] = numValue
+        }
       }
     },
     handleTouchStart(e) {
@@ -390,6 +432,15 @@ export default {
     handleImageError(e) {
       // Usa a função utilitária do imageService para lidar com erros de imagem
       imageService.handleImageError(e)
+    },
+    // Método para atualizar as descrições dos produtos quando o idioma mudar
+    updateProductDescriptions() {
+      if (this.products && this.products.length > 0) {
+        this.products = this.products.map(product => ({
+          ...product,
+          description: product[`description_${this.locale}`] || product.description_en || ''
+        }))
+      }
     }
   },
 
@@ -411,16 +462,21 @@ export default {
   text-overflow: ellipsis;
 }
 
-/* Estilo para manter a altura fixa da descrição */
+/* Estilo para manter a altura fixa da descrição com exatamente duas linhas */
 .description-fixed-height {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
-  height: 4.2em; /* Altura fixa para 3 linhas, ligeiramente reduzida */
-  min-height: 4.2em;
-  line-height: 1.5em;
-  overflow: hidden;
+  height: 2.4em !important; /* Altura fixa para exatamente 2 linhas */
+  min-height: 2.4em !important;
+  max-height: 2.4em !important;
+  line-height: 1.2em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .transition-opacity {
@@ -434,6 +490,18 @@ export default {
   letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
   color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
   transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
+}
+
+/* Remove as setas do input number em todos os navegadores */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 </style>
 

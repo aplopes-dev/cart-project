@@ -40,11 +40,23 @@
 
             <div class="item-details">
               <div class="item-info">
-                <h2 class="whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+                <!-- Descrição do produto em destaque (com máximo de 2 linhas) -->
+                <div class="h-[2.2em] overflow-hidden mb-0.5">
+                  <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                    <p class="font-archivo font-bold text-[12px] md:text-[14px] leading-[14px] md:leading-[18px] text-black/90 line-clamp-2">
+                      {{ productDescriptions[item.id] || item.name }}
+                    </p>
+                  </router-link>
+                </div>
+
+                <!-- Nome do produto abaixo com fonte mais leve -->
+                <h3 class="font-archivo-narrow text-[9px] md:text-[10px] leading-[11px] md:leading-[12px] line-clamp-1 truncate mb-0.5 product-name m-0 p-0"
+                   style="font-weight: 100 !important; opacity: 0.7 !important; letter-spacing: 0.03em !important; color: rgba(0, 0, 0, 0.6) !important; transform: scale(0.98, 1) !important;">
                   <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
                     {{ item.name }}
                   </router-link>
-                </h2>
+                </h3>
+
                 <p v-if="showPrices" class="price">{{ formatPrice(item.price) }}</p>
                 <div v-if="item.color || item.size || item.weight" class="item-characteristics">
                   <span v-if="item.color" class="characteristic">
@@ -73,13 +85,20 @@
               <div class="flex items-center gap-4 md:gap-4 gap-2 md:mt-2 mt-1">
                 <div class="quantity-selector">
                   <button class="quantity-btn minus" @click="cartStore.updateQuantity(index, item.quantity - 1)">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
                     </svg>
                   </button>
-                  <span class="quantity-value">{{ item.quantity }}</span>
+                  <input
+                    type="number"
+                    v-model.number="item.quantity"
+                    min="1"
+                    class="quantity-input"
+                    :aria-label="$t('cart.quantity')"
+                    @change="validateAndUpdateQuantity(index, item)"
+                  />
                   <button class="quantity-btn plus" @click="handleIncreaseQuantity(index, item)">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <line x1="3.33" y1="8" x2="12.67" y2="8" stroke="#1E1E1E" stroke-width="1.6"/>
                       <line x1="8" y1="3.33" x2="8" y2="12.67" stroke="#1E1E1E" stroke-width="1.6"/>
                     </svg>
@@ -145,7 +164,8 @@
 /* eslint-disable */
 import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { settingsService } from '@/services/settingsService'
 import { productService } from '@/services/productService'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
@@ -158,8 +178,10 @@ export default {
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
     const router = useRouter()
+    const { locale } = useI18n()
     const currencySymbol = ref('$')
     const showPrices = ref(true) // Controla a visibilidade dos preços
+    const productDescriptions = ref({}) // Armazena as descrições dos produtos
 
     const loadCurrencySymbol = async () => {
       try {
@@ -180,18 +202,56 @@ export default {
 
         // Atualiza a visibilidade dos preços com base no toggle master
         showPrices.value = togglesStore.masterToggle
-        console.log('Master toggle state:', togglesStore.masterToggle)
-        console.log('Show prices:', showPrices.value)
       } catch (error) {
         console.error('Error loading financial settings:', error)
       }
     }
 
-    onMounted(() => {
-      loadCurrencySymbol()
+    // Função para carregar as descrições dos produtos no carrinho
+    const loadProductDescriptions = async () => {
+      try {
+        if (cartStore.items.length > 0) {
+          for (const item of cartStore.items) {
+            if (!productDescriptions.value[item.id]) {
+              const productDetails = await productService.getProductDetails(item.id)
+              if (productDetails) {
+                // Seleciona a descrição no idioma atual ou usa fallback para inglês
+                const description = productDetails[`description_${locale.value}`] ||
+                                   productDetails.description_en ||
+                                   productDetails.description_fr ||
+                                   ''
+                productDescriptions.value[item.id] = description
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading product descriptions:', error)
+      }
+    }
+
+    // Observa mudanças nos itens do carrinho para carregar descrições
+    const cartItemsWatcher = computed(() => cartStore.items.length)
+    // Quando o número de itens muda, carrega as descrições
+    watch(cartItemsWatcher, () => {
+      if (cartStore.items.length > 0) {
+        loadProductDescriptions()
+      }
     })
 
-    return { cartStore, currencySymbol, showPrices, router }
+    // Observa mudanças no idioma para atualizar as descrições
+    watch(locale, () => {
+      if (Object.keys(productDescriptions.value).length > 0) {
+        loadProductDescriptions()
+      }
+    })
+
+    onMounted(() => {
+      loadCurrencySymbol()
+      loadProductDescriptions()
+    })
+
+    return { cartStore, currencySymbol, showPrices, router, productDescriptions }
   },
   methods: {
     formatPrice(price) {
@@ -291,6 +351,23 @@ export default {
 
       // Se não tiver características ou todas já estiverem selecionadas, aumenta a quantidade normalmente
       this.cartStore.updateQuantity(index, item.quantity + 1)
+    },
+
+    // Método para validar e atualizar a quantidade quando o usuário digita diretamente
+    validateAndUpdateQuantity(index, item) {
+      // Converter para número
+      let numValue = parseInt(item.quantity)
+
+      // Verificar se é um número válido
+      if (isNaN(numValue) || numValue < 1) {
+        numValue = 1
+      } else if (numValue > 999) {
+        // Limitar a um valor razoável para evitar problemas
+        numValue = 999
+      }
+
+      // Atualizar a quantidade no carrinho
+      this.cartStore.updateQuantity(index, numValue)
     }
   },
   computed: {
@@ -355,8 +432,8 @@ export default {
 .cart-item {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 16px;
-  padding: 32px 0;
+  gap: 12px;
+  padding: 16px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
   align-items: flex-start;
 }
@@ -370,14 +447,19 @@ export default {
 .item-details {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   width: 100%;
 }
 
 @media (max-width: 768px) {
   .item-details {
-    gap: 4px;
+    gap: 2px;
     justify-content: space-between;
+  }
+
+  .item-image {
+    width: 100px;
+    height: 90px;
   }
 }
 
@@ -462,19 +544,19 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 12px 12px 16px;
-  gap: 8px;
+  padding: 4px 4px 4px 8px;
+  gap: 4px;
   isolation: isolate;
-  width: 151px;
-  height: 40px;
+  width: 90px;
+  height: 28px;
   background: #FFFFFF;
   border: 1px solid #000000;
 }
 
 .quantity-btn {
   margin: 0 auto;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: none;
   border: none;
   cursor: pointer;
@@ -491,17 +573,27 @@ export default {
   right: 20.83%;
 }
 
-.quantity-value {
+.quantity-input {
   margin: 0 auto;
-  width: 8px;
-  height: 16px;
+  width: 30px;
+  height: 100%;
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 100%;
   text-align: center;
   color: #1E1E1E;
+  border: none;
+  outline: none;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .quantity-selector button:hover {
@@ -564,9 +656,9 @@ export default {
   }
 
   .quantity-selector {
-    width: 100px;
-    height: 32px;
-    padding: 6px;
+    width: 80px;
+    height: 24px;
+    padding: 2px;
   }
 
   /* Ajustes para o botão de excluir no mobile */
@@ -578,6 +670,15 @@ export default {
   .delete-btn svg {
     width: 24px;
     height: 24px;
+  }
+
+  /* Estilo personalizado para o nome do produto */
+  .product-name {
+    font-weight: 100 !important;
+    opacity: 0.7 !important;
+    letter-spacing: 0.03em !important;
+    color: rgba(0, 0, 0, 0.6) !important;
+    transform: scale(0.98, 1) !important;
   }
 }
 </style>

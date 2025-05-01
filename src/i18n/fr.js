@@ -8,7 +8,7 @@ export default {
     career: 'Carrière',
     contactUs: 'Contactez-nous',
     callUsToday: 'Appelez-nous aujourd\'hui',
-    chatWithUs: 'Chattez avec nous',
+    chatWithUs: 'Chattez Communiquez',
     signIn: 'Connexion',
     search: 'Rechercher',
     searchPlaceholder: 'Rechercher...',
@@ -871,6 +871,10 @@ export default {
     prev: 'Précédent',
     next: 'Suivant',
     itemsPerPage: 'Éléments par page'
+  },
+
+  breadcrumb: {
+    home: 'Accueil'
   },
 
   project: {

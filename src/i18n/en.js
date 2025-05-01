@@ -868,6 +868,10 @@ export default {
     itemsPerPage: 'Items per page'
   },
 
+  breadcrumb: {
+    home: 'Home'
+  },
+
   project: {
     selectProject: 'Select a project',
     changeConfirmation: {

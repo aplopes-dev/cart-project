@@ -312,7 +312,7 @@
           </div>
 
           <!-- Grid de Produtos -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 md:gap-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-1">
             <div v-if="loading" class="col-span-full flex justify-center items-center py-12">
               <div class="loader-container">
                 <div class="loader-spinner"></div>
@@ -329,7 +329,7 @@
                 :key="product.id"
                 :class="[
                   'flex flex-col bg-white border border-[#FAFAFA]',
-                  showPrices ? 'min-h-[370px] md:min-h-[450px] md:h-[500px]' : 'min-h-[320px] md:min-h-[400px] md:h-[450px]'
+                  showPrices ? 'min-h-[250px] md:min-h-[280px] md:h-[300px]' : 'min-h-[230px] md:min-h-[260px] md:h-[280px]'
                 ]"
               >
                 <!-- Wrap the clickable area in a div -->
@@ -340,25 +340,29 @@
                   <img
                     :src="getProductImage(product)"
                     :alt="product.name"
-                    class="w-[90%] h-[140px] md:h-[200px] object-contain object-center mx-auto pt-2 md:pt-0"
+                    class="w-[90%] h-[110px] md:h-[140px] object-contain object-center mx-auto pt-1 md:pt-0"
                     @error="handleImageError"
                   >
-                  <div class="p-2 pb-0 md:p-2 flex flex-col h-full">
-                    <h3 class="font-archivo-narrow font-thin text-[16px] md:text-[20px] leading-[20px] md:leading-[24px] text-black h-[20px] md:h-[48px] line-clamp-1 md:line-clamp-2 truncate md:overflow-visible mb-1 md:mb-1 product-name">
+                  <div class="p-1 pt-1 pb-0 md:p-1 md:pb-0 flex flex-col h-full">
+                    <!-- Descrição do produto em negrito (invertida com o nome) -->
+                    <div class="h-[32px] md:h-[36px] overflow-hidden">
+                      <p class="font-archivo font-bold text-[12px] md:text-[13px] leading-[16px] md:leading-[18px] text-black/90 line-clamp-2 mb-0 text-center">
+                        {{ product.description || '-' }}
+                      </p>
+                    </div>
+                    <!-- Nome do produto com fonte mais leve -->
+                    <h3 class="font-archivo-narrow text-[12px] md:text-[14px] leading-[14px] md:leading-[16px] line-clamp-1 truncate mt-0 mb-0 product-name">
                       {{ product.name }}
                     </h3>
-                    <p class="font-archivo font-bold text-sm md:text-sm text-black/70 description-fixed-height">
-                      {{ product.description || '&nbsp;'.repeat(3) }}
-                    </p>
-                    <div class="mt-auto w-full mb-0 pb-0">
+                    <div class="mt-2 w-full mb-0 pb-0">
                       <!-- Quando showPrices é true, mostra o preço com espaçamento adequado -->
-                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[20px] md:text-[22px] leading-[24px] md:leading-[26px] mt-1 md:mt-2 mb-1 md:mb-1">
+                      <p v-if="showPrices" class="font-archivo-narrow font-semibold text-[18px] md:text-[20px] leading-[20px] md:leading-[22px] mt-0 mb-0">
                         {{ formatPrice(product.price) }}
                       </p>
-                      <!-- Quando showPrices é false, não adiciona espaçamento no mobile -->
-                      <div v-else class="mt-0 md:mt-1"></div>
+                      <!-- Quando showPrices é false, não adiciona espaçamento -->
+                      <div v-else class="mt-0"></div>
                       <!-- Wrap the button in a div that stops event propagation -->
-                      <div @click.stop>
+                      <div @click.stop class="mt-0 -mb-1">
                         <ProductQuantitySelector
                           @add-to-cart="(quantity) => handleAddToCart(product, quantity)"
                         />
@@ -522,24 +526,30 @@
 </template>
 
 <style scoped>
-/* Estilo para fixar a altura da descrição do produto */
-.description-fixed-height {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  height: 60px;
-  max-height: 60px;
-  overflow: hidden;
+/* Reduzir espaçamento entre os elementos do card */
+.grid-cols-4 {
+  gap: 0.5rem !important;
 }
 
-@media (max-width: 768px) {
-  .description-fixed-height {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    height: 40px;
-    max-height: 40px;
-  }
+/* Estilo para line-clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
+  text-align: center !important; /* Centraliza o texto */
 }
 </style>
 

@@ -4,7 +4,6 @@
     <div
       v-if="showToast"
       class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 bg-black text-empire-yellow px-4 sm:px-6 py-3 sm:py-4 rounded-md shadow-lg z-50 transition-opacity duration-300 text-center sm:text-left"
-      :class="{ 'opacity-0': !showToast, 'opacity-100': showToast }"
     >
       <p class="font-archivo-narrow text-base sm:text-lg">
         {{ $t('cart.productAdded') }}
@@ -41,8 +40,10 @@
                 @error="handleImageError"
               />
               <div class="flex-grow">
-                <div class="font-archivo-narrow font-semibold text-lg">{{ product.name }}</div>
-                <div class="font-archivo text-sm text-black/70 truncate">{{ product.description }}</div>
+                <!-- Descrição do produto em negrito -->
+                <div class="font-archivo font-bold text-lg text-gray-800 truncate" v-html="highlightMatch(product.description, searchQuery)"></div>
+                <!-- Nome do produto com fonte mais leve -->
+                <div class="font-archivo font-light text-sm text-gray-600 truncate" v-html="highlightMatch(product.name, searchQuery)"></div>
                 <div v-if="showPrices" class="font-archivo text-base text-black/70 mt-1">{{ formatPrice(product.price) }}</div>
               </div>
               <div class="flex items-center">
@@ -80,8 +81,10 @@
               />
               <div class="flex-grow flex flex-col justify-between">
                 <div>
-                  <div class="font-archivo-narrow font-semibold text-[15px] line-clamp-1 mb-1.5">{{ product.name }}</div>
-                  <div class="font-archivo text-xs text-black/70 truncate mb-1.5">{{ product.description }}</div>
+                  <!-- Descrição do produto em negrito -->
+                  <div class="font-archivo font-bold text-[15px] line-clamp-1 mb-1.5 text-gray-800" v-html="highlightMatch(product.description, searchQuery)"></div>
+                  <!-- Nome do produto com fonte mais leve -->
+                  <div class="font-archivo font-light text-xs text-gray-600 truncate mb-1.5" v-html="highlightMatch(product.name, searchQuery)"></div>
                   <div v-if="showPrices" class="font-archivo text-sm text-black/70 mb-3">{{ formatPrice(product.price) }}</div>
                 </div>
 
@@ -139,7 +142,7 @@ import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
 export default {
   name: 'ProductSearchCombobox',
   setup() {
-    useI18n() // Importamos mas não usamos diretamente
+    const { locale } = useI18n() // Obtemos a referência ao locale para uso posterior
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
 
@@ -158,32 +161,149 @@ export default {
     let debounceTimeout = null
 
     const debouncedSearch = () => {
-      clearTimeout(debounceTimeout)
-      if (searchQuery.value.trim() === '') {
-        searchResults.value = []
-        return
+      // Limpa o timeout anterior se existir
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = null;
       }
 
-      loading.value = true
+      // Se a query estiver vazia, limpa os resultados
+      if (!searchQuery.value || searchQuery.value.trim() === '') {
+        searchResults.value = [];
+        loading.value = false;
+        return;
+      }
+
+      // Mostra o indicador de carregamento
+      loading.value = true;
+
+      // Define um novo timeout
       debounceTimeout = setTimeout(() => {
-        searchProducts()
-      }, 300)
+        // Chama a função de busca
+        searchProducts();
+      }, 300);
+    }
+
+    // Função para normalizar texto (remover acentos e caracteres especiais)
+    const normalizeText = (text) => {
+      return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .toLowerCase()
+        .replace(/[^\w\s]/g, ' ') // Substitui caracteres especiais por espaços
+        .replace(/\s+/g, ' ')     // Substitui múltiplos espaços por um único espaço
+        .trim();
     }
 
     const searchProducts = async () => {
-      if (searchQuery.value.trim() === '') {
+      if (!searchQuery.value || searchQuery.value.trim() === '') {
         searchResults.value = []
         loading.value = false
         return
       }
 
       try {
-        // Usa o mesmo método que o header usa para buscar produtos
+        loading.value = true
+
+        // Verifica se a consulta está entre aspas duplas para busca exata
+        const isExactSearch = searchQuery.value.startsWith('"') && searchQuery.value.endsWith('"')
+        let searchTerm = searchQuery.value
+
+        if (isExactSearch) {
+          // Remove as aspas para busca exata
+          searchTerm = searchQuery.value.slice(1, -1)
+        }
+
+        // Usa o idioma atual para selecionar o campo de descrição correto
+        const descriptionField = `description_${locale.value || 'en'}`
+
+        // Para pesquisas com múltiplas palavras, vamos processar cada palavra separadamente
+        // e formatar para o backend usando a sintaxe %TERMO%
+        let searchTermForAPI;
+
+        if (searchTerm && searchTerm.includes(' ')) {
+          // Dividir a string em palavras
+          const words = searchTerm.split(/\s+/).filter(word => word.length > 0);
+
+          if (words.length > 1) {
+            // Formatar cada palavra com % e juntar com &&
+            searchTermForAPI = words.map(word => `%${word}%`).join(' && ');
+          } else {
+            // Se só tiver uma palavra após a divisão
+            searchTermForAPI = `%${words[0] || ''}%`;
+          }
+        } else {
+          // Se não tiver espaços, é uma única palavra
+          searchTermForAPI = `%${searchTerm || ''}%`;
+        }
+
+        // Usa o serviço de produtos para buscar produtos
         const response = await productService.getProducts({
-          search: searchQuery.value,
-          limit: 10
-        })
-        searchResults.value = response.items || []
+          search: searchTermForAPI,
+          limit: 20
+        });
+
+        if (!response || !response.items) {
+          searchResults.value = []
+          loading.value = false
+          return
+        }
+
+        // Processa as imagens dos produtos e adiciona a descrição localizada
+        let processedProducts = (response.items || []).map(product => {
+          // Seleciona a descrição no idioma atual ou usa fallback para inglês
+          const description = product[descriptionField] || product.description_en || product.description_fr || ''
+
+          return {
+            ...product,
+            // Adiciona a descrição localizada
+            description: description,
+            // Adiciona campos normalizados para facilitar a busca
+            normalizedName: normalizeText(product.name || ''),
+            normalizedDescription: normalizeText(description)
+          };
+        });
+
+        // Se a pesquisa tiver múltiplas palavras, vamos filtrar os resultados para garantir
+        // que todos os termos estejam presentes no nome ou na descrição
+        if (!isExactSearch && searchTerm.includes(' ')) {
+          const normalizedSearchTerm = normalizeText(searchTerm);
+          const keywords = normalizedSearchTerm.split(' ').filter(k => k.length > 0);
+
+          // Filtra os resultados para garantir que todas as palavras-chave estejam presentes
+          processedProducts = processedProducts.filter(product => {
+            // Texto completo normalizado (nome + descrição)
+            const productText = product.normalizedName + ' ' + product.normalizedDescription;
+
+            // Verifica se todas as palavras-chave estão presentes
+            return keywords.every(keyword => productText.includes(keyword));
+          });
+
+          // Ordena os resultados por relevância (número de ocorrências das palavras-chave)
+          processedProducts.sort((a, b) => {
+            const textA = a.normalizedName + ' ' + a.normalizedDescription;
+            const textB = b.normalizedName + ' ' + b.normalizedDescription;
+
+            // Conta ocorrências de todas as palavras-chave
+            let matchesA = 0;
+            let matchesB = 0;
+
+            keywords.forEach(keyword => {
+              // Conta ocorrências de cada palavra-chave
+              const regexKeyword = new RegExp(keyword, 'g');
+              const matchesInA = (textA.match(regexKeyword) || []).length;
+              const matchesInB = (textB.match(regexKeyword) || []).length;
+
+              matchesA += matchesInA;
+              matchesB += matchesInB;
+            });
+
+            // Ordena por número de ocorrências (decrescente)
+            return matchesB - matchesA;
+          });
+        }
+
+        searchResults.value = processedProducts
 
         // Inicializa as quantidades para os produtos encontrados
         searchResults.value.forEach(product => {
@@ -258,6 +378,65 @@ export default {
       return `${currencySymbol.value}${Number(price).toFixed(2)}`
     }
 
+    // Função para escapar caracteres especiais em expressões regulares
+    const escapeRegExp = (string) => {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Função para destacar a correspondência na busca de forma segura
+    const highlightMatch = (text, query) => {
+      // Verificações de segurança
+      if (!text || typeof text !== 'string') return '';
+      if (!query || typeof query !== 'string' || query.trim() === '') return text;
+
+      try {
+        // Cria uma cópia do texto para não modificar o original
+        let safeText = String(text);
+
+        // Verifica se a consulta está entre aspas duplas para busca exata
+        const isExactSearch = query.startsWith('"') && query.endsWith('"');
+        let searchTerm = isExactSearch ? query.slice(1, -1) : query;
+
+        // Se o termo de busca estiver vazio após processamento, retorna o texto original
+        if (!searchTerm || searchTerm.trim() === '') return safeText;
+
+        // Normaliza a consulta para comparação
+        const normalizedSearchTerm = normalizeText(searchTerm);
+
+        // Divide a consulta em palavras-chave
+        const keywords = normalizedSearchTerm.split(' ').filter(k => k && k.length > 0);
+
+        // Se não houver palavras-chave válidas, retorna o texto original
+        if (!keywords || keywords.length === 0) return safeText;
+
+        // Cria uma versão segura do texto para destacar
+        let highlightedText = safeText;
+
+        // Destaca cada palavra-chave individualmente
+        keywords.forEach(keyword => {
+          if (keyword && keyword.length >= 2) { // Ignora palavras muito curtas
+            try {
+              // Escapa caracteres especiais na palavra-chave
+              const pattern = escapeRegExp(keyword);
+
+              // Cria uma expressão regular segura
+              const regex = new RegExp(`(${pattern})`, 'gi');
+
+              // Substitui as ocorrências pela versão destacada
+              highlightedText = highlightedText.replace(regex, '<span class="bg-yellow-200 text-black font-bold px-0.5 rounded">$1</span>');
+            } catch (e) {
+              // Ignora erros de regex e continua com a próxima palavra-chave
+            }
+          }
+        });
+
+        return highlightedText;
+      } catch (error) {
+        // Em caso de qualquer erro, retorna o texto original
+        return text;
+      }
+    }
+
     const loadFinancialSettings = async () => {
       try {
         const settings = await settingsService.getFinancialSettings()
@@ -320,7 +499,8 @@ export default {
       addToCart,
       showSuccessToast,
       handleImageError,
-      formatPrice
+      formatPrice,
+      highlightMatch
     }
   }
 }
