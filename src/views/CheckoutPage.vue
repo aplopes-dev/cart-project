@@ -166,12 +166,10 @@
 
                   <div class="flex items-center lg:absolute lg:right-0 lg:top-0">
                     <button
-                      v-if="deliveryMethod !== 'delivery'"
-                      @click.stop
-                      @click="openAddressModal"
-                      class="mobile-address-btn"
+                      @click.stop="openAddressModal"
+                      class="bg-empire-yellow text-black px-3 py-1.5 rounded text-sm font-archivo font-medium mr-4 hover:bg-empire-yellow/90 transition-colors"
                     >
-                      {{ $t('checkout.changeAddress') }}
+                      {{ deliveryMethod === 'delivery' ? $t('checkout.changeAddress') : $t('checkout.changeLocation') }}
                     </button>
 
                     <!-- Seta para mobile -->
@@ -191,9 +189,9 @@
                 <div v-show="sections.shipping || isDesktop">
                   <!-- Delivery Mode -->
                   <div v-if="deliveryMethod === 'delivery'" class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                    <!-- Linha 1: Address Line -->
+                    <!-- Linha 1: Address Line 1 -->
                     <div class="col-span-1 md:col-span-3">
-                      <label class="block font-archivo text-sm mb-2">Address Line</label>
+                      <label class="block font-archivo text-sm mb-2">Address Line 1</label>
                       <input
                         type="text"
                         v-model="formData.address"
@@ -208,7 +206,24 @@
                       </span>
                     </div>
 
-                    <!-- Linha 2: City, State -->
+                    <!-- Linha 2: Address Line 2 (antigo Landmark) -->
+                    <div class="col-span-1 md:col-span-3">
+                      <label class="block font-archivo text-sm mb-2">Address Line 2</label>
+                      <input
+                        type="text"
+                        v-model="formData.landmark"
+                        placeholder="Enter additional address information"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.landmark) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.landmark" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+
+                    <!-- Linha 3: City, Postal Code -->
                     <div class="col-span-1 md:col-span-2">
                       <label class="block font-archivo text-sm mb-2">City</label>
                       <input
@@ -221,38 +236,6 @@
                         ]"
                       >
                       <span v-if="showErrors && formErrors.city" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
-                    <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">State</label>
-                      <input
-                        type="text"
-                        v-model="formData.state"
-                        placeholder="Enter state"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
-
-                    <!-- Linha 3: Landmark, Postal Code -->
-                    <div class="col-span-1 md:col-span-2">
-                      <label class="block font-archivo text-sm mb-2">Landmark</label>
-                      <input
-                        type="text"
-                        v-model="formData.landmark"
-                        placeholder="Enter landmark"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.landmark) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.landmark" class="text-red-500 text-sm mt-1">
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
@@ -271,6 +254,9 @@
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
+
+                    <!-- Campo state oculto para compatibilidade com backend -->
+                    <input type="hidden" v-model="formData.state">
 
                     <!-- Linha 4: Contact on Site, Contact Phone, Delivery Date/Time -->
                     <div class="col-span-1 md:col-span-1">
@@ -924,6 +910,7 @@ export default {
       currentAddressId: null,
       showProjectModal: false,
       selectedLocation: null, // Objeto do local selecionado
+      selectedShippingAddressId: null, // ID do endereço de entrega selecionado
       isLoadingSummary: true // Estado de carregamento para o resumo do pedido
     }
   },
@@ -935,7 +922,7 @@ export default {
       const errors = {}
       const requiredFields = [
         'firstName', 'lastName', 'email', // 'phone' removido da lista de campos obrigatórios
-        'address', 'city', 'state', 'postalCode' // Removidos number, neighborhood e country dos campos obrigatórios
+        'address', 'city', 'postalCode' // Removidos state, number, neighborhood e country dos campos obrigatórios
       ]
 
       requiredFields.forEach(field => {
@@ -1161,6 +1148,9 @@ export default {
       this.selectedLocationId = location.id;
       this.selectedLocation = location;
       console.log('Local selecionado:', location);
+
+      // Fechar o modal após a seleção
+      this.showAddressModal = false;
     },
 
     // Método para carregar os dados da empresa
@@ -1335,44 +1325,16 @@ export default {
           }
         }
 
-        // Primeiro, vamos salvar o endereço de entrega se estivermos no modo delivery
+        // Usar o ID do endereço selecionado se estivermos no modo delivery
         let shippingAddressId = null;
 
         if (this.deliveryMethod === 'delivery') {
-          try {
-            // Preparar os dados do endereço de entrega
-            const shippingAddressData = {
-              address: this.formData.address,
-              city: this.formData.city,
-              state: this.formData.state,
-              landmark: this.formData.landmark || '',
-              postal_code: this.formData.postalCode,
-              is_default: false // Não definimos como padrão automaticamente
-            };
-
-            // Salvar o endereço de entrega
-            // Como não temos um endpoint específico para adicionar um endereço,
-            // vamos usar o endpoint de atualização de endereços
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            if (user.id) {
-              // Primeiro, obtemos os endereços existentes
-              const existingAddresses = await api.get(`/users/${user.id}/addresses`);
-
-              // Adicionamos o novo endereço à lista
-              const updatedAddresses = [...existingAddresses.data, shippingAddressData];
-
-              // Atualizamos todos os endereços
-              const response = await api.put(`/users/${user.id}/addresses`, updatedAddresses);
-
-              // O último endereço adicionado será o novo endereço
-              if (response.data && response.data.length > 0) {
-                shippingAddressId = response.data[response.data.length - 1].id;
-                console.log('Endereço de entrega salvo com ID:', shippingAddressId);
-              }
-            }
-          } catch (error) {
-            console.error('Erro ao salvar endereço de entrega:', error);
-            // Continuamos mesmo se falhar o salvamento do endereço
+          // Se o usuário selecionou um endereço existente, usamos o ID diretamente
+          if (this.selectedShippingAddressId) {
+            shippingAddressId = this.selectedShippingAddressId;
+            console.log('Usando endereço existente com ID:', shippingAddressId);
+          } else {
+            console.log('Nenhum endereço selecionado, usando os dados do formulário sem salvar na tabela shipping_address');
           }
         }
 
@@ -1385,7 +1347,7 @@ export default {
           address: this.deliveryMethod === 'delivery' ? this.formData.address :
                   (this.selectedCompanyAddress ? this.selectedCompanyAddress.address : this.companyData.address),
           city: this.deliveryMethod === 'delivery' ? this.formData.city : '',
-          state: this.deliveryMethod === 'delivery' ? this.formData.state : '',
+          state: this.deliveryMethod === 'delivery' ? (this.formData.state || '') : '',
           landmark: this.deliveryMethod === 'delivery' ? this.formData.landmark : '',
           postalCode: this.deliveryMethod === 'delivery' ? this.formData.postalCode : '',
           notes: this.checkoutStore.orderNotes,
@@ -1397,8 +1359,8 @@ export default {
           project_id: project ? project.id : null,
           // Adiciona o ID do local selecionado se o método de entrega for pickup
           location_id: this.deliveryMethod === 'pickup' && this.selectedLocationId ? this.selectedLocationId : null,
-          // Adiciona o ID do endereço de entrega se estivermos no modo delivery
-          shipping_address_id: shippingAddressId,
+          // Adiciona o ID do endereço de entrega se estivermos no modo delivery e um endereço foi selecionado
+          shipping_address_id: this.deliveryMethod === 'delivery' ? shippingAddressId : null,
           // Adiciona o campo neovation_order (sempre null)
           neovation_order: null,
 
@@ -1439,19 +1401,24 @@ export default {
       }
     },
     updateShippingAddress(address) {
-      // Comentado temporariamente - não preencher automaticamente os campos de endereço
-      // Será usado no futuro quando reativarmos essa funcionalidade
-      /*
+      // Preencher automaticamente os campos de endereço quando o usuário selecionar um endereço
       this.formData.address = address.address
-      this.formData.number = address.number // Adicionado number
-      this.formData.neighborhood = address.neighborhood // Adicionado neighborhood
-      this.formData.apartment = address.apartment
+      this.formData.number = address.number || ''
+      this.formData.landmark = address.landmark || ''
+      this.formData.apartment = address.complement || ''
       this.formData.city = address.city
       this.formData.state = address.state
       this.formData.postalCode = address.postalCode
-      this.formData.country = address.country
-      */
+      this.formData.country = address.country || 'Canada'
+
+      // Armazenar o ID do endereço selecionado
       this.currentAddressId = address.id
+
+      // Armazenar o ID do endereço para usar diretamente no pedido
+      this.selectedShippingAddressId = address.id
+
+      // Fechar o modal após a seleção
+      this.showAddressModal = false
     }
   },
   watch: {

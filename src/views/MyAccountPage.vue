@@ -53,8 +53,8 @@
             </router-link>
           </div>
 
-          <!-- Card - Segurança -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Segurança (oculto conforme solicitado) -->
+          <div v-if="false" class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
@@ -86,8 +86,8 @@
             </button>
           </div>
 
-          <!-- Card - Configurações (apenas para ADMIN e MANAGER) (temporariamente oculto, mas mantido para uso futuro) -->
-          <div v-if="false && isAdminOrManager" class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Configurações (apenas para ADMIN e MANAGER) -->
+          <div v-if="isAdminOrManager" class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>

@@ -195,7 +195,7 @@ export default {
     phonePlaceholder: 'Enter your phone number...',
 
     shippingDetails: 'Shipping Details',
-    address: 'Address',
+    address: 'Address Line 1',
     addressPlaceholder: 'Enter your address...',
     number: 'Number',
     numberPlaceholder: 'Enter the number...',
@@ -209,6 +209,8 @@ export default {
     postalCodePlaceholder: 'Enter your postal code...',
     country: 'Country',
     countryPlaceholder: 'Select your country...',
+    landmark: 'Address Line 2',
+    landmarkPlaceholder: 'Enter additional address information...',
 
     paymentDetails: 'Payment Details',
     cardHolder: 'Card Holder',

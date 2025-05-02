@@ -8,7 +8,7 @@ export default {
     career: 'Carrière',
     contactUs: 'Contactez-nous',
     callUsToday: 'Appelez-nous aujourd\'hui',
-    chatWithUs: 'Chattez Communiquez',
+    chatWithUs: 'Chattez communiquez',
     signIn: 'Connexion',
     search: 'Rechercher',
     searchPlaceholder: 'Rechercher...',
@@ -185,7 +185,7 @@ export default {
     phonePlaceholder: 'Entrez votre numéro de téléphone...',
 
     shippingDetails: 'Détails de Livraison',
-    address: 'Adresse',
+    address: 'Adresse Ligne 1',
     addressPlaceholder: 'Entrez votre adresse...',
     apartment: 'Appartement/Suite',
     apartmentPlaceholder: 'Numéro d\'appartement (optionnel)...',
@@ -197,6 +197,8 @@ export default {
     postalCodePlaceholder: 'Entrez votre code postal...',
     country: 'Pays',
     countryPlaceholder: 'Sélectionnez votre pays...',
+    landmark: 'Adresse Ligne 2',
+    landmarkPlaceholder: 'Entrez des informations d\'adresse supplémentaires...',
 
     paymentDetails: 'Détails du Paiement',
     cardHolder: 'Nom sur la Carte',

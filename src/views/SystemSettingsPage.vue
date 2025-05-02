@@ -24,8 +24,8 @@
 
         <!-- Grid de Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <!-- Card - Configurações Financeiras -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Configurações Financeiras (oculto temporariamente) -->
+          <div v-if="false" class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
@@ -69,8 +69,8 @@
             </router-link>
           </div>
 
-          <!-- Card - Configurações de Categorias/Produtos -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Configurações de Categorias/Produtos (oculto conforme solicitado) -->
+          <div v-if="false" class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
