@@ -24,8 +24,8 @@
           <!-- Personal Details Form -->
           <div class="lg:col-span-8">
             <div class="space-y-4 md:space-y-8 bg-[#FAFAFA] p-4 md:p-8">
-              <!-- Personal Details Section -->
-              <section>
+              <!-- Personal Details Section (temporariamente oculto) -->
+              <section v-if="false">
                 <div class="flex items-center cursor-pointer lg:cursor-default mb-6 relative pr-12" @click="toggleSection('personal')">
                   <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl">{{ $t('checkout.personalDetails') }}</h2>
                   <svg
@@ -166,6 +166,7 @@
 
                   <div class="flex items-center lg:absolute lg:right-0 lg:top-0">
                     <button
+                      v-if="deliveryMethod !== 'delivery'"
                       @click.stop
                       @click="openAddressModal"
                       class="mobile-address-btn"
@@ -189,13 +190,14 @@
                 </div>
                 <div v-show="sections.shipping || isDesktop">
                   <!-- Delivery Mode -->
-                  <div v-if="deliveryMethod === 'delivery'" class="grid grid-cols-2 gap-3 md:gap-4">
-                    <div class="col-span-2">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.address') }}</label>
+                  <div v-if="deliveryMethod === 'delivery'" class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                    <!-- Linha 1: Address Line -->
+                    <div class="col-span-1 md:col-span-3">
+                      <label class="block font-archivo text-sm mb-2">Address Line</label>
                       <input
                         type="text"
                         v-model="formData.address"
-                        :placeholder="$t('checkout.addressPlaceholder')"
+                        placeholder="Enter street address"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
@@ -206,54 +208,13 @@
                       </span>
                     </div>
 
-                    <!-- Número -->
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.number') }}</label>
-                      <input
-                        type="text"
-                        v-model="formData.number"
-                        :placeholder="$t('checkout.numberPlaceholder')"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.number) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.number" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
-
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.neighborhood') }}</label>
-                      <input
-                        type="text"
-                        v-model="formData.neighborhood"
-                        :placeholder="$t('checkout.neighborhoodPlaceholder')"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.neighborhood) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.neighborhood" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
-
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.apartment') }}</label>
-                      <input
-                        type="text"
-                        v-model="formData.apartment"
-                        :placeholder="$t('checkout.apartmentPlaceholder')"
-                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
-                      >
-                    </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
+                    <!-- Linha 2: City, State -->
+                    <div class="col-span-1 md:col-span-2">
+                      <label class="block font-archivo text-sm mb-2">City</label>
                       <input
                         type="text"
                         v-model="formData.city"
-                        :placeholder="$t('checkout.cityPlaceholder')"
+                        placeholder="Enter city"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
@@ -263,12 +224,12 @@
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">State</label>
                       <input
                         type="text"
                         v-model="formData.state"
-                        :placeholder="$t('checkout.statePlaceholder')"
+                        placeholder="Enter state"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
@@ -278,12 +239,29 @@
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
+
+                    <!-- Linha 3: Landmark, Postal Code -->
+                    <div class="col-span-1 md:col-span-2">
+                      <label class="block font-archivo text-sm mb-2">Landmark</label>
+                      <input
+                        type="text"
+                        v-model="formData.landmark"
+                        placeholder="Enter landmark"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.landmark) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.landmark" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">Postal Code</label>
                       <input
                         type="text"
                         v-model="formData.postalCode"
-                        :placeholder="$t('checkout.postalCodePlaceholder')"
+                        placeholder="Enter postal code"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
@@ -293,21 +271,50 @@
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
-                    <div>
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
+
+                    <!-- Linha 4: Contact on Site, Contact Phone, Delivery Date/Time -->
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">Contact on Site</label>
                       <input
                         type="text"
-                        v-model="formData.country"
-                        :placeholder="$t('checkout.countryPlaceholder')"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
-                        ]"
+                        v-model="formData.contactOnSite"
+                        placeholder="Enter contact name"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                       >
-                      <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
                     </div>
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">Contact Phone</label>
+                      <input
+                        type="tel"
+                        v-model="formData.contactPhone"
+                        placeholder="Enter contact phone"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
+                      >
+                    </div>
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">Delivery Date/Time</label>
+                      <input
+                        type="datetime-local"
+                        v-model="formData.deliveryDateTime"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
+                      >
+                    </div>
+
+                    <!-- Linha 5: Special Delivery Instructions -->
+                    <div class="col-span-1 md:col-span-3">
+                      <label class="block font-archivo text-sm mb-2">Special Delivery Instructions</label>
+                      <textarea
+                        v-model="formData.specialInstructions"
+                        placeholder="E.g., delivery to a dock, delivery to the back"
+                        rows="3"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
+                      ></textarea>
+                    </div>
+
+                    <!-- Campos ocultos para compatibilidade com backend -->
+                    <input type="hidden" v-model="formData.number">
+                    <input type="hidden" v-model="formData.apartment">
+                    <input type="hidden" v-model="formData.country">
                   </div>
 
                   <!-- Pick-up Mode -->
@@ -427,15 +434,24 @@
                         />
                       </router-link>
 
-                      <!-- Container para nome e preço -->
+                      <!-- Container para descrição, nome e preço -->
                       <div class="flex-1 min-w-0 mx-4"> <!-- min-w-0 permite que o texto seja truncado -->
                         <div class="flex flex-col gap-2">
+                          <!-- Descrição do produto em negrito (invertida com o nome) -->
+                          <div class="h-[2.4em] overflow-hidden">
+                            <router-link :to="`/product/${item.id}`" class="hover:text-empire-yellow transition-colors">
+                              <p class="font-archivo font-bold text-sm md:text-base leading-[1.2em] text-black/90 description-fixed-height">
+                                {{ getProductDescription(item) }}
+                              </p>
+                            </router-link>
+                          </div>
+
                           <!-- Nome do Produto com Quantidade -->
                           <div class="flex items-center gap-2 min-w-0"> <!-- min-w-0 permite que o texto seja truncado -->
                             <div class="flex-shrink-0 flex justify-center items-center w-[22px] h-[22px] bg-black">
                               <span class="font-archivo font-semibold text-xs text-empire-yellow">{{ item.quantity }}x</span>
                             </div>
-                            <router-link :to="`/product/${item.id}`" class="font-archivo text-base md:text-[22px] leading-[24px] md:leading-[40px] truncate hover:text-empire-yellow transition-colors">{{ item.name }}</router-link>
+                            <router-link :to="`/product/${item.id}`" class="font-archivo-narrow font-light text-[12px] md:text-[14px] leading-[14px] md:leading-[16px] text-black/70 truncate hover:text-empire-yellow transition-colors product-name">{{ item.name }}</router-link>
                           </div>
 
                           <!-- Características do produto -->
@@ -575,7 +591,7 @@
 import { useCartStore } from '@/stores/cartStore'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import api from '@/services/api'
 import { useI18n } from 'vue-i18n'
 import AddressSelectionModal from '@/components/address/AddressSelectionModal.vue'
@@ -588,6 +604,7 @@ import { imageService } from '@/services/imageService' // Para usar o handleImag
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { projectService } from '@/services/projectService'
 import { locationService } from '@/services/locationService'
+import { productService } from '@/services/productService'
 
 export default {
   name: 'CheckoutPage',
@@ -600,7 +617,7 @@ export default {
     const cartStore = useCartStore()
     const store = useStore()
     const router = useRouter()
-    const { t } = useI18n()
+    const { t, locale } = useI18n()
     const addressStore = useAddressStore()
     const checkoutStore = useCheckoutStore()
     const currencySymbol = ref('$')
@@ -614,6 +631,7 @@ export default {
     const loading = ref(true) // Estado de carregamento principal
     const summaryLoading = ref(true) // Estado de carregamento do resumo
     const error = ref(null) // Estado de erro
+    const productDescriptions = ref({}) // Armazena as descrições dos produtos
 
     const loadFinancialSettings = async () => {
       try {
@@ -690,6 +708,95 @@ export default {
     // Variável ref para controlar o estado de loading do resumo no setup
     const isLoadingSummaryRef = ref(true)
 
+    // Função para carregar as descrições dos produtos no carrinho
+    const loadProductDescriptions = async () => {
+      try {
+        if (cartStore.items.length > 0) {
+          console.log('Loading descriptions for', cartStore.items.length, 'items');
+
+          // Cria uma cópia dos itens para modificação
+          const updatedItems = [...cartStore.items];
+          let hasUpdates = false;
+
+          for (let i = 0; i < updatedItems.length; i++) {
+            const item = updatedItems[i];
+            console.log('Processing item:', item.id, item.name);
+
+            // Verifica se já temos a descrição em cache
+            if (productDescriptions.value[item.id]) {
+              console.log('Description already in cache for item', item.id);
+              // Adiciona a descrição diretamente ao item
+              if (!item.description) {
+                updatedItems[i] = {
+                  ...item,
+                  description: productDescriptions.value[item.id]
+                };
+                hasUpdates = true;
+              }
+              continue;
+            }
+
+            try {
+              console.log('Fetching product details for item', item.id);
+              const productDetails = await productService.getProductDetails(item.id);
+
+              if (productDetails) {
+                // Seleciona a descrição no idioma atual ou usa fallback para inglês
+                const description = productDetails[`description_${locale.value}`] ||
+                                   productDetails.description_en ||
+                                   productDetails.description_fr ||
+                                   '';
+
+                console.log('Got description for item', item.id, ':', description);
+
+                // Armazena no cache
+                productDescriptions.value[item.id] = description;
+
+                // Adiciona a descrição diretamente ao item
+                updatedItems[i] = {
+                  ...item,
+                  description: description
+                };
+                hasUpdates = true;
+              }
+            } catch (err) {
+              console.error('Error fetching product details for item', item.id, ':', err);
+            }
+          }
+
+          // Se houve atualizações, atualiza os itens no carrinho
+          if (hasUpdates) {
+            console.log('Updating cart items with descriptions');
+
+            // Atualiza os itens no store
+            for (let i = 0; i < updatedItems.length; i++) {
+              if (updatedItems[i].description && !cartStore.items[i].description) {
+                console.log(`Adding description to item ${i} (${updatedItems[i].id}): ${updatedItems[i].description.substring(0, 30)}...`);
+                // Atualiza a descrição no item original
+                cartStore.items[i].description = updatedItems[i].description;
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading product descriptions:', error);
+      }
+    }
+
+    // Observa mudanças nos itens do carrinho para carregar descrições
+    watch(() => cartStore.items.length, () => {
+      if (cartStore.items.length > 0) {
+        loadProductDescriptions()
+      }
+    })
+
+    // Observa mudanças no idioma para atualizar as descrições
+    watch(locale, () => {
+      if (Object.keys(productDescriptions.value).length > 0) {
+        loadProductDescriptions()
+      }
+    })
+
     const loadCheckoutData = async () => {
       try {
         console.log('Iniciando carregamento de dados do checkout')
@@ -707,6 +814,9 @@ export default {
 
         // Carrega os endereços do usuário
         await addressStore.fetchAddresses()
+
+        // Carrega as descrições dos produtos
+        await loadProductDescriptions()
 
         console.log('Dados básicos carregados, desativando loading principal')
         // Desativa o loading principal após carregar os dados básicos
@@ -754,7 +864,9 @@ export default {
       // Expor a função loadFinancialSettings para uso nos methods
       loadFinancialSettings,
       // Expor a variável isLoadingSummaryRef para sincronização com isLoadingSummary
-      isLoadingSummaryRef
+      isLoadingSummaryRef,
+      // Expor as descrições dos produtos
+      productDescriptions
     }
   },
   data() {
@@ -785,15 +897,19 @@ export default {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
-        phone: user.phone || '', // Adicionar inicialização do telefone
-        address: '',
-        number: '', // Adicionado campo number
-        neighborhood: '', // Adicionado campo neighborhood
-        apartment: '',
+        phone: user.phone || '', // Telefone do usuário
+        address: '', // Address Line 1
+        number: '', // Mantido para compatibilidade com backend
+        landmark: '', // Novo campo: Ponto de referência (substitui neighborhood)
+        apartment: '', // Mantido para compatibilidade com backend
         city: '',
         state: '',
         postalCode: '',
         country: '',
+        contactOnSite: '', // Novo campo: Contato no local
+        contactPhone: '', // Novo campo: Telefone de contato no local
+        deliveryDateTime: '', // Novo campo: Data/hora de entrega
+        specialInstructions: '', // Novo campo: Instruções especiais de entrega
         cardHolder: '',
         cardNumber: '',
         expiryDate: '',
@@ -818,8 +934,8 @@ export default {
     formErrors() {
       const errors = {}
       const requiredFields = [
-        'firstName', 'lastName', 'email', 'phone',
-        'address', 'number', 'neighborhood', 'city', 'state', 'postalCode', 'country' // Adicionado neighborhood aos campos obrigatórios
+        'firstName', 'lastName', 'email', // 'phone' removido da lista de campos obrigatórios
+        'address', 'city', 'state', 'postalCode' // Removidos number, neighborhood e country dos campos obrigatórios
       ]
 
       requiredFields.forEach(field => {
@@ -919,6 +1035,31 @@ export default {
     handleImageError(e) {
       // Usa a função utilitária do imageService para lidar com erros de imagem
       imageService.handleImageError(e)
+    },
+    // Método para obter a descrição do produto
+    getProductDescription(item) {
+      if (!item) {
+        console.warn('Item is undefined or null');
+        return '-';
+      }
+
+      console.log('Getting description for item:', item.id);
+
+      // Primeiro, verifica se o item já tem a descrição
+      if (item.description) {
+        console.log('Using item description:', item.description);
+        return item.description;
+      }
+
+      // Depois, verifica se temos a descrição no cache
+      if (this.productDescriptions && this.productDescriptions[item.id]) {
+        console.log('Found description in cache:', this.productDescriptions[item.id]);
+        return this.productDescriptions[item.id];
+      }
+
+      // Se não tiver descrição, retorna o nome do produto como fallback
+      console.log('Falling back to item name:', item.name);
+      return item.name || '-';
     },
     isWhiteOrLight(color) {
       if (!color || color === 'transparent') return false;
@@ -1083,9 +1224,9 @@ export default {
 
       // Se estiver no modo pickup, não valida os campos de endereço
       if (this.deliveryMethod === 'pickup') {
-        // Verifica apenas os campos pessoais
+        // Verifica apenas os campos pessoais (exceto telefone que não é mais obrigatório)
         const personalFieldsValid = !Object.entries(this.formErrors)
-          .filter(([field]) => ['firstName', 'lastName', 'email', 'phone'].includes(field))
+          .filter(([field]) => ['firstName', 'lastName', 'email'].includes(field))
           .some(([, error]) => error);
 
         return personalFieldsValid;
@@ -1194,18 +1335,59 @@ export default {
           }
         }
 
+        // Primeiro, vamos salvar o endereço de entrega se estivermos no modo delivery
+        let shippingAddressId = null;
+
+        if (this.deliveryMethod === 'delivery') {
+          try {
+            // Preparar os dados do endereço de entrega
+            const shippingAddressData = {
+              address: this.formData.address,
+              city: this.formData.city,
+              state: this.formData.state,
+              landmark: this.formData.landmark || '',
+              postal_code: this.formData.postalCode,
+              is_default: false // Não definimos como padrão automaticamente
+            };
+
+            // Salvar o endereço de entrega
+            // Como não temos um endpoint específico para adicionar um endereço,
+            // vamos usar o endpoint de atualização de endereços
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.id) {
+              // Primeiro, obtemos os endereços existentes
+              const existingAddresses = await api.get(`/users/${user.id}/addresses`);
+
+              // Adicionamos o novo endereço à lista
+              const updatedAddresses = [...existingAddresses.data, shippingAddressData];
+
+              // Atualizamos todos os endereços
+              const response = await api.put(`/users/${user.id}/addresses`, updatedAddresses);
+
+              // O último endereço adicionado será o novo endereço
+              if (response.data && response.data.length > 0) {
+                shippingAddressId = response.data[response.data.length - 1].id;
+                console.log('Endereço de entrega salvo com ID:', shippingAddressId);
+              }
+            }
+          } catch (error) {
+            console.error('Erro ao salvar endereço de entrega:', error);
+            // Continuamos mesmo se falhar o salvamento do endereço
+          }
+        }
+
+        // Preparamos os dados para o backend
+        // Mantemos a estrutura original para compatibilidade com o backend
+        // Os novos campos são adicionados como metadados extras
         const orderData = {
-          poNumber: this.formData.poNumber,
+          poNumber: this.formData.poNumber, // Número de PO
           deliveryMethod: this.deliveryMethod,
           address: this.deliveryMethod === 'delivery' ? this.formData.address :
                   (this.selectedCompanyAddress ? this.selectedCompanyAddress.address : this.companyData.address),
-          number: this.deliveryMethod === 'delivery' ? this.formData.number : '',
-          complement: this.deliveryMethod === 'delivery' ? this.formData.complement : '',
-          neighborhood: this.deliveryMethod === 'delivery' ? this.formData.neighborhood : '',
           city: this.deliveryMethod === 'delivery' ? this.formData.city : '',
           state: this.deliveryMethod === 'delivery' ? this.formData.state : '',
+          landmark: this.deliveryMethod === 'delivery' ? this.formData.landmark : '',
           postalCode: this.deliveryMethod === 'delivery' ? this.formData.postalCode : '',
-          country: this.deliveryMethod === 'delivery' ? this.formData.country : '',
           notes: this.checkoutStore.orderNotes,
           // Se o toggle master estiver desabilitado, envia valores null
           // Agora o backend foi modificado para aceitar null para esses campos
@@ -1214,7 +1396,20 @@ export default {
           // Adiciona o ID do projeto selecionado (pode ser null)
           project_id: project ? project.id : null,
           // Adiciona o ID do local selecionado se o método de entrega for pickup
-          location_id: this.deliveryMethod === 'pickup' && this.selectedLocationId ? this.selectedLocationId : null
+          location_id: this.deliveryMethod === 'pickup' && this.selectedLocationId ? this.selectedLocationId : null,
+          // Adiciona o ID do endereço de entrega se estivermos no modo delivery
+          shipping_address_id: shippingAddressId,
+          // Adiciona o campo neovation_order (sempre null)
+          neovation_order: null,
+
+          // Adiciona os campos de contato e entrega diretamente no objeto principal
+          contactOnSite: this.deliveryMethod === 'delivery' ? this.formData.contactOnSite : null,
+          contactPhone: this.deliveryMethod === 'delivery' ? this.formData.contactPhone : null,
+          deliveryDateTime: this.deliveryMethod === 'delivery' ? this.formData.deliveryDateTime : null,
+          specialInstructions: this.deliveryMethod === 'delivery' ? this.formData.specialInstructions : null,
+
+          // Mantemos o objeto metadata para compatibilidade com código existente
+          metadata: {}
         };
 
         console.log('Order data being sent:', orderData);
@@ -1244,6 +1439,9 @@ export default {
       }
     },
     updateShippingAddress(address) {
+      // Comentado temporariamente - não preencher automaticamente os campos de endereço
+      // Será usado no futuro quando reativarmos essa funcionalidade
+      /*
       this.formData.address = address.address
       this.formData.number = address.number // Adicionado number
       this.formData.neighborhood = address.neighborhood // Adicionado neighborhood
@@ -1252,6 +1450,7 @@ export default {
       this.formData.state = address.state
       this.formData.postalCode = address.postalCode
       this.formData.country = address.country
+      */
       this.currentAddressId = address.id
     }
   },
@@ -1296,8 +1495,10 @@ export default {
   },
   async created() {
     // Não carregamos os endereços aqui, pois já estão sendo carregados no loadCheckoutData
-    // Apenas configuramos o endereço padrão se já estiver carregado
     try {
+      // Comentado temporariamente - não preencher automaticamente os campos de endereço
+      // Será usado no futuro quando reativarmos essa funcionalidade
+      /*
       const defaultAddress = this.addressStore.addresses.find(addr => addr.isDefault)
 
       if (defaultAddress) {
@@ -1311,6 +1512,7 @@ export default {
         this.formData.country = defaultAddress.country
         this.currentAddressId = defaultAddress.id
       }
+      */
 
       // Carrega os dados da empresa para o modo pickup
       this.loadCompanyData();
@@ -1405,5 +1607,31 @@ input::placeholder {
     font-weight: 500;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+}
+
+/* Estilo para manter a altura fixa da descrição com exatamente duas linhas */
+.description-fixed-height {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  height: 2.4em !important; /* Altura fixa para exatamente 2 linhas */
+  min-height: 2.4em !important;
+  max-height: 2.4em !important;
+  line-height: 1.2em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Estilo personalizado para o nome do produto com espessura extra fina */
+.product-name {
+  font-weight: 100 !important; /* Força a espessura mais fina possível */
+  opacity: 0.7 !important; /* Reduz ainda mais a opacidade para parecer mais fino */
+  letter-spacing: 0.03em !important; /* Aumenta mais o espaçamento entre letras */
+  color: rgba(0, 0, 0, 0.6) !important; /* Cor mais clara para parecer mais fino */
+  transform: scale(0.98, 1) !important; /* Comprime ligeiramente na horizontal */
 }
 </style>

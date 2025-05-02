@@ -320,8 +320,42 @@
                   <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2">{{ $t('ordersSettings.orderInfo') }}</h3>
                   <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.date') }}:</span> {{ formatDate(selectedOrder.created_at) }}</p>
                   <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.status') }}:</span> {{ $t(`ordersSettings.status_${selectedOrder.status}`) }}</p>
-                  <p class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.project') }}:</span> {{ selectedOrder.project_name || $t('ordersSettings.noProject') }}</p>
-                  <p v-if="selectedOrder.notes" class="font-archivo text-xs md:text-sm"><span class="font-medium">{{ $t('ordersSettings.notes') }}:</span> {{ selectedOrder.notes }}</p>
+
+                  <h3 class="font-archivo-narrow font-semibold text-base md:text-lg mb-1 md:mb-2 mt-3">{{ $t('ordersSettings.additionalInfo') }}</h3>
+
+                  <!-- Project -->
+                  <p class="font-archivo text-xs md:text-sm flex items-center">
+                    <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    <span class="font-medium">{{ $t('ordersSettings.project') }}:</span> {{ selectedOrder.project_name || $t('ordersSettings.noProject') }}
+                  </p>
+
+                  <!-- Contact on Site -->
+                  <p v-if="selectedOrder.contact_on_site" class="font-archivo text-xs md:text-sm flex items-center mt-1">
+                    <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span class="font-medium">{{ $t('ordersSettings.contactOnSite') }}: </span><span class="font-semibold">{{ selectedOrder.contact_on_site }}</span>
+                  </p>
+
+                  <!-- Contact Phone -->
+                  <p v-if="selectedOrder.contact_phone" class="font-archivo text-xs md:text-sm flex items-center mt-1">
+                    <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                    </svg>
+                    <span class="font-medium">{{ $t('ordersSettings.contactPhone') }}: </span><span class="font-semibold">{{ selectedOrder.contact_phone }}</span>
+                  </p>
+
+                  <!-- Delivery Date/Time -->
+                  <p v-if="selectedOrder.delivery_date_time" class="font-archivo text-xs md:text-sm flex items-center mt-1">
+                    <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="font-medium">{{ $t('ordersSettings.deliveryDateTime') }}: </span><span class="font-semibold">{{ formatDateTime(selectedOrder.delivery_date_time) }}</span>
+                  </p>
+
+                  <p v-if="selectedOrder.notes" class="font-archivo text-xs md:text-sm mt-3"><span class="font-medium">{{ $t('ordersSettings.notes') }}:</span> {{ selectedOrder.notes }}</p>
                 </div>
 
                 <div>
@@ -329,19 +363,37 @@
                     {{ selectedOrder.delivery_method === 'pickup' ? $t('orders.pickupLocation') : $t('ordersSettings.shippingAddress') }}
                   </h3>
 
+                  <!-- PO Number (exibido para ambos os métodos de entrega) -->
+                  <p v-if="selectedOrder.po_number" class="font-archivo text-xs md:text-sm mb-2 flex items-center">
+                    <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="font-medium">{{ $t('ordersSettings.poNumber') }}: </span><span class="font-semibold">{{ selectedOrder.po_number }}</span>
+                  </p>
+
                   <!-- Endereço de entrega (delivery) -->
                   <template v-if="selectedOrder.delivery_method === 'delivery' || !selectedOrder.delivery_method">
-                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.address }}, {{ selectedOrder.number }}</p>
-                    <p v-if="selectedOrder.complement" class="font-archivo text-xs md:text-sm">{{ selectedOrder.complement }}</p>
-                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.neighborhood }}</p>
-                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.city }}, {{ selectedOrder.state }}</p>
-                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.postal_code }}</p>
-                    <p class="font-archivo text-xs md:text-sm">{{ selectedOrder.country }}</p>
+                    <p class="font-archivo text-xs md:text-sm flex items-center">
+                      <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                      {{ selectedOrder.address }}{{ selectedOrder.landmark ? ', ' + selectedOrder.landmark : '' }}
+                    </p>
+                    <p class="font-archivo text-xs md:text-sm ml-4">{{ selectedOrder.city }}, {{ selectedOrder.state }} {{ selectedOrder.postal_code }}</p>
+
+                    <!-- Special Delivery Instructions (sem label e ícone) -->
+                    <p v-if="selectedOrder.special_instructions" class="font-archivo text-xs md:text-sm mt-2 text-gray-600 italic ml-4">
+                      {{ selectedOrder.special_instructions }}
+                    </p>
                   </template>
 
                   <!-- Local de retirada (pickup) -->
                   <template v-else-if="selectedOrder.delivery_method === 'pickup'">
-                    <p class="font-archivo text-xs md:text-sm">
+                    <p class="font-archivo text-xs md:text-sm flex items-center">
+                      <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                      </svg>
                       <span class="font-medium">{{ $t('orders.pickupAt') }}:</span>
                       {{ selectedOrder.location_description || $t('orders.noLocationSpecified') }}
                     </p>
@@ -700,6 +752,19 @@ export default {
       return new Intl.DateTimeFormat('pt-BR').format(date)
     }
 
+    // Formatar data e hora
+    const formatDateTime = (dateTimeString) => {
+      if (!dateTimeString) return ''
+      const date = new Date(dateTimeString)
+      return new Intl.DateTimeFormat('pt-BR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date)
+    }
+
     // Formatar moeda
     const formatCurrency = (value) => {
       if (value === null || value === undefined) return '-'
@@ -787,6 +852,7 @@ export default {
       viewOrderDetails,
       exportToExcel,
       formatDate,
+      formatDateTime,
       formatCurrency,
       getStatusClass,
       calculateSubtotal

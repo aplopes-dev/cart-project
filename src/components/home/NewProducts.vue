@@ -35,7 +35,7 @@
                 <!-- Área clicável para detalhes do produto -->
                 <div
                   class="w-full cursor-pointer"
-                  @click="navigateToProduct(product.id)"
+                  @click="navigateToProduct(product.id, index)"
                 >
                   <!-- Imagem do Produto -->
                   <img
@@ -187,6 +187,7 @@ import { ref, onMounted, watch } from 'vue'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { useRouter } from 'vue-router'
 import { imageService } from '@/services/imageService'
+import { getProductUrlWithDescription } from '@/utils/urlUtils'
 
 export default {
   name: 'NewProducts',
@@ -336,11 +337,12 @@ export default {
         this.currentSlide--
       }
     },
-    navigateToProduct(productId) {
+    navigateToProduct(productId, index) {
+      // Navega para a rota simples com apenas o ID do produto
       this.$router.push({
-        name: 'ProductDetails', // Corrigido para corresponder ao nome exato da rota
+        name: 'ProductDetails',
         params: { id: productId }
-      })
+      });
     },
     incrementQuantity(index) {
       if (!this.quantities[index]) {
@@ -397,9 +399,11 @@ export default {
       // Verifica se o produto tem características que precisam ser selecionadas
       if (productCharacteristicsService.hasCharacteristics(product)) {
         // Se tiver características, redireciona para a página de detalhes do produto
+        // Navega para a rota simples com apenas o ID do produto
         this.router.push({
-          path: `/product/${product.id}`,
-          query: { showValidation: 'true' } // Passa um parâmetro para mostrar a validação
+          name: 'ProductDetails',
+          params: { id: product.id },
+          query: { showValidation: 'true' }
         });
         return;
       }

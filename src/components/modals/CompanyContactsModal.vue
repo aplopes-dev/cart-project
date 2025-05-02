@@ -65,6 +65,19 @@
                   >
                 </div>
 
+                <!-- Website -->
+                <div>
+                  <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
+                    {{ $t('company.contacts.website') }}
+                  </label>
+                  <input
+                    v-model="contactForm.website"
+                    type="text"
+                    class="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base h-9 md:h-auto rounded-lg border border-gray-300 focus:border-empire-yellow focus:ring-2 focus:ring-empire-yellow/20 transition-all outline-none"
+                  >
+                  <span class="text-xs text-gray-500 mt-1 block">{{ $t('company.websiteHint') }}</span>
+                </div>
+
                 <!-- Endereço -->
                 <div class="col-span-1 md:col-span-2">
                   <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
@@ -197,6 +210,7 @@ const contactForm = reactive({
   name: '',
   email: '',
   phone: '',
+  website: '',
   address: ''
 })
 
@@ -204,6 +218,7 @@ const resetForm = () => {
   contactForm.name = ''
   contactForm.email = ''
   contactForm.phone = ''
+  contactForm.website = ''
   contactForm.address = ''
   isEditing.value = false
   editingIndex.value = -1
@@ -219,6 +234,7 @@ const handleSubmit = () => {
     name: contactForm.name,
     email: contactForm.email,
     phone: contactForm.phone,
+    website: contactForm.website,
     address: contactForm.address
   }
 

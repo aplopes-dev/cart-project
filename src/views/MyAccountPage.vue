@@ -23,8 +23,8 @@
             </router-link>
           </div>
 
-          <!-- Card - Dados Pessoais -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Dados Pessoais (temporariamente oculto, mas mantido para uso futuro) -->
+          <div v-if="false" class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -38,8 +38,8 @@
             </router-link>
           </div>
 
-          <!-- Card - Endereços -->
-          <div class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Endereços (temporariamente oculto, mas mantido para uso futuro) -->
+          <div v-if="false" class="bg-[#FAFAFA] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 20s-7-5.5-7-10a7 7 0 0 1 14 0c0 4.5-7 10-7 10z"/>
@@ -86,8 +86,8 @@
             </button>
           </div>
 
-          <!-- Card - Configurações (apenas para ADMIN e MANAGER) -->
-          <div v-if="isAdminOrManager" class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
+          <!-- Card - Configurações (apenas para ADMIN e MANAGER) (temporariamente oculto, mas mantido para uso futuro) -->
+          <div v-if="false && isAdminOrManager" class="bg-[#FFEBEE] p-4 sm:p-8 flex flex-col gap-3 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-3">
               <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>

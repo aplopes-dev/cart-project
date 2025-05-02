@@ -12,7 +12,21 @@
         </template>
         <template v-else>
           <div v-for="(company, index) in companies" :key="company.id" class="flex items-center">
-            <span class="font-archivo font-medium text-[14px] leading-[28px] text-black text-center whitespace-nowrap" style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;">
+            <a
+              v-if="company.website"
+              :href="formatWebsiteUrl(company.website)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-archivo font-medium text-[14px] leading-[28px] text-black text-center whitespace-nowrap hover:underline"
+              style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+            >
+              {{ company.name }}
+            </a>
+            <span
+              v-else
+              class="font-archivo font-medium text-[14px] leading-[28px] text-black text-center whitespace-nowrap"
+              style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+            >
               {{ company.name }}
             </span>
             <!-- Add dot separator between companies except for the last one -->
@@ -35,7 +49,21 @@
         <div class="marquee-container">
           <div class="marquee-content" :style="{ animationDuration: `${marqueeSpeed}s` }">
             <div v-for="company in companies" :key="`${company.id}-1`" class="flex items-center">
-              <span class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap" style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;">
+              <a
+                v-if="company.website"
+                :href="formatWebsiteUrl(company.website)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap hover:underline"
+                style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+              >
+                {{ company.name }}
+              </a>
+              <span
+                v-else
+                class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap"
+                style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+              >
                 {{ company.name }}
               </span>
               <!-- Add dot separator between all companies in the marquee -->
@@ -45,7 +73,21 @@
           <!-- Duplicate content for seamless looping -->
           <div class="marquee-content" :style="{ animationDuration: `${marqueeSpeed}s` }">
             <div v-for="company in companies" :key="`${company.id}-2`" class="flex items-center">
-              <span class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap" style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;">
+              <a
+                v-if="company.website"
+                :href="formatWebsiteUrl(company.website)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap hover:underline"
+                style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+              >
+                {{ company.name }}
+              </a>
+              <span
+                v-else
+                class="font-archivo font-medium text-[13px] leading-[28px] text-black text-center whitespace-nowrap"
+                style="font-family: Archivo; font-weight: 500; letter-spacing: 0%;"
+              >
                 {{ company.name }}
               </span>
               <!-- Add dot separator between all companies in the marquee -->
@@ -88,7 +130,8 @@ const fetchCompanies = async () => {
       // Add the main company first
       companies.value = [{
         id: companyInfo.id,
-        name: companyInfo.company_name
+        name: companyInfo.company_name,
+        website: companyInfo.website
       }]
 
       // Then add the contacts
@@ -97,7 +140,8 @@ const fetchCompanies = async () => {
         companyInfo.contacts.forEach(contact => {
           companies.value.push({
             id: contact.id,
-            name: contact.name
+            name: contact.name,
+            website: contact.website
           })
         })
       }
@@ -114,6 +158,22 @@ const fetchCompanies = async () => {
 const checkScrollDesktop = () => {
   // No need for scroll indicators in desktop version
   // as we're using native scrollbar
+}
+
+// Function to format website URL (add https:// if not present)
+const formatWebsiteUrl = (url) => {
+  if (!url) return '#'
+
+  // Remove any leading/trailing whitespace
+  const trimmedUrl = url.trim()
+
+  // Check if the URL already has a protocol
+  if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+    return trimmedUrl
+  }
+
+  // Add https:// to the URL
+  return `https://${trimmedUrl}`
 }
 
 // Initialize after data is loaded

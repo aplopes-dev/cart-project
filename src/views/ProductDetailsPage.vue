@@ -229,6 +229,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import ProductQuantitySelector from '@/components/product/ProductQuantitySelector.vue'
 import BestSeller from '@/components/product/BestSeller.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
@@ -240,9 +241,12 @@ import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+// eslint-disable-next-line no-unused-vars
+import { useRoute, useRouter } from 'vue-router'
 import eventBus from '@/utils/eventBus'
 import { formatCategoryName } from '@/filters'
+// eslint-disable-next-line no-unused-vars
+import { getProductUrlWithDescription } from '@/utils/urlUtils'
 
 export default {
   name: 'ProductDetailsPage',
@@ -345,6 +349,28 @@ export default {
           images: allImages,
           description: productData[`description_${locale.value}`] || productData.description_en || '',
           technical_description: productData[`technical_description_${locale.value}`] || productData.technical_description_en || ''
+        }
+
+        // Atualiza a URL para incluir a descrição do produto
+        // Usa a descrição do produto em vez do nome
+        const productDescription = productData[`description_${locale.value}`] ||
+                                  productData.description_en ||
+                                  productData.description_fr ||
+                                  productData.name || '';
+
+        console.log('[ProductDetailsPage] Usando descrição para URL:', productDescription);
+        const formattedUrl = getProductUrlWithDescription(productId, productDescription);
+
+        // Usa history.replaceState para atualizar a URL sem causar uma nova navegação
+        if (window.history && window.history.replaceState) {
+          // Preserva os parâmetros de consulta existentes
+          const queryString = window.location.search;
+          window.history.replaceState(
+            {},
+            document.title,
+            formattedUrl + queryString
+          );
+          console.log('[ProductDetailsPage] URL atualizada para:', formattedUrl + queryString);
         }
 
         // Resetar seleções e validações ao trocar de produto

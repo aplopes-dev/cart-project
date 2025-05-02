@@ -74,6 +74,14 @@ const routes = [
     component: () => import('../views/ProductDetailsPage.vue')
   },
   {
+    path: '/product/:id/:description',
+    name: 'ProductDetailsWithDescription',
+    redirect: to => {
+      // Redireciona para a rota original, mantendo o ID do produto
+      return { name: 'ProductDetails', params: { id: to.params.id } }
+    }
+  },
+  {
     path: '/categories',
     name: 'Categories',
     component: CategoryPage

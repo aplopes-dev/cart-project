@@ -26,7 +26,16 @@
                       <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
                   </div>
-                  <span class="font-archivo text-xl font-semibold">{{ companyData.name }}</span>
+                  <a
+                    v-if="companyData.website"
+                    :href="formatWebsiteUrl(companyData.website)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-archivo text-xl font-semibold hover:text-empire-yellow transition-colors"
+                  >
+                    {{ companyData.name }}
+                  </a>
+                  <span v-else class="font-archivo text-xl font-semibold">{{ companyData.name }}</span>
                 </div>
 
                 <div class="space-y-4">
@@ -87,7 +96,16 @@
                       </svg>
                     </div>
                     <div>
-                      <span class="font-archivo text-lg sm:text-xl font-semibold block">{{ contact.name }}</span>
+                      <a
+                        v-if="contact.website"
+                        :href="formatWebsiteUrl(contact.website)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="font-archivo text-lg sm:text-xl font-semibold block hover:text-empire-yellow transition-colors"
+                      >
+                        {{ contact.name }}
+                      </a>
+                      <span v-else class="font-archivo text-lg sm:text-xl font-semibold block">{{ contact.name }}</span>
                       <span class="text-gray-600 text-xs sm:text-sm">{{ contact.department }}</span>
                     </div>
                   </div>
@@ -278,9 +296,26 @@ const companyData = ref({
   name: '',
   email: '',
   phone: '',
-  address: ''
+  address: '',
+  website: ''
 })
 const contacts = ref([])
+
+// Função para formatar URL do website (adicionar https:// se não estiver presente)
+const formatWebsiteUrl = (url) => {
+  if (!url) return '#'
+
+  // Remove any leading/trailing whitespace
+  const trimmedUrl = url.trim()
+
+  // Check if the URL already has a protocol
+  if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+    return trimmedUrl
+  }
+
+  // Add https:// to the URL
+  return `https://${trimmedUrl}`
+}
 
 // Carrega os dados da empresa e contatos
 const loadCompanyData = async () => {
@@ -291,7 +326,8 @@ const loadCompanyData = async () => {
       name: response.data.company_name || '',
       email: response.data.email || '',
       phone: response.data.phone || '',
-      address: response.data.address || ''
+      address: response.data.address || '',
+      website: response.data.website || ''
     }
     // Mapeia os contatos para o formato correto
     contacts.value = (response.data.contacts || []).map(contact => ({
@@ -300,7 +336,8 @@ const loadCompanyData = async () => {
       department: contact.department,
       email: contact.email,
       phone: contact.phone,
-      address: contact.address // Garantindo que o endereço está sendo mapeado
+      address: contact.address, // Garantindo que o endereço está sendo mapeado
+      website: contact.website // Adicionando o website
     }))
   } catch (err) {
     console.error('Error loading company data:', err)

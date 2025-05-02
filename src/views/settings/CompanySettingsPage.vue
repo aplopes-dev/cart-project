@@ -86,6 +86,18 @@
               </span>
             </div>
 
+            <!-- Website -->
+            <div>
+              <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.website') }}</label>
+              <input
+                type="text"
+                v-model="formData.website"
+                :placeholder="$t('company.websitePlaceholder')"
+                class="w-full p-2 md:p-4 h-10 md:h-auto text-sm md:text-base border border-gray-300"
+              >
+              <span class="text-xs text-gray-500 mt-1 block">{{ $t('company.websiteHint') }}</span>
+            </div>
+
             <!-- Endereço -->
             <div>
               <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('company.address') }}</label>
@@ -195,6 +207,21 @@
                           </a>
                         </div>
 
+                        <!-- Website -->
+                        <div v-if="contact.website" class="flex items-center gap-3 text-gray-600">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                          </svg>
+                          <a
+                            :href="formatWebsiteUrl(contact.website)"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-gray-600 hover:text-empire-yellow transition-colors"
+                          >
+                            {{ contact.website }}
+                          </a>
+                        </div>
+
                         <!-- Endereço -->
                         <div v-if="contact.address" class="flex items-center gap-3 text-gray-600">
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,6 +289,7 @@ const formData = ref({
   name: '',
   email: '',
   phone: '',
+  website: '',
   address: ''
 })
 
@@ -280,6 +308,7 @@ const loadCompanyData = async () => {
       name: response.data.company_name || '',
       email: response.data.email || '',
       phone: response.data.phone || '',
+      website: response.data.website || '',
       address: response.data.address || ''
     }
     contacts.value = response.data.contacts || []
@@ -331,11 +360,13 @@ const handleSubmit = async () => {
       company_name: formData.value.name,
       email: formData.value.email,
       phone: formData.value.phone,
+      website: formData.value.website,
       address: formData.value.address,
       contacts: contacts.value.map(contact => ({
         name: contact.name,
         email: contact.email,
         phone: contact.phone,
+        website: contact.website,
         address: contact.address
       }))
     }
@@ -353,6 +384,22 @@ const handleSubmit = async () => {
 
 const goBack = () => {
   router.push('/settings')
+}
+
+// Função para formatar URL do website (adicionar https:// se não estiver presente)
+const formatWebsiteUrl = (url) => {
+  if (!url) return '#'
+
+  // Remove any leading/trailing whitespace
+  const trimmedUrl = url.trim()
+
+  // Check if the URL already has a protocol
+  if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+    return trimmedUrl
+  }
+
+  // Add https:// to the URL
+  return `https://${trimmedUrl}`
 }
 
 onMounted(() => {
