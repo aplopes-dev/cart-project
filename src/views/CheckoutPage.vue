@@ -191,11 +191,11 @@
                   <div v-if="deliveryMethod === 'delivery'" class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                     <!-- Linha 1: Address Line 1 -->
                     <div class="col-span-1 md:col-span-3">
-                      <label class="block font-archivo text-sm mb-2">Address Line 1</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.addressLine1') }}</label>
                       <input
                         type="text"
                         v-model="formData.address"
-                        placeholder="Enter street address"
+                        :placeholder="$t('checkout.addressLine1Placeholder')"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
@@ -208,11 +208,11 @@
 
                     <!-- Linha 2: Address Line 2 (antigo Landmark) -->
                     <div class="col-span-1 md:col-span-3">
-                      <label class="block font-archivo text-sm mb-2">Address Line 2</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.addressLine2') }}</label>
                       <input
                         type="text"
                         v-model="formData.landmark"
-                        placeholder="Enter additional address information"
+                        :placeholder="$t('checkout.addressLine2Placeholder')"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.landmark) ? 'border-red-500' : 'border-black/25'
@@ -225,11 +225,11 @@
 
                     <!-- Linha 3: City, Postal Code -->
                     <div class="col-span-1 md:col-span-2">
-                      <label class="block font-archivo text-sm mb-2">City</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
                       <input
                         type="text"
                         v-model="formData.city"
-                        placeholder="Enter city"
+                        :placeholder="$t('checkout.cityPlaceholder')"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
@@ -240,11 +240,11 @@
                       </span>
                     </div>
                     <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">Postal Code</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
                       <input
                         type="text"
                         v-model="formData.postalCode"
-                        placeholder="Enter postal code"
+                        :placeholder="$t('checkout.postalCodePlaceholder')"
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
@@ -260,25 +260,25 @@
 
                     <!-- Linha 4: Contact on Site, Contact Phone, Delivery Date/Time -->
                     <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">Contact on Site</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.contactOnSite') }}</label>
                       <input
                         type="text"
                         v-model="formData.contactOnSite"
-                        placeholder="Enter contact name"
+                        :placeholder="$t('checkout.contactOnSitePlaceholder')"
                         class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                       >
                     </div>
                     <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">Contact Phone</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.contactPhone') }}</label>
                       <input
                         type="tel"
                         v-model="formData.contactPhone"
-                        placeholder="Enter contact phone"
+                        :placeholder="$t('checkout.contactPhonePlaceholder')"
                         class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                       >
                     </div>
                     <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">Delivery Date/Time</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.deliveryDateTime') }}</label>
                       <input
                         type="datetime-local"
                         v-model="formData.deliveryDateTime"
@@ -288,10 +288,10 @@
 
                     <!-- Linha 5: Special Delivery Instructions -->
                     <div class="col-span-1 md:col-span-3">
-                      <label class="block font-archivo text-sm mb-2">Special Delivery Instructions</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.specialInstructions') }}</label>
                       <textarea
                         v-model="formData.specialInstructions"
-                        placeholder="E.g., delivery to a dock, delivery to the back"
+                        :placeholder="$t('checkout.specialInstructionsPlaceholder')"
                         rows="3"
                         class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                       ></textarea>
