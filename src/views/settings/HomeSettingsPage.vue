@@ -1010,6 +1010,20 @@ const fetchBanners = async () => {
   }
 }
 
+// Função utilitária para scroll antes de abrir modal
+const scrollBeforeOpenModal = () => {
+  // Primeiro, calculamos a posição desejada
+  const windowHeight = window.innerHeight
+  const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
+  const targetPosition = scrollPosition + (windowHeight * 0.2) // 20% da altura da janela
+
+  // Fazemos o scroll suave
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth'
+  })
+}
+
 // Open banner modal
 const openBannerModal = (banner = null) => {
   editingBanner.value = banner
@@ -1038,7 +1052,14 @@ const openBannerModal = (banner = null) => {
 
   imagePreview.value = null
   selectedFileName.value = ''
-  showModal.value = true
+
+  // Faz o scroll antes de abrir o modal
+  scrollBeforeOpenModal()
+
+  // Abre o modal após um pequeno delay para dar tempo do scroll terminar
+  setTimeout(() => {
+    showModal.value = true
+  }, 300)
 }
 
 // Function to change title language and sync subtitle language
@@ -1298,7 +1319,14 @@ const openLogoModal = (logo = null) => {
 
   logoImagePreview.value = null
   logoSelectedFileName.value = ''
-  showLogoModal.value = true
+
+  // Faz o scroll antes de abrir o modal
+  scrollBeforeOpenModal()
+
+  // Abre o modal após um pequeno delay para dar tempo do scroll terminar
+  setTimeout(() => {
+    showLogoModal.value = true
+  }, 300)
 }
 
 // Close logo modal
@@ -1540,7 +1568,14 @@ const openBrandModal = (brand = null) => {
 
   brandImagePreview.value = null
   brandSelectedFileName.value = ''
-  showBrandModal.value = true
+
+  // Faz o scroll antes de abrir o modal
+  scrollBeforeOpenModal()
+
+  // Abre o modal após um pequeno delay para dar tempo do scroll terminar
+  setTimeout(() => {
+    showBrandModal.value = true
+  }, 300)
 }
 
 // Close brand modal

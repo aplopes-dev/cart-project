@@ -236,6 +236,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { categoryService } from '@/services/categoryService'
 import { logoService } from '@/services/logoService'
+import { imageService } from '@/services/imageService'
 import api from '@/services/api'
 import eventBus from '@/utils/eventBus'
 import { formatCategoryName } from '@/filters'
@@ -252,8 +253,8 @@ const companyData = ref({
 
 const handleImageError = (e) => {
   console.error('Error loading image:', e)
-  e.target.src = 'https://via.placeholder.com/200x87?text=Logo'
-  e.target.onerror = null
+  // Usa a função utilitária do imageService para lidar com erros de imagem
+  imageService.handleImageError(e)
 }
 
 const navigateToCategory = (categoryId) => {
