@@ -380,7 +380,7 @@
                       </svg>
                       {{ selectedOrder.address }}{{ selectedOrder.landmark ? ', ' + selectedOrder.landmark : '' }}
                     </p>
-                    <p class="font-archivo text-xs md:text-sm ml-4">{{ selectedOrder.city }}, {{ selectedOrder.state }} {{ selectedOrder.postal_code }}</p>
+                    <p class="font-archivo text-xs md:text-sm ml-4">{{ selectedOrder.city }} {{ selectedOrder.postal_code }}</p>
 
                     <!-- Special Delivery Instructions (sem label e ícone) -->
                     <p v-if="selectedOrder.special_instructions" class="font-archivo text-xs md:text-sm mt-2 text-gray-600 italic ml-4">

@@ -46,66 +46,32 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-              <!-- Street -->
+              <!-- Address Line 1 -->
               <div class="md:col-span-2">
-                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.street') }}</label>
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.addressLine1') }}</label>
                 <input
                   type="text"
-                  v-model="address.street"
-                  :placeholder="$t('addresses.streetPlaceholder')"
+                  v-model="address.addressLine1"
+                  :placeholder="$t('addresses.addressLine1Placeholder')"
                   :class="[
                     'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
-                    showErrors && !address.street ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
+                    showErrors && !address.addressLine1 ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
                   ]"
                 />
-                <span v-if="showErrors && !address.street" class="text-red-500 text-xs md:text-sm mt-1">
+                <span v-if="showErrors && !address.addressLine1" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
 
-              <!-- Number -->
-              <div>
-                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.number') }}</label>
+              <!-- Address Line 2 -->
+              <div class="md:col-span-2">
+                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.addressLine2') }}</label>
                 <input
                   type="text"
-                  v-model="address.number"
-                  :placeholder="$t('addresses.numberPlaceholder')"
-                  :class="[
-                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
-                    showErrors && !address.number ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
-                  ]"
-                />
-                <span v-if="showErrors && !address.number" class="text-red-500 text-xs md:text-sm mt-1">
-                  {{ $t('addresses.requiredField') }}
-                </span>
-              </div>
-
-              <!-- Complement -->
-              <div>
-                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.complement') }}</label>
-                <input
-                  type="text"
-                  v-model="address.complement"
-                  :placeholder="$t('addresses.complementPlaceholder')"
+                  v-model="address.addressLine2"
+                  :placeholder="$t('addresses.addressLine2Placeholder')"
                   class="w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:border-empire-yellow h-9 md:h-auto"
                 />
-              </div>
-
-              <!-- Neighborhood -->
-              <div>
-                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.neighborhood') }}</label>
-                <input
-                  type="text"
-                  v-model="address.neighborhood"
-                  :placeholder="$t('addresses.neighborhoodPlaceholder')"
-                  :class="[
-                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
-                    showErrors && !address.neighborhood ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
-                  ]"
-                />
-                <span v-if="showErrors && !address.neighborhood" class="text-red-500 text-xs md:text-sm mt-1">
-                  {{ $t('addresses.requiredField') }}
-                </span>
               </div>
 
               <!-- City -->
@@ -121,23 +87,6 @@
                   ]"
                 />
                 <span v-if="showErrors && !address.city" class="text-red-500 text-xs md:text-sm mt-1">
-                  {{ $t('addresses.requiredField') }}
-                </span>
-              </div>
-
-              <!-- State -->
-              <div>
-                <label class="block font-archivo text-xs md:text-sm mb-1 md:mb-2">{{ $t('addresses.state') }}</label>
-                <input
-                  type="text"
-                  v-model="address.state"
-                  :placeholder="$t('addresses.statePlaceholder')"
-                  :class="[
-                    'w-full px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border rounded-lg focus:outline-none h-9 md:h-auto',
-                    showErrors && !address.state ? 'border-red-500' : 'border-gray-300 focus:border-empire-yellow'
-                  ]"
-                />
-                <span v-if="showErrors && !address.state" class="text-red-500 text-xs md:text-sm mt-1">
                   {{ $t('addresses.requiredField') }}
                 </span>
               </div>
@@ -287,11 +236,8 @@ const addressToDelete = ref(null)
 // Função para validar endereço
 const validateAddress = (address) => {
   const requiredFields = [
-    'street',
-    'number',         // Adicionado como obrigatório
-    'neighborhood',   // Adicionado como obrigatório
+    'addressLine1',
     'city',
-    'state',
     'postalCode'
   ]
   return requiredFields.every(field => address[field]?.trim())
@@ -313,14 +259,10 @@ const loadAddresses = async () => {
     const response = await api.get(`/users/${user.id}/addresses`);
     addresses.value = response.data.map(addr => ({
       id: addr.id, // Garantir que o ID está sendo mapeado
-      street: addr.address,
-      number: addr.number,
-      complement: addr.complement,
-      neighborhood: addr.neighborhood,
+      addressLine1: addr.address_line_1 || addr.address, // Compatibilidade com estrutura antiga
+      addressLine2: addr.address_line_2 || addr.landmark || '',
       city: addr.city,
-      state: addr.state,
       postalCode: addr.postal_code,
-      country: addr.country,
       isDefault: addr.is_default
     }));
   } catch (error) {
@@ -352,14 +294,10 @@ const saveAddresses = async () => {
     }
 
     const formattedAddresses = addresses.value.map(addr => ({
-      address: addr.street,
-      number: addr.number,         // Adicionado
-      complement: addr.complement,
-      neighborhood: addr.neighborhood, // Adicionado
+      address_line_1: addr.addressLine1,
+      address_line_2: addr.addressLine2 || null,
       city: addr.city,
-      state: addr.state,
       postal_code: addr.postalCode,
-      country: 'Canada',
       is_default: addr.isDefault
     }))
 
@@ -427,14 +365,10 @@ const confirmDelete = async () => {
 const addAddress = () => {
   showErrors.value = false  // Resetar os erros ao adicionar novo endereço
   addresses.value.push({
-    street: '',
-    number: '',
-    complement: '',
-    neighborhood: '',
+    addressLine1: '',
+    addressLine2: '',
     city: '',
-    state: '',
     postalCode: '',
-    country: 'Canada',
     isDefault: addresses.value.length === 0
   })
 }

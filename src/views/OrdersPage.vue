@@ -202,11 +202,11 @@
               <!-- Sumário do pedido -->
               <div class="border-t border-black/10 mt-4 md:mt-6 pt-3 md:pt-4">
                 <div class="flex flex-wrap justify-between">
-                  <!-- Informações do pedido: Notas e Endereço -->
+                  <!-- Informações do pedido: Endereço e Informações Adicionais -->
                   <div class="w-full md:w-3/4 mb-4 md:mb-0 pr-0 md:pr-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                      <!-- Notes Section -->
-                      <div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                      <!-- Notes Section (oculta) -->
+                      <div v-if="false">
                         <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.notes') }}</h4>
                         <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[80px] md:max-h-[100px] overflow-y-auto">
                           <p v-if="order.notes" class="font-archivo text-xs whitespace-pre-wrap notes-text">
@@ -218,7 +218,7 @@
                         </div>
                       </div>
 
-                      <!-- Shipping/Pickup Address Section -->
+                      <!-- Shipping/Pickup Address Section (primeira coluna) -->
                       <div>
                         <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">
                           {{ order.delivery_method === 'pickup' ? $t('orders.pickupLocation') : $t('orders.shippingAddress') }}
@@ -244,7 +244,7 @@
                             <div class="font-archivo text-xs">
                               <span class="font-medium">{{ order.customer_name }}</span>
                               <span class="block">{{ order.address }}{{ order.landmark ? ', ' + order.landmark : '' }}</span>
-                              <span class="block">{{ order.city }}, {{ order.state }} {{ order.postal_code }}</span>
+                              <span class="block">{{ order.city }} {{ order.postal_code }}</span>
                               <span class="block mt-1 flex items-center" v-if="order.phone">
                                 <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
@@ -266,6 +266,10 @@
                             <div class="font-archivo text-xs">
                               <span class="font-medium">{{ $t('orders.pickupAt') }}</span>
                               <span class="block">{{ order.location_description || $t('orders.noLocationSpecified') }}</span>
+                              <!-- Special Pickup Instructions (sem label e ícone) -->
+                              <span class="block mt-1 text-gray-600 italic" v-if="order.special_instructions">
+                                {{ order.special_instructions }}
+                              </span>
                             </div>
                           </div>
 
@@ -275,7 +279,7 @@
                         </div>
                       </div>
 
-                      <!-- Additional Info Section -->
+                      <!-- Additional Info Section (segunda coluna) -->
                       <div>
                         <h4 class="font-archivo-narrow font-semibold text-sm md:text-base mb-1 md:mb-2">{{ $t('orders.additionalInfo') }}</h4>
                         <div class="bg-black/5 rounded-lg p-2 md:p-3 max-h-[150px] md:max-h-[180px] overflow-y-auto">

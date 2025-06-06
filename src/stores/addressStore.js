@@ -20,14 +20,10 @@ export const useAddressStore = defineStore('address', {
         const response = await api.get(`/users/${user.id}/addresses`)
         this.addresses = response.data.map(addr => ({
           id: addr.id,
-          address: addr.address,
-          number: addr.number,
-          neighborhood: addr.neighborhood,
-          apartment: addr.complement,
+          address_line_1: addr.address_line_1 || addr.address, // Compatibilidade com estrutura antiga
+          address_line_2: addr.address_line_2 || addr.landmark || '',
           city: addr.city,
-          state: addr.state,
-          postalCode: addr.postal_code,
-          country: addr.country,
+          postal_code: addr.postal_code,
           isDefault: addr.is_default
         }))
       } catch (error) {

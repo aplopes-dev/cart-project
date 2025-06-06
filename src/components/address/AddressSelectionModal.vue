@@ -70,10 +70,9 @@
                           </div>
 
                           <div class="font-archivo space-y-1">
-                            <p>{{ address.address }}, {{ address.number }}</p>
-                            <p v-if="address.apartment">{{ address.apartment }}</p>
-                            <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
-                            <p>{{ address.country }}</p>
+                            <p>{{ address.address_line_1 }}</p>
+                            <p v-if="address.address_line_2">{{ address.address_line_2 }}</p>
+                            <p>{{ address.city }} {{ address.postal_code }}</p>
                           </div>
                         </div>
 
@@ -210,14 +209,10 @@ export default {
         const response = await api.get(`/users/${user.id}/addresses`)
         addresses.value = response.data.map(addr => ({
           id: addr.id,
-          address: addr.address,
-          number: addr.number,
-          neighborhood: addr.neighborhood, // Adicionado neighborhood
-          apartment: addr.complement,
+          address_line_1: addr.address_line_1 || addr.address, // Compatibilidade com estrutura antiga
+          address_line_2: addr.address_line_2 || addr.landmark || '',
           city: addr.city,
-          state: addr.state,
-          postalCode: addr.postal_code,
-          country: addr.country,
+          postal_code: addr.postal_code,
           isDefault: addr.is_default
         }))
 

@@ -314,6 +314,17 @@
                         </p>
                       </div>
                     </div>
+
+                    <!-- Special Delivery Instructions for Pickup -->
+                    <div>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.specialInstructions') }}</label>
+                      <textarea
+                        v-model="formData.specialInstructions"
+                        :placeholder="$t('checkout.specialInstructionsPlaceholder')"
+                        rows="3"
+                        class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
+                      ></textarea>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -1339,40 +1350,48 @@ export default {
         }
 
         // Preparamos os dados para o backend
-        // Mantemos a estrutura original para compatibilidade com o backend
-        // Os novos campos são adicionados como metadados extras
+        // Lógica diferenciada para pickup vs delivery
         const orderData = {
           poNumber: this.formData.poNumber, // Número de PO
           deliveryMethod: this.deliveryMethod,
-          address: this.deliveryMethod === 'delivery' ? this.formData.address :
-                  (this.selectedCompanyAddress ? this.selectedCompanyAddress.address : this.companyData.address),
-          city: this.deliveryMethod === 'delivery' ? this.formData.city : '',
-          state: this.deliveryMethod === 'delivery' ? (this.formData.state || '') : '',
-          landmark: this.deliveryMethod === 'delivery' ? this.formData.landmark : '',
-          postalCode: this.deliveryMethod === 'delivery' ? this.formData.postalCode : '',
           notes: this.checkoutStore.orderNotes,
           // Se o toggle master estiver desabilitado, envia valores null
-          // Agora o backend foi modificado para aceitar null para esses campos
           shippingCost: this.showPrices ? parseFloat(this.calculateShipping) : null,
           taxAmount: this.showPrices ? parseFloat(this.calculateTaxes) : null,
           // Adiciona o ID do projeto selecionado (pode ser null)
           project_id: project ? project.id : null,
-          // Adiciona o ID do local selecionado se o método de entrega for pickup
-          location_id: this.deliveryMethod === 'pickup' && this.selectedLocationId ? this.selectedLocationId : null,
-          // Adiciona o ID do endereço de entrega se estivermos no modo delivery e um endereço foi selecionado
-          shipping_address_id: this.deliveryMethod === 'delivery' ? shippingAddressId : null,
           // Adiciona o campo neovation_order (sempre null)
           neovation_order: null,
-
-          // Adiciona os campos de contato e entrega diretamente no objeto principal
-          contactOnSite: this.deliveryMethod === 'delivery' ? this.formData.contactOnSite : null,
-          contactPhone: this.deliveryMethod === 'delivery' ? this.formData.contactPhone : null,
-          deliveryDateTime: this.deliveryMethod === 'delivery' ? this.formData.deliveryDateTime : null,
-          specialInstructions: this.deliveryMethod === 'delivery' ? this.formData.specialInstructions : null,
-
-          // Mantemos o objeto metadata para compatibilidade com código existente
-          metadata: {}
+          specialInstructions: this.formData.specialInstructions || null, // Disponível para ambos os métodos
         };
+
+        // Lógica específica para cada método de entrega
+        if (this.deliveryMethod === 'pickup') {
+          // Para pickup: apenas location_id, sem dados de endereço
+          orderData.location_id = this.selectedLocationId;
+          orderData.address = null;
+          orderData.landmark = null;
+          orderData.city = null;
+          orderData.postalCode = null;
+          orderData.shipping_address_id = null;
+          orderData.contactOnSite = null;
+          orderData.contactPhone = null;
+          orderData.deliveryDateTime = null;
+        } else if (this.deliveryMethod === 'delivery') {
+          // Para delivery: dados de endereço e shipping_address_id se selecionado
+          orderData.location_id = null;
+          orderData.address = this.formData.address;
+          orderData.landmark = this.formData.landmark || null;
+          orderData.city = this.formData.city;
+          orderData.postalCode = this.formData.postalCode;
+          orderData.shipping_address_id = shippingAddressId; // ID do endereço selecionado ou null
+          orderData.contactOnSite = this.formData.contactOnSite || null;
+          orderData.contactPhone = this.formData.contactPhone || null;
+          orderData.deliveryDateTime = this.formData.deliveryDateTime || null;
+        }
+
+        // Mantemos o objeto metadata para compatibilidade com código existente
+        orderData.metadata = {};
 
         console.log('Order data being sent:', orderData);
 
@@ -1402,14 +1421,11 @@ export default {
     },
     updateShippingAddress(address) {
       // Preencher automaticamente os campos de endereço quando o usuário selecionar um endereço
-      this.formData.address = address.address
-      this.formData.number = address.number || ''
-      this.formData.landmark = address.landmark || ''
-      this.formData.apartment = address.complement || ''
+      // Usando a nova estrutura simplificada
+      this.formData.address = address.address_line_1
+      this.formData.landmark = address.address_line_2 || ''
       this.formData.city = address.city
-      this.formData.state = address.state
-      this.formData.postalCode = address.postalCode
-      this.formData.country = address.country || 'Canada'
+      this.formData.postalCode = address.postal_code
 
       // Armazenar o ID do endereço selecionado
       this.currentAddressId = address.id

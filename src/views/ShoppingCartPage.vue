@@ -182,8 +182,8 @@
           </div>
         </div>
 
-        <!-- Notes Section -->
-        <div class="py-4 md:py-6 border-b border-black/25">
+        <!-- Notes Section (oculta) -->
+        <div v-if="false" class="py-4 md:py-6 border-b border-black/25">
           <button
             class="font-archivo-narrow font-semibold text-lg md:text-xl hover:opacity-70 flex items-center gap-2"
             @click="toggleNotes"
@@ -206,7 +206,7 @@
             <textarea
               v-model="notes"
               rows="4"
-              class="w-full p-4 border-2 border-black/25 rounded font-archivo text-base resize-none focus:outline-none focus:border-black"
+              class="w-full p-4 border-2 border-black/25 rounded font-arquivo text-base resize-none focus:outline-none focus:border-black"
               :placeholder="$t('shoppingCart.notesPlaceholder')"
               @input="checkoutStore.setOrderNotes($event.target.value)"
             ></textarea>
