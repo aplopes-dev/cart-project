@@ -87,7 +87,7 @@
                     <p class="font-archivo text-xs md:text-sm lg:text-base text-black/70 line-clamp-1 md:line-clamp-none">{{ item.description }}</p>
 
                     <!-- Características do produto -->
-                    <div v-if="item.color || item.size || item.weight" class="mt-0.5 md:mt-1 space-y-0.5 md:space-y-0.5">
+                    <div v-if="item.color || item.size || item.weight || item.unit" class="mt-0.5 md:mt-1 space-y-0.5 md:space-y-0.5">
                       <p v-if="item.color" class="font-archivo text-xs md:text-sm lg:text-base text-black/70 flex items-center gap-1 md:gap-2">
                         <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                         <span class="flex items-center gap-1 md:gap-2">
@@ -99,6 +99,9 @@
                       </p>
                       <p v-if="item.weight" class="font-archivo text-xs md:text-sm lg:text-base text-black/70">
                         <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                      </p>
+                      <p v-if="item.unit" class="font-arquivo text-xs md:text-sm lg:text-base text-black/70">
+                        <span class="font-semibold">{{ $t('productDetails.selectUnit') }}:</span> {{ item.unit }}
                       </p>
                     </div>
                   </div>
@@ -451,7 +454,8 @@ export default defineComponent({
             const selectedCharacteristics = {
               color: item.color,
               size: item.size,
-              weight: item.weight
+              weight: item.weight,
+              unit: item.unit
             }
 
             // Se não tiver todas as características selecionadas, redireciona para a página de detalhes

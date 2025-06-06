@@ -138,6 +138,9 @@ import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { settingsService } from '@/services/settingsService'
 import { PLACEHOLDER_IMAGE_PATH } from '@/services/imageConstants'
+import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { getDefaultUnit } from '@/utils/unitUtils'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'ProductSearchCombobox',
@@ -145,6 +148,7 @@ export default {
     const { locale } = useI18n() // Obtemos a referência ao locale para uso posterior
     const cartStore = useCartStore()
     const togglesStore = useFinancialTogglesStore()
+    const router = useRouter()
 
     const searchQuery = ref('')
     const searchResults = ref([])
@@ -344,15 +348,25 @@ export default {
       }
     }
 
-    const addToCart = (product) => {
+    const addToCart = async (product) => {
+      // Verifica se o produto tem características que precisam ser selecionadas
+      if (productCharacteristicsService.hasCharacteristics(product)) {
+        // Se tiver características ou múltiplas unidades, redireciona para a página de detalhes do produto
+        // com parâmetro para mostrar validação
+        router.push(`/product/${product.id}?showValidation=true`)
+        return
+      }
+
       const quantity = selectedQuantities[product.id] || 1
 
-      cartStore.addItem({
+      await cartStore.addItem({
         id: product.id,
         name: product.name,
         price: product.price,
         image: product.image || '/images/products/no-image.png',
-        quantity: quantity
+        quantity: quantity,
+        unit: getDefaultUnit(product.unit_of_measure),
+        foxpro_code: product.foxpro_code
       })
 
       // Reset quantity after adding to cart

@@ -447,10 +447,11 @@
                           />
                           <div>
                             <div class="font-archivo text-xs md:text-sm">{{ item.product_name }}</div>
-                            <div v-if="item.color || item.size || item.weight" class="text-[10px] md:text-xs text-gray-500 font-archivo">
+                            <div v-if="item.color || item.size || item.weight || item.unit" class="text-[10px] md:text-xs text-gray-500 font-archivo">
                               <span v-if="item.color">{{ $t('ordersSettings.color') }}: {{ item.color }}</span>
                               <span v-if="item.size" class="ml-1">{{ $t('ordersSettings.size') }}: {{ item.size }}</span>
                               <span v-if="item.weight" class="ml-1">{{ $t('ordersSettings.weight') }}: {{ item.weight }}</span>
+                              <span v-if="item.unit" class="ml-1">{{ $t('ordersSettings.unit') }}: {{ item.unit }}</span>
                             </div>
                           </div>
                         </div>

@@ -155,7 +155,7 @@
                         </div>
 
                         <!-- Características do produto -->
-                        <div v-if="item.color || item.size || item.weight" class="flex flex-wrap gap-x-2 md:gap-x-3 mt-0.5 md:mt-1">
+                        <div v-if="item.color || item.size || item.weight || item.unit" class="flex flex-wrap gap-x-2 md:gap-x-3 mt-0.5 md:mt-1">
                           <span v-if="item.color" class="text-[10px] md:text-xs text-gray-600 flex items-center gap-0.5 md:gap-1">
                             <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                             <span class="flex items-center gap-1">
@@ -167,6 +167,9 @@
                           </span>
                           <span v-if="item.weight" class="text-[10px] md:text-xs text-gray-600">
                             <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                          </span>
+                          <span v-if="item.unit" class="text-[10px] md:text-xs text-gray-600">
+                            <span class="font-semibold">{{ $t('productDetails.selectUnit') }}:</span> {{ item.unit }}
                           </span>
                         </div>
                       </div>

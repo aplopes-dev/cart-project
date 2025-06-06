@@ -223,8 +223,8 @@
                       </span>
                     </div>
 
-                    <!-- Linha 3: City, Postal Code -->
-                    <div class="col-span-1 md:col-span-2">
+                    <!-- Linha 3: City, State, Postal Code -->
+                    <div class="col-span-1 md:col-span-1">
                       <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
                       <input
                         type="text"
@@ -236,6 +236,21 @@
                         ]"
                       >
                       <span v-if="showErrors && formErrors.city" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
+                    <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.state"
+                        :placeholder="$t('checkout.statePlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
@@ -255,8 +270,22 @@
                       </span>
                     </div>
 
-                    <!-- Campo state oculto para compatibilidade com backend -->
-                    <input type="hidden" v-model="formData.state">
+                    <!-- Linha 3.5: Country -->
+                    <div class="col-span-1 md:col-span-3">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
+                      <input
+                        type="text"
+                        v-model="formData.country"
+                        :placeholder="$t('checkout.countryPlaceholder')"
+                        :class="[
+                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
+                          (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
+                        ]"
+                      >
+                      <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
+                        {{ $t('checkout.fieldRequired') }}
+                      </span>
+                    </div>
 
                     <!-- Linha 4: Contact on Site, Contact Phone, Delivery Date/Time -->
                     <div class="col-span-1 md:col-span-1">
@@ -300,7 +329,6 @@
                     <!-- Campos ocultos para compatibilidade com backend -->
                     <input type="hidden" v-model="formData.number">
                     <input type="hidden" v-model="formData.apartment">
-                    <input type="hidden" v-model="formData.country">
                   </div>
 
                   <!-- Pick-up Mode -->
@@ -452,7 +480,7 @@
                           </div>
 
                           <!-- Características do produto -->
-                          <div v-if="item.color || item.size || item.weight" class="flex flex-col gap-0.5 md:gap-1 mt-0.5 md:mt-1">
+                          <div v-if="item.color || item.size || item.weight || item.unit" class="flex flex-col gap-0.5 md:gap-1 mt-0.5 md:mt-1">
                             <span v-if="item.color" class="font-archivo text-sm text-black/70 flex items-center gap-2">
                               <span class="font-semibold">{{ $t('productDetails.selectColor') }}:</span>
                               <span class="flex items-center gap-2">
@@ -475,6 +503,9 @@
                             </span>
                             <span v-if="item.weight" class="font-archivo text-sm text-black/70">
                               <span class="font-semibold">{{ $t('productDetails.selectWeight') }}:</span> {{ item.weight }}
+                            </span>
+                            <span v-if="item.unit" class="font-archivo text-sm text-black/70">
+                              <span class="font-semibold">{{ $t('productDetails.selectUnit') }}:</span> {{ item.unit }}
                             </span>
                           </div>
 
@@ -833,8 +864,16 @@ export default {
     }
 
     // Carrega os dados ao montar o componente
-    onMounted(() => {
-      loadCheckoutData()
+    onMounted(async () => {
+      console.log('🚀 Iniciando carregamento dos dados do checkout...');
+      await loadCheckoutData()
+      console.log('✅ Dados do checkout carregados');
+
+      // Aguarda um pouco e depois emite evento para carregar endereço padrão
+      setTimeout(() => {
+        console.log('⏰ Emitindo evento para carregar endereço padrão...');
+        window.dispatchEvent(new CustomEvent('loadDefaultAddressNow'));
+      }, 1000);
     })
 
     return {
@@ -991,14 +1030,30 @@ export default {
       return '';
     }
   },
-  mounted() {
+  async mounted() {
     window.addEventListener('resize', this.checkDesktop)
+
+    // Criar referência para o handler do evento
+    this.handleLoadDefaultAddress = () => {
+      console.log('📨 Evento loadDefaultAddressNow recebido');
+
+      if (this.deliveryMethod === 'delivery') {
+        console.log('🚚 Modo delivery ativo, carregando endereço padrão...');
+        this.loadDefaultAddress();
+      } else {
+        console.log('❌ Não está no modo delivery');
+      }
+    };
+
+    // Listener para carregar endereço padrão
+    window.addEventListener('loadDefaultAddressNow', this.handleLoadDefaultAddress);
 
     // Não precisamos mais definir os estados de loading aqui,
     // pois eles já são definidos no loadCheckoutData
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkDesktop)
+    window.removeEventListener('loadDefaultAddressNow', this.handleLoadDefaultAddress)
   },
   methods: {
     // Métodos para controlar os estados de loading
@@ -1123,14 +1178,24 @@ export default {
 
     // Método para definir o modo de entrega
     setDeliveryMethod(method) {
+      console.log('🔄 Mudando modo de entrega para:', method);
       this.deliveryMethod = method;
 
       // Se mudar para pickup, carrega os locais disponíveis
       if (method === 'pickup') {
+        console.log('📦 Modo pickup selecionado, carregando locais...');
         // Carrega os locais disponíveis
         if (this.locations.length === 0) {
           this.loadLocations();
         }
+        // Limpa os campos de endereço quando mudar para pickup
+        this.clearAddressFields();
+      } else if (method === 'delivery') {
+        console.log('🚚 Modo delivery selecionado, carregando endereço padrão...');
+        // Se mudar para delivery, carrega o endereço padrão se disponível
+        setTimeout(() => {
+          this.loadDefaultAddress();
+        }, 100); // Pequeno delay para garantir que a mudança foi processada
       }
     },
 
@@ -1150,6 +1215,87 @@ export default {
         console.error('Erro ao carregar locais:', error);
         this.$toast.error(this.$t('checkout.errorLoadingLocations'));
       }
+    },
+
+    // Método para carregar o endereço padrão
+    async loadDefaultAddress() {
+      try {
+        console.log('🔄 Iniciando carregamento do endereço padrão...');
+        console.log('📍 Modo de entrega atual:', this.deliveryMethod);
+
+        // Só carrega se estiver no modo delivery
+        if (this.deliveryMethod !== 'delivery') {
+          console.log('❌ Não está no modo delivery, cancelando carregamento');
+          return;
+        }
+
+        // Garante que os endereços sejam carregados primeiro
+        if (!this.addressStore.addresses || this.addressStore.addresses.length === 0) {
+          console.log('📦 Endereços não carregados, carregando agora...');
+          await this.addressStore.fetchAddresses();
+        }
+
+        // Busca o endereço padrão (is_default = true)
+        const addresses = this.addressStore.addresses;
+        console.log('📋 Total de endereços disponíveis:', addresses.length);
+        console.log('📋 Endereços completos:', JSON.stringify(addresses, null, 2));
+
+        // Tenta encontrar por is_default = true primeiro
+        let defaultAddress = addresses.find(addr => addr.is_default === true);
+
+        // Se não encontrar, tenta por isDefault = true (compatibilidade)
+        if (!defaultAddress) {
+          defaultAddress = addresses.find(addr => addr.isDefault === true);
+        }
+
+        console.log('🎯 Endereço padrão encontrado:', defaultAddress);
+
+        if (defaultAddress) {
+          console.log('✅ Preenchendo formulário com endereço padrão...');
+
+          // Preenche o formulário com os dados do endereço padrão
+          this.formData.address = defaultAddress.address_line_1 || '';
+          this.formData.landmark = defaultAddress.address_line_2 || '';
+          this.formData.city = defaultAddress.city || '';
+          this.formData.state = defaultAddress.state || '';
+          this.formData.postalCode = defaultAddress.postal_code || '';
+          this.formData.country = defaultAddress.country || '';
+
+          // Salva o ID do endereço selecionado
+          this.selectedShippingAddressId = defaultAddress.id;
+          this.currentAddressId = defaultAddress.id;
+
+          console.log('📝 Dados preenchidos no formulário:');
+          console.log('   - Address:', this.formData.address);
+          console.log('   - Landmark:', this.formData.landmark);
+          console.log('   - City:', this.formData.city);
+          console.log('   - State:', this.formData.state);
+          console.log('   - Postal Code:', this.formData.postalCode);
+          console.log('   - Country:', this.formData.country);
+          console.log('✅ Formulário preenchido com sucesso!');
+
+          // Força a reatividade do Vue
+          this.$forceUpdate();
+        } else {
+          console.log('❌ Nenhum endereço padrão encontrado');
+          console.log('🧹 Limpando campos de endereço...');
+          this.clearAddressFields();
+        }
+      } catch (error) {
+        console.error('❌ Erro ao carregar endereço padrão:', error);
+      }
+    },
+
+    // Método para limpar os campos de endereço
+    clearAddressFields() {
+      this.formData.address = '';
+      this.formData.landmark = '';
+      this.formData.city = '';
+      this.formData.state = '';
+      this.formData.postalCode = '';
+      this.formData.country = '';
+      this.selectedShippingAddressId = null;
+      this.currentAddressId = null;
     },
 
 
@@ -1383,7 +1529,9 @@ export default {
           orderData.address = this.formData.address;
           orderData.landmark = this.formData.landmark || null;
           orderData.city = this.formData.city;
+          orderData.state = this.formData.state || null;
           orderData.postalCode = this.formData.postalCode;
+          orderData.country = this.formData.country || null;
           orderData.shipping_address_id = shippingAddressId; // ID do endereço selecionado ou null
           orderData.contactOnSite = this.formData.contactOnSite || null;
           orderData.contactPhone = this.formData.contactPhone || null;
@@ -1425,7 +1573,9 @@ export default {
       this.formData.address = address.address_line_1
       this.formData.landmark = address.address_line_2 || ''
       this.formData.city = address.city
+      this.formData.state = address.state || ''
       this.formData.postalCode = address.postal_code
+      this.formData.country = address.country || ''
 
       // Armazenar o ID do endereço selecionado
       this.currentAddressId = address.id

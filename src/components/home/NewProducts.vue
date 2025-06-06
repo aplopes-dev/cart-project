@@ -188,6 +188,7 @@ import { productCharacteristicsService } from '@/services/productCharacteristics
 import { useRouter } from 'vue-router'
 import { imageService } from '@/services/imageService'
 import { getProductUrlWithDescription } from '@/utils/urlUtils'
+import { getDefaultUnit } from '@/utils/unitUtils'
 
 export default {
   name: 'NewProducts',
@@ -392,7 +393,7 @@ export default {
         }
       }
     },
-    handleAddToCart(index) {
+    async handleAddToCart(index) {
       const product = this.products[index]
       const quantity = this.quantities[index]
 
@@ -414,10 +415,11 @@ export default {
         name: product.name,
         price: product.price,
         quantity: quantity,
+        unit: getDefaultUnit(product.unit_of_measure),
         image: product.image
       }
 
-      this.cartStore.addItem(item)
+      await this.cartStore.addItem(item)
       this.showSuccessToast()
     },
     showSuccessToast() {

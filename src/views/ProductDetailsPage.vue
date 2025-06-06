@@ -165,6 +165,31 @@
                   </div>
                   <p v-if="showValidationErrors && !selectedWeight" class="text-red-500 text-sm">{{ $t('productDetails.requiredField') }}</p>
                 </div>
+
+                <!-- Unidades de Medida -->
+                <div v-if="hasUnits(product.unit_of_measure) && hasMultipleUnits(product.unit_of_measure)" class="space-y-2">
+                  <label class="font-archivo font-medium text-base md:text-lg flex items-center">
+                    {{ $t('productDetails.selectUnit') }}
+                    <span v-if="showValidationErrors && !selectedUnit" class="text-red-500 ml-2">*</span>
+                  </label>
+                  <div class="grid grid-cols-4 gap-2 md:gap-4" :class="{'border-red-500 border-2 p-2 rounded': showValidationErrors && !selectedUnit}">
+                    <button
+                      v-for="unit in parseUnitsOfMeasure(product.unit_of_measure)"
+                      :key="unit"
+                      @click="handleUnitSelect(unit)"
+                      class="h-10 md:h-12 border-2 font-archivo transition-all duration-200 text-sm md:text-base"
+                      :class="[
+                        selectedUnit === unit
+                          ? 'border-black bg-black text-white'
+                          : 'border-black/70 hover:border-black',
+                        'hover:bg-black hover:text-white'
+                      ]"
+                    >
+                      {{ unit }}
+                    </button>
+                  </div>
+                  <p v-if="showValidationErrors && !selectedUnit" class="text-red-500 text-sm">{{ $t('productDetails.requiredField') }}</p>
+                </div>
               </div>
 
               <!-- Mensagem de erro para características não selecionadas -->
@@ -247,6 +272,7 @@ import eventBus from '@/utils/eventBus'
 import { formatCategoryName } from '@/filters'
 // eslint-disable-next-line no-unused-vars
 import { getProductUrlWithDescription } from '@/utils/urlUtils'
+import { parseUnitsOfMeasure, hasMultipleUnits, hasUnits, getDefaultUnit } from '@/utils/unitUtils'
 
 export default {
   name: 'ProductDetailsPage',
@@ -277,6 +303,7 @@ export default {
     const selectedColor = ref(null)
     const selectedSize = ref(null)
     const selectedWeight = ref(null)
+    const selectedUnit = ref(null)
     const selectedImage = ref(null)
     const showToast = ref(false)
     const showValidationErrors = ref(false)
@@ -377,8 +404,15 @@ export default {
         selectedColor.value = null
         selectedSize.value = null
         selectedWeight.value = null
+        selectedUnit.value = null
         selectedImage.value = productData.image // Corrigido de mainImage para image
-        console.log(`[ProductDetailsPage] Imagem selecionada inicializada: ${selectedImage.value}`);
+        console.log(`[ProductDetailsPage] Imagem selecionada inicializada: ${selectedImage.value}`)
+
+        // Se o produto tem apenas uma unidade de medida, seleciona automaticamente
+        if (productData.unit_of_measure && !hasMultipleUnits(productData.unit_of_measure)) {
+          selectedUnit.value = getDefaultUnit(productData.unit_of_measure)
+          console.log(`[ProductDetailsPage] Unidade única selecionada automaticamente: ${selectedUnit.value}`)
+        };
 
         // Verifica se deve mostrar a validação (parâmetro da URL)
         const showValidation = route.query.showValidation === 'true'
@@ -440,6 +474,7 @@ export default {
       selectedColor,
       selectedSize,
       selectedWeight,
+      selectedUnit,
       selectedImage,
       showToast,
       showValidationErrors,
@@ -448,7 +483,11 @@ export default {
       discountPercentage,
       showPrices,
       loadProduct,
-      formatCategoryName
+      formatCategoryName,
+      parseUnitsOfMeasure,
+      hasMultipleUnits,
+      hasUnits,
+      getDefaultUnit
     }
   },
   methods: {
@@ -504,7 +543,7 @@ export default {
       if (!this.discountPercentage || this.discountPercentage <= 0) return null
       return price / (1 - (this.discountPercentage / 100))
     },
-    handleAddToCart(quantity) {
+    async handleAddToCart(quantity) {
       // Verificar se as características obrigatórias foram selecionadas
       if (!this.validateCharacteristics()) {
         return;
@@ -517,11 +556,12 @@ export default {
         color: this.selectedColor,
         size: this.selectedSize,
         weight: this.selectedWeight,
+        unit: this.selectedUnit || this.getDefaultUnit(this.product.unit_of_measure),
         quantity: quantity,
         image: this.selectedImage || this.product.image
       }
 
-      this.cartStore.addItem(item)
+      await this.cartStore.addItem(item)
       this.showSuccessToast()
     },
 
@@ -539,6 +579,11 @@ export default {
       }
 
       if (this.product.characteristics?.WEIGHT?.length && !this.selectedWeight) {
+        isValid = false;
+      }
+
+      // Verificar se há múltiplas unidades de medida e se uma foi selecionada
+      if (this.hasMultipleUnits(this.product.unit_of_measure) && !this.selectedUnit) {
         isValid = false;
       }
 
@@ -580,7 +625,15 @@ export default {
         this.showValidationErrors = false;
       }
     },
-    handleShopNow() {
+
+    handleUnitSelect(unit) {
+      this.selectedUnit = unit;
+      // Limpa a mensagem de erro quando o usuário seleciona uma característica
+      if (this.showValidationErrors) {
+        this.showValidationErrors = false;
+      }
+    },
+    async handleShopNow() {
       // Verificar se as características obrigatórias foram selecionadas
       if (!this.validateCharacteristics()) {
         return;
@@ -595,12 +648,13 @@ export default {
         color: this.selectedColor,
         size: this.selectedSize,
         weight: this.selectedWeight,
+        unit: this.selectedUnit || this.getDefaultUnit(this.product.unit_of_measure),
         quantity: quantity,
         image: this.getProductImage(this.selectedImage || this.product.image),
         foxpro_code: this.product.foxpro_code
       }
 
-      this.cartStore.addItem(item)
+      await this.cartStore.addItem(item)
 
       // Redirecionar para o checkout
       this.$router.push('/checkout')

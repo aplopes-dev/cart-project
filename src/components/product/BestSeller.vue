@@ -96,6 +96,7 @@ import { ref, watch } from 'vue'
 // eslint-disable-next-line no-unused-vars
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
 import { imageService } from '@/services/imageService'
+import { getDefaultUnit } from '@/utils/unitUtils'
 
 export default {
   name: 'BestSeller',
@@ -251,7 +252,7 @@ export default {
     formatPrice(price) {
       return `${this.currencySymbol}${Number(price).toFixed(2)}`
     },
-    addToCart(product) {
+    async addToCart(product) {
       // Verifica se o produto tem características que precisam ser selecionadas
       if (productCharacteristicsService.hasCharacteristics(product)) {
         // Se tiver características, redireciona para a página de detalhes do produto
@@ -265,10 +266,11 @@ export default {
         name: product.name,
         price: product.price,
         quantity: 1,
+        unit: getDefaultUnit(product.unit_of_measure),
         image: product.image,
         foxpro_code: product.foxpro_code
       }
-      this.cartStore.addItem(item)
+      await this.cartStore.addItem(item)
       this.showSuccessToast()
     },
     showSuccessToast() {

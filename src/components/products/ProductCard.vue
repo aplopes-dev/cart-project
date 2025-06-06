@@ -60,6 +60,7 @@ import { productCharacteristicsService } from '@/services/productCharacteristics
 import { imageService } from '@/services/imageService'
 import { useRouter } from 'vue-router'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
+import { getDefaultUnit } from '@/utils/unitUtils'
 
 export default defineComponent({
   name: 'ProductCard',
@@ -137,7 +138,7 @@ export default defineComponent({
       // Usa a função utilitária do imageService para lidar com erros de imagem
       imageService.handleImageError(e)
     },
-    addToCart() {
+    async addToCart() {
       // Verifica se o produto tem características que precisam ser selecionadas
       if (productCharacteristicsService.hasCharacteristics(this.product)) {
         // Se tiver características, redireciona para a página de detalhes do produto
@@ -154,10 +155,11 @@ export default defineComponent({
         name: this.product.name,
         price: this.product.price,
         quantity: 1,
+        unit: getDefaultUnit(this.product.unit_of_measure),
         image: this.getProductImage(this.product),
         foxpro_code: this.product.foxpro_code
       }
-      this.cartStore.addItem(item)
+      await this.cartStore.addItem(item)
     }
   },
   watch: {

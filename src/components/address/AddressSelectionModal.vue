@@ -72,7 +72,8 @@
                           <div class="font-archivo space-y-1">
                             <p>{{ address.address_line_1 }}</p>
                             <p v-if="address.address_line_2">{{ address.address_line_2 }}</p>
-                            <p>{{ address.city }} {{ address.postal_code }}</p>
+                            <p>{{ address.city }}, {{ address.state }} {{ address.postal_code }}</p>
+                            <p v-if="address.country" class="text-sm text-gray-600">{{ address.country }}</p>
                           </div>
                         </div>
 
@@ -212,7 +213,9 @@ export default {
           address_line_1: addr.address_line_1 || addr.address, // Compatibilidade com estrutura antiga
           address_line_2: addr.address_line_2 || addr.landmark || '',
           city: addr.city,
+          state: addr.state || '',
           postal_code: addr.postal_code,
+          country: addr.country || '',
           isDefault: addr.is_default
         }))
 

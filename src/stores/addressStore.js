@@ -23,8 +23,11 @@ export const useAddressStore = defineStore('address', {
           address_line_1: addr.address_line_1 || addr.address, // Compatibilidade com estrutura antiga
           address_line_2: addr.address_line_2 || addr.landmark || '',
           city: addr.city,
+          state: addr.state || '',
           postal_code: addr.postal_code,
-          isDefault: addr.is_default
+          country: addr.country || '',
+          is_default: addr.is_default,
+          isDefault: addr.is_default // Mantém ambos para compatibilidade
         }))
       } catch (error) {
         console.error('Error fetching addresses:', error)

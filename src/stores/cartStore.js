@@ -50,7 +50,9 @@ export const useCartStore = defineStore('cart', {
               image: item.image,
               color: item.color,
               size: item.size,
-              weight: item.weight
+              weight: item.weight,
+              unit: item.unit,
+              foxpro_code: item.foxpro_code
             }))
           }
         } catch (error) {
@@ -122,13 +124,14 @@ export const useCartStore = defineStore('cart', {
       localStorage.setItem(storageKey, JSON.stringify(this.items))
     },
 
-    addItem(item) {
+    async addItem(item) {
       // Verifica se existe um item com o mesmo ID e as mesmas características
       const existingItemIndex = this.items.findIndex(i =>
         i.id === item.id &&
         i.color === item.color &&
         i.size === item.size &&
-        i.weight === item.weight
+        i.weight === item.weight &&
+        i.unit === item.unit
       )
 
       if (existingItemIndex > -1) {
@@ -140,6 +143,16 @@ export const useCartStore = defineStore('cart', {
       }
 
       this.saveToLocalStorage()
+
+      // Sincroniza com o backend para obter dados completos do produto
+      const userId = JSON.parse(localStorage.getItem('user'))?.id
+      if (userId) {
+        try {
+          await this.syncCartWithBackend()
+        } catch (error) {
+          console.error('Error syncing cart after adding item:', error)
+        }
+      }
     },
 
     removeItem(index) {
@@ -188,7 +201,8 @@ export const useCartStore = defineStore('cart', {
               quantity: item.quantity,
               color: item.color,
               size: item.size,
-              weight: item.weight
+              weight: item.weight,
+              unit: item.unit
             }))
           });
 
@@ -202,7 +216,9 @@ export const useCartStore = defineStore('cart', {
               image: item.image,
               color: item.color,
               size: item.size,
-              weight: item.weight
+              weight: item.weight,
+              unit: item.unit,
+              foxpro_code: item.foxpro_code
             }));
 
             this.items = cartItems;

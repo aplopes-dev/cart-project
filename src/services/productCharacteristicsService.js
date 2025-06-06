@@ -1,3 +1,5 @@
+import { hasMultipleUnits } from '@/utils/unitUtils'
+
 /**
  * Serviço para verificar e gerenciar características de produtos
  */
@@ -8,16 +10,21 @@ export const productCharacteristicsService = {
    * @returns {Boolean} - Retorna true se o produto tem características, false caso contrário
    */
   hasCharacteristics(product) {
-    if (!product || !product.characteristics) {
+    if (!product) {
       return false;
     }
 
     // Verifica se o produto tem pelo menos uma característica com valores
-    return (
+    const hasProductCharacteristics = product.characteristics && (
       (product.characteristics.COLOR && product.characteristics.COLOR.length > 0) ||
       (product.characteristics.SIZE && product.characteristics.SIZE.length > 0) ||
       (product.characteristics.WEIGHT && product.characteristics.WEIGHT.length > 0)
     );
+
+    // Verifica se o produto tem múltiplas unidades de medida
+    const hasMultipleUnitsOfMeasure = hasMultipleUnits(product.unit_of_measure);
+
+    return hasProductCharacteristics || hasMultipleUnitsOfMeasure;
   },
 
   /**
@@ -27,22 +34,27 @@ export const productCharacteristicsService = {
    * @returns {Boolean} - Retorna true se todas as características obrigatórias foram selecionadas
    */
   allCharacteristicsSelected(product, selectedCharacteristics) {
-    if (!product || !product.characteristics) {
+    if (!product) {
       return true;
     }
 
-    const { color, size, weight } = selectedCharacteristics;
+    const { color, size, weight, unit } = selectedCharacteristics;
 
     // Verifica se todas as características disponíveis foram selecionadas
-    if (product.characteristics.COLOR?.length > 0 && !color) {
+    if (product.characteristics?.COLOR?.length > 0 && !color) {
       return false;
     }
 
-    if (product.characteristics.SIZE?.length > 0 && !size) {
+    if (product.characteristics?.SIZE?.length > 0 && !size) {
       return false;
     }
 
-    if (product.characteristics.WEIGHT?.length > 0 && !weight) {
+    if (product.characteristics?.WEIGHT?.length > 0 && !weight) {
+      return false;
+    }
+
+    // Verifica se há múltiplas unidades de medida e se uma foi selecionada
+    if (hasMultipleUnits(product.unit_of_measure) && !unit) {
       return false;
     }
 

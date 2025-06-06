@@ -58,7 +58,7 @@
                 </h3>
 
                 <p v-if="showPrices" class="price">{{ formatPrice(item.price) }}</p>
-                <div v-if="item.color || item.size || item.weight" class="item-characteristics">
+                <div v-if="item.color || item.size || item.weight || item.unit" class="item-characteristics">
                   <span v-if="item.color" class="characteristic">
                     {{ $t('productDetails.selectColor') }}:
                     <span class="value flex items-center gap-2">
@@ -78,6 +78,7 @@
                   </span>
                   <span v-if="item.size" class="characteristic">{{ $t('productDetails.selectSize') }}: <span class="value">{{ item.size }}</span></span>
                   <span v-if="item.weight" class="characteristic">{{ $t('productDetails.selectWeight') }}: <span class="value">{{ item.weight }}</span></span>
+                  <span v-if="item.unit" class="characteristic">{{ $t('productDetails.selectUnit') }}: <span class="value">{{ item.unit }}</span></span>
                 </div>
               </div>
 
@@ -331,7 +332,8 @@ export default {
             const selectedCharacteristics = {
               color: item.color,
               size: item.size,
-              weight: item.weight
+              weight: item.weight,
+              unit: item.unit
             }
 
             // Se não tiver todas as características selecionadas, redireciona para a página de detalhes
