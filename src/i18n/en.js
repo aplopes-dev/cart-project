@@ -640,6 +640,13 @@ export default {
     status_processing: 'Processing',
     status_completed: 'Completed',
     status_cancelled: 'Cancelled',
+    updateStatus: 'Update Status',
+    updateOrderStatus: 'Update Order Status',
+    currentStatus: 'Current Status',
+    newStatus: 'New Status',
+    cancel: 'Cancel',
+    updating: 'Updating',
+    errorUpdatingStatus: 'Error updating order status',
     excel: {
       fileName: 'Orders_Empire_Canada',
       orderNumber: 'Order Number',

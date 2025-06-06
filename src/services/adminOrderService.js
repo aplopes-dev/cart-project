@@ -120,6 +120,24 @@ export const adminOrderService = {
       console.error('Error exporting orders:', error)
       throw error
     }
+  },
+
+  /**
+   * Atualiza o status de um pedido (apenas para administradores)
+   * @param {string} orderId - ID do pedido
+   * @param {string} status - Novo status (pending, processing, completed, cancelled)
+   * @returns {Promise<Object>} Resposta da atualização
+   */
+  async updateOrderStatus(orderId, status) {
+    try {
+      const response = await api.patch(`/orders/admin/${orderId}/status`, {
+        status
+      })
+      return response.data
+    } catch (error) {
+      console.error(`Error updating order status for ID ${orderId}:`, error)
+      throw error
+    }
   }
 }
 

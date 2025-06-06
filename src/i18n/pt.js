@@ -652,7 +652,21 @@ export default {
     status_pending: 'Pendente',
     status_processing: 'Em processamento',
     status_completed: 'Concluído',
-    status_cancelled: 'Cancelado'
+    status_cancelled: 'Cancelado',
+    updateStatus: 'Atualizar Status',
+    updateOrderStatus: 'Atualizar Status do Pedido',
+    currentStatus: 'Status Atual',
+    newStatus: 'Novo Status',
+    cancel: 'Cancelar',
+    updating: 'Atualizando',
+    errorUpdatingStatus: 'Erro ao atualizar status do pedido',
+    updateStatus: 'Atualizar Status',
+    updateOrderStatus: 'Atualizar Status do Pedido',
+    currentStatus: 'Status Atual',
+    newStatus: 'Novo Status',
+    cancel: 'Cancelar',
+    updating: 'Atualizando',
+    errorUpdatingStatus: 'Erro ao atualizar status do pedido'
   },
   orders: {
     title: 'Meus Pedidos',

@@ -577,6 +577,13 @@ export default {
     status_processing: 'En Cours',
     status_completed: 'Terminée',
     status_cancelled: 'Annulée',
+    updateStatus: 'Mettre à jour le statut',
+    updateOrderStatus: 'Mettre à jour le statut de la commande',
+    currentStatus: 'Statut actuel',
+    newStatus: 'Nouveau statut',
+    cancel: 'Annuler',
+    updating: 'Mise à jour en cours',
+    errorUpdatingStatus: 'Erreur lors de la mise à jour du statut de la commande',
     excel: {
       fileName: 'Commandes_Empire_Canada',
       orderNumber: 'Numéro de Commande',

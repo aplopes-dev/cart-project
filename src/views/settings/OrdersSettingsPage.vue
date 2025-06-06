@@ -234,17 +234,31 @@
                     </span>
                   </td>
                   <td class="py-2 md:py-3 px-2 md:px-4 border-b text-xs md:text-sm">
-                    <button
-                      @click="viewOrderDetails(order.id)"
-                      class="text-empire-yellow hover:text-yellow-500 font-archivo"
-                    >
-                      <!-- Ícone para mobile, texto para desktop -->
-                      <span class="hidden md:inline">{{ $t('ordersSettings.viewDetails') }}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    </button>
+                    <div class="flex space-x-2">
+                      <button
+                        @click="viewOrderDetails(order.id)"
+                        class="text-empire-yellow hover:text-yellow-500 font-archivo"
+                        :title="$t('ordersSettings.viewDetails')"
+                      >
+                        <!-- Ícone para mobile, texto para desktop -->
+                        <span class="hidden md:inline">{{ $t('ordersSettings.viewDetails') }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="openStatusModal(order)"
+                        class="text-blue-600 hover:text-blue-800 font-archivo"
+                        :title="$t('ordersSettings.updateStatus')"
+                      >
+                        <!-- Ícone para mobile, texto para desktop -->
+                        <span class="hidden md:inline">{{ $t('ordersSettings.updateStatus') }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -479,6 +493,68 @@
             </div>
           </div>
         </div>
+
+        <!-- Modal de atualização de status -->
+        <div v-if="showStatusModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded-lg p-4 md:p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="font-archivo-narrow font-semibold text-lg md:text-xl">
+                {{ $t('ordersSettings.updateOrderStatus') }}
+              </h2>
+              <button @click="closeStatusModal" class="text-gray-500 hover:text-gray-700 p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="selectedOrderForStatus">
+              <div class="mb-4">
+                <p class="font-archivo text-sm text-gray-600 mb-2">
+                  {{ $t('ordersSettings.orderNumber') }}: <span class="font-semibold">{{ selectedOrderForStatus.order_number }}</span>
+                </p>
+                <p class="font-archivo text-sm text-gray-600 mb-4">
+                  {{ $t('ordersSettings.currentStatus') }}:
+                  <span :class="getStatusClass(selectedOrderForStatus.status)" class="font-semibold">
+                    {{ $t(`ordersSettings.status_${selectedOrderForStatus.status}`) }}
+                  </span>
+                </p>
+              </div>
+
+              <div class="mb-6">
+                <label class="block font-archivo text-sm font-medium mb-2">
+                  {{ $t('ordersSettings.newStatus') }}:
+                </label>
+                <select
+                  v-model="newStatus"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-empire-yellow"
+                >
+                  <option value="pending">{{ $t('ordersSettings.status_pending') }}</option>
+                  <option value="processing">{{ $t('ordersSettings.status_processing') }}</option>
+                  <option value="completed">{{ $t('ordersSettings.status_completed') }}</option>
+                  <option value="cancelled">{{ $t('ordersSettings.status_cancelled') }}</option>
+                </select>
+              </div>
+
+              <div class="flex justify-end space-x-3">
+                <button
+                  @click="closeStatusModal"
+                  class="px-4 py-2 text-sm font-archivo text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  {{ $t('ordersSettings.cancel') }}
+                </button>
+                <button
+                  @click="updateOrderStatus"
+                  :disabled="isUpdatingStatus || newStatus === selectedOrderForStatus.status"
+                  class="px-4 py-2 text-sm font-archivo bg-empire-yellow text-black rounded hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span v-if="isUpdatingStatus">{{ $t('ordersSettings.updating') }}...</span>
+                  <span v-else>{{ $t('ordersSettings.updateStatus') }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -532,6 +608,12 @@ export default {
     const showOrderModal = ref(false)
     const selectedOrder = ref({})
     const isLoadingOrderDetails = ref(false)
+
+    // Modal de atualização de status
+    const showStatusModal = ref(false)
+    const selectedOrderForStatus = ref(null)
+    const newStatus = ref('')
+    const isUpdatingStatus = ref(false)
 
     // Carregar projetos para o filtro
     const loadProjects = async () => {
@@ -635,6 +717,51 @@ export default {
         console.error('Erro ao carregar detalhes do pedido:', error)
       } finally {
         isLoadingOrderDetails.value = false
+      }
+    }
+
+    // Abrir modal de atualização de status
+    const openStatusModal = (order) => {
+      selectedOrderForStatus.value = order
+      newStatus.value = order.status
+      showStatusModal.value = true
+    }
+
+    // Fechar modal de atualização de status
+    const closeStatusModal = () => {
+      showStatusModal.value = false
+      selectedOrderForStatus.value = null
+      newStatus.value = ''
+      isUpdatingStatus.value = false
+    }
+
+    // Atualizar status do pedido
+    const updateOrderStatus = async () => {
+      if (!selectedOrderForStatus.value || newStatus.value === selectedOrderForStatus.value.status) {
+        return
+      }
+
+      isUpdatingStatus.value = true
+
+      try {
+        await adminOrderService.updateOrderStatus(selectedOrderForStatus.value.id, newStatus.value)
+
+        // Atualizar o status na lista local
+        const orderIndex = orders.value.findIndex(o => o.id === selectedOrderForStatus.value.id)
+        if (orderIndex !== -1) {
+          orders.value[orderIndex].status = newStatus.value
+        }
+
+        // Fechar modal
+        closeStatusModal()
+
+        // Mostrar mensagem de sucesso (opcional)
+        console.log('Status do pedido atualizado com sucesso')
+      } catch (error) {
+        console.error('Erro ao atualizar status do pedido:', error)
+        alert(t('ordersSettings.errorUpdatingStatus'))
+      } finally {
+        isUpdatingStatus.value = false
       }
     }
 
@@ -765,6 +892,17 @@ export default {
       }).format(date)
     }
 
+    // Função para obter classe CSS do status
+    const getStatusClass = (status) => {
+      const statusClasses = {
+        pending: 'text-yellow-600',
+        processing: 'text-blue-600',
+        completed: 'text-green-600',
+        cancelled: 'text-red-600'
+      }
+      return statusClasses[status] || 'text-gray-600'
+    }
+
     // Formatar moeda
     const formatCurrency = (value) => {
       if (value === null || value === undefined) return '-'
@@ -774,17 +912,7 @@ export default {
       }).format(value)
     }
 
-    // Obter classe CSS para o status
-    const getStatusClass = (status) => {
-      const statusClasses = {
-        pending: 'bg-yellow-100 text-yellow-800',
-        processing: 'bg-blue-100 text-blue-800',
-        completed: 'bg-green-100 text-green-800',
-        cancelled: 'bg-red-100 text-red-800'
-      }
 
-      return `px-1 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs rounded-full ${statusClasses[status] || ''}`
-    }
 
     // Calcular subtotal
     const calculateSubtotal = () => {
@@ -844,12 +972,19 @@ export default {
       showOrderModal,
       selectedOrder,
       isLoadingOrderDetails,
+      showStatusModal,
+      selectedOrderForStatus,
+      newStatus,
+      isUpdatingStatus,
       paginationRange,
       loadOrders,
       applyFilters,
       resetFilters,
       changePage,
       viewOrderDetails,
+      openStatusModal,
+      closeStatusModal,
+      updateOrderStatus,
       exportToExcel,
       formatDate,
       formatDateTime,
