@@ -105,6 +105,12 @@
       @close="closeProjectModal"
       @project-selected="handleProjectSelected"
     />
+
+    <!-- Modal de Sem Projetos -->
+    <NoProjectsModal
+      :is-visible="showNoProjectsModal"
+      @close="closeNoProjectsModal"
+    />
   </div>
 </template>
 
@@ -112,15 +118,17 @@
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { ref, getCurrentInstance, nextTick } from 'vue'
+import { ref, getCurrentInstance, nextTick, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { projectService } from '@/services/projectService'
 import ProjectSelectionModal from '@/components/auth/ProjectSelectionModal.vue'
+import NoProjectsModal from '@/components/auth/NoProjectsModal.vue'
 
 export default {
   name: 'LoginPage',
   components: {
-    ProjectSelectionModal
+    ProjectSelectionModal,
+    NoProjectsModal
   },
   setup() {
     const { t } = useI18n()
@@ -137,6 +145,7 @@ export default {
     const isLoading = ref(false)
     const showPassword = ref(false)
     const showProjectModal = ref(false)
+    const showNoProjectsModal = ref(false)
     const redirectPath = ref('')
 
     const handleLogin = async () => {
@@ -205,9 +214,24 @@ export default {
             showProjectModal.value = true
             console.log('Estado do modal de seleção de projeto:', showProjectModal.value)
           } else {
-            // Se não tiver projetos, redireciona diretamente
-            console.log('Usuário não tem projetos, redirecionando diretamente')
-            router.push({ path: redirectPath.value, replace: true })
+            // Se não tiver projetos, faz logout imediatamente e exibe modal de erro
+            console.log('Usuário não tem projetos, fazendo logout e exibindo modal de erro')
+
+            // Fazer logout imediatamente por segurança
+            try {
+              await store.dispatch('logout')
+              console.log('Usuário deslogado devido à falta de projetos')
+            } catch (logoutError) {
+              console.error('Erro ao fazer logout:', logoutError)
+            }
+
+            // Limpar os campos de login
+            email.value = ''
+            password.value = ''
+            error.value = ''
+
+            // Exibir modal informativo
+            showNoProjectsModal.value = true
           }
         } catch (projectError) {
           console.error('Erro ao buscar projetos do usuário:', projectError)
@@ -232,6 +256,12 @@ export default {
       showProjectModal.value = false
       // Se o usuário fechar o modal sem selecionar um projeto, redireciona para a página inicial
       router.push({ path: redirectPath.value, replace: true })
+    }
+
+    const closeNoProjectsModal = () => {
+      showNoProjectsModal.value = false
+      // O logout já foi feito quando o modal foi exibido
+      console.log('Modal de sem projetos fechado')
     }
 
     const handleProjectSelected = async (data) => {
@@ -275,6 +305,46 @@ export default {
       })
     }
 
+    // Verificação de segurança ao montar o componente
+    onMounted(async () => {
+      // Se o usuário já estiver logado, verificar se tem projetos
+      if (store.state.isAuthenticated && store.state.currentUser) {
+        const userProfile = store.state.currentUser.profile || 'USER'
+
+        // Admins podem acessar sem projetos
+        if (userProfile === 'ADMIN') {
+          return
+        }
+
+        try {
+          const userProjects = await projectService.getCurrentUserProjects()
+          console.log('Verificação de segurança - Projetos do usuário:', userProjects)
+
+          if (userProjects.length === 0) {
+            console.log('Usuário logado sem projetos detectado, fazendo logout por segurança')
+
+            // Fazer logout imediatamente
+            try {
+              await store.dispatch('logout')
+              console.log('Logout de segurança realizado')
+            } catch (logoutError) {
+              console.error('Erro no logout de segurança:', logoutError)
+            }
+
+            // Limpar campos
+            email.value = ''
+            password.value = ''
+            error.value = ''
+
+            // Exibir modal
+            showNoProjectsModal.value = true
+          }
+        } catch (projectError) {
+          console.error('Erro na verificação de segurança de projetos:', projectError)
+        }
+      }
+    })
+
     return {
       email,
       password,
@@ -282,9 +352,11 @@ export default {
       isLoading,
       showPassword,
       showProjectModal,
+      showNoProjectsModal,
       redirectPath,
       handleLogin,
       closeProjectModal,
+      closeNoProjectsModal,
       handleProjectSelected,
       goToSignup,
       t

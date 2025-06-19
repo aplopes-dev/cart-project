@@ -223,8 +223,34 @@
                       </span>
                     </div>
 
-                    <!-- Linha 3: City, State, Postal Code -->
+                    <!-- Linha 3: Country e State -->
+                    <div class="col-span-1 md:col-span-2">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
+                      <CustomSelect
+                        v-model="selectedCountryId"
+                        :options="countryOptions"
+                        :placeholder="$t('checkout.selectCountry')"
+                        :error="showErrors && formErrors.country"
+                        :error-message="$t('checkout.fieldRequired')"
+                        @change="onCountryChange"
+                      />
+                    </div>
+
                     <div class="col-span-1 md:col-span-1">
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
+                      <CustomSelect
+                        v-model="selectedProvinceId"
+                        :options="provinceOptions"
+                        :placeholder="$t('checkout.selectState')"
+                        :disabled="!selectedCountryId"
+                        :error="showErrors && formErrors.state"
+                        :error-message="$t('checkout.fieldRequired')"
+                        @change="onProvinceChange"
+                      />
+                    </div>
+
+                    <!-- Linha 4: City e Postal Code -->
+                    <div class="col-span-1 md:col-span-2">
                       <label class="block font-archivo text-sm mb-2">{{ $t('checkout.city') }}</label>
                       <input
                         type="text"
@@ -239,21 +265,7 @@
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
-                    <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.state') }}</label>
-                      <input
-                        type="text"
-                        v-model="formData.state"
-                        :placeholder="$t('checkout.statePlaceholder')"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.state) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.state" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
+
                     <div class="col-span-1 md:col-span-1">
                       <label class="block font-archivo text-sm mb-2">{{ $t('checkout.postalCode') }}</label>
                       <input
@@ -266,23 +278,6 @@
                         ]"
                       >
                       <span v-if="showErrors && formErrors.postalCode" class="text-red-500 text-sm mt-1">
-                        {{ $t('checkout.fieldRequired') }}
-                      </span>
-                    </div>
-
-                    <!-- Linha 3.5: Country -->
-                    <div class="col-span-1 md:col-span-3">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.country') }}</label>
-                      <input
-                        type="text"
-                        v-model="formData.country"
-                        :placeholder="$t('checkout.countryPlaceholder')"
-                        :class="[
-                          'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
-                          (showErrors && formErrors.country) ? 'border-red-500' : 'border-black/25'
-                        ]"
-                      >
-                      <span v-if="showErrors && formErrors.country" class="text-red-500 text-sm mt-1">
                         {{ $t('checkout.fieldRequired') }}
                       </span>
                     </div>
@@ -307,10 +302,10 @@
                       >
                     </div>
                     <div class="col-span-1 md:col-span-1">
-                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.deliveryDateTime') }}</label>
+                      <label class="block font-archivo text-sm mb-2">{{ $t('checkout.deliveryDate') }}</label>
                       <input
-                        type="datetime-local"
-                        v-model="formData.deliveryDateTime"
+                        type="date"
+                        v-model="formData.deliveryDate"
                         class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white"
                       >
                     </div>
@@ -333,13 +328,28 @@
 
                   <!-- Pick-up Mode -->
                   <div v-else class="space-y-4">
-                    <!-- Location Information -->
-                    <div class="bg-gray-100 p-4 rounded-lg">
-                      <div>
-                        <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('checkout.pickupLocation') }}</h3>
-                        <p class="font-archivo text-base">
-                          {{ selectedLocation ? selectedLocation.description : $t('checkout.selectLocation') }}
-                        </p>
+                    <!-- Location Information and Pickup Date - Desktop Layout -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <!-- Location Information - 3/4 columns on desktop -->
+                      <div class="md:col-span-3">
+                        <div class="bg-gray-100 p-4 rounded-lg h-full">
+                          <div>
+                            <h3 class="font-archivo-narrow font-semibold text-lg mb-2">{{ $t('checkout.pickupLocation') }}</h3>
+                            <p class="font-archivo text-base">
+                              {{ selectedLocation ? selectedLocation.description : $t('checkout.selectLocation') }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Pickup Date - 1/4 column on desktop -->
+                      <div class="md:col-span-1">
+                        <label class="block font-archivo text-sm mb-2">{{ $t('checkout.pickupDate') }}</label>
+                        <input
+                          type="date"
+                          v-model="formData.deliveryDate"
+                          class="w-full p-2 md:p-4 border-2 border-black/25 rounded font-archivo text-sm md:text-base bg-white h-[calc(100%-2rem)]"
+                        >
                       </div>
                     </div>
 
@@ -633,13 +643,16 @@ import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { projectService } from '@/services/projectService'
 import { locationService } from '@/services/locationService'
 import { productService } from '@/services/productService'
+import { geographyService } from '@/services/geographyService'
+import CustomSelect from '@/components/CustomSelect.vue'
 
 export default {
   name: 'CheckoutPage',
   components: {
     AddressSelectionModal,
     ProjectConfirmationModal,
-    LoadingSpinner
+    LoadingSpinner,
+    CustomSelect
   },
   setup() {
     const cartStore = useCartStore()
@@ -944,7 +957,7 @@ export default {
         country: '',
         contactOnSite: '', // Novo campo: Contato no local
         contactPhone: '', // Novo campo: Telefone de contato no local
-        deliveryDateTime: '', // Novo campo: Data/hora de entrega
+        deliveryDate: '', // Novo campo: Data de entrega/retirada
         specialInstructions: '', // Novo campo: Instruções especiais de entrega
         cardHolder: '',
         cardNumber: '',
@@ -961,7 +974,12 @@ export default {
       showProjectModal: false,
       selectedLocation: null, // Objeto do local selecionado
       selectedShippingAddressId: null, // ID do endereço de entrega selecionado
-      isLoadingSummary: true // Estado de carregamento para o resumo do pedido
+      isLoadingSummary: true, // Estado de carregamento para o resumo do pedido
+      // Dados de geografia
+      countries: [], // Lista de países
+      provinces: [], // Lista de estados/províncias
+      selectedCountryId: null, // ID do país selecionado
+      selectedProvinceId: null // ID do estado/província selecionado
     }
   },
   computed: {
@@ -1028,6 +1046,20 @@ export default {
         return this.$t('checkout.minOrderValueMessage', { value: `${this.currencySymbol}${minValue.toFixed(2)}` });
       }
       return '';
+    },
+    // Opções formatadas para o combobox de países
+    countryOptions() {
+      return this.countries.map(country => ({
+        value: country.id,
+        label: country.cdesc
+      }));
+    },
+    // Opções formatadas para o combobox de estados
+    provinceOptions() {
+      return this.provinces.map(province => ({
+        value: province.id,
+        label: province.cdesc
+      }));
     }
   },
   async mounted() {
@@ -1047,6 +1079,9 @@ export default {
 
     // Listener para carregar endereço padrão
     window.addEventListener('loadDefaultAddressNow', this.handleLoadDefaultAddress);
+
+    // Carregar países ao montar o componente
+    this.loadCountries();
 
     // Não precisamos mais definir os estados de loading aqui,
     // pois eles já são definidos no loadCheckoutData
@@ -1214,6 +1249,78 @@ export default {
       } catch (error) {
         console.error('Erro ao carregar locais:', error);
         this.$toast.error(this.$t('checkout.errorLoadingLocations'));
+      }
+    },
+
+    // Método para carregar países
+    async loadCountries() {
+      try {
+        console.log('🌍 Carregando países...');
+        const countries = await geographyService.getCountries();
+        this.countries = countries;
+        console.log('Países carregados:', countries);
+      } catch (error) {
+        console.error('Erro ao carregar países:', error);
+        this.$toast.error(this.$t('checkout.errorLoadingCountries'));
+      }
+    },
+
+    // Método para carregar estados/províncias de um país
+    async loadProvinces(countryId) {
+      try {
+        console.log('🏛️ Carregando estados para país:', countryId);
+        const provinces = await geographyService.getProvincesByCountry(countryId);
+        this.provinces = provinces;
+        console.log('Estados carregados:', provinces);
+      } catch (error) {
+        console.error('Erro ao carregar estados:', error);
+        this.$toast.error(this.$t('checkout.errorLoadingStates'));
+      }
+    },
+
+    // Método chamado quando o país é alterado
+    async onCountryChange(countryId) {
+      console.log('🔄 País alterado para:', countryId);
+
+      // Atualiza o ID selecionado
+      this.selectedCountryId = countryId;
+
+      // Limpa o estado selecionado
+      this.selectedProvinceId = null;
+      this.formData.state = '';
+      this.provinces = [];
+
+      if (countryId) {
+        // Busca o país selecionado e atualiza o formData
+        const selectedCountry = this.countries.find(c => c.id === countryId);
+        if (selectedCountry) {
+          this.formData.country = selectedCountry.cdesc;
+          console.log('País selecionado:', selectedCountry.cdesc);
+        }
+
+        // Carrega os estados do país selecionado
+        await this.loadProvinces(countryId);
+      } else {
+        this.formData.country = '';
+      }
+    },
+
+    // Método chamado quando o estado é alterado
+    onProvinceChange(provinceId) {
+      console.log('🔄 Estado alterado para:', provinceId);
+
+      // Atualiza o ID selecionado
+      this.selectedProvinceId = provinceId;
+
+      if (provinceId) {
+        // Busca o estado selecionado e atualiza o formData
+        const selectedProvince = this.provinces.find(p => p.id === provinceId);
+        if (selectedProvince) {
+          this.formData.state = selectedProvince.cdesc;
+          console.log('Estado selecionado:', selectedProvince.cdesc);
+        }
+      } else {
+        this.formData.state = '';
       }
     },
 
@@ -1522,7 +1629,9 @@ export default {
           orderData.shipping_address_id = null;
           orderData.contactOnSite = null;
           orderData.contactPhone = null;
-          orderData.deliveryDateTime = null;
+          // Separar data e hora - sempre enviar hora como null
+          orderData.delivery_date = this.formData.deliveryDate || null;
+          orderData.delivery_time = null;
         } else if (this.deliveryMethod === 'delivery') {
           // Para delivery: dados de endereço e shipping_address_id se selecionado
           orderData.location_id = null;
@@ -1532,10 +1641,15 @@ export default {
           orderData.state = this.formData.state || null;
           orderData.postalCode = this.formData.postalCode;
           orderData.country = this.formData.country || null;
+          // Incluir IDs de país e estado
+          orderData.country_id = this.selectedCountryId || null;
+          orderData.state_id = this.selectedProvinceId || null;
           orderData.shipping_address_id = shippingAddressId; // ID do endereço selecionado ou null
           orderData.contactOnSite = this.formData.contactOnSite || null;
           orderData.contactPhone = this.formData.contactPhone || null;
-          orderData.deliveryDateTime = this.formData.deliveryDateTime || null;
+          // Separar data e hora - sempre enviar hora como null
+          orderData.delivery_date = this.formData.deliveryDate || null;
+          orderData.delivery_time = null;
         }
 
         // Mantemos o objeto metadata para compatibilidade com código existente

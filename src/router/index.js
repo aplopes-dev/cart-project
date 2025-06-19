@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { authService } from '@/services/auth.service'
+import { projectService } from '@/services/projectService'
 import Home from '../views/Home.vue'
 import HistoryView from '../views/HistoryView.vue'
 import SuppliersView from '../views/SuppliersView.vue'
@@ -228,7 +229,7 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isAuthenticated = authService.isAuthenticated()
   const currentUser = authService.getCurrentUser()
 
@@ -254,6 +255,38 @@ router.beforeEach((to, from, next) => {
       window.scrollTo(0, 0)
       next()
     }
+  } else if (to.meta.requiresAuth && isAuthenticated) {
+    // Verificação adicional de segurança para usuários autenticados
+    const userProfile = currentUser?.profile || 'USER'
+
+    // Admins podem acessar sem verificação de projetos
+    if (userProfile === 'ADMIN') {
+      window.scrollTo(0, 0)
+      next()
+      return
+    }
+
+    // Para usuários não-admin, verificar se têm projetos
+    try {
+      const userProjects = await projectService.getCurrentUserProjects()
+
+      if (userProjects.length === 0) {
+        console.log('Router Guard: Usuário sem projetos detectado, redirecionando para login')
+        // Fazer logout por segurança
+        authService.logout()
+        next({
+          path: '/login',
+          query: { redirect: to.fullPath }
+        })
+        return
+      }
+    } catch (error) {
+      console.error('Router Guard: Erro ao verificar projetos:', error)
+      // Em caso de erro, permitir acesso mas logar o erro
+    }
+
+    window.scrollTo(0, 0)
+    next()
   } else {
     window.scrollTo(0, 0)
     next()

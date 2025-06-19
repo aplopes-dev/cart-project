@@ -247,7 +247,8 @@
                             <div class="font-archivo text-xs">
                               <span class="font-medium">{{ order.customer_name }}</span>
                               <span class="block">{{ order.address }}{{ order.landmark ? ', ' + order.landmark : '' }}</span>
-                              <span class="block">{{ order.city }} {{ order.postal_code }}</span>
+                              <span class="block">{{ order.city }}{{ order.state ? ', ' + order.state : '' }} {{ order.postal_code }}</span>
+                              <span v-if="order.country" class="block">{{ order.country }}</span>
                               <span class="block mt-1 flex items-center" v-if="order.phone">
                                 <svg class="w-3 h-3 text-empire-yellow flex-shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
@@ -500,7 +501,8 @@ const formatDate = (dateString) => {
 const formatDateTime = (dateTimeString) => {
   if (!dateTimeString) return '';
   const date = new Date(dateTimeString);
-  return date.toLocaleString();
+  // Exibir apenas a data, sem horário
+  return date.toLocaleDateString();
 }
 
 const getStatusClass = (status) => {
