@@ -451,7 +451,7 @@
 
                 <!-- Loading Spinner para o resumo do pedido -->
                 <div v-if="isLoadingSummary" class="py-8 flex justify-center">
-                  <LoadingSpinner text="Carregando resumo..." />
+                  <LoadingSpinner :text="$t('checkout.processing')" />
                 </div>
 
                 <template v-else-if="cartItems.length > 0">
