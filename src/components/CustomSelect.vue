@@ -4,6 +4,7 @@
       :value="modelValue"
       @change="$emit('update:modelValue', $event.target.value)"
       :disabled="disabled"
+      :required="required"
       :class="[
         'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white appearance-none cursor-pointer transition-all duration-200',
         error ? 'border-red-500 focus:border-red-600' : 'border-black/25 focus:border-blue-500',
@@ -69,6 +70,10 @@ export default {
     errorMessage: {
       type: String,
       default: ''
+    },
+    required: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue', 'change'],

@@ -196,6 +196,7 @@
                         type="text"
                         v-model="formData.address"
                         :placeholder="$t('checkout.addressLine1Placeholder')"
+                        required
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.address) ? 'border-red-500' : 'border-black/25'
@@ -232,6 +233,7 @@
                         :placeholder="$t('checkout.selectCountry')"
                         :error="showErrors && formErrors.country"
                         :error-message="$t('checkout.fieldRequired')"
+                        required
                         @change="onCountryChange"
                       />
                     </div>
@@ -245,6 +247,7 @@
                         :disabled="!selectedCountryId"
                         :error="showErrors && formErrors.state"
                         :error-message="$t('checkout.fieldRequired')"
+                        required
                         @change="onProvinceChange"
                       />
                     </div>
@@ -256,6 +259,7 @@
                         type="text"
                         v-model="formData.city"
                         :placeholder="$t('checkout.cityPlaceholder')"
+                        required
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.city) ? 'border-red-500' : 'border-black/25'
@@ -272,6 +276,7 @@
                         type="text"
                         v-model="formData.postalCode"
                         :placeholder="$t('checkout.postalCodePlaceholder')"
+                        required
                         :class="[
                           'w-full p-2 md:p-4 border-2 rounded font-archivo text-sm md:text-base bg-white',
                           (showErrors && formErrors.postalCode) ? 'border-red-500' : 'border-black/25'
@@ -988,14 +993,36 @@ export default {
     },
     formErrors() {
       const errors = {}
-      const requiredFields = [
-        'firstName', 'lastName', 'email', // 'phone' removido da lista de campos obrigatórios
-        'address', 'city', 'postalCode' // Removidos state, number, neighborhood e country dos campos obrigatórios
-      ]
 
-      requiredFields.forEach(field => {
-        errors[field] = !this.formData[field]
-      })
+      if (this.deliveryMethod === 'delivery') {
+        // Campos obrigatórios para delivery
+        const deliveryRequiredFields = [
+          'address',        // Address line 1
+          'country',        // Country
+          'state',          // State
+          'city',           // City
+          'postalCode'      // Postal Code
+        ]
+
+        deliveryRequiredFields.forEach(field => {
+          errors[field] = !this.formData[field]
+        })
+
+        console.log('🚚 Validação delivery - campos obrigatórios:', {
+          address: !!this.formData.address,
+          country: !!this.formData.country,
+          state: !!this.formData.state,
+          city: !!this.formData.city,
+          postalCode: !!this.formData.postalCode
+        })
+      } else if (this.deliveryMethod === 'pickup') {
+        // Para pickup: apenas local selecionado é obrigatório
+        errors.location = !this.selectedLocationId
+        console.log('🏪 Validação pickup - local obrigatório:', {
+          selectedLocationId: this.selectedLocationId,
+          hasLocationError: errors.location
+        })
+      }
 
       return errors
     },
@@ -1245,6 +1272,16 @@ export default {
         if (!this.selectedLocationId && locations.length > 0) {
           this.selectedLocationId = locations[0].id;
           this.selectedLocation = locations[0];
+          console.log('🏪 Local selecionado automaticamente:', {
+            id: this.selectedLocationId,
+            name: this.selectedLocation.name
+          });
+        } else {
+          console.log('🏪 Estado dos locais:', {
+            selectedLocationId: this.selectedLocationId,
+            locationsCount: locations.length,
+            hasSelectedLocation: !!this.selectedLocationId
+          });
         }
       } catch (error) {
         console.error('Erro ao carregar locais:', error);
@@ -1472,19 +1509,17 @@ export default {
       this.isDesktop = window.innerWidth >= 1024
     },
     validateForm() {
+      console.log('🔍 Iniciando validação do formulário');
       this.showErrors = true
 
-      // Se estiver no modo pickup, não valida os campos de endereço
-      if (this.deliveryMethod === 'pickup') {
-        // Verifica apenas os campos pessoais (exceto telefone que não é mais obrigatório)
-        const personalFieldsValid = !Object.entries(this.formErrors)
-          .filter(([field]) => ['firstName', 'lastName', 'email'].includes(field))
-          .some(([, error]) => error);
+      console.log('📋 Método de entrega:', this.deliveryMethod);
+      console.log('📋 Erros do formulário:', this.formErrors);
+      console.log('📋 hasErrors:', this.hasErrors);
 
-        return personalFieldsValid;
-      }
+      const isValid = !this.hasErrors;
+      console.log('✅ Formulário válido:', isValid);
 
-      return !this.hasErrors
+      return isValid;
     },
     async completePurchase() {
       console.log('🚀 completePurchase iniciado');
