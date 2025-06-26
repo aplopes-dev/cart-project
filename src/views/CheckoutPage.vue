@@ -1463,8 +1463,6 @@ export default {
       }
     },
 
-
-
     toggleSection(section) {
       if (!this.isDesktop) {
         this.sections[section] = !this.sections[section]
@@ -1489,55 +1487,85 @@ export default {
       return !this.hasErrors
     },
     async completePurchase() {
-      // Verifica se o botão está habilitado
-      if (!this.isCheckoutButtonEnabled) {
-        return;
-      }
+      console.log('🚀 completePurchase iniciado');
 
-      if (!this.validateForm()) {
-        return;
-      }
-
-      // Verifica o perfil do usuário
-      const currentUser = this.store.state.currentUser;
-      const userProfile = currentUser?.profile || 'USER';
-
-      // Se o usuário for ADMIN, finaliza o pedido sem mostrar o modal de projeto
-      if (userProfile === 'ADMIN') {
-        console.log('Usuário é ADMIN, finalizando pedido sem projeto');
-        this.confirmProjectAndProceed({ id: null, name: null });
-        return;
-      }
-
-      // Se o usuário for USER ou MANAGER, verifica se tem apenas um projeto
-      if (userProfile === 'USER' || userProfile === 'MANAGER') {
-        try {
-          // Busca os projetos do usuário
-          const userProjects = await projectService.getCurrentUserProjects();
-
-          // Se o usuário tiver apenas um projeto, finaliza o pedido com esse projeto
-          if (userProjects.length === 1) {
-            console.log('Usuário tem apenas um projeto, finalizando pedido com esse projeto:', userProjects[0]);
-            const project = {
-              id: userProjects[0].id,
-              name: userProjects[0].name || userProjects[0].nome
-            };
-
-            // Salva o projeto no sessionStorage
-            projectService.saveSelectedProject(project);
-
-            // Finaliza o pedido com esse projeto
-            this.confirmProjectAndProceed(project);
-            return;
-          }
-        } catch (error) {
-          console.error('Erro ao buscar projetos do usuário:', error);
-          // Em caso de erro, mostra o modal normalmente
+      try {
+        // Verifica se o botão está habilitado
+        console.log('🔍 Verificando se botão está habilitado:', this.isCheckoutButtonEnabled);
+        if (!this.isCheckoutButtonEnabled) {
+          console.log('❌ Botão não está habilitado, saindo');
+          return;
         }
-      }
 
-      // Se não for nenhum dos casos acima, mostra o modal de confirmação de projeto
-      this.showProjectModal = true;
+        // Valida o formulário
+        console.log('🔍 Validando formulário...');
+        const isFormValid = this.validateForm();
+        console.log('📋 Resultado da validação:', isFormValid);
+
+        if (!isFormValid) {
+          console.log('❌ Formulário inválido, saindo');
+          return;
+        }
+
+        // Verifica o perfil do usuário
+        console.log('👤 Verificando perfil do usuário...');
+        const currentUser = this.store.state.currentUser;
+        const userProfile = currentUser?.profile || 'USER';
+        console.log('👤 Perfil do usuário:', userProfile);
+
+        // Se o usuário for ADMIN, finaliza o pedido sem mostrar o modal de projeto
+        if (userProfile === 'ADMIN') {
+          console.log('👑 Usuário é ADMIN, finalizando pedido sem projeto');
+          this.confirmProjectAndProceed({ id: null, name: null });
+          return;
+        }
+
+        // Se o usuário for USER ou MANAGER, verifica se tem apenas um projeto
+        if (userProfile === 'USER' || userProfile === 'MANAGER') {
+          try {
+            console.log('🔍 Buscando projetos do usuário...');
+            // Busca os projetos do usuário
+            const userProjects = await projectService.getCurrentUserProjects();
+            console.log('📋 Projetos encontrados:', userProjects);
+
+            // Se o usuário tiver apenas um projeto, finaliza o pedido com esse projeto
+            if (userProjects.length === 1) {
+              console.log('✅ Usuário tem apenas um projeto, finalizando pedido com esse projeto:', userProjects[0]);
+              const project = {
+                id: userProjects[0].id,
+                name: userProjects[0].name || userProjects[0].nome
+              };
+
+              // Salva o projeto no sessionStorage
+              projectService.saveSelectedProject(project);
+
+              // Finaliza o pedido com esse projeto
+              this.confirmProjectAndProceed(project);
+              return;
+            } else if (userProjects.length === 0) {
+              console.log('⚠️ Usuário não tem projetos, finalizando sem projeto');
+              this.confirmProjectAndProceed({ id: null, name: null });
+              return;
+            } else {
+              console.log('📋 Usuário tem múltiplos projetos, mostrando modal');
+            }
+          } catch (error) {
+            console.error('❌ Erro ao buscar projetos do usuário:', error);
+            // Em caso de erro, mostra o modal normalmente
+            console.log('🔄 Continuando para mostrar modal devido ao erro');
+          }
+        }
+
+        // Se não for nenhum dos casos acima, mostra o modal de confirmação de projeto
+        console.log('📋 Mostrando modal de confirmação de projeto');
+        this.showProjectModal = true;
+        console.log('✅ Modal de projeto definido como true:', this.showProjectModal);
+
+      } catch (error) {
+        console.error('❌ Erro inesperado em completePurchase:', error);
+        // Mostra uma mensagem de erro para o usuário
+        this.$toast.error(this.$t('checkout.errorProcessingOrder'));
+      }
     },
 
     closeProjectModal() {
