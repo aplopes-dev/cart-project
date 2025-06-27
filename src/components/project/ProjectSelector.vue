@@ -1,10 +1,13 @@
 <template>
   <div class="project-selector relative">
-    <!-- Combobox de projetos (visível apenas quando logado e tem projetos) - Desktop -->
-    <div v-if="isAuthenticated && projects.length > 0" class="relative project-dropdown hidden md:block" ref="projectDropdownRef">
+    <!-- Combobox de projetos (visível quando logado e tem 1 ou mais projetos) - Desktop -->
+    <div v-if="isAuthenticated && projects.length >= 1" class="relative project-dropdown hidden md:block" ref="projectDropdownRef">
       <button
         @click="toggleProjectDropdown"
-        class="text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1"
+        :class="[
+          'text-[15px] leading-7 text-white font-archivo font-medium flex items-center gap-1',
+          projects.length <= 1 ? 'cursor-default' : 'cursor-pointer'
+        ]"
         :disabled="isLoading"
         style="max-width: 250px;"
       >
@@ -17,6 +20,7 @@
         </span>
         <span v-else>{{ $t('project.selectProject') }}</span>
         <svg
+          v-if="projects.length > 1"
           class="w-4 h-4 flex-shrink-0"
           :class="{ 'transform rotate-180': isProjectDropdownOpen }"
           viewBox="0 0 24 24"
@@ -59,10 +63,13 @@
     </div>
 
     <!-- Versão Mobile -->
-    <div v-if="isAuthenticated && projects.length > 0" class="relative project-dropdown md:hidden" ref="projectDropdownRefMobile">
+    <div v-if="isAuthenticated && projects.length >= 1" class="relative project-dropdown md:hidden" ref="projectDropdownRefMobile">
       <button
         @click="toggleProjectDropdown"
-        class="px-1 py-1 text-[13px] leading-6 text-white font-archivo font-medium text-center flex items-center justify-center gap-1"
+        :class="[
+          'px-1 py-1 text-[13px] leading-6 text-white font-archivo font-medium text-center flex items-center justify-center gap-1',
+          projects.length <= 1 ? 'cursor-default' : 'cursor-pointer'
+        ]"
         :disabled="isLoading"
         style="max-width: 120px; min-width: 80px;"
       >
@@ -71,6 +78,7 @@
         </span>
         <span v-else class="truncate max-w-[80px]">{{ $t('project.selectProject') }}</span>
         <svg
+          v-if="projects.length > 1"
           class="w-3 h-3 flex-shrink-0 transition-transform duration-200"
           :class="{ 'transform rotate-180': isProjectDropdownOpen }"
           viewBox="0 0 24 24"
@@ -236,6 +244,12 @@ export default {
     // Toggle do dropdown de projetos
     const toggleProjectDropdown = (event) => {
       event.stopPropagation()
+
+      // Se há apenas 1 projeto, não abre o dropdown
+      if (projects.value.length <= 1) {
+        return
+      }
+
       isProjectDropdownOpen.value = !isProjectDropdownOpen.value
 
       // Se o dropdown estiver sendo aberto, emite um evento para fechar outros dropdowns

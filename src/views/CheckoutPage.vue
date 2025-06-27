@@ -1379,6 +1379,12 @@ export default {
           await this.addressStore.fetchAddresses();
         }
 
+        // Garante que os países estejam carregados
+        if (!this.countries || this.countries.length === 0) {
+          console.log('🌍 Países não carregados, carregando agora...');
+          await this.loadCountries();
+        }
+
         // Busca o endereço padrão (is_default = true)
         const addresses = this.addressStore.addresses;
         console.log('📋 Total de endereços disponíveis:', addresses.length);
@@ -1401,9 +1407,38 @@ export default {
           this.formData.address = defaultAddress.address_line_1 || '';
           this.formData.landmark = defaultAddress.address_line_2 || '';
           this.formData.city = defaultAddress.city || '';
-          this.formData.state = defaultAddress.state || '';
           this.formData.postalCode = defaultAddress.postal_code || '';
-          this.formData.country = defaultAddress.country || '';
+
+          // Busca e seleciona o país pelo nome
+          if (defaultAddress.country) {
+            console.log('🔍 Buscando país pelo nome:', defaultAddress.country);
+            const country = this.countries.find(c => c.cdesc === defaultAddress.country);
+            if (country) {
+              console.log('✅ País encontrado:', country);
+              this.selectedCountryId = country.id;
+              this.formData.country = country.cdesc;
+
+              // Carrega os estados do país e depois busca o estado
+              await this.loadProvinces(country.id);
+
+              // Busca e seleciona o estado pelo nome
+              if (defaultAddress.state) {
+                console.log('🔍 Buscando estado pelo nome:', defaultAddress.state);
+                const province = this.provinces.find(p => p.cdesc === defaultAddress.state);
+                if (province) {
+                  console.log('✅ Estado encontrado:', province);
+                  this.selectedProvinceId = province.id;
+                  this.formData.state = province.cdesc;
+                } else {
+                  console.log('❌ Estado não encontrado:', defaultAddress.state);
+                  this.formData.state = defaultAddress.state; // Mantém o nome original
+                }
+              }
+            } else {
+              console.log('❌ País não encontrado:', defaultAddress.country);
+              this.formData.country = defaultAddress.country; // Mantém o nome original
+            }
+          }
 
           // Salva o ID do endereço selecionado
           this.selectedShippingAddressId = defaultAddress.id;
@@ -1416,6 +1451,8 @@ export default {
           console.log('   - State:', this.formData.state);
           console.log('   - Postal Code:', this.formData.postalCode);
           console.log('   - Country:', this.formData.country);
+          console.log('   - Selected Country ID:', this.selectedCountryId);
+          console.log('   - Selected Province ID:', this.selectedProvinceId);
           console.log('✅ Formulário preenchido com sucesso!');
 
           // Força a reatividade do Vue
@@ -1440,6 +1477,9 @@ export default {
       this.formData.country = '';
       this.selectedShippingAddressId = null;
       this.currentAddressId = null;
+      this.selectedCountryId = null;
+      this.selectedProvinceId = null;
+      this.provinces = []; // Limpa a lista de estados
     },
 
 
@@ -1542,53 +1582,40 @@ export default {
           return;
         }
 
-        // Verifica o perfil do usuário
-        console.log('👤 Verificando perfil do usuário...');
-        const currentUser = this.store.state.currentUser;
-        const userProfile = currentUser?.profile || 'USER';
-        console.log('👤 Perfil do usuário:', userProfile);
+        // Verifica a quantidade de projetos do usuário (regra igual para todos os perfis)
+        try {
+          console.log('🔍 Buscando projetos do usuário...');
+          // Busca os projetos do usuário
+          const userProjects = await projectService.getCurrentUserProjects();
+          console.log('📋 Projetos encontrados:', userProjects);
 
-        // Se o usuário for ADMIN, finaliza o pedido sem mostrar o modal de projeto
-        if (userProfile === 'ADMIN') {
-          console.log('👑 Usuário é ADMIN, finalizando pedido sem projeto');
-          this.confirmProjectAndProceed({ id: null, name: null });
-          return;
-        }
+          if (userProjects.length === 0) {
+            // Se não tiver projetos, finaliza sem projeto
+            console.log('⚠️ Usuário não tem projetos, finalizando sem projeto');
+            this.confirmProjectAndProceed({ id: null, name: null });
+            return;
+          } else if (userProjects.length === 1) {
+            // Se tiver apenas um projeto, finaliza com esse projeto
+            console.log('✅ Usuário tem apenas um projeto, finalizando pedido com esse projeto:', userProjects[0]);
+            const project = {
+              id: userProjects[0].id,
+              name: userProjects[0].name || userProjects[0].nome
+            };
 
-        // Se o usuário for USER ou MANAGER, verifica se tem apenas um projeto
-        if (userProfile === 'USER' || userProfile === 'MANAGER') {
-          try {
-            console.log('🔍 Buscando projetos do usuário...');
-            // Busca os projetos do usuário
-            const userProjects = await projectService.getCurrentUserProjects();
-            console.log('📋 Projetos encontrados:', userProjects);
+            // Salva o projeto no sessionStorage
+            projectService.saveSelectedProject(project);
 
-            // Se o usuário tiver apenas um projeto, finaliza o pedido com esse projeto
-            if (userProjects.length === 1) {
-              console.log('✅ Usuário tem apenas um projeto, finalizando pedido com esse projeto:', userProjects[0]);
-              const project = {
-                id: userProjects[0].id,
-                name: userProjects[0].name || userProjects[0].nome
-              };
-
-              // Salva o projeto no sessionStorage
-              projectService.saveSelectedProject(project);
-
-              // Finaliza o pedido com esse projeto
-              this.confirmProjectAndProceed(project);
-              return;
-            } else if (userProjects.length === 0) {
-              console.log('⚠️ Usuário não tem projetos, finalizando sem projeto');
-              this.confirmProjectAndProceed({ id: null, name: null });
-              return;
-            } else {
-              console.log('📋 Usuário tem múltiplos projetos, mostrando modal');
-            }
-          } catch (error) {
-            console.error('❌ Erro ao buscar projetos do usuário:', error);
-            // Em caso de erro, mostra o modal normalmente
-            console.log('🔄 Continuando para mostrar modal devido ao erro');
+            // Finaliza o pedido com esse projeto
+            this.confirmProjectAndProceed(project);
+            return;
+          } else {
+            // Se tiver múltiplos projetos, mostra o modal (para todos os perfis)
+            console.log('📋 Usuário tem múltiplos projetos, mostrando modal');
           }
+        } catch (error) {
+          console.error('❌ Erro ao buscar projetos do usuário:', error);
+          // Em caso de erro, mostra o modal normalmente para permitir seleção manual
+          console.log('🔄 Continuando para mostrar modal devido ao erro');
         }
 
         // Se não for nenhum dos casos acima, mostra o modal de confirmação de projeto
