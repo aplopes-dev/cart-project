@@ -2,7 +2,7 @@
 FROM node:18 AS builder
 
 # Definir argumentos para receber variáveis do docker-compose
-ARG VUE_APP_API_URL=https://cart.neova.ca/api
+ARG VUE_APP_API_URL=https://magasin.empirecanada.ca/api
 ARG VUE_APP_TITLE="Empire E-commerce"
 ARG VUE_APP_DEFAULT_LOCALE=pt
 ARG NODE_ENV=production
