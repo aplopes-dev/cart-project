@@ -256,35 +256,9 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
   } else if (to.meta.requiresAuth && isAuthenticated) {
-    // Verificação adicional de segurança para usuários autenticados
-    const userProfile = currentUser?.profile || 'USER'
-
-    // Admins podem acessar sem verificação de projetos
-    if (userProfile === 'ADMIN') {
-      window.scrollTo(0, 0)
-      next()
-      return
-    }
-
-    // Para usuários não-admin, verificar se têm projetos
-    try {
-      const userProjects = await projectService.getCurrentUserProjects()
-
-      if (userProjects.length === 0) {
-        console.log('Router Guard: Usuário sem projetos detectado, redirecionando para login')
-        // Fazer logout por segurança
-        authService.logout()
-        next({
-          path: '/login',
-          query: { redirect: to.fullPath }
-        })
-        return
-      }
-    } catch (error) {
-      console.error('Router Guard: Erro ao verificar projetos:', error)
-      // Em caso de erro, permitir acesso mas logar o erro
-    }
-
+    // Usuários autenticados podem acessar todas as rotas que requerem autenticação
+    // Removida a verificação de projetos que causava logout indevido
+    console.log('Router Guard: Usuário autenticado acessando rota protegida')
     window.scrollTo(0, 0)
     next()
   } else {
