@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { authService } from '@/services/auth.service'
-import { projectService } from '@/services/projectService'
 import Home from '../views/Home.vue'
 import HistoryView from '../views/HistoryView.vue'
 import SuppliersView from '../views/SuppliersView.vue'
