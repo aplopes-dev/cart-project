@@ -30,11 +30,16 @@ export const useCartStore = defineStore('cart', {
         const localCart = localStorage.getItem(`cart_${userId}`)
         if (localCart) {
           const cartItems = JSON.parse(localCart)
-          this.items = cartItems
+          // Agrupa os itens carregados do localStorage para garantir consistência
+          const groupedItems = this.groupCartItems(cartItems)
+          this.items = groupedItems
+
+          // Salva os itens agrupados de volta no localStorage
+          localStorage.setItem(`cart_${userId}`, JSON.stringify(groupedItems))
 
           // Remove o carrinho de visitante se existir
           localStorage.removeItem('cart_guest')
-          return cartItems
+          return groupedItems
         }
 
         // Busca carrinho do banco independente do guest cart
@@ -61,28 +66,11 @@ export const useCartStore = defineStore('cart', {
 
         // Se tem itens no guest cart ou no banco, mescla os dois
         if (guestCartItems.length > 0 || dbCartItems.length > 0) {
-          // Cria um Map com os itens do banco usando o id como chave
-          const mergedItems = new Map()
+          // Combina todos os itens em um array único
+          const allItems = [...dbCartItems, ...guestCartItems]
 
-          // Adiciona primeiro os itens do banco
-          dbCartItems.forEach(item => {
-            mergedItems.set(item.id, item)
-          })
-
-          // Adiciona ou atualiza com os itens do guest cart
-          guestCartItems.forEach(guestItem => {
-            const existingItem = mergedItems.get(guestItem.id)
-            if (existingItem) {
-              // Se o item já existe, soma as quantidades
-              existingItem.quantity += guestItem.quantity
-            } else {
-              // Se não existe, adiciona o novo item
-              mergedItems.set(guestItem.id, guestItem)
-            }
-          })
-
-          // Converte o Map de volta para array
-          const finalCartItems = Array.from(mergedItems.values())
+          // Aplica o agrupamento para mesclar itens duplicados
+          const finalCartItems = this.groupCartItems(allItems)
 
           // Atualiza o estado e localStorage
           this.items = finalCartItems
@@ -208,7 +196,7 @@ export const useCartStore = defineStore('cart', {
 
           // Atualiza o estado e localStorage com a resposta da API
           if (response.data && response.data.items) {
-            const cartItems = response.data.items.map(item => ({
+            const apiItems = response.data.items.map(item => ({
               id: item.productId,
               quantity: item.quantity,
               price: item.price,
@@ -221,14 +209,38 @@ export const useCartStore = defineStore('cart', {
               foxpro_code: item.foxpro_code
             }));
 
-            this.items = cartItems;
-            localStorage.setItem(`cart_${userId}`, JSON.stringify(cartItems));
+            // Agrupa os itens retornados da API para evitar duplicatas
+            const groupedItems = this.groupCartItems(apiItems);
+
+            this.items = groupedItems;
+            localStorage.setItem(`cart_${userId}`, JSON.stringify(groupedItems));
           }
         }
       } catch (error) {
         console.error('Error syncing cart:', error);
         throw error;
       }
+    },
+
+    // Função auxiliar para agrupar itens do carrinho
+    groupCartItems(items) {
+      const groupedMap = new Map();
+
+      items.forEach(item => {
+        // Cria uma chave única baseada no ID e características do produto
+        const key = `${item.id}_${item.color || ''}_${item.size || ''}_${item.weight || ''}_${item.unit || ''}`;
+
+        if (groupedMap.has(key)) {
+          // Se já existe um item com as mesmas características, soma as quantidades
+          const existingItem = groupedMap.get(key);
+          existingItem.quantity += item.quantity;
+        } else {
+          // Se não existe, adiciona o novo item
+          groupedMap.set(key, { ...item });
+        }
+      });
+
+      return Array.from(groupedMap.values());
     }
   }
 })
