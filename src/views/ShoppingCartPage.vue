@@ -129,28 +129,28 @@
 
               <!-- Versão Mobile: Flex container para alinhar à direita -->
               <div class="flex md:hidden items-center ml-auto">
-                <!-- Seletor de quantidade - Mobile (mais largo e menos alto) -->
-                <div class="flex items-center border border-black/25 h-8 w-[100px] md:w-[140px]">
+                <!-- Seletor de quantidade - Mobile (corrigido) -->
+                <div class="flex items-center border border-black/25 rounded-sm overflow-hidden bg-white">
                   <button @click="decreaseQuantity(index)"
-                          class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">-</button>
+                          class="w-8 h-8 flex items-center justify-center text-lg hover:bg-black/5 border-r border-black/25">-</button>
                   <input
                     type="number"
                     v-model.number="item.quantity"
                     min="1"
-                    class="quantity-input flex-1 h-full text-center text-base md:text-lg"
+                    class="quantity-input w-12 h-8 text-center text-sm border-none outline-none bg-transparent"
                     :aria-label="$t('cart.quantity')"
                     @change="validateAndUpdateQuantity(index, item)"
                   />
                   <button @click="increaseQuantity(index)"
-                          class="px-2 md:px-3 h-full flex items-center justify-center text-base md:text-lg hover:bg-black/5 w-8 md:w-12">+</button>
+                          class="w-8 h-8 flex items-center justify-center text-lg hover:bg-black/5 border-l border-black/25">+</button>
                 </div>
 
                 <!-- Ícone de Lixeira - Mobile (mesma altura do seletor de quantidade) -->
                 <button
                   @click="removeItem(index)"
-                  class="w-7 h-7 md:w-8 md:h-8 ml-1 md:ml-2 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
+                  class="w-8 h-8 ml-2 flex items-center justify-center hover:bg-[#E30505]/10 transition-colors rounded-sm"
                 >
-                  <svg width="20" height="20" class="md:w-6 md:h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="18" height="18" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 8H28" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M25.3333 8V26.6667C25.3333 27.0203 25.1929 27.3594 24.9428 27.6095C24.6928 27.8595 24.3536 28 24 28H8C7.64638 28 7.30724 27.8595 7.05719 27.6095C6.80714 27.3594 6.66667 27.0203 6.66667 26.6667V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M10.6667 8V5.33333C10.6667 4.97971 10.8071 4.64057 11.0572 4.39052C11.3072 4.14048 11.6464 4 12 4H20C20.3536 4 20.6928 4.14048 20.9428 4.39052C21.1929 4.64057 21.3333 4.97971 21.3333 5.33333V8" stroke="#E30505" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -217,7 +217,7 @@
         </div>
 
         <!-- Summary -->
-        <div class="py-4 md:py-6 max-w-[456px] ml-auto">
+        <div class="py-4 md:py-6 max-w-[456px] ml-auto mb-4 md:mb-0">
           <div v-if="showPrices" class="flex justify-between items-center mb-4">
             <span class="font-archivo-narrow font-semibold text-lg md:text-xl">{{ $t('shoppingCart.subtotal') }}</span>
             <span class="font-archivo-narrow font-semibold text-lg md:text-xl">
@@ -595,6 +595,28 @@ textarea::placeholder {
   border: none;
   outline: none;
   background: transparent;
+}
+
+/* Estilos específicos para mobile - componente de quantidade */
+@media (max-width: 767px) {
+  .shopping-cart-page .quantity-input {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #000 !important;
+  }
+
+  /* Garantir que os botões de quantidade tenham o mesmo tamanho */
+  .shopping-cart-page .flex.items-center.border button {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+  }
 }
 
 
