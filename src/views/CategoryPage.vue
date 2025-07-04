@@ -569,6 +569,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useFinancialTogglesStore } from '@/stores/financialTogglesStore'
 import { useI18n } from 'vue-i18n'
 import { productCharacteristicsService } from '@/services/productCharacteristicsService'
+import { getDefaultUnit } from '@/utils/unitUtils'
 // Removendo importação do VueSlider que não está instalado
 
 const route = useRoute()
@@ -984,14 +985,29 @@ const handleAddToCart = (product, quantity) => {
     return;
   }
 
-  // Se não tiver características, adiciona diretamente ao carrinho
+  // Verificar se o produto tem múltiplas unidades de medida
+  const hasMultipleUnits = product.unit_of_measure &&
+    product.unit_of_measure.startsWith('{') &&
+    product.unit_of_measure.endsWith('}')
+
+  if (hasMultipleUnits) {
+    // Se tem múltiplas unidades, redirecionar para página do produto
+    router.push(`/product/${product.id}`)
+    return
+  }
+
+  // Se não tiver características e não tem múltiplas unidades, adiciona diretamente ao carrinho
+  // Obter a unidade padrão do produto
+  const defaultUnit = getDefaultUnit(product.unit_of_measure)
+
   const cartItem = {
     id: product.id,
     name: product.name,
     price: product.price,
     quantity: quantity,
     image: getProductImage(product),
-    foxpro_code: product.foxpro_code
+    foxpro_code: product.foxpro_code,
+    unit: defaultUnit // Incluir a unidade de medida
   }
 
   cartStore.addItem(cartItem)
