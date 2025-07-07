@@ -75,7 +75,7 @@
               <!-- Forgot Password -->
               <router-link
                 to="/forgot-password"
-                class="w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
+                class="hidden w-full font-archivo text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] text-center text-[#1E1E1E] hover:text-empire-yellow"
               >
                 {{ $t('auth.forgotPassword') }}
               </router-link>

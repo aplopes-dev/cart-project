@@ -31,5 +31,21 @@ export const userService = {
       console.error('Error updating user profile:', error)
       throw error
     }
+  },
+
+  async createUser(userData) {
+    try {
+      const response = await api.post(`${API_URL}/users`, {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        profile: userData.profile
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error creating user:', error)
+      throw error
+    }
   }
 }

@@ -149,7 +149,7 @@ export default {
     }
 
     // Obter URL da imagem da categoria
-    const getCategoryImage = (imagePath, category) => {
+    const getCategoryImage = (imagePath) => {
       return imagePath || '/images/products/default.png'
     }
 

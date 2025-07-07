@@ -21,8 +21,18 @@
 
       <!-- Título da Página -->
       <div class="mb-6 md:mb-8">
-        <h1 class="font-archivo-narrow font-semibold text-2xl md:text-3xl mb-1 md:mb-2">{{ $t('systemSettings.users') }}</h1>
-        <p class="text-black/70 text-sm md:text-base">{{ $t('systemSettings.usersDescription') }}</p>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 class="font-archivo-narrow font-semibold text-2xl md:text-3xl mb-1 md:mb-2">{{ $t('systemSettings.users') }}</h1>
+            <p class="text-black/70 text-sm md:text-base">{{ $t('systemSettings.usersDescription') }}</p>
+          </div>
+          <button
+            @click="openAddUserModal"
+            class="bg-empire-yellow hover:opacity-90 text-black px-4 py-2 font-archivo-narrow font-semibold text-sm md:text-base transition-opacity"
+          >
+            {{ $t('users.addUser') }}
+          </button>
+        </div>
       </div>
 
       <!-- Filtros e Busca -->
@@ -218,6 +228,80 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Adicionar Usuário -->
+    <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-4 md:p-6 rounded-md w-full max-w-[90%] md:max-w-md">
+        <h2 class="font-archivo-narrow font-semibold text-xl md:text-2xl mb-3 md:mb-4">{{ $t('users.addUser') }}</h2>
+
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.firstName') }}</label>
+          <input
+            v-model="newUser.firstName"
+            type="text"
+            class="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded"
+            :placeholder="$t('users.firstNamePlaceholder')"
+          />
+        </div>
+
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.lastName') }}</label>
+          <input
+            v-model="newUser.lastName"
+            type="text"
+            class="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded"
+            :placeholder="$t('users.lastNamePlaceholder')"
+          />
+        </div>
+
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.email') }}</label>
+          <input
+            v-model="newUser.email"
+            type="email"
+            class="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded"
+            :placeholder="$t('users.emailPlaceholder')"
+          />
+        </div>
+
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.password') }}</label>
+          <input
+            v-model="newUser.password"
+            type="password"
+            class="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded"
+            :placeholder="$t('users.passwordPlaceholder')"
+          />
+        </div>
+
+        <div class="mb-3 md:mb-4">
+          <label class="block text-gray-700 text-sm md:text-base mb-1 md:mb-2">{{ $t('users.profile') }}</label>
+          <select
+            v-model="newUser.profile"
+            class="w-full p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded"
+          >
+            <option value="">{{ $t('users.selectProfile') }}</option>
+            <option value="ADMIN">{{ $t('users.admin') }}</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 md:gap-3">
+          <button
+            @click="closeAddModal"
+            class="px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded"
+          >
+            {{ $t('common.cancel') }}
+          </button>
+          <button
+            @click="createUser"
+            :disabled="createLoading"
+            class="px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base bg-empire-yellow text-black rounded disabled:opacity-50"
+          >
+            {{ createLoading ? $t('common.saving') : $t('common.save') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -240,6 +324,17 @@ const profileFilter = ref('')
 const showEditModal = ref(false)
 const selectedUser = ref({})
 const updateLoading = ref(false)
+
+// Estado do modal de adicionar usuário
+const showAddModal = ref(false)
+const newUser = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  profile: 'ADMIN'
+})
+const createLoading = ref(false)
 
 // Estado da paginação
 const currentPage = ref(1)
@@ -306,6 +401,30 @@ const closeEditModal = () => {
   selectedUser.value = {}
 }
 
+// Abrir modal de adicionar usuário
+const openAddUserModal = () => {
+  newUser.value = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    profile: 'ADMIN'
+  }
+  showAddModal.value = true
+}
+
+// Fechar modal de adicionar usuário
+const closeAddModal = () => {
+  showAddModal.value = false
+  newUser.value = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    profile: 'ADMIN'
+  }
+}
+
 // Salvar perfil do usuário
 const saveUserProfile = async () => {
   updateLoading.value = true
@@ -327,6 +446,30 @@ const saveUserProfile = async () => {
     toast.error(t('users.updateError'))
   } finally {
     updateLoading.value = false
+  }
+}
+
+// Criar novo usuário
+const createUser = async () => {
+  if (!newUser.value.firstName || !newUser.value.lastName || !newUser.value.email || !newUser.value.password) {
+    toast.error(t('users.fillAllFields'))
+    return
+  }
+
+  createLoading.value = true
+  try {
+    await userService.createUser(newUser.value)
+
+    // Recarrega a lista de usuários para incluir o novo usuário
+    await loadUsers()
+
+    toast.success(t('users.createSuccess'))
+    closeAddModal()
+  } catch (err) {
+    console.error('Error creating user:', err)
+    toast.error(t('users.createError'))
+  } finally {
+    createLoading.value = false
   }
 }
 
