@@ -401,6 +401,20 @@ const closeEditModal = () => {
   selectedUser.value = {}
 }
 
+// Função utilitária para scroll antes de abrir modal
+const scrollBeforeOpenModal = () => {
+  // Primeiro, calculamos a posição desejada
+  const windowHeight = window.innerHeight
+  const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
+  const targetPosition = scrollPosition + (windowHeight * 0.2) // 20% da altura da janela
+
+  // Fazemos o scroll suave
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth'
+  })
+}
+
 // Abrir modal de adicionar usuário
 const openAddUserModal = () => {
   newUser.value = {
@@ -410,7 +424,14 @@ const openAddUserModal = () => {
     password: '',
     profile: 'ADMIN'
   }
-  showAddModal.value = true
+
+  // Faz o scroll antes de abrir o modal
+  scrollBeforeOpenModal()
+
+  // Abre o modal após um pequeno delay para dar tempo do scroll terminar
+  setTimeout(() => {
+    showAddModal.value = true
+  }, 300)
 }
 
 // Fechar modal de adicionar usuário
