@@ -164,7 +164,7 @@
               <!-- Titles -->
               <div class="mb-2 md:mb-4">
                 <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2">
-                  {{ $t('homeBanner.title') }} *
+                  {{ $t('homeBanner.title') }}
                 </label>
 
                 <!-- Tabs for language selection -->
@@ -206,7 +206,6 @@
                     type="text"
                     class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow h-9 md:h-auto"
                     :placeholder="$t('homeBanner.titlePlaceholderEn')"
-                    required
                   >
                 </div>
 
@@ -225,7 +224,7 @@
               <!-- Subtitles -->
               <div class="mb-2 md:mb-4">
                 <label class="block font-archivo text-xs md:text-sm font-medium mb-1 md:mb-2">
-                  {{ $t('homeBanner.subtitle') }} *
+                  {{ $t('homeBanner.subtitle') }}
                 </label>
 
                 <!-- Tabs for language selection -->
@@ -267,7 +266,6 @@
                     class="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-empire-yellow"
                     rows="2" md:rows="3"
                     :placeholder="$t('homeBanner.subtitlePlaceholderEn')"
-                    required
                   ></textarea>
                 </div>
 
@@ -1108,8 +1106,8 @@ const handleImageChange = (event) => {
       return
     }
 
-    // Validate file size (max 2MB)
-    const maxSize = 2 * 1024 * 1024
+    // Validate file size (max 20MB)
+    const maxSize = 20 * 1024 * 1024
     if (file.size > maxSize) {
       toast.error(t('homeBanner.imageTooLarge'))
       event.target.value = ''
@@ -1347,8 +1345,8 @@ const handleLogoImageChange = (event) => {
       return
     }
 
-    // Validate file size (max 1MB)
-    const maxSize = 1 * 1024 * 1024
+    // Validate file size (max 20MB)
+    const maxSize = 20 * 1024 * 1024
     if (file.size > maxSize) {
       toast.error(t('logo.imageTooLarge'))
       event.target.value = ''
@@ -1596,8 +1594,8 @@ const handleBrandImageChange = (event) => {
       return
     }
 
-    // Validate file size (max 1MB)
-    const maxSize = 1 * 1024 * 1024
+    // Validate file size (max 20MB)
+    const maxSize = 20 * 1024 * 1024
     if (file.size > maxSize) {
       toast.error(t('brand.imageTooLarge'))
       event.target.value = ''
