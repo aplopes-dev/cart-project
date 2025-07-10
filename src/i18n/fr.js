@@ -156,6 +156,7 @@ export default {
     back: 'Retour',
     saving: 'Enregistrement...',
     updating: 'Mise à jour...',
+    deleting: 'Suppression...',
     retry: 'Réessayer',
     myAccount: 'Mon Compte'
   },

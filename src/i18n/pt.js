@@ -161,6 +161,7 @@ export default {
     back: 'Voltar',
     saving: 'Salvando...',
     updating: 'Atualizando...',
+    deleting: 'Excluindo...',
     retry: 'Tentar novamente',
     myAccount: 'Minha Conta'
   },

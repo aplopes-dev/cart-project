@@ -156,6 +156,7 @@ export default {
     back: 'Back',
     saving: 'Saving...',
     updating: 'Updating...',
+    deleting: 'Deleting...',
     retry: 'Retry',
     myAccount: 'My Account'
   },
